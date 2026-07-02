@@ -1,0 +1,15 @@
+node_modules/
+.next/
+dist/
+build/
+coverage/
+.env
+.env.*
+!.env.example
+*.log
+
+# Do not place data caches in the website repo.
+data/
+data_cache/
+outputs/
+
