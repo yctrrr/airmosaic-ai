@@ -34,12 +34,27 @@ tests/                    Unit tests
 ## Quick Start
 
 ```powershell
-$env:AIRMOSAIC_LOCAL_WORKSPACE = "D:\AirMosaicAI\local_workspace"
-$env:GCAM_RELEASE_DIR = "<path to GCAM release package>"
-
+# Install
 cd D:\AirMosaicAI\airmosaic-ai-core
 pip install -e ".[dev]"
-python -m airmosaic_core.cli
+
+# CLI: list datasets
+airmosaic list-datasets
+
+# CLI: check local data availability
+airmosaic check-availability population
+
+# CLI: generate causal analysis plan
+airmosaic draft-causal-plan --question "Did clean air policy reduce mortality?" --treatment "clean air policy" --outcome "mortality"
+```
+
+## Web Frontend
+
+A static landing page (`index.html`) with EN/ZH language toggle, served locally:
+
+```powershell
+python -m http.server 5176 --bind 127.0.0.1
+# Open http://127.0.0.1:5176
 ```
 
 ## Skills

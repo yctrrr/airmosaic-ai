@@ -34,12 +34,27 @@ tests/                    单元测试
 ## 快速启动
 
 ```powershell
-$env:AIRMOSAIC_LOCAL_WORKSPACE = "D:\AirMosaicAI\local_workspace"
-$env:GCAM_RELEASE_DIR = "<GCAM 发行包路径>"
-
+# 安装
 cd D:\AirMosaicAI\airmosaic-ai-core
 pip install -e ".[dev]"
-python -m airmosaic_core.cli
+
+# CLI：列出数据集
+airmosaic list-datasets
+
+# CLI：检查本地数据可用性
+airmosaic check-availability population
+
+# CLI：生成因果分析方案
+airmosaic draft-causal-plan --question "清洁空气政策是否降低了死亡率？" --treatment "清洁空气政策" --outcome "死亡率"
+```
+
+## 网页前端
+
+静态页面（`index.html`），支持中英文切换，本地启动：
+
+```powershell
+python -m http.server 5176 --bind 127.0.0.1
+# 浏览器打开 http://127.0.0.1:5176
 ```
 
 ## 技能模块
