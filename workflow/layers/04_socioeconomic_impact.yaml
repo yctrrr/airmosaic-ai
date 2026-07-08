@@ -23,7 +23,7 @@ inputs:
       temporal_resolution: "annual"
 
     - id: "baseline_mortality"
-      source: "skills/data_acquisition/ihme-gbd-results"
+      source: "skills/data_acquisition/04_impact/ihme-gbd-results"
       description: "Baseline mortality/morbidity rates by cause, age, region"
 
     - id: "carbon_emission"
@@ -157,10 +157,10 @@ traceability:
     link: "workflow/layers/03_atmospheric_transport.yaml"
     description: "Concentration fields feed exposure assessment"
   - source: "gbd_health"
-    link: "技能: skills/data_acquisition/ihme-gbd-results"
+    link: "技能: skills/data_acquisition/04_impact/ihme-gbd-results"
     description: "Baseline mortality/morbidity rates"
   - source: "population"
-    link: "技能: skills/data_acquisition/worldpop"
+    link: "技能: skills/data_acquisition/01_socioeconomic/worldpop"
     description: "Gridded population for exposure weighting"
   - source: "health_ier"
     link: "文献: GBD 2019 IER parameters"

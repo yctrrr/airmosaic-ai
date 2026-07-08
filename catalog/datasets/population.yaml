@@ -21,7 +21,7 @@ access_method: local archive, public data portal, or project-provided table
 license_or_terms: Source-specific terms apply.
 local_cache_policy: Cache processed subsets aligned to analysis geography.
 default_cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/population
-acquisition_skill: skills/data_acquisition/worldpop
+acquisition_skill: skills/data_acquisition/01_socioeconomic/worldpop
 quality_notes: Age structure and boundary version must be recorded.
 example_queries:
   - population weighted PM2.5 exposure by county

@@ -24,7 +24,7 @@ access_method: local codebook, GBD exports, or authorized health parameter table
 license_or_terms: Source-specific health data terms apply.
 local_cache_policy: Cache only derived or authorized parameter tables.
 default_cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gbd_health
-acquisition_skill: skills/data_acquisition/ihme-gbd-results
+acquisition_skill: skills/data_acquisition/04_impact/ihme-gbd-results
 quality_notes: Endpoint definitions and CR function versions must be recorded.
 example_queries:
   - PM2.5 attributable mortality using MRBRT

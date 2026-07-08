@@ -38,7 +38,7 @@ inputs:
       description: "End-of-pipe technology adoption rates"
 
     - id: "gcam_scenario"
-      source: "skills/model/gcam"
+      source: "skills/model/IAM/gcam"
       description: "GCAM scenario output for energy system pathways"
 
 modules:
@@ -137,10 +137,10 @@ outputs:
 
 traceability:
   - source: "gcam_scenario"
-    link: "技能: skills/model/gcam"
+    link: "技能: skills/model/IAM/gcam"
     description: "GCAM scenario outputs feed energy system pathways"
   - source: "population"
-    link: "技能: skills/data_acquisition/worldpop"
+    link: "技能: skills/data_acquisition/01_socioeconomic/worldpop"
     description: "Population grids for exposure weighting"
   - source: "industrial_structure"
     link: "外部: 统计年鉴/投入产出表"

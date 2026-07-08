@@ -20,16 +20,32 @@ D:\AirMosaicAI\
 
 ```
 catalog/                   Dataset metadata (YAML schemas)
+workflow/                  Analysis pipeline templates (4 layers)
 skills/
-  data_acquisition/       WorldPop, GBD data acquisition
-  model/                  GCAM scenario analysis, config, extraction
-src/airmosaic_core/       Python service package
+  data_acquisition/        WorldPop, GBD — organized by workflow layer
+    01_socioeconomic/      WorldPop (population grids)
+    04_impact/             GBD Results (health data)
+  model/                   Model analysis — organized by model type
+    IAM/                   Integrated Assessment Models
+      gcam/                GCAM scenario analysis, config, extraction
+src/airmosaic_core/        Python service package
   services/
     data_catalog.py        Dataset registry queries
     data_access.py         Local cache checks, path resolution
     causal_design.py       Causal analysis plan generation
-examples/                 Agent call examples (JSON templates)
-tests/                    Unit tests
+examples/                  Agent call examples (JSON templates)
+tests/                     Unit tests
+```
+
+## Workflow Pipeline
+
+Four-layer analysis pipeline with AI/empirical method branching:
+
+```
+Layer 1: Socioeconomic → activity levels, energy, end-of-pipe tech
+Layer 2: Emission Inventory → pollutant & carbon emissions
+Layer 3: Atmospheric Transport → concentration field
+Layer 4: Impact Assessment → health burden, economic damage, inequality
 ```
 
 ## Quick Start
@@ -53,26 +69,22 @@ airmosaic draft-causal-plan --question "Did clean air policy reduce mortality?" 
 
 Each skill is a self-contained module with `SKILL.md`, `scripts/`, `references/`, and `examples/`.
 
-| Skill | Purpose |
-|-------|---------|
-| WorldPop | Download population grids by country/year, with clipping and validation |
-| GBD Results | Fetch mortality rates and disease burden from IHME GBD |
-| GCAM | Explore BaseX output, interpret config, extract prices/quantities via XQuery |
+| Skill | Layer | Purpose |
+|-------|-------|---------|
+| WorldPop | 01 Socioeconomic | Download population grids by country/year, clipping, validation |
+| GBD Results | 04 Impact | Fetch mortality rates and disease burden from IHME GBD |
+| GCAM | IAM | Explore BaseX output, interpret config, extract prices/quantities via XQuery |
 
-GCAM skill has three layers:
+GCAM skill has three sub-layers:
 - **01_output_structure**: XPath/XQuery exploration of scenarios, regions, sectors, technologies
 - **02_configuration**: SSP-RCP setup, CCS config, input data chain tracing
 - **03_data_extraction**: Market/sector price extraction, technology component decomposition, province aggregation
 
 ## External Agent Interface
 
-Platform capabilities are exposed via three interfaces:
-
 - **MCP Tools**: Structured JSON function calls for Codex, Claude, etc.
 - **REST / OpenAPI**: Standard HTTP API for web frontends and services
 - **Python SDK / CLI**: Local scripts, Jupyter notebooks, batch processing
-
-Agents never access the filesystem directly. All data I/O goes through service interfaces.
 
 ## Data Boundary
 
