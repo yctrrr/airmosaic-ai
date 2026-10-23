@@ -10,11 +10,14 @@ Read the [Harness guide](harness/README.md) for team roles, execution steps, bou
 
 | Goal | Documentation |
 |---|---|
+| Follow the four research steps and their current execution status | [Four-step guide](harness/four-step-workflow.md) |
 | Install and call existing CLI/SDK services | [Core tools](harness/usage/core.md) |
 | Acquire population, enterprise, yearbook or GBD data | [Data acquisition](harness/usage/data-acquisition.md) |
 | Use GCAM scripts or health-impact templates | [Model analysis](harness/usage/model-analysis.md) |
+| Use mlr3 / TimeXer methods and track reference projects | [Machine learning](harness/usage/machine-learning.md) |
+| Find reusable methods from recent local practice | [Methods library](methods/README.md) |
 | Let an agent modify the project | [AGENTS.md](AGENTS.md), [agent boundaries](harness/agent-boundaries.md) |
-| Run reviewed CLI/Python tools | [run-tool](harness/usage/run-tool.md) |
+| Run reviewed CLI/Python/R tools | [run-tool](harness/usage/run-tool.md) |
 | Find available capabilities | [Registry queries](harness/usage/tool-registry.md), [tool catalog](harness/tool-catalog.md) |
 | Separate data, personal configuration and authentication | [Storage and credentials](harness/storage-and-credentials.md) |
 | Add skills/tools and configure discovery/display | [Registration specification](harness/tool-registration.md) |
@@ -24,12 +27,15 @@ Read the [Harness guide](harness/README.md) for team roles, execution steps, bou
 ```text
 AGENTS.md                 Agent operating instructions
 harness/                  Shared collaboration and tool-use documentation
+methods/                  Four-step methods and shared references; documentation only
 catalog/                  Dataset metadata and schemas
 config/examples/          Public templates for private environment configuration
 workflow/                 Four-layer workflow design templates
 skills/
-  data_acquisition/       WorldPop, CSMAR, industrial yearbook, IHME GBD
-  model/                  Health-impact templates and GCAM analysis skills
+  data_acquisition/       01 socioeconomic / 02 emissions / 03 atmosphere / 04 impacts / shared
+  model/                  Same four steps; shared IAM and machine-learning references
+    machine_learning/     Machine-learning guides: mlr3 and TimeXer
+    IAM/                  Shared GCAM output analysis and build guidance
 src/airmosaic_core/        Python CLI and service classes
 tests/                    Core service tests
 ```
@@ -43,6 +49,8 @@ Socioeconomic drivers → emissions → atmospheric transport/chemistry → impa
 ```
 
 These layers organize the research workflow. They are not all implemented as executable services. Method selection requires suitable data, baselines and domain review; sample counts alone do not establish that an AI model or causal method is appropriate.
+
+Operational mapping: [four-step workflow](harness/four-step-workflow.md), [skills](skills/README.md) and [methods](methods/README.md). Step 02 lists methods only, with no concrete data or implementation code. Step 03 includes GEOS-Chem setup/build guidance; no model compilation or simulation adapter is enabled. Documentation maintenance uses descriptions, interfaces and synthetic inputs, without reading original data.
 
 ## Quick start
 

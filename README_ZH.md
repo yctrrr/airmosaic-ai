@@ -10,12 +10,15 @@
 
 | 目标 | 文档 |
 |---|---|
+| 按四个研究步骤查找入口、流程和执行状态 | [四步导航](harness/four-step-workflow.md) |
 | 安装并调用现有 CLI/SDK | [基础工具](harness/usage/core.md) |
 | 获取人口、企业、年鉴或 GBD 数据 | [数据获取](harness/usage/data-acquisition.md) |
 | 使用 GCAM 脚本或健康影响模板 | [模型分析](harness/usage/model-analysis.md) |
+| 使用 mlr3 / TimeXer 方法并跟踪参考项目 | [机器学习](harness/usage/machine-learning.md) |
+| 查找近期本地实践中的可复用方法 | [方法库](methods/README.md) |
 | 让 agent 修改项目 | [AGENTS.md](AGENTS.md)、[Agent 行为边界](harness/agent-boundaries.md) |
 | 查找可用能力 | [注册查询](harness/usage/tool-registry.md)、[工具清单](harness/tool-catalog.md) |
-| 统一执行 CLI/Python 工具 | [run-tool](harness/usage/run-tool.md) |
+| 统一执行 CLI/Python/R 工具 | [run-tool](harness/usage/run-tool.md) |
 | 分开管理数据、个人配置和认证状态 | [工作区与凭据](harness/storage-and-credentials.md) |
 | 新增技能/工具并配置发现和展示 | [注册规范](harness/tool-registration.md) |
 
@@ -24,12 +27,15 @@
 ```text
 AGENTS.md                 Agent operating instructions
 harness/                  Shared collaboration and tool-use documentation
+methods/                  Four-step methods and shared references; documentation only
 catalog/                  Dataset metadata and schemas
 config/examples/          Public templates for private environment configuration
 workflow/                 Four-layer workflow design templates
 skills/
-  data_acquisition/       WorldPop, CSMAR, industrial yearbook, IHME GBD
-  model/                  Health-impact templates and GCAM analysis skills
+  data_acquisition/       01 socioeconomic / 02 emissions / 03 atmosphere / 04 impacts / shared
+  model/                  Same four steps; shared IAM and machine-learning references
+    machine_learning/     Machine-learning guides: mlr3 and TimeXer
+    IAM/                  Shared GCAM output analysis and build guidance
 src/airmosaic_core/        Python CLI and service classes
 tests/                    Core service tests
 ```
@@ -43,6 +49,8 @@ Socioeconomic drivers → emissions → atmospheric transport/chemistry → impa
 ```
 
 这四层组织了社会经济、排放、大气输送/化学和影响研究流程；并非每一层都已实现为可执行服务。方法选择需要数据适用性、基线和领域审核，不能仅由样本数量判断 AI 或因果方法是否适用。
+
+具体对应见[四步流程](harness/four-step-workflow.md)、[skills 导航](skills/README.md)和[方法库](methods/README.md)。02 只列方法，不提供具体数据和实现代码；03 新增 GEOS-Chem 使用与编译排错参考，没有启用模型编译或模拟适配器。文档维护只使用说明、接口和合成输入，不读取原始数据。
 
 ## 快速启动
 

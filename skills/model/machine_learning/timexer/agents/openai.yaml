@@ -1,0 +1,4 @@
+interface:
+  display_name: "TimeXer 时序预测"
+  short_description: "Use TimeXer methods and track upstream behavior"
+  default_prompt: "使用 $timexer-forecasting 核对预测时点、外生变量、训练与推理契约，并说明需要人工适配的步骤。"

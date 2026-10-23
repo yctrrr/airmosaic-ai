@@ -4,6 +4,8 @@ AirMosaic contains reusable atmospheric-environment skills, data declarations, s
 
 ## Required operating boundaries
 
+- Documentation/method maintenance and routine checks use only relevant documentation, interface definitions and synthetic inputs. Do not read or copy original data without a separately scoped data task. Step 02 is methods-only: no concrete data, parameter values, implementation code, project script names or source fingerprints. Keep that boundary in methods, skills and workflow references.
+
 - Work within the user's requested files, datasets, years, regions and operations. Continue necessary, authorized reversible work without repeated confirmation; ask only when essential information or authorization is missing.
 - Preserve originals, existing results and other contributors' changes. Check the branch and working tree before editing. Do not launch additional model runs, bulk downloads, publication or external messages merely because a workflow mentions them.
 - Never put private usernames, passwords, keys, tokens, cookies, browser profiles, private hostnames, signed links or machine-specific paths in shared code, documentation, examples, Issues, PRs or logs.
@@ -15,6 +17,8 @@ AirMosaic contains reusable atmospheric-environment skills, data declarations, s
 
 ## Documentation map
 
+Start with the [four-step guide](harness/four-step-workflow.md) and [skill navigation](skills/README.md). methods/index.yaml maps every method to actual skills and stages; it is not an execution registry.
+
 | Task | Guide |
 |---|---|
 | Understand collaboration and execution | [Harness overview](harness/README.md) |
@@ -24,6 +28,8 @@ AirMosaic contains reusable atmospheric-environment skills, data declarations, s
 | Install core services; inspect datasets/cache | [Core tools](harness/usage/core.md) |
 | Acquire or process source data | [Data acquisition](harness/usage/data-acquisition.md) |
 | Inspect GCAM outputs or adapt health templates | [Model analysis](harness/usage/model-analysis.md) |
+| Use mlr3 / TimeXer guidance and track reference projects | [Machine learning](harness/usage/machine-learning.md) |
+| Reuse categorized local methods without treating source files as registered tools | [Methods library](methods/README.md) |
 | Register a capability or configure host discovery | [Registration and display](harness/tool-registration.md) |
 
 Read only guides and references relevant to the task. Detailed harness guides are currently in Chinese; the root README has English and Chinese versions.

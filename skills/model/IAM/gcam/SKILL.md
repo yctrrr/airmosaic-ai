@@ -13,6 +13,8 @@ Follow the [shared storage contract](../../../../harness/storage-and-credentials
 
 ## Layer Navigation
 
+GCAM 是跨阶段共享能力，见[四步导航](../../../../harness/four-step-workflow.md)。源码编译、链接依赖与运行错误的区分见[构建排错](references/build-troubleshooting.md)。该说明不启动编译或模拟，不扩大现有输出分析工具的权限。
+
 Choose the right layer based on the task:
 
 | Task | Layer |

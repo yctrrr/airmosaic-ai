@@ -2,9 +2,11 @@
 
 本说明面向使用 agent 开发、调用或维护 AirMosaic 的成员。先按任务选择工具，再核对输入、权限和数据条件，最后用验收记录交付结果。
 
-本文规定团队应遵循的操作流程。工具注册、分类列表、详情及静态前置条件查询见[查询说明](usage/tool-registry.md)；已实现的 [run-tool](usage/run-tool.md) 为 8 个核心 CLI 和 6 个 Python 脚本提供参数校验、dry-run、路径前置检查与脱敏记录。它不构成 OS 沙箱，原脚本直接调用不经过这些检查；MCP 和工作流编排尚未实现。
+本文规定团队应遵循的操作流程。工具注册、分类列表、详情及静态前置条件查询见[查询说明](usage/tool-registry.md)；已实现的 [run-tool](usage/run-tool.md) 为 8 个核心 CLI、6 个 Python 脚本和 2 个 GCAM R 脚本提供参数校验、dry-run、路径前置检查与脱敏记录。它不构成 OS 沙箱，原脚本直接调用不经过这些检查；MCP 和工作流编排尚未实现。
 
 ## 1. 从哪里开始
+
+以[四步流程](four-step-workflow.md)为研究主导航；[methods](../methods/README.md)逐项映射 skills，共享能力保留单一入口。02 只列方法；03 GEOS-Chem 为参考，不提供模拟执行器。文档维护不用原始数据。
 
 | 需要完成的事情 | 阅读入口 |
 |---|---|
@@ -12,10 +14,12 @@
 | 区分数据、个人配置和认证存储 | [工作区与凭据](storage-and-credentials.md) |
 | 获取人口、企业、年鉴或 GBD 数据 | [数据获取与处理](usage/data-acquisition.md) |
 | 使用 GCAM 或健康影响模板 | [模型分析](usage/model-analysis.md) |
+| 使用 mlr3 / TimeXer 方法与跟踪参考项目 | [机器学习](usage/machine-learning.md) |
+| 按类型查找近期本地数据与模型方法 | [方法库](../methods/README.md) |
 | 让 agent 修改文档、脚本或配置 | [Agent 行为边界](agent-boundaries.md) |
 | 新增技能、注册工具、配置展示 | [注册与展示规范](tool-registration.md) |
 | 确认某项能力是否真的存在 | [分类查询](usage/tool-registry.md)、[工具清单](tool-catalog.md) |
-| 统一执行 CLI/Python 工具 | [run-tool 使用步骤与边界](usage/run-tool.md) |
+| 统一执行 CLI/Python/R 工具 | [run-tool 使用步骤与边界](usage/run-tool.md) |
 | 查看这版文档已验证到哪一步 | [验证记录与未执行事项](verification.md) |
 
 仓库根目录的 [AGENTS.md](../AGENTS.md) 是 agent 的简明入口。各 skill 保存具体方法；本目录保存跨模块的协作和操作规范。个人项目记录放在仓库外，不复制到这些共享说明中。

@@ -1,6 +1,12 @@
 # 模型分析与人工适配
 
+按[四步流程](../four-step-workflow.md)定位模型与交接。GEOS-Chem 的[使用与编译排错](../../skills/model/03_atmospheric_transport/geos-chem/SKILL.md)为参考；GCAM [构建排错](../../skills/model/IAM/gcam/references/build-troubleshooting.md)与已有输出分析分开。两者均无编译或模拟 run-tool 适配器。
+
+近期本地排放、成本、浓度健康、GCAM 与机器学习方法另见[方法库](../../methods/README.md)，其中本地项目源码与已接入适配器分别标记。
+
 先区分“分析已有结果”“修改配置”“启动模拟”。当前支持 GCAM 已有数据库的结构检查、Python 提取、CSV 汇总和 R 绘图，没有统一模型模拟启动器、跨层编排或科学自动验收服务。
+
+机器学习方法另见[机器学习分类说明](machine-learning.md)、[mlr3 skill](../../skills/model/machine_learning/mlr3/SKILL.md)和 [TimeXer skill](../../skills/model/machine_learning/timexer/SKILL.md)，当前按参考流程登记，尚无训练/预测适配器。
 
 ## 1. 真实入口
 

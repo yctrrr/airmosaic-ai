@@ -1,6 +1,6 @@
 # 工具能力与执行边界
 
-真实 ID、参数与执行支持以 `catalog/tools/*.yaml` 和 list-tools/describe-tool 为准。当前 23 个登记条目中 16 个支持 run-tool（8 个核心 CLI、6 个 Python 脚本、2 个 GCAM R 脚本）；登记不证明本机就绪、登录或科学验证通过。操作见[查询指南](usage/tool-registry.md)和[执行指南](usage/run-tool.md)，验证层级见[记录](verification.md)。
+真实 ID、参数与执行支持以 `catalog/tools/*.yaml` 和 list-tools/describe-tool 为准。当前 25 个登记条目中 16 个支持 run-tool（8 个核心 CLI、6 个 Python 脚本、2 个 GCAM R 脚本）；登记不证明本机就绪、登录或科学验证通过。操作见[查询指南](usage/tool-registry.md)和[执行指南](usage/run-tool.md)，验证层级见[记录](verification.md)。
 
 ## 核心工具
 
@@ -49,6 +49,8 @@ SDK 导出 DataCatalogService、DataAccessService、CausalDesignService、ToolRe
 
 ## 模型分析
 
+四步状态见[流程导航](four-step-workflow.md)。排放层只列方法；GEOS-Chem 是[未登记执行器的参考 skill](../skills/model/03_atmospheric_transport/geos-chem/SKILL.md)。GCAM 的[构建排错](../skills/model/IAM/gcam/references/build-troubleshooting.md)也不是编译工具；本轮未增加执行适配器。
+
 参考 [GCAM 总导航](../skills/model/IAM/gcam/SKILL.md)和[模型分类说明](usage/model-analysis.md)。
 
 | 工具 ID | runner | 范围 |
@@ -61,6 +63,8 @@ SDK 导出 DataCatalogService、DataAccessService、CausalDesignService、ToolRe
 | `gcam_configuration_reference` | 否，参考 | 只读说明或授权任务副本修改；没有配置 API 或模拟启动器 |
 | `pm25_hia_calculate_template` | 否，模板 | [健康影响](../skills/model/04_impact/health_impact_analysis/SKILL.md)输入和方法需适配验收 |
 | `pm25_hia_visualize_template` | 否，模板 | 绘图输入、网格、依赖与输出需人工检查 |
+| `mlr3_workflow_reference` | 否，参考 | [机器学习](usage/machine-learning.md)：mlr3 训练/预测方法与上游跟踪；尚无执行适配器 |
+| `timexer_workflow_reference` | 否，参考 | [TimeXer](../skills/model/machine_learning/timexer/SKILL.md)：外生变量时序预测、参数与推理适配方法；尚无执行适配器 |
 
 ## 参数、模板与注册的区别
 

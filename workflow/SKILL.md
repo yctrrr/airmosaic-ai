@@ -1,12 +1,14 @@
 # Workflow Layer — Analysis Pipeline Templates
 
-预定义的四层大气环境决策分析流水线。每一层定义输入、处理模块、AI/经验分支逻辑和输出规格。
+四步大气环境决策分析设计。各步记录方法与交接要求；排放清单仅列方法，其余层中的模块/分支是待验证设计。
 
-Four-layer atmospheric-environment decision analysis pipeline. Each layer defines inputs, processing modules, AI/empirical branching logic, and output specifications.
+Four-step atmospheric-environment workflow design. Step 02 lists conceptual methods only; other module and branching declarations are proposals requiring task-specific validation.
 
 **Status: design templates.** No workflow orchestrator or runtime enforcement is implemented. This document has no standard skill frontmatter and is not a registered executable tool. Use the [harness guide](../harness/README.md) and [actual tool catalog](../harness/tool-catalog.md) for current operations.
 
 ---
+
+详细操作与实现状态见[四步导航](../harness/four-step-workflow.md)；方法对应见[方法库](../methods/README.md)。02 仅列方法，03 GEOS-Chem 为参考，均无自动执行器。
 
 ## Layer Overview
 
@@ -54,4 +56,4 @@ The existing adapters do not implement all four layers or automatically connect 
 
 ## Traceability
 
-See `references/io_traceability.md` for full I/O contract and causal traceability design.
+See [manual handoff checklist](references/io_traceability.md) for stage interfaces, comparison scope and traceability limits.

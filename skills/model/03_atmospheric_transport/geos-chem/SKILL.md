@@ -1,0 +1,22 @@
+---
+name: geos-chem-workflow
+description: Guide version-specific GEOS-Chem Classic and GCHP setup, compilation triage, runtime configuration and concentration handoff. Reference only; no compilation, download, scheduler or simulation adapter.
+---
+
+# GEOS-Chem 使用与排错参考
+
+**步骤**：03 大气输送与化学。**执行状态**：文档参考，尚未注册工具 ID，不能调用 run-tool 编译或运行。此 skill 不安装依赖、不登录、不下载、不读取数据，也不启动或改动现有作业。
+
+## 使用顺序
+
+1. 明确 Classic/GCHP、固定源码版本、模拟类型、网格与比较情景；确认使用对应版本的官方说明。
+2. 阅读[输入准备](../../../data_acquisition/03_atmospheric_transport/atmospheric-inputs/SKILL.md)，列出气象、初始/边界条件、物种和时间契约；排放输入仅列接口方法，不附具体数据和实现。
+3. 按[使用流程与注意事项](references/usage.md)检查工具链、源码/构建/运行目录和配置。编译错误使用[编译与运行排错](references/build-troubleshooting.md)，保留失败类别与版本，避免随意改科学代码。
+4. 后续明确授权的模型任务先做短时验证，分别检查进程、时间覆盖、诊断、restart 和研究口径；本轮只维护文档，不执行这些步骤。
+5. 浓度交接给 04：说明单位、网格、垂直层/地表定义、时间平均、共同有效范围及观测验证限制。
+
+## 路径与证据
+
+源码与发行包在仓库外；任务构建/运行目录由个人非秘密配置明确指定，结果写到新的工作区任务目录。GC_SOURCE_DIR、GC_RUN_DIR 等只为文档逻辑变量，不是 AirMosaic 自动加载配置。模型原始日志可能含路径和文件名，不作为公开附件；未适配流程不具有 run-tool 的环境隔离与脱敏回执。
+
+本指南按本地技术笔记提炼并与官方文档交叉核对，来源与版本差异见 [SOURCES.md](SOURCES.md)。历史机器补丁不视为通用修复；不将 forward、GCHP 或任意版本的 adjoint 能力互相代替。

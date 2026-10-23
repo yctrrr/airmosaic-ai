@@ -1,0 +1,238 @@
+schema_version: 2
+reviewed_on: '2026-10-23'
+purpose: Four-step documentation inventory and skill mapping; not a tool registry
+  or workflow executor.
+execution_performed_this_review: false
+status_definitions:
+  local_source: Source exists in a separate local project; no AirMosaic adapter.
+  mixed: Some related AirMosaic tools exist; the whole workflow is not executable
+    here.
+  registered_tools: Listed executable adapters exist; individual reference IDs remain
+    disabled and task readiness requires separate checks.
+  reference: Method guidance only; model training or inference is not implemented
+    here.
+  methods_only: Conceptual methods only; no concrete data, implementation code, source-script
+    references or executable adapter.
+methods:
+- method_id: literature_collection
+  category: data_acquisition
+  title: 文献发现、下载与归档
+  document: shared/literature.md
+  status: local_source
+  evidence: current_public_source_inspection
+  source_projects:
+  - literature_management
+  tool_ids: []
+  primary_stage: shared
+  applies_to:
+  - 01_socioeconomic
+  - 02_emission_inventory
+  - 03_atmospheric_transport
+  - 04_impact
+  skills:
+  - skills/data_acquisition/shared/literature-workflow/SKILL.md
+- method_id: statistical_yearbooks
+  category: data_acquisition
+  title: 统计年鉴与表格来源
+  document: 01_socioeconomic/statistical_yearbooks.md
+  status: mixed
+  evidence: recent_task_record_and_current_template_guides
+  source_projects:
+  - statistical_yearbooks
+  - airmosaic_core
+  tool_ids:
+  - yearbook_regional_sector_template
+  - yearbook_product_output_template
+  primary_stage: 01_socioeconomic
+  applies_to:
+  - 01_socioeconomic
+  skills:
+  - skills/data_acquisition/01_socioeconomic/ind_yearbook/SKILL.md
+- method_id: enterprise_sources
+  category: data_acquisition
+  title: 企业财务、年报与环境披露
+  document: 01_socioeconomic/enterprise_sources.md
+  status: mixed
+  evidence: current_source_and_recent_task_record
+  source_projects:
+  - enterprise_disclosure
+  - enterprise_database
+  - airmosaic_core
+  tool_ids:
+  - csmar_browser_download
+  - csmar_process_company_info
+  primary_stage: 01_socioeconomic
+  applies_to:
+  - 01_socioeconomic
+  skills:
+  - skills/data_acquisition/01_socioeconomic/csmar/SKILL.md
+  - skills/data_acquisition/01_socioeconomic/enterprise-disclosure/SKILL.md
+- method_id: population_health_data
+  category: data_acquisition
+  title: 人口与健康基础数据
+  document: shared/population_health.md
+  status: registered_tools
+  evidence: current_manifest_and_skill_guides
+  source_projects:
+  - airmosaic_core
+  tool_ids:
+  - worldpop_download
+  - ihme_gbd_fetch_results
+  primary_stage: shared
+  applies_to:
+  - 01_socioeconomic
+  - 04_impact
+  skills:
+  - skills/data_acquisition/01_socioeconomic/worldpop/SKILL.md
+  - skills/data_acquisition/04_impact/ihme-gbd-results/SKILL.md
+- method_id: energy_balance_processing
+  category: data_processing
+  title: CEADs 能源与折标煤
+  document: 01_socioeconomic/energy_balance.md
+  status: local_source
+  evidence: current_source_and_recent_task_record
+  source_projects:
+  - energy_consumption
+  tool_ids: []
+  primary_stage: 01_socioeconomic
+  applies_to:
+  - 01_socioeconomic
+  skills:
+  - skills/data_acquisition/01_socioeconomic/energy-balance/SKILL.md
+- method_id: enterprise_panel_processing
+  category: data_processing
+  title: 企业主体、面板与统计约束
+  document: 01_socioeconomic/enterprise_panels.md
+  status: local_source
+  evidence: current_source_and_recent_task_record
+  source_projects:
+  - enterprise_database
+  tool_ids: []
+  primary_stage: 01_socioeconomic
+  applies_to:
+  - 01_socioeconomic
+  skills:
+  - skills/model/01_socioeconomic/socioeconomic-drivers/SKILL.md
+  - skills/data_acquisition/01_socioeconomic/csmar/SKILL.md
+- method_id: spatial_inventory_processing
+  category: data_processing
+  title: 空间清单重建与对齐
+  document: 02_emission_inventory/spatial_inventory.md
+  status: methods_only
+  evidence: conceptual_methods_only
+  source_projects: []
+  tool_ids: []
+  primary_stage: 02_emission_inventory
+  applies_to:
+  - 02_emission_inventory
+  skills:
+  - skills/data_acquisition/02_emission_inventory/inventory-input-methods/SKILL.md
+  - skills/model/02_emission_inventory/emission-inventory-methods/SKILL.md
+- method_id: emission_accounting
+  category: model_use
+  title: 排放核算与治理效率
+  document: 02_emission_inventory/emission_accounting.md
+  status: methods_only
+  evidence: conceptual_methods_only
+  source_projects: []
+  tool_ids: []
+  primary_stage: 02_emission_inventory
+  applies_to:
+  - 02_emission_inventory
+  skills:
+  - skills/model/02_emission_inventory/emission-inventory-methods/SKILL.md
+- method_id: cost_scenarios
+  category: model_use
+  title: 治理成本与分配情景
+  document: shared/cost_scenarios.md
+  status: local_source
+  evidence: current_project_guide_and_operating_boundaries
+  source_projects:
+  - cost_burden
+  tool_ids: []
+  primary_stage: shared
+  applies_to:
+  - 01_socioeconomic
+  - 02_emission_inventory
+  - 04_impact
+  skills:
+  - skills/model/shared/cost-scenarios/SKILL.md
+- method_id: concentration_health_model
+  category: model_use
+  title: 健康影响与情景配对
+  document: 04_impact/health_impacts.md
+  status: mixed
+  evidence: health_method_guidance_and_existing_repository_templates
+  source_projects:
+  - cost_burden
+  - airmosaic_core
+  tool_ids:
+  - pm25_hia_calculate_template
+  - pm25_hia_visualize_template
+  primary_stage: 04_impact
+  applies_to:
+  - 04_impact
+  skills:
+  - skills/model/04_impact/health_impact_analysis/SKILL.md
+- method_id: gcam_output_analysis
+  category: model_use
+  title: GCAM 输出分析
+  document: shared/gcam.md
+  status: registered_tools
+  evidence: current_manifest_and_skill_guides
+  source_projects:
+  - airmosaic_core
+  tool_ids:
+  - gcam_inspect_output_structure
+  - gcam_extract_market_sector
+  - gcam_extract_technology_components
+  - gcam_aggregate_provinces
+  - gcam_plot_sector_change
+  - gcam_configuration_reference
+  primary_stage: shared
+  applies_to:
+  - 01_socioeconomic
+  - 02_emission_inventory
+  - 04_impact
+  skills:
+  - skills/model/IAM/gcam/SKILL.md
+- method_id: machine_learning
+  category: model_use
+  title: mlr3 与 TimeXer
+  document: shared/machine_learning.md
+  status: reference
+  evidence: current_reference_skills_and_prior_static_checks
+  source_projects:
+  - airmosaic_core
+  tool_ids:
+  - mlr3_workflow_reference
+  - timexer_workflow_reference
+  primary_stage: shared
+  applies_to:
+  - 01_socioeconomic
+  - 02_emission_inventory
+  - 03_atmospheric_transport
+  - 04_impact
+  skills:
+  - skills/model/machine_learning/mlr3/SKILL.md
+  - skills/model/machine_learning/timexer/SKILL.md
+- method_id: geos_chem_workflow
+  category: model_use
+  title: GEOS-Chem 输入、编译与浓度交接
+  document: 03_atmospheric_transport/geos_chem.md
+  status: reference
+  evidence: local_technical_notes_and_official_documentation
+  source_projects:
+  - atmospheric_model_notes
+  tool_ids: []
+  primary_stage: 03_atmospheric_transport
+  applies_to:
+  - 03_atmospheric_transport
+  skills:
+  - skills/data_acquisition/03_atmospheric_transport/atmospheric-inputs/SKILL.md
+  - skills/model/03_atmospheric_transport/geos-chem/SKILL.md
+stages:
+  01_socioeconomic: 01_socioeconomic
+  02_emission_inventory: 02_emission_inventory
+  03_atmospheric_transport: 03_atmospheric_transport
+  04_impact: 04_impact

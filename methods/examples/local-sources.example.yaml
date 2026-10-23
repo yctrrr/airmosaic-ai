@@ -1,0 +1,33 @@
+# Optional private mapping in AIRMOSAIC_CONFIG_DIR; not automatically loaded.
+# No passwords, tokens, cookies, hosts or actual local paths belong in this example.
+schema_version: 1
+source_projects:
+  literature_management:
+    root: null
+    purpose: Public source checkout for literature discovery and archive planning.
+  statistical_yearbooks:
+    root: null
+    purpose: Authorized local yearbook inputs and coverage receipts.
+  enterprise_disclosure:
+    root: null
+    purpose: Provincial disclosure and listed-company report source project.
+  enterprise_database:
+    root: null
+    purpose: Enterprise identity, production evidence and financial-panel source project.
+  energy_consumption:
+    root: null
+    purpose: CEADs and energy-balance processing source project.
+  cost_burden:
+    root: null
+    purpose: Cost scenarios, concentration post-processing and health source project.
+  airmosaic_core:
+    root: null
+    purpose: This source checkout; never use it as the data, config or auth root.
+  atmospheric_model_notes:
+    root: null
+    purpose: Authorized technical documents for atmospheric-model method review; no
+      data or authentication scanning.
+  gcam_model_notes:
+    root: null
+    purpose: Authorized GCAM technical documentation; not model output or personal
+      configuration.

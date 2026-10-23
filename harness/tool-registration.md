@@ -13,6 +13,8 @@
 
 Workflow YAML 和请求示例属于流程/参数说明。它们不能代替处理函数、安装步骤或 MCP 注册。
 
+方法库 index.yaml 的 primary_stage/applies_to/skills/tool_ids 仅建立文档映射；skills 必须指向真实 SKILL.md，tool_ids 只能引用已登记 ID。新增参考 skill 可以保持没有 tool_id，不能为展示而虚构执行入口。四步与共享边界见[四步流程](four-step-workflow.md)。
+
 ## 2. 标识规则与现有映射
 
 新 skill 使用稳定的英文小写连字符名称，工具使用稳定的英文小写下划线名称；人类可读标题可以使用中文。名称不能包含个人账号、机器名、绝对路径或凭据。
@@ -30,6 +32,8 @@ Workflow YAML 和请求示例属于流程/参数说明。它们不能代替处�
 | GCAM 输出结构 | `gcam-output-structure` | 无数据获取登记 |
 | GCAM 配置 | `gcam-configuration` | 无数据获取登记 |
 | GCAM 提取 | `gcam-data-extraction` | 无数据获取登记 |
+| 机器学习 / mlr3 | `mlr3-modeling` | 无数据获取登记 |
+| 机器学习 / TimeXer | `timexer-forecasting` | 无数据获取登记 |
 
 因此 `airmosaic list-datasets --skill csmar` 使用数据目录的 ID；宿主中选择技能则使用其实际名称。后续统一标识时保留明确别名和迁移记录。
 

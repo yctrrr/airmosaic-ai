@@ -1,0 +1,4 @@
+interface:
+  display_name: "mlr3 模型使用"
+  short_description: "Use mlr3 models and track the upstream workflow"
+  default_prompt: "使用 $mlr3-modeling 核对任务数据、划分、模型训练与预测方法，并说明当前需要人工适配的步骤。"

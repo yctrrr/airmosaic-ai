@@ -1,0 +1,58 @@
+schema_version: 1
+tool_id: timexer_workflow_reference
+title: TimeXer 外生变量时序预测方法
+description: 官方 TimeXer 方法、数据契约、训练和推理适配指南；尚无受控执行器。
+category: model
+skill_id: timexer-forecasting
+owner_role: model-maintainer
+implementation_status: reference
+registration_status: catalogued
+entrypoint:
+  kind: reference
+  path: skills/model/machine_learning/timexer/SKILL.md
+  argument_bindings: {}
+input_schema:
+  type: object
+  properties: {}
+  required: []
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages:
+  - torch
+  - numpy
+  - pandas
+  - scikit-learn
+  - einops
+  - reformer-pytorch
+  - sktime
+  - matplotlib
+  - scipy
+  - patool
+  - sympy
+  - tqdm
+  executables: []
+  r_packages: []
+  configuration:
+  - name: AIRMOSAIC_LOCAL_WORKSPACE
+    role: workspace
+    kind: directory
+  resources: []
+  manual_checks:
+  - Review the pinned upstream source and its license before any source redistribution.
+  - Prepare an isolated model environment with compatible pinned requirements; this list is not a version lock.
+  - Configure TIMEXER_SOURCE_DIR locally outside the shared repository; it is not loaded by AirMosaic.
+  - Adapt temporal splits, covariate availability, test access, scaler persistence and inference for the task.
+authentication:
+  method: none
+effects:
+  reads:
+  - authorized_time_series
+  writes:
+  - task_output
+  network: false
+documentation: harness/usage/machine-learning.md
+execution:
+  enabled: false
