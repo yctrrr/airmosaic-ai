@@ -1,0 +1,43 @@
+schema_version: 1
+tool_id: gcam_configuration_reference
+title: GCAM 配置参考
+description: 解释情景及配置链；修改只能在获准的任务副本中进行。
+category: model
+skill_id: gcam-configuration
+owner_role: model-maintainer
+implementation_status: reference
+registration_status: catalogued
+entrypoint:
+  kind: reference
+  path: skills/model/IAM/gcam/02_configuration/SKILL.md
+  argument_bindings: {}
+input_schema:
+  type: object
+  properties: {}
+  required: []
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages: []
+  executables: []
+  r_packages: []
+  configuration:
+  - name: AIRMOSAIC_LOCAL_WORKSPACE
+    role: workspace
+    kind: directory
+  - name: GCAM_RELEASE_DIR
+    role: model
+    kind: directory
+  resources: []
+  manual_checks: []
+authentication:
+  method: none
+effects:
+  reads:
+  - model_release
+  writes:
+  - task_output
+  network: false
+documentation: harness/usage/model-analysis.md

@@ -1,0 +1,52 @@
+schema_version: 1
+tool_id: csmar_process_company_info
+title: 处理 CSMAR 企业基础信息
+description: 读取已有 ZIP，输出行业候选表和企业列表。
+category: data_acquisition
+skill_id: csmar-downloader
+owner_role: data-acquisition-maintainer
+implementation_status: implemented
+registration_status: registered
+entrypoint:
+  kind: python_script
+  path: skills/data_acquisition/01_socioeconomic/csmar/scripts/process_listed_company_basic_info.py
+  argument_bindings:
+    zip: --zip
+    out_dir: --out-dir
+input_schema:
+  type: object
+  properties:
+    zip:
+      type: string
+      description: Value supplied for this task.
+    out_dir:
+      type: string
+      description: Value supplied for this task.
+  required:
+  - zip
+  - out_dir
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages:
+  - pandas
+  - openpyxl
+  executables: []
+  r_packages: []
+  configuration:
+  - name: AIRMOSAIC_LOCAL_WORKSPACE
+    role: workspace
+    kind: directory
+  resources: []
+  manual_checks: []
+authentication:
+  method: none
+effects:
+  reads:
+  - data_cache
+  writes:
+  - task_output
+  network: false
+documentation: harness/usage/data-acquisition.md

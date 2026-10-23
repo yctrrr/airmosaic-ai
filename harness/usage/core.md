@@ -40,7 +40,9 @@ chmod 700 "$AIRMOSAIC_AUTH_DIR"
 
 安装会访问包仓库并写入本地环境。`AIRMOSAIC_LOCAL_WORKSPACE` 也可由成员在自己的会话中设置为其他授权目录，须放在代码仓库外。新 shell 需要重新配置变量；复制 `.env.example` 不会自动加载配置。个人持久路径映射按[配置示例](../../config/examples/README.md)复制到仓库外，审查后显式加载。三类根的用途和各 skill 映射见[工作区与凭据](../storage-and-credentials.md)。
 
-核心依赖为 PyYAML，开发依赖增加 pytest。pandas、R、Java/BaseX 和浏览器依赖按具体模块安装，不属于核心安装已经完成的事项。
+核心依赖为 PyYAML 和 jsonschema，开发依赖增加 pytest。pandas、R、Java/BaseX 和浏览器依赖按具体模块安装，不属于核心安装已经完成的事项。
+
+工具入口、类别、依赖、认证和环境状态使用 `list-tools`、`describe-tool`、`check-tool`，详见[注册查询](tool-registry.md)。它们与下面的数据声明列表分别管理。
 
 ## 2. 查看和搜索数据声明
 

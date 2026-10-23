@@ -1,0 +1,59 @@
+schema_version: 1
+tool_id: airmosaic_draft_causal_plan
+title: 生成因果设计模板
+description: 返回本地结构化模板，不调用 LLM 或估计因果效应。
+category: core
+skill_id: core
+owner_role: core-maintainer
+implementation_status: implemented
+registration_status: registered
+entrypoint:
+  kind: cli
+  path: src/airmosaic_core/cli.py
+  argument_bindings:
+    question: --question
+    treatment: --treatment
+    outcome: --outcome
+    unit: --unit
+  module: airmosaic_core.cli
+  subcommand: draft-causal-plan
+input_schema:
+  type: object
+  properties:
+    question:
+      type: string
+      description: Value supplied for this task.
+    treatment:
+      type: string
+      description: Value supplied for this task.
+    outcome:
+      type: string
+      description: Value supplied for this task.
+    unit:
+      type: string
+      description: Value supplied for this task.
+  required:
+  - question
+  - treatment
+  - outcome
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages:
+  - PyYAML
+  - jsonschema
+  executables: []
+  r_packages: []
+  configuration: []
+  resources: []
+  manual_checks: []
+authentication:
+  method: none
+effects:
+  reads:
+  - repository_metadata
+  writes: []
+  network: false
+documentation: harness/usage/core.md

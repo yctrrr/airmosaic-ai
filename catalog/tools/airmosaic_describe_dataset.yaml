@@ -1,0 +1,45 @@
+schema_version: 1
+tool_id: airmosaic_describe_dataset
+title: 查询数据详情
+description: 返回数据元数据；不代表数据已下载。
+category: core
+skill_id: core
+owner_role: core-maintainer
+implementation_status: implemented
+registration_status: registered
+entrypoint:
+  kind: cli
+  path: src/airmosaic_core/cli.py
+  argument_bindings:
+    dataset_id: positional:0
+  module: airmosaic_core.cli
+  subcommand: describe-dataset
+input_schema:
+  type: object
+  properties:
+    dataset_id:
+      type: string
+      description: Value supplied for this task.
+  required:
+  - dataset_id
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages:
+  - PyYAML
+  - jsonschema
+  executables: []
+  r_packages: []
+  configuration: []
+  resources: []
+  manual_checks: []
+authentication:
+  method: none
+effects:
+  reads:
+  - repository_metadata
+  writes: []
+  network: false
+documentation: harness/usage/core.md

@@ -7,9 +7,10 @@ from pathlib import Path
 from .services.causal_design import CausalDesignService
 from .services.data_access import DataAccessService
 from .services.data_catalog import DataCatalogService
+from .services.tool_registry import CATEGORIES, STATUSES, ToolRegistryError, ToolRegistryService, format_tool_table
 
 
-def main() -> None:
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="airmosaic")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -34,7 +35,41 @@ def main() -> None:
     causal.add_argument("--outcome", required=True)
     causal.add_argument("--unit", default="county-year")
 
+    tools = subparsers.add_parser("list-tools", help="List registered tools and read-only prerequisite checks")
+    tools.add_argument("--category", choices=list(CATEGORIES))
+    tools.add_argument("--skill")
+    tools.add_argument("--status", choices=STATUSES)
+    tools.add_argument("--query", help="Match all whitespace-separated terms in tool metadata")
+    tools.add_argument("--format", choices=("table", "json"), default="table")
+    detail = subparsers.add_parser("describe-tool", help="Show tool metadata and actual entrypoint")
+    detail.add_argument("tool_id")
+    detail.add_argument("--format", choices=("table", "json"), default="json")
+    check = subparsers.add_parser("check-tool", help="Check prerequisites without running or logging in")
+    check.add_argument("tool_id")
+    return parser
+
+
+def main() -> None:
+    parser = build_parser()
+
     args = parser.parse_args()
+    if args.command in {"list-tools", "describe-tool", "check-tool"}:
+        try:
+            registry = ToolRegistryService()
+            if args.command == "list-tools":
+                payload = registry.list_tools(args.category, args.skill, args.status, args.query)
+            elif args.command == "describe-tool":
+                payload = registry.describe_tool(args.tool_id)
+            else:
+                payload = registry.check_tool(args.tool_id)
+        except ToolRegistryError as error:
+            # Do not render parser/YAML exceptions, source text or local paths.
+            parser.exit(2, json.dumps({"error": "tool_registry_error", "message": str(error)}) + "\n")
+        if getattr(args, "format", "json") == "table":
+            print(format_tool_table(payload if isinstance(payload, list) else [payload]))
+        else:
+            print(json.dumps(payload, ensure_ascii=False, indent=2))
+        return
     catalog = DataCatalogService()
 
     if args.command == "list-datasets":

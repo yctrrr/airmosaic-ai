@@ -1,0 +1,53 @@
+schema_version: 1
+tool_id: airmosaic_check_availability
+title: 检查缓存文件
+description: 只查文件存在性；原命令输出仅供本地查看，共享前需脱敏。
+category: core
+skill_id: core
+owner_role: core-maintainer
+implementation_status: implemented
+registration_status: registered
+entrypoint:
+  kind: cli
+  path: src/airmosaic_core/cli.py
+  argument_bindings:
+    dataset_id: positional:0
+    pattern: --pattern
+  module: airmosaic_core.cli
+  subcommand: check-availability
+input_schema:
+  type: object
+  properties:
+    dataset_id:
+      type: string
+      description: Value supplied for this task.
+    pattern:
+      type: string
+      description: Value supplied for this task.
+  required:
+  - dataset_id
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages:
+  - PyYAML
+  - jsonschema
+  executables: []
+  r_packages: []
+  configuration:
+  - name: AIRMOSAIC_LOCAL_WORKSPACE
+    role: workspace
+    kind: directory
+  resources: []
+  manual_checks: []
+authentication:
+  method: none
+effects:
+  reads:
+  - repository_metadata
+  - data_cache
+  writes: []
+  network: false
+documentation: harness/usage/core.md

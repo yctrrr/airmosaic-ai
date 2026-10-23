@@ -14,7 +14,7 @@ Read the [Harness guide](harness/README.md) for team roles, execution steps, bou
 | Acquire population, enterprise, yearbook or GBD data | [Data acquisition](harness/usage/data-acquisition.md) |
 | Use GCAM scripts or health-impact templates | [Model analysis](harness/usage/model-analysis.md) |
 | Let an agent modify the project | [AGENTS.md](AGENTS.md), [agent boundaries](harness/agent-boundaries.md) |
-| Find available capabilities | [Current tool catalog](harness/tool-catalog.md) |
+| Find available capabilities | [Registry queries](harness/usage/tool-registry.md), [tool catalog](harness/tool-catalog.md) |
 | Separate data, personal configuration and authentication | [Storage and credentials](harness/storage-and-credentials.md) |
 | Add skills/tools and configure discovery/display | [Registration specification](harness/tool-registration.md) |
 
@@ -53,17 +53,19 @@ $amPython = (Resolve-Path ".venv/Scripts/python.exe").Path
 & $amPython -m pip install -e ".[dev]"
 & $amPython -m airmosaic_core.cli --help
 & $amPython -m airmosaic_core.cli list-datasets
+& $amPython -m airmosaic_core.cli list-tools
+& $amPython -m airmosaic_core.cli list-tools --category data_acquisition --format json
 ```
 
 The [core guide](harness/usage/core.md) provides Windows and Linux/macOS configuration. Set `AIRMOSAIC_LOCAL_WORKSPACE` before cache checks or data work. `.env` is not loaded automatically. Optional model/browser dependencies must be configured separately. `AIRMOSAIC_CONFIG_DIR` and `AIRMOSAIC_AUTH_DIR` are caller conventions, not automatically loaded stores.
 
 ## Current interfaces
 
-The CLI provides `list-datasets`, `describe-dataset`, `search-datasets`, `check-availability` and `draft-causal-plan`. The SDK exports `DataCatalogService`, `DataAccessService` and `CausalDesignService`.
+The CLI provides dataset/cache/template commands plus `list-tools`, `describe-tool` and `check-tool`. The SDK also exports `ToolRegistryService`. Tool queries support categories, skill/keyword/status filters, structured details and local prerequisite checks; see the [query guide](harness/usage/tool-registry.md).
 
 Dataset listing reads acquisition skill declarations. Cache inspection only finds files; it does not validate contents or checksums. The causal-plan command returns a local template without calling an LLM or producing a causal estimate.
 
-MCP, REST, a unified tool runner, an automated registry loader and a workflow orchestrator are planned. Symbolic tool names in request examples are not registered APIs. See the [catalog](harness/tool-catalog.md) for actual scripts and their limitations.
+The registry loader validates `catalog/tools/*.yaml` against its schema and distinguishes executable entries from templates/references. Querying never runs scripts, logs in or reads credentials. Login and R-library status remain unverified without independent checks. MCP, REST, a generic tool runner and workflow orchestration remain planned. Symbolic names in old examples are not registered aliases.
 
 ## Skills and agents
 

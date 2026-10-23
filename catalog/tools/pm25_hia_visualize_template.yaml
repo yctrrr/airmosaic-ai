@@ -1,0 +1,55 @@
+schema_version: 1
+tool_id: pm25_hia_visualize_template
+title: 健康影响绘图模板
+description: source 会执行分析；需先适配数据、口径、路径并完成独立科学案例。
+category: model
+skill_id: health-impact-analysis
+owner_role: model-maintainer
+implementation_status: template
+registration_status: catalogued
+entrypoint:
+  kind: template
+  path: skills/model/04_impact/health_impact_analysis/templates/visualize_pm25_deaths.R
+  argument_bindings: {}
+input_schema:
+  type: object
+  properties: {}
+  required: []
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages: []
+  executables:
+  - Rscript
+  r_packages:
+  - data.table
+  - ggplot2
+  - sf
+  - RColorBrewer
+  configuration:
+  - name: AIRMOSAIC_LOCAL_WORKSPACE
+    role: workspace
+    kind: directory
+  - name: PM25_HIA_OUTPUT_DIR
+    role: output
+    kind: directory
+  - name: PM25_HIA_POP_FILE
+    role: input
+    kind: file
+  - name: PM25_HIA_SHP_DIR
+    role: input
+    kind: directory
+  resources: []
+  manual_checks:
+  - Adapt input schemas and validate scientific units/weights before sourcing.
+authentication:
+  method: none
+effects:
+  reads:
+  - data_cache
+  writes:
+  - task_output
+  network: false
+documentation: harness/usage/model-analysis.md

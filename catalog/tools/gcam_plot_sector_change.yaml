@@ -1,0 +1,60 @@
+schema_version: 1
+tool_id: gcam_plot_sector_change
+title: 绘制 GCAM 行业变化
+description: 固定比较 2021/2035，输出由 UNIT_PRICE_OUT_DIR 控制。
+category: model
+skill_id: gcam-data-extraction
+owner_role: model-maintainer
+implementation_status: implemented
+registration_status: registered
+entrypoint:
+  kind: r_script
+  path: skills/model/IAM/gcam/03_data_extraction/scripts/plot_sector_change.R
+  argument_bindings:
+    sectors: --sectors
+    scenarios: --scenarios
+    input_csv: --input-csv
+input_schema:
+  type: object
+  properties:
+    sectors:
+      type: string
+      description: Value supplied for this task.
+    scenarios:
+      type: string
+      description: Value supplied for this task.
+    input_csv:
+      type: string
+      description: Value supplied for this task.
+  required: []
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages: []
+  executables:
+  - Rscript
+  r_packages:
+  - dplyr
+  - ggplot2
+  - readr
+  - tidyr
+  configuration:
+  - name: AIRMOSAIC_LOCAL_WORKSPACE
+    role: workspace
+    kind: directory
+  - name: UNIT_PRICE_OUT_DIR
+    role: output
+    kind: directory
+  resources: []
+  manual_checks: []
+authentication:
+  method: none
+effects:
+  reads:
+  - task_output
+  writes:
+  - task_output
+  network: false
+documentation: harness/usage/model-analysis.md

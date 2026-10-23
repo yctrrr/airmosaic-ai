@@ -1,0 +1,66 @@
+schema_version: 1
+tool_id: gcam_inspect_output_structure
+title: 检查 GCAM 输出结构
+description: 读取 output/database_basexdb 及地区映射表，布局不同于 Python 情景提取。
+category: model
+skill_id: gcam-output-structure
+owner_role: model-maintainer
+implementation_status: implemented
+registration_status: registered
+entrypoint:
+  kind: r_script
+  path: skills/model/IAM/gcam/01_output_structure/scripts/inspect_gcam_xml_structure.R
+  argument_bindings:
+    release_dir: --release-dir=
+    output_dir: --output-dir=
+    max_memory: --max-memory=
+input_schema:
+  type: object
+  properties:
+    release_dir:
+      type: string
+      description: Value supplied for this task.
+    output_dir:
+      type: string
+      description: Explicit task output directory under ${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/.
+    max_memory:
+      type: string
+      description: Value supplied for this task.
+  required:
+  - output_dir
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages: []
+  executables:
+  - Rscript
+  - java
+  r_packages:
+  - data.table
+  - rgcam
+  configuration:
+  - name: AIRMOSAIC_LOCAL_WORKSPACE
+    role: workspace
+    kind: directory
+  - name: GCAM_RELEASE_DIR
+    role: model
+    kind: directory
+  resources:
+  - root: GCAM_RELEASE_DIR
+    path: output/database_basexdb
+    kind: directory
+  - root: GCAM_RELEASE_DIR
+    path: database_R/Prov_code_china.csv
+    kind: file
+  manual_checks: []
+authentication:
+  method: none
+effects:
+  reads:
+  - model_release
+  writes:
+  - task_output
+  network: false
+documentation: harness/usage/model-analysis.md

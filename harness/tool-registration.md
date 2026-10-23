@@ -1,6 +1,6 @@
 # 技能、数据集与工具的注册和展示
 
-本规范定义 AirMosaic 的协作约定和后续实现要求。当前已生效的是核心 CLI、Python 类方法、skill 文件和 acquisition `datasets.yaml` 扫描。统一工具清单加载器、自动安装器、工具面板与 MCP 适配器尚未实现。
+本规范定义 AirMosaic 的协作约定和后续实现要求。当前已实现核心 CLI、Python 类方法、数据声明扫描，以及工具注册加载与只读查询。自动执行器、安装器、工具面板和 MCP 适配器尚未实现。
 
 ## 1. 四种登记对象分别管理
 
@@ -9,7 +9,7 @@
 | Skill | `SKILL.md` 的 `name`、`description` | Agent 或宿主技能发现机制 | 让 agent 找到专业流程 |
 | 宿主展示元数据 | skill 内 `agents/openai.yaml` | 支持该格式的宿主 | 配置名称、提示词、依赖等；不创建可执行函数 |
 | Dataset | acquisition skill 内 `datasets.yaml` 的 `dataset_id` | `DataCatalogService` | 出现在 `list-datasets`；不自动下载或校验数据 |
-| Tool | 当前为源码中的 CLI/方法/脚本；未来使用统一 manifest | 对应运行入口；未来由 harness 加载 | 只有实际适配器和处理函数存在，才可调用 |
+| Tool | `catalog/tools/*.yaml` | `ToolRegistryService` 和工具查询 CLI | 校验并展示实际入口；不自动执行或注册为 MCP 工具 |
 
 Workflow YAML 和请求示例属于流程/参数说明。它们不能代替处理函数、安装步骤或 MCP 注册。
 
@@ -70,63 +70,35 @@ Workflow YAML 和请求示例属于流程/参数说明。它们不能代替处�
 
 `catalog/datasets/` 当前还用于详情查询的后备查找。`list-datasets` 的主要来源是 acquisition skill 中的声明；仅添加 `catalog/datasets/*.yaml` 不保证出现在列表中。维护同一 ID 时明确唯一权威来源，避免两份内容漂移。
 
-## 5. 工具 manifest 设计
+## 5. 工具 manifest：已实现
 
-建议后续以 `catalog/tools/*.yaml` 为执行工具元数据的唯一来源，再生成列表、详情和宿主适配器声明。**当前没有这类加载器，以下 YAML 是规范示例，不会自行注册工具。**
+`catalog/tools/*.yaml` 是注册工具元数据的唯一来源，一项工具一个文件；使用 [tool.schema.json](../catalog/schemas/tool.schema.json) 校验。可参考真实的 [WorldPop 声明](../catalog/tools/worldpop_download.yaml)和[工具列表声明](../catalog/tools/airmosaic_list_tools.yaml)，避免复制一份过时的示例。
 
-```yaml
-schema_version: 1
-tool_id: airmosaic_list_datasets
-title: 查询可获取的数据集
-description: 按领域、层级或负责技能列出数据声明，返回元数据。
-category: core
-owner_role: core-maintainer
-implementation_status: implemented
-registration_status: proposed
-entrypoint:
-  kind: python_module_cli
-  module: airmosaic_core.cli
-  subcommand: list-datasets
-  argument_bindings:
-    layer: --layer
-    skill: --skill
-    domain: --domain
-input_schema:
-  type: object
-  properties:
-    layer: {type: string}
-    skill: {type: string}
-    domain: {type: string}
-  additionalProperties: false
-output_schema:
-  type: array
-  items:
-    type: object
-    required: [dataset_id, name, domain, layer, skill_id, skill_path, access_mode, description]
-effects:
-  reads: [repository_dataset_metadata]
-  writes: []
-  network: false
-  credentials: false
-requirements:
-  python: '>=3.10'
-  python_packages: [PyYAML]
-documentation: harness/usage/core.md
-```
+| 字段 | 要求 |
+|---|---|
+| `schema_version` / `tool_id` | 当前版本为 1；ID 稳定且全局唯一 |
+| `title` / `description` / `category` / `skill_id` / `owner_role` | 公共用途、分类、实际 skill 标识和维护角色，不含个人配置 |
+| `implementation_status` / `registration_status` | 可执行项为 implemented/registered；模板和参考为 template 或 reference/catalogued |
+| `entrypoint` | 真实相对路径；kind 为 cli/python_script/r_script/template/reference；CLI 声明模块和子命令 |
+| `input_schema` / `argument_bindings` | 字段一一对应；命令旗标或 `positional:0` 等位置绑定，不能登记任意 shell |
+| `default_arguments` | 可选，位于 entrypoint 内；机器查询接口固定 `format: json`，查询返回相应命令 token |
+| `output_schema` | 机器调用的 JSON 结果类型；脚本仅声明预期产物，不代表原脚本会返回 JSON API 响应 |
+| `requirements` | Python 发行包、可执行程序、R 包、允许的非秘密配置名、固定模型资源和人工检查 |
+| `authentication` / `effects` | 认证方式/逻辑 profile ID，以及读写对象、联网副作用；不能登记密码、token 或实际 profile 路径 |
+| `documentation` | 存在的仓库相对分类说明路径 |
 
-示例的 `implemented` 只指现有 CLI，`proposed` 指未来工具登记。解释器由本地环境解析；不能将某成员的 Python 绝对路径写入 manifest。角色需在实际审核流程中对应明确维护者，不可把角色字符串当作访问授权。
+加载时拒绝未知字段、重复 YAML 键/工具 ID、缺失绑定、不支持的版本、路径穿越或链接位置、外部 schema 引用。schema 仅描述接口；这里没有参数执行器。Python/脚本仍按原入口调用。
 
-新增工具的登记流程：
+新增工具步骤：
 
-1. 确认最小动作和副作用，给出稳定 ID、标题、描述与分类。
-2. 实现或定位真实入口；参数与真实解析器逐项对应，禁止使用无法执行的示例名称。
-3. 定义输入和输出 schema、单位及缺失值语义；参数绑定使用白名单，不接收任意 shell 命令。
-4. 声明依赖、网络、认证、可读数据根、输出根、覆盖行为、预期耗时及取消方式。按照[存储约定](storage-and-credentials.md)区分数据、非秘密配置与认证根；工具只声明认证方式或逻辑 profile ID，不登记密码/token。
-5. 为成功、错误输入、依赖缺失和越界请求编写案例；通过后记录证据级别。
-6. 加入统一目录，并验证列表、详情、调用和分类文档一致。
-7. 面向某宿主发布时再完成相应安装/连接，实测该宿主的发现与调用。
+1. 定义稳定 ID 与最小动作，核对实际入口和参数解析器。
+2. 添加 manifest，按[存储约定](storage-and-credentials.md)声明非秘密配置、认证及副作用。资源检查只允许已配置模型根下的固定相对位置。
+3. 运行 `list-tools --format json` 加载并校验全部声明，再用 `describe-tool` 和 `check-tool` 检查新项。
+4. 运行对应测试，核对声明与实际 CLI/脚本参数一致，并检查错误注册和依赖缺失案例。
+5. 模板/参考资料保持非可执行，不为展示“就绪”而虚构处理函数或登录状态。
+6. 更新分类文档和清单；审查私人信息后按任务授权提交。
 
-运行时可用性按当前成员环境计算，不硬编码在仓库 manifest 中。相同工具在甲成员处可以就绪，在乙成员处可以因未登录或缺少数据而不可用。
+查询入口、返回码、状态优先级与 SDK 用法见[工具查询说明](usage/tool-registry.md)。同一工具在不同成员或解释器环境中的检查结果可能不同，状态不写回仓库。
 
 ## 6. Codex 中如何发现和展示
 
@@ -166,4 +138,4 @@ documentation: harness/usage/core.md
 
 详情应包含：实际命令/调用形式、输入输出、单位、依赖、认证方式、读写范围、网络行为、错误处理、验证证据及分类使用说明。界面默认只展示逻辑路径；成员查看本机完整路径必须限定在本地授权界面，不写入公共页面。
 
-当前以 Markdown 清单提供入口。未来增加列表命令、工具面板和自动生成文档时，应从同一 manifest 派生，检查变更后无差异；具体命令名称在实现前仅作为设计讨论，不放进“可直接运行”的示例。
+当前以分类 CLI 表格、JSON 和 Markdown 导航提供入口。列表与详情均从同一 manifest 派生；Markdown 只保留导航和领域限制。未来工具面板或 MCP 仍需独立实现适配器，不能把列表登记当成宿主注册。

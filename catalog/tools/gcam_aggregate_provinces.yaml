@@ -1,0 +1,51 @@
+schema_version: 1
+tool_id: gcam_aggregate_provinces
+title: 汇总 GCAM 省级数据
+description: 读取提取 CSV；排除 China/Global 行，需核对省份覆盖与加权单位。
+category: model
+skill_id: gcam-data-extraction
+owner_role: model-maintainer
+implementation_status: implemented
+registration_status: registered
+entrypoint:
+  kind: python_script
+  path: skills/model/IAM/gcam/03_data_extraction/scripts/xquery_province_aggregator.py
+  argument_bindings:
+    input_csv: --input-csv
+    out_dir: --out-dir
+input_schema:
+  type: object
+  properties:
+    input_csv:
+      type: string
+      description: Value supplied for this task.
+    out_dir:
+      type: string
+      description: Explicit task output directory under ${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/.
+  required:
+  - input_csv
+  - out_dir
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages:
+  - pandas
+  executables: []
+  r_packages: []
+  configuration:
+  - name: AIRMOSAIC_LOCAL_WORKSPACE
+    role: workspace
+    kind: directory
+  resources: []
+  manual_checks: []
+authentication:
+  method: none
+effects:
+  reads:
+  - task_output
+  writes:
+  - task_output
+  network: false
+documentation: harness/usage/model-analysis.md

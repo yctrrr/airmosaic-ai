@@ -1,0 +1,45 @@
+schema_version: 1
+tool_id: yearbook_regional_sector_template
+title: 年鉴地区行业模板
+description: 需要适配输入、年份和全部输出位置；不是一键分析工具。
+category: data_acquisition
+skill_id: ind-yearbook
+owner_role: data-acquisition-maintainer
+implementation_status: template
+registration_status: catalogued
+entrypoint:
+  kind: template
+  path: skills/data_acquisition/01_socioeconomic/ind_yearbook/templates/process_regional_sector.R
+  argument_bindings: {}
+input_schema:
+  type: object
+  properties: {}
+  required: []
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages: []
+  executables:
+  - Rscript
+  r_packages:
+  - data.table
+  - readxl
+  - stringr
+  configuration:
+  - name: AIRMOSAIC_LOCAL_WORKSPACE
+    role: workspace
+    kind: directory
+  resources: []
+  manual_checks:
+  - Adapt template and route all writes away from original input trees.
+authentication:
+  method: none
+effects:
+  reads:
+  - data_cache
+  writes:
+  - task_output
+  network: false
+documentation: harness/usage/data-acquisition.md

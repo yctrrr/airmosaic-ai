@@ -1,6 +1,6 @@
 # 当前工具与技能清单
 
-按 2026-10-15 的源码核对。此清单描述仓库能力，不证明当前成员已经安装依赖、具备数据权限或通过真实数据验证。源码变更时同步更新清单及对应类别说明。
+首版手工清单按 2026-10-15 的源码核对；工具注册与查询现已实现。实时工具元数据以 `catalog/tools/*.yaml` 和 `list-tools` 为准，详见[查询说明](usage/tool-registry.md)。此清单描述仓库能力，不证明当前成员已经安装依赖、具备数据权限或通过真实数据验证。源码变更时同步更新清单及对应类别说明。
 
 本次核对的方法和限制见[验证记录](verification.md)。
 
@@ -69,7 +69,7 @@
 - GCAM 提取与展示：`extract_gcam_market_sector_data`、`extract_gcam_technology_components`、`aggregate_gcam_province_data`、`plot_gcam_sector_change`。
 - Workflow：`WorkflowOrchestrator`、`get_workflow_output`、`audit_trace`、`compare_methods`。
 
-当前未提供统一 `list-tools`、`run-tool`、`doctor` 命令、REST 服务或自动技能安装器。新成员可按本清单调用真实入口；后续封装遵循[注册规范](tool-registration.md)。
+已提供 `list-tools`、`describe-tool`、`check-tool` 和 `ToolRegistryService`，读取经 schema 校验的工具声明，展示真实入口、依赖和静态就绪情况。当前未提供统一 `run-tool`、`doctor`、REST、MCP 或自动技能安装器。旧示例名称不是注册 ID 的别名。新成员按查询返回的实际入口及分类说明调用；新增登记遵循[注册规范](tool-registration.md)。
 
 ## 维护时必须同步的事项
 

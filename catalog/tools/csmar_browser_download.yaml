@@ -1,0 +1,45 @@
+schema_version: 1
+tool_id: csmar_browser_download
+title: CSMAR 浏览器获取
+description: 需机构授权与本人浏览器登录；当前是操作流程，没有下载 CLI。
+category: data_acquisition
+skill_id: csmar-downloader
+owner_role: data-acquisition-maintainer
+implementation_status: reference
+registration_status: catalogued
+entrypoint:
+  kind: reference
+  path: skills/data_acquisition/01_socioeconomic/csmar/SKILL.md
+  argument_bindings: {}
+input_schema:
+  type: object
+  properties: {}
+  required: []
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages: []
+  executables: []
+  r_packages: []
+  configuration:
+  - name: AIRMOSAIC_LOCAL_WORKSPACE
+    role: workspace
+    kind: directory
+  - name: AIRMOSAIC_AUTH_DIR
+    role: auth
+    kind: directory
+  resources: []
+  manual_checks:
+  - Use an authorized browser tool, or Node.js Playwright with a compatible Chromium installation.
+  - Confirm table permissions and requested scope in the authorized browser.
+authentication:
+  method: browser_session
+  profile_id: csmar
+effects:
+  reads: []
+  writes:
+  - data_cache
+  network: true
+documentation: harness/usage/data-acquisition.md

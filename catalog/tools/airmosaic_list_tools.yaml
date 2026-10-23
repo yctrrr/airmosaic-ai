@@ -1,0 +1,79 @@
+schema_version: 1
+tool_id: airmosaic_list_tools
+title: 分类查询工具
+description: 列出工具入口、依赖、认证要求与静态前置条件。
+category: core
+skill_id: core
+owner_role: core-maintainer
+implementation_status: implemented
+registration_status: registered
+entrypoint:
+  kind: cli
+  path: src/airmosaic_core/cli.py
+  argument_bindings:
+    category: --category
+    skill: --skill
+    status: --status
+    format: --format
+    query: --query
+  module: airmosaic_core.cli
+  subcommand: list-tools
+  default_arguments:
+    format: json
+input_schema:
+  type: object
+  properties:
+    category:
+      type: string
+      description: Value supplied for this task.
+      enum:
+      - core
+      - data_acquisition
+      - model
+    skill:
+      type: string
+      description: Value supplied for this task.
+    status:
+      type: string
+      description: Value supplied for this task.
+      enum:
+      - ready
+      - missing_entrypoint
+      - missing_dependency
+      - missing_configuration
+      - invalid_configuration
+      - missing_data
+      - needs_auth
+      - unknown
+      - not_executable
+    format:
+      type: string
+      enum:
+      - json
+      description: Machine-facing invocation always uses JSON; the human CLI also accepts table.
+    query:
+      type: string
+      description: Match all whitespace-separated terms in tool metadata.
+  required:
+  - format
+  additionalProperties: false
+output_schema:
+  type: array
+requirements:
+  python: '>=3.10'
+  python_packages:
+  - PyYAML
+  - jsonschema
+  executables: []
+  r_packages: []
+  configuration: []
+  resources: []
+  manual_checks: []
+authentication:
+  method: none
+effects:
+  reads:
+  - repository_metadata
+  writes: []
+  network: false
+documentation: harness/usage/core.md

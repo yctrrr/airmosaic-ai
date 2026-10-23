@@ -18,7 +18,7 @@ AirMosaic contains reusable atmospheric-environment skills, data declarations, s
 | Task | Guide |
 |---|---|
 | Understand collaboration and execution | [Harness overview](harness/README.md) |
-| Find commands, scripts and templates | [Tool catalog](harness/tool-catalog.md) |
+| Find commands, scripts and templates | [Tool catalog](harness/tool-catalog.md), [registry queries](harness/usage/tool-registry.md) |
 | Configure separate data/settings/authentication roots | [Storage and credentials](harness/storage-and-credentials.md) |
 | Install core services; inspect datasets/cache | [Core tools](harness/usage/core.md) |
 | Acquire or process source data | [Data acquisition](harness/usage/data-acquisition.md) |
@@ -35,6 +35,9 @@ Core commands, with the same interpreter used for installation:
 
 ```sh
 python -m airmosaic_core.cli --help
+python -m airmosaic_core.cli list-tools --format json
+python -m airmosaic_core.cli describe-tool worldpop_download
+python -m airmosaic_core.cli check-tool ihme_gbd_fetch_results
 python -m airmosaic_core.cli list-datasets
 python -m airmosaic_core.cli describe-dataset worldpop_population_grid
 python -m airmosaic_core.cli search-datasets "population grid"
@@ -53,7 +56,9 @@ Skill sources live under `skills/`. Read their `SKILL.md` files explicitly when 
 
 Acquisition skill IDs include `worldpop`, `csmar`, `ind_yearbook` and `ihme-gbd-results`. Some differ from skill frontmatter names; use the [mapping](harness/tool-registration.md) when filtering datasets or selecting skills.
 
-The repository currently has no unified tool-registry loader, MCP server, REST service or `WorkflowOrchestrator`. Names in example JSON and agent contracts are proposed wrappers unless an actual handler is verified. R templates may require adaptation and can execute when sourced.
+`ToolRegistryService` now validates `catalog/tools/*.yaml` and supports `list-tools`, `describe-tool` and `check-tool`. These read-only queries check static prerequisites; they never execute tools, load personal config or inspect credentials. Authentication/R libraries may remain unverified. Templates and references are catalogued as non-callable.
+
+MCP, REST, a generic tool runner and `WorkflowOrchestrator` are not implemented. Raw entrypoint tokens still require task parameters and execution authorization. Names in old example JSON are not automatically registered aliases. R templates may execute when sourced.
 
 ## Execution and scientific boundaries
 

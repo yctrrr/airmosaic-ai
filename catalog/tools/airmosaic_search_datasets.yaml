@@ -1,0 +1,45 @@
+schema_version: 1
+tool_id: airmosaic_search_datasets
+title: 搜索数据声明
+description: 在本地元数据中匹配关键词。
+category: core
+skill_id: core
+owner_role: core-maintainer
+implementation_status: implemented
+registration_status: registered
+entrypoint:
+  kind: cli
+  path: src/airmosaic_core/cli.py
+  argument_bindings:
+    query: positional:0
+  module: airmosaic_core.cli
+  subcommand: search-datasets
+input_schema:
+  type: object
+  properties:
+    query:
+      type: string
+      description: Value supplied for this task.
+  required:
+  - query
+  additionalProperties: false
+output_schema:
+  type: array
+requirements:
+  python: '>=3.10'
+  python_packages:
+  - PyYAML
+  - jsonschema
+  executables: []
+  r_packages: []
+  configuration: []
+  resources: []
+  manual_checks: []
+authentication:
+  method: none
+effects:
+  reads:
+  - repository_metadata
+  writes: []
+  network: false
+documentation: harness/usage/core.md

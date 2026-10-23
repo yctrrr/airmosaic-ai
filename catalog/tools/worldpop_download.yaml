@@ -1,0 +1,71 @@
+schema_version: 1
+tool_id: worldpop_download
+title: 发现与下载 WorldPop
+description: 默认发现也写元数据；显式 --download 才下载文件。
+category: data_acquisition
+skill_id: worldpop
+owner_role: data-acquisition-maintainer
+implementation_status: implemented
+registration_status: registered
+entrypoint:
+  kind: python_script
+  path: skills/data_acquisition/01_socioeconomic/worldpop/scripts/download_worldpop.py
+  argument_bindings:
+    project: --project
+    iso3: --iso3
+    year: --year
+    contains: --contains
+    extensions: --extensions
+    root: --root
+    download: --download
+    limit: --limit
+input_schema:
+  type: object
+  properties:
+    project:
+      type: string
+      description: Value supplied for this task.
+    iso3:
+      type: string
+      description: Value supplied for this task.
+    year:
+      type: integer
+    contains:
+      type: string
+      description: Value supplied for this task.
+    extensions:
+      type: string
+      description: Value supplied for this task.
+    root:
+      type: string
+      description: Must be under the authorized data workspace.
+    download:
+      type: boolean
+    limit:
+      type: integer
+  required:
+  - project
+  - root
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages:
+  - requests
+  executables: []
+  r_packages: []
+  configuration:
+  - name: AIRMOSAIC_LOCAL_WORKSPACE
+    role: workspace
+    kind: directory
+  resources: []
+  manual_checks: []
+authentication:
+  method: none
+effects:
+  reads: []
+  writes:
+  - data_cache
+  network: true
+documentation: harness/usage/data-acquisition.md

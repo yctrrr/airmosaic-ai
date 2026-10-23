@@ -1,0 +1,72 @@
+schema_version: 1
+tool_id: gcam_extract_market_sector
+title: 提取 GCAM 市场与行业
+description: 调用 Java/BaseX 提取已有情景结果，需先核对情景数据库和单位。
+category: model
+skill_id: gcam-data-extraction
+owner_role: model-maintainer
+implementation_status: implemented
+registration_status: registered
+entrypoint:
+  kind: python_script
+  path: skills/model/IAM/gcam/03_data_extraction/scripts/xquery_market_sector.py
+  argument_bindings:
+    scenarios: --scenarios
+    regions: --regions
+    sectors: --sectors
+    years: --years
+    out_dir: --out-dir
+input_schema:
+  type: object
+  properties:
+    scenarios:
+      type: string
+      description: Value supplied for this task.
+    regions:
+      type: string
+      description: Value supplied for this task.
+    sectors:
+      type: string
+      description: Value supplied for this task.
+    years:
+      type: string
+      description: Value supplied for this task.
+    out_dir:
+      type: string
+      description: Explicit task output directory under ${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/.
+  required:
+  - scenarios
+  - sectors
+  - out_dir
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages:
+  - pandas
+  executables:
+  - java
+  r_packages: []
+  configuration:
+  - name: AIRMOSAIC_LOCAL_WORKSPACE
+    role: workspace
+    kind: directory
+  - name: GCAM_RELEASE_DIR
+    role: model
+    kind: directory
+  resources:
+  - root: GCAM_RELEASE_DIR
+    path: libs/jars
+    kind: directory
+  manual_checks:
+  - Verify a compatible BaseX JAR and selected scenario database before execution.
+authentication:
+  method: none
+effects:
+  reads:
+  - model_release
+  writes:
+  - task_output
+  network: false
+documentation: harness/usage/model-analysis.md
