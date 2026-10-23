@@ -11,21 +11,20 @@ entrypoint:
   kind: r_script
   path: skills/model/IAM/gcam/01_output_structure/scripts/inspect_gcam_xml_structure.R
   argument_bindings:
-    release_dir: --release-dir=
     output_dir: --output-dir=
     max_memory: --max-memory=
+  default_arguments:
+    max_memory: 1g
 input_schema:
   type: object
   properties:
-    release_dir:
-      type: string
-      description: Value supplied for this task.
     output_dir:
       type: string
       description: Explicit task output directory under ${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/.
     max_memory:
       type: string
-      description: Value supplied for this task.
+      description: Java heap limit, for example 1g or 512m; defaults to 1g.
+      pattern: ^[1-9][0-9]{0,3}[mMgG]$
   required:
   - output_dir
   additionalProperties: false
@@ -54,7 +53,9 @@ requirements:
   - root: GCAM_RELEASE_DIR
     path: database_R/Prov_code_china.csv
     kind: file
-  manual_checks: []
+  manual_checks:
+  - R namespaces are loaded in an isolated process only during execution; verify rgcam
+    BaseX compatibility.
 authentication:
   method: none
 effects:
@@ -65,4 +66,7 @@ effects:
   network: false
 documentation: harness/usage/model-analysis.md
 execution:
-  enabled: false
+  enabled: true
+  adapter: gcam_inspect
+  path_parameters:
+    output_dir: output_directory

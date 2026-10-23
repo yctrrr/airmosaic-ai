@@ -269,7 +269,7 @@ def test_real_core_cli_and_private_free_text_summary(roots):
     assert causal["status"] == "succeeded" and "synthetic-private" not in json.dumps(causal)
 
 
-@pytest.mark.parametrize("tool_id", ["pm25_hia_calculate_template", "csmar_browser_download", "gcam_plot_sector_change", "airmosaic_run_tool"])
+@pytest.mark.parametrize("tool_id", ["pm25_hia_calculate_template", "csmar_browser_download", "gcam_configuration_reference", "airmosaic_run_tool"])
 def test_unsupported_entries_never_execute(roots, tool_id):
     with pytest.raises(ToolExecutionError, match="execution_not_supported"):
         ToolRunnerService().run(tool_id)

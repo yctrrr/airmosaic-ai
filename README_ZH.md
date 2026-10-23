@@ -74,7 +74,7 @@ CLI 提供数据目录、缓存和模板命令，并新增 `list-tools`、`descr
 
 数据列表读取 acquisition skill 的声明。缓存检查只查找文件，不验证内容或校验和。因果设计命令返回本地模板，不调用 LLM，也不生成因果估计结果。
 
-注册加载器已按 schema 校验 `catalog/tools/*.yaml`，并区分可执行入口与模板/参考资料。查询不运行脚本、不登录、不读取凭据；登录与 R 包状态仍需独立核验。已实现的 `run-tool` 适配器支持 8 个核心 CLI 和 6 个 Python 脚本，提供参数校验、dry-run、路径前置检查及脱敏记录，见[执行指南](harness/usage/run-tool.md)。R、模板和参考资料不能通过它运行；它不是 OS 沙箱。MCP、REST 和工作流编排器仍待实现。使用真实工具 ID 和扁平参数 JSON；浏览器参考与 R 模板按分类说明人工准备。
+注册加载器已按 schema 校验 `catalog/tools/*.yaml`，并区分可执行入口与模板/参考资料。查询不运行脚本、不登录、不读取凭据；登录与 R 包状态仍需独立核验。已实现的 `run-tool` 适配器支持 8 个核心 CLI、6 个 Python 脚本和 2 个 GCAM R 脚本，提供参数校验、dry-run、路径前置检查及脱敏记录，见[执行指南](harness/usage/run-tool.md)。模板和参考资料不能通过它运行；R 包在隔离执行时加载校验，dry-run 不启动 R；它不是 OS 沙箱。MCP、REST 和工作流编排器仍待实现。使用真实工具 ID 和扁平参数 JSON；浏览器参考与 R 模板按分类说明人工准备。
 
 ## Skills 与 agents
 

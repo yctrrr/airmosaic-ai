@@ -5,7 +5,7 @@ description: Navigate GCAM existing-output inspection, configuration references,
 
 # GCAM Model Analysis
 
-> Invocation status: Use `gcam_extract_market_sector`, `gcam_extract_technology_components` and `gcam_aggregate_provinces` through `run-tool`. Structure inspection and plotting remain standalone R scripts; configuration is a reference workflow. No GCAM simulation launcher is registered.
+> Invocation status: Use `gcam_extract_market_sector`, `gcam_extract_technology_components` and `gcam_aggregate_provinces` through `run-tool`. `gcam_inspect_output_structure` and `gcam_plot_sector_change` also use `run-tool`; configuration is a reference workflow. No GCAM simulation launcher is registered.
 
 ## Local paths and authentication
 
@@ -38,13 +38,13 @@ Choose the right layer based on the task:
 | `gcam_extract_market_sector` | `run-tool` | Existing market/sector rows |
 | `gcam_extract_technology_components` | `run-tool` | Existing technology-component rows |
 | `gcam_aggregate_provinces` | `run-tool` | Existing market/sector CSV |
-| `gcam_inspect_output_structure` | Standalone R, runner disabled | Fixed inspection queries and database layout |
-| `gcam_plot_sector_change` | Standalone R, runner disabled | Fixed comparison years and explicit output mapping |
+| `gcam_inspect_output_structure` | `run-tool` (R) | Fixed inspection queries and database layout |
+| `gcam_plot_sector_change` | `run-tool` (R) | Fixed comparison years and explicit output mapping |
 | `gcam_configuration_reference` | Reference only, runner disabled | Manual inspection/authorized task-copy edits |
 
 Use `describe-tool <tool_id>` to inspect each record, then follow the linked sub-skill and [model guide](../../../../harness/usage/model-analysis.md). Enabled adapters use the configured project Python; extraction needs pandas, local Java, a compatible BaseX JAR and selected scenario databases. `GCAM_RELEASE_DIR` must be explicitly configured outside Git and the data/config/auth roots; it is not bundled or auto-discovered. Aggregation only needs pandas and its input CSV.
 
-The runner supplies output paths; setting `UNIT_PRICE_OUT_DIR` is only necessary for the standalone plotting script. An authorized configuration change requires a task copy and separate checks; it never authorizes simulation execution. No automatic workflow stitching, GCAM simulation launcher or scientific acceptance service is implemented.
+The runner supplies output paths and injects `UNIT_PRICE_OUT_DIR` for plotting; caller values of that variable are ignored. R runs with --vanilla and isolated package checks; dry-run leaves package loading unverified. An authorized configuration change requires a task copy and separate checks; it never authorizes simulation execution. No automatic workflow stitching, GCAM simulation launcher or scientific acceptance service is implemented.
 
 ## Data Boundary
 

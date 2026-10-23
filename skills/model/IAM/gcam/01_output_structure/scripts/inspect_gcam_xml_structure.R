@@ -50,9 +50,11 @@ run_basex_csv <- function(query, db_path, db_name, classpath, max_memory) {
     "-smethod=csv", "-scsv=header=yes",
     "-o", tmp_output,
     "-i", db_name,
-    paste("RUN", tmp_query)
+    tmp_query
   )
-  status <- system2("java", args = args)
+  # system2 constructs a command string: quote each argument for paths with
+  # spaces/metacharacters. Query text and calculations are unchanged.
+  status <- system2("java", args = shQuote(args))
   if (!identical(status, 0L)) stop("BaseX query failed with status ", status, call. = FALSE)
   data.table::fread(tmp_output, encoding = "UTF-8")
 }

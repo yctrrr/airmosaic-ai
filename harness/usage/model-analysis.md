@@ -1,6 +1,6 @@
 # 模型分析与人工适配
 
-先区分“分析已有结果”“修改配置”“启动模拟”。当前支持 GCAM 已有数据库的 Python 提取和 CSV 汇总，没有统一模型模拟启动器、跨层编排或科学自动验收服务。
+先区分“分析已有结果”“修改配置”“启动模拟”。当前支持 GCAM 已有数据库的结构检查、Python 提取、CSV 汇总和 R 绘图，没有统一模型模拟启动器、跨层编排或科学自动验收服务。
 
 ## 1. 真实入口
 
@@ -15,12 +15,12 @@ python -m airmosaic_core.cli check-tool gcam_extract_technology_components
 | `gcam_extract_market_sector` | run-tool | 已有市场/行业价格、数量和单位行 |
 | `gcam_extract_technology_components` | run-tool | 已有技术组件行及汇总；没有 method 参数 |
 | `gcam_aggregate_provinces` | run-tool | 已有市场/行业 CSV 的省级汇总 |
-| `gcam_inspect_output_structure` | 准备后单独 Rscript | 固定查询和数据库布局，runner disabled |
-| `gcam_plot_sector_change` | 准备后单独 Rscript | 固定比较 2021/2035，runner disabled |
+| `gcam_inspect_output_structure` | run-tool（R） | 固定查询和数据库布局 |
+| `gcam_plot_sector_change` | run-tool（R） | 固定比较 2021/2035 |
 | `gcam_configuration_reference` | 参考与人工任务 | 无通用配置读写或模型启动 API |
 | `pm25_hia_calculate_template`、`pm25_hia_visualize_template` | 人工适配 R 模板 | 尚非可执行服务 |
 
-全部条目可用 describe-tool 查询，只有前三项支持 run-tool。登记、静态 ready、任务 can_execute、进程 succeeded 和科学验收分别判断。
+全部条目可用 describe-tool 查询，前五项支持 run-tool。登记、静态 ready、任务 can_execute、进程 succeeded 和科学验收分别判断。
 
 ## 2. 提取：资源与参数
 
@@ -85,30 +85,50 @@ python -m airmosaic_core.cli run-tool gcam_aggregate_provinces --params-file $ag
 
 汇总排除 China/Global，按 scenario/source/sector/year 输出 weighted_price、quantity_sum、province_count。先检查省份覆盖与价格/数量单位；China-only 行不能做省级加权，零权重退回普通均值等行为需专业审查。脚本不自动完成选价、收入估算或全国价格的科学验收。
 
-## 4. R 结构检查与绘图：人工准备
+## 4. R 结构检查与绘图：统一执行
 
-两项已有脚本均未接入 runner。先查询真实 ID、核对输入/依赖/输出及本次授权，再单独执行；无 runner 环境隔离或脱敏记录。
+两项已有 R 脚本均通过 run-tool 执行。需要本地 PATH 上的原生 Rscript；结构检查另需 Java。R 使用 `--vanilla`，不加载个人或站点启动配置，不继承 R_LIBS、R_PROFILE、R_ENVIRON 等注入变量。所需包须装在所选 R 的标准 library 中；本版本不自动使用个人/site 扩展包目录、不自动安装软件。三个数据/config/auth 根仍须分别准备。
 
-`gcam_inspect_output_structure` 读取 `${GCAM_RELEASE_DIR}/output/database_basexdb` 和 database_R/Prov_code_china.csv，与 Python 按情景布局不同。只支持 --release-dir=、--output-dir=、--max-memory=，没有 action/scenario 筛选 API。更换布局或查询需适配任务副本。
+| 工具 | R 包 | 参数与资源 |
+|---|---|---|
+| `gcam_inspect_output_structure` | data.table、rgcam | `max_memory` 默认 `1g`，可用 `512m`；`output_dir` 自动分配。模型根来自本地 GCAM_RELEASE_DIR，不接受 JSON release_dir |
+| `gcam_plot_sector_change` | dplyr、ggplot2、readr、tidyr | 必填 `input_csv`；可选逗号字符串 `sectors`、`scenarios`；`out_dir` 自动分配 |
+
+check-tool 和 dry-run 不启动 R，包状态保留为 unverified；实际执行先加载 namespace，再运行脚本，缺包/依赖无法加载返回 failed、r_dependency_unavailable。`can_execute: true` 只表示静态预检未发现阻塞，不能证明包已加载或数据库兼容。运行中的超时/原生崩溃也不能当成验证完成。
+
+### 结构检查
+
+固定读取 `${GCAM_RELEASE_DIR}/output/database_basexdb` 和 `${GCAM_RELEASE_DIR}/database_R/Prov_code_china.csv`。这与 Python 的按情景布局不同；Java classpath 来自 rgcam，不使用 Python 提取器的 libs/jars 选择规则。包和 BaseX/数据库版本兼容性要在实际执行中核验。
 
 ```powershell
-$structureRunId = [guid]::NewGuid().ToString("N")
-$structureOutput = Join-Path $env:AIRMOSAIC_LOCAL_WORKSPACE "output/$structureRunId/gcam_inspect_output_structure"
-Rscript skills/model/IAM/gcam/01_output_structure/scripts/inspect_gcam_xml_structure.R "--release-dir=$env:GCAM_RELEASE_DIR" "--output-dir=$structureOutput" "--max-memory=1g"
+python -m airmosaic_core.cli describe-tool gcam_inspect_output_structure
+python -m airmosaic_core.cli run-tool gcam_inspect_output_structure --params-file examples/run-tool/gcam-inspect.json --dry-run
+python -m airmosaic_core.cli run-tool gcam_inspect_output_structure --params-file examples/run-tool/gcam-inspect.json --timeout 600
 ```
 
-必须显式输出目录，原默认位置可能在模型发行包内；脚本捕获部分查询错误，不能只看完成提示。
+[参数示例](../../examples/run-tool/gcam-inspect.json)：`{"max_memory":"1g"}`。执行器固定传入 max_memory，不继承调用方的 GCAM_BASEX_MAX_MEMORY；输出限制在本次任务目录，不回写原默认 derived 位置。生成 inspect_scenarios.csv、inspect_province_top_level.csv、inspect_industrial_sector_tree.csv、inspect_industrial_cost_nodes.csv。原脚本会继续处理后续查询，因此执行器检查全部四个文件存在且非空；缺少任一文件返回 failed、expected_outputs_missing，保留部分输出。文件存在不表示内容或科学口径已验收。
 
-`gcam_plot_sector_change` 接受 --input-csv、--sectors、--scenarios，没有 --out-dir。把已核对的市场行 CSV 映射到 marketCsv，并设置新任务目录：
+没有 action、scenario、region 或 sector 筛选参数。自定义查询、不同数据库布局和新增行业需要人工适配任务副本，并另行审查接入；不要因 runner 拒绝参数而改用原始命令绕过检查。
+
+### 绘图与市场提取衔接
+
+[绘图参数](../../examples/run-tool/gcam-plot.json)与汇总一样，需要把 source_run_id 和情景名换成本次已核对值：
+
+```json
+{"input_csv":"${AIRMOSAIC_LOCAL_WORKSPACE}/output/<source_run_id>/gcam_extract_market_sector/market_sector_rows.csv","sectors":"cement","scenarios":"example_scenario"}
+```
+
+保存到 CONFIG_DIR 下的 gcam-plot.json 后调用：
 
 ```powershell
-$plotRunId = [guid]::NewGuid().ToString("N")
-$env:UNIT_PRICE_OUT_DIR = Join-Path $env:AIRMOSAIC_LOCAL_WORKSPACE "output/$plotRunId/gcam_plot_sector_change"
-# $marketCsv 必须已映射且含 2021/2035 和所需情景，替换示例情景名
-Rscript skills/model/IAM/gcam/03_data_extraction/scripts/plot_sector_change.R --input-csv $marketCsv --sectors "cement" --scenarios "example_scenario"
+$plotParams = Join-Path $env:AIRMOSAIC_CONFIG_DIR "gcam-plot.json"
+python -m airmosaic_core.cli run-tool gcam_plot_sector_change --params-file $plotParams --dry-run
+python -m airmosaic_core.cli run-tool gcam_plot_sector_change --params-file $plotParams --timeout 300
 ```
 
-更换比较年份或方法需适配副本，检查 R 包和输出；原始日志在本地审查、脱敏，不能当作 runner 已处理的共享记录。
+input_csv 必须是 workspace data_cache 或既有 output 内的文件；旧 R 参数解析器会按逗号拆分输入，因此路径含逗号时拒绝执行。显式提供 sectors/scenarios 可限定任务范围；省略 sectors 时仍采用原默认 cement、coke、iron and steel，省略 scenarios 时仍使用全部情景。比较年份固定为 2021/2035。
+
+执行器把 out_dir 映射为本次子进程的 UNIT_PRICE_OUT_DIR，不读取调用方该变量，也不向脚本传入不存在的 --out-dir。输出 sector_change_2021_2035.png 和 sector_change_weighted_mean.csv；两者均须存在且非空。保留原 sector_cost 筛选、China/Global 排除、负权重截零与零权重均值回退。检查两年数据、价格/数量单位、完整地区覆盖和零基期价格等问题；修改年份、图式或计算方法仍需人工适配。
 
 ## 5. 配置与健康影响：人工适配
 

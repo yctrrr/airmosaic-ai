@@ -201,10 +201,11 @@ def test_nested_roots_are_rejected(separate_roots, installed_dependencies, monke
 
 
 def test_output_cannot_target_data_cache(separate_roots, installed_dependencies, monkeypatch):
-    monkeypatch.setenv("UNIT_PRICE_OUT_DIR", str(separate_roots["AIRMOSAIC_LOCAL_WORKSPACE"] / "data_cache"))
-    result = ToolRegistryService().check_tool("gcam_plot_sector_change")
+    monkeypatch.setenv("PM25_HIA_OUTPUT_DIR", str(separate_roots["AIRMOSAIC_LOCAL_WORKSPACE"] / "data_cache"))
+    from airmosaic_core.services.tool_readiness import _configuration
+    result = _configuration({"name": "PM25_HIA_OUTPUT_DIR", "role": "output", "kind": "directory"}, ROOT)
     assert result["status"] == "invalid_configuration"
-    assert any(check.get("reason") == "output_outside_task_root" for check in result["checks"])
+    assert result["reason"] == "output_outside_task_root"
 
 
 def test_output_ancestor_must_be_directory(separate_roots, installed_dependencies, monkeypatch):
@@ -212,8 +213,9 @@ def test_output_ancestor_must_be_directory(separate_roots, installed_dependencie
     output.mkdir()
     marker = output / "file"
     marker.write_text("synthetic", encoding="utf-8")
-    monkeypatch.setenv("UNIT_PRICE_OUT_DIR", str(marker / "nested"))
-    result = ToolRegistryService().check_tool("gcam_plot_sector_change")
+    monkeypatch.setenv("PM25_HIA_OUTPUT_DIR", str(marker / "nested"))
+    from airmosaic_core.services.tool_readiness import _configuration
+    result = _configuration({"name": "PM25_HIA_OUTPUT_DIR", "role": "output", "kind": "directory"}, ROOT)
     assert result["status"] == "invalid_configuration"
 
 

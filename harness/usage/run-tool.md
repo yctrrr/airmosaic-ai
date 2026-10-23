@@ -1,6 +1,6 @@
 # 统一执行：run-tool
 
-本入口支持 8 个核心 CLI 和 6 个既有 Python 脚本，使用当前虚拟环境的解释器。R、模板、参考资料及嵌套 `run-tool` 不支持执行。先安装源码 checkout：`python -m pip install -e '.[dev]'`，按[配置示例](../../config/examples/README.md)显式设置三类根目录，并在本地创建它们。不会自动加载个人配置或凭据。
+本入口支持 8 个核心 CLI、6 个既有 Python 脚本和 2 个 GCAM R 脚本。Python 使用当前虚拟环境；R 使用本地 PATH 中的原生 Rscript。模板、参考资料及嵌套 `run-tool` 不支持执行。先安装源码 checkout：`python -m pip install -e '.[dev]'`，按[配置示例](../../config/examples/README.md)显式设置三类根目录，并在本地创建它们。不会自动加载个人配置或凭据。
 
 ## 操作步骤
 
@@ -35,6 +35,8 @@ python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/r
 | `gcam_extract_market_sector` | [gcam-market.json](../../examples/run-tool/gcam-market.json) | 替换示例情景，明确地区、年份；两省样例不是全国 |
 | `gcam_extract_technology_components` | [gcam-technology.json](../../examples/run-tool/gcam-technology.json) | 同上；没有 method 参数 |
 | `gcam_aggregate_provinces` | [aggregate.json](../../examples/run-tool/aggregate.json) | 把 source_run_id 换成成功市场提取的实际 ID，并检查 CSV |
+| `gcam_inspect_output_structure` | [gcam-inspect.json](../../examples/run-tool/gcam-inspect.json) | 固定数据库布局与地区映射；max_memory 默认 1g |
+| `gcam_plot_sector_change` | [gcam-plot.json](../../examples/run-tool/gcam-plot.json) | 替换来源 ID/情景，核对市场行与 2021/2035 |
 
 JSON 是参数对象，不含 tool/tool_id/parameters 外层字段；ID 在命令行选择。列表型筛选使用逗号分隔字符串，不是数组。输入/输出路径仅展开工作区变量；示例中的尖括号必须人工替换。输出参数通常省略，由执行器补充。人工计划与 R 模板不能作为参数文件执行。各任务的业务检查见[数据获取](data-acquisition.md)与[模型分析](model-analysis.md)。
 
@@ -44,11 +46,11 @@ JSON 是参数对象，不含 tool/tool_id/parameters 外层字段；ID 在命�
 |---|---|
 | 三类根 | `AIRMOSAIC_LOCAL_WORKSPACE`、`AIRMOSAIC_CONFIG_DIR`、`AIRMOSAIC_AUTH_DIR` 必须是已存在、互不包含、仓库外的本地目录；仅检查根目录元数据 |
 | 输入文件 | 仅允许 workspace 的 `data_cache/` 或 `output/` 下已存在的文件；拒绝认证/秘密目录、Git、UNC、网络盘、链接、junction、`..`、Windows 设备名及 ADS |
-| 新结果 | 自动补充 `root` / `out_dir` / `out` 为 `output/<run_id>/<tool_id>/`，GBD 默认 `results.csv`；手动输出参数也必须在这个任务子树内 |
+| 新结果 | 自动补充 `root` / `out_dir` / `output_dir` / `out` 为 `output/<run_id>/<tool_id>/`，GBD 默认 `results.csv`；手动输出参数也必须在这个任务子树内 |
 | 记录 | `runs/<run_id>/record.json`，包含状态、原因类别、退出码、时间、公开源码与 manifest SHA256、参数名/类型及逻辑位置 |
 | 临时文件/用户目录 | `temp/<run_id>/`；子进程 HOME、APPDATA、临时目录重定向到此处；保留以便本地诊断，不自动递归清理 |
 | 参数文件 | 仅显式读取 CONFIG_DIR、workspace 的 data_cache/output，或仓库 examples 下的非秘密 `.json`；最大 1 MiB，不读取整个配置目录；仅展开 `${AIRMOSAIC_LOCAL_WORKSPACE}` |
-| 模型资源 | 显式 `GCAM_RELEASE_DIR`，位于 Git 和三类个人根之外；检查 BaseX JAR 和指定情景数据库，保持原数据库与模型逻辑 |
+| 模型资源 | 显式 `GCAM_RELEASE_DIR`，位于 Git 和三类个人根之外；Python 提取检查 BaseX JAR 和指定情景数据库；R 结构检查固定数据库与映射表，BaseX 使用 rgcam 的 classpath，保持原数据库与模型逻辑 |
 
 `run_id` 自动生成，或传入全新 32 位小写十六进制 ID。已有任务目录会被拒绝，失败/blocked 产物也不覆盖；重试使用新 ID。WorldPop 下载先放本次 output，验收后由成员另行授权发布到共享缓存。CSMAR 从 ZIP 内直接读取工作簿，不再在输入 ZIP 旁解压。缓存可用性查询的旧 glob 入口经过最多 10000 个目录项的无链接预检，超限需缩小数据目录或使用专门的本地检查。
 
@@ -58,12 +60,14 @@ JSON 是参数对象，不含 tool/tool_id/parameters 外层字段；ID 在命�
 
 脚本 stdout/stderr 丢弃，不保留原始子进程日志；原始参数值、输入文件名、机器路径、环境值和认证内容均不进入记录。核心 CLI 输出在内存中限制为 1 MiB，仅返回白名单摘要（列表数量、匹配文件数量、状态或模板生成标记），不会返回原命令中的私人路径/自由文本；要查看公共详情可直接使用原查询命令。科学数据文件仍可能包含受限信息，不能把它们视为已脱敏的附件。
 
+R 适配器使用原生 Rscript、`--vanilla` 和固定启动代码；参数值不插入 R 代码。R 包仅从所选 R 的标准 library 加载，个人/site 包目录与启动文件不自动使用。Windows 额外传入受限的 PROCESSOR_ARCHITECTURE 枚举以支持 R 原生库，不继承其余个人环境。缺包或 namespace 加载失败记为 r_dependency_unavailable；脚本错误为 r_script_failed。check-tool 与 dry-run 不加载 R 包，`r_dependencies.status` 保持 unverified；只有实际执行通过 namespace 检查后才标 available。结构检查四个 CSV、绘图 PNG/CSV 若缺失或为空，即使原脚本退出 0 也返回 expected_outputs_missing。这些检查不替代内容与科学验收。
+
 超时默认 300 秒、允许 1–3600 秒；超时或捕获超限时终止本次拥有的进程树，记录清理是否得到确认。脚本中途写入的文件保留为待检查的部分输出。执行失败不会自动重试，也不会撤销已经发生的外部请求。
 
 | 状态 / 退出码 | 含义 |
 |---|---|
 | `dry_run` / 0 | 只生成计划；即使有 blockers 也不表示执行成功，自动化应检查 `can_execute` |
-| `succeeded` / 0 | 子进程退出 0 且核心结果可解析；`scientific_validation` 仍为 `not_run` |
+| `succeeded` / 0 | 子进程退出 0、核心结果可解析、R 预期产物存在且非空；`scientific_validation` 仍为 `not_run` |
 | `blocked` / 3 | 参数和路径有效，但依赖、数据或权限未满足；写脱敏记录，不启动子进程 |
 | `failed` / 3 | 执行、超时或结果解析失败；写脱敏记录，检查部分产物 |
 | 错误 / 2 | 参数、配置、路径、工具策略或记录初始化不合法；仅返回固定错误类别 |

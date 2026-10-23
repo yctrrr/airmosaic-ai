@@ -30,7 +30,7 @@ ${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/<tool_id>/
 ${AIRMOSAIC_LOCAL_WORKSPACE}/runs/<run_id>/record.json
 ```
 
-Standalone R steps must explicitly select a fresh task output; plotting reads `UNIT_PRICE_OUT_DIR`. They do not inherit runner checks or sanitized receipts. Keep all artifacts local; only reviewed summaries may be shared. No automatic cache promotion or file cleanup occurs.
+The two registered GCAM R tools use run-tool task outputs and sanitized receipts; plotting receives a runner-owned `UNIT_PRICE_OUT_DIR`. Direct standalone calls bypass these protections. Keep all artifacts local; only reviewed summaries may be shared. No automatic cache promotion or file cleanup occurs.
 
 ## Where GCAM Release Package Lives
 

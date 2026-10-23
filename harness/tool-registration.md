@@ -88,7 +88,7 @@ Workflow YAML 和请求示例属于流程/参数说明。它们不能代替处�
 | `documentation` | 存在的仓库相对分类说明路径 |
 | `execution` | 必填；`enabled: false` 表示仅查询。启用时声明受支持 `adapter` 与 `path_parameters`，必须与代码允许清单完全一致 |
 
-加载时拒绝未知字段、重复 YAML 键/工具 ID、缺失绑定、不支持的版本、路径穿越或链接位置、外部 schema 引用。仅添加 YAML 不能启用任意代码执行：还必须在 `tool_policies.py` 审查登记 ID/适配器/路径角色，并在 `ToolRunnerService` 实现必要的输入、资源和结果检查，提供合成测试。CLI 适配器必须匹配已审查的子命令；R、参考与模板保持 disabled。schema 本身不授予操作权限。
+加载时拒绝未知字段、重复 YAML 键/工具 ID、缺失绑定、不支持的版本、路径穿越或链接位置、外部 schema 引用。仅添加 YAML 不能启用任意代码执行：还必须在 `tool_policies.py` 审查登记 ID/适配器/路径角色，并在 `ToolRunnerService` 实现必要的输入、资源和结果检查，提供合成测试。CLI 适配器必须匹配已审查的子命令；两个 GCAM R 适配器使用 r_script；参考与模板保持 disabled。R 绘图的 out_dir 使用唯一允许的 env:UNIT_PRICE_OUT_DIR 绑定，不能声明任意环境键。schema 本身不授予操作权限。
 
 参数文件不包含工具 envelope；ID 由 run-tool 命令行指定。输出字段可由执行器补齐后再按 input_schema 校验。WorldPop/GBD 的 skill.schema.json 是调用方参数快照，省略自动输出字段的必填要求；它们不注册工具，权威接口仍是 manifest。维护时同步快照与参数示例，逐项验证参数名、类型和默认输出；人工计划须明确 execution_supported 为 false，不能用伪造 action 代替未实现接口。
 

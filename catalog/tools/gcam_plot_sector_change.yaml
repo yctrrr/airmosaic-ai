@@ -1,7 +1,7 @@
 schema_version: 1
 tool_id: gcam_plot_sector_change
 title: 绘制 GCAM 行业变化
-description: 固定比较 2021/2035，输出由 UNIT_PRICE_OUT_DIR 控制。
+description: 固定比较 2021/2035；run-tool 注入本次任务输出目录。
 category: model
 skill_id: gcam-data-extraction
 owner_role: model-maintainer
@@ -14,19 +14,28 @@ entrypoint:
     sectors: --sectors
     scenarios: --scenarios
     input_csv: --input-csv
+    out_dir: env:UNIT_PRICE_OUT_DIR
 input_schema:
   type: object
   properties:
     sectors:
       type: string
-      description: Value supplied for this task.
+      description: Comma-separated non-empty names; no leading option markers.
+      pattern: ^[A-Za-z0-9][A-Za-z0-9 _.()-]*(,[A-Za-z0-9][A-Za-z0-9 _.()-]*)*$
     scenarios:
       type: string
-      description: Value supplied for this task.
+      description: Comma-separated non-empty names; no leading option markers.
+      pattern: ^[A-Za-z0-9][A-Za-z0-9 _.()-]*(,[A-Za-z0-9][A-Za-z0-9 _.()-]*)*$
     input_csv:
       type: string
-      description: Value supplied for this task.
-  required: []
+      description: Existing market_sector_rows.csv inside workspace data_cache or
+        output; filename must not contain commas.
+    out_dir:
+      type: string
+      description: Task output directory; supplied by the runner.
+  required:
+  - input_csv
+  - out_dir
   additionalProperties: false
 output_schema:
   type: object
@@ -44,9 +53,6 @@ requirements:
   - name: AIRMOSAIC_LOCAL_WORKSPACE
     role: workspace
     kind: directory
-  - name: UNIT_PRICE_OUT_DIR
-    role: output
-    kind: directory
   resources: []
   manual_checks: []
 authentication:
@@ -59,4 +65,8 @@ effects:
   network: false
 documentation: harness/usage/model-analysis.md
 execution:
-  enabled: false
+  enabled: true
+  adapter: gcam_plot
+  path_parameters:
+    input_csv: input_file
+    out_dir: output_directory

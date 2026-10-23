@@ -1,6 +1,6 @@
 # 工具能力与执行边界
 
-真实 ID、参数与执行支持以 `catalog/tools/*.yaml` 和 list-tools/describe-tool 为准。当前 23 个登记条目中 14 个支持 run-tool（8 个核心 CLI、6 个 Python 脚本）；登记不证明本机就绪、登录或科学验证通过。操作见[查询指南](usage/tool-registry.md)和[执行指南](usage/run-tool.md)，验证层级见[记录](verification.md)。
+真实 ID、参数与执行支持以 `catalog/tools/*.yaml` 和 list-tools/describe-tool 为准。当前 23 个登记条目中 16 个支持 run-tool（8 个核心 CLI、6 个 Python 脚本、2 个 GCAM R 脚本）；登记不证明本机就绪、登录或科学验证通过。操作见[查询指南](usage/tool-registry.md)和[执行指南](usage/run-tool.md)，验证层级见[记录](verification.md)。
 
 ## 核心工具
 
@@ -56,15 +56,15 @@ SDK 导出 DataCatalogService、DataAccessService、CausalDesignService、ToolRe
 | `gcam_extract_market_sector` | 是 | 已有数据库的市场/行业行，需 pandas、Java/BaseX 和模型根 |
 | `gcam_extract_technology_components` | 是 | 已有技术组件行及汇总，不提供 method 参数 |
 | `gcam_aggregate_provinces` | 是 | 已有市场 CSV；排除 China/Global，人工核对覆盖、单位和权重 |
-| `gcam_inspect_output_structure` | 否，独立 R | 固定查询、output/database_basexdb 布局；必要时适配副本 |
-| `gcam_plot_sector_change` | 否，独立 R | 固定 2021/2035，显式设置 UNIT_PRICE_OUT_DIR |
+| `gcam_inspect_output_structure` | 是，R | 固定查询、output/database_basexdb 布局；自定义查询需适配副本 |
+| `gcam_plot_sector_change` | 是，R | 必填 input_csv；固定 2021/2035，runner 注入任务输出 |
 | `gcam_configuration_reference` | 否，参考 | 只读说明或授权任务副本修改；没有配置 API 或模拟启动器 |
 | `pm25_hia_calculate_template` | 否，模板 | [健康影响](../skills/model/04_impact/health_impact_analysis/SKILL.md)输入和方法需适配验收 |
 | `pm25_hia_visualize_template` | 否，模板 | 绘图输入、网格、依赖与输出需人工检查 |
 
 ## 参数、模板与注册的区别
 
-可执行 JSON 示例只含 manifest 参数，工具 ID 在 run-tool 命令行指定。列表使用逗号分隔字符串，输出通常省略以自动分配任务目录。标为人工计划的配置/结构 JSON 使用 reference_tool_id 和 execution_supported: false，只供阅读，不能传给 run-tool。其余领域蓝图也不会成为可调用 action。
+可执行 JSON 示例只含 manifest 参数，工具 ID 在 run-tool 命令行指定。列表使用逗号分隔字符串，输出通常省略以自动分配任务目录。标为人工计划的配置/浏览器 JSON 使用 reference_tool_id 和 execution_supported: false，只供阅读，不能传给 run-tool。其余领域蓝图也不会成为可调用 action。
 
 新增工具需同步 manifest、允许清单、参数解析、分类说明和 skill，遵循[注册规范](tool-registration.md)。状态查询的 ready 不表示任务 can_execute；进程 succeeded 不表示科学验收通过。
 

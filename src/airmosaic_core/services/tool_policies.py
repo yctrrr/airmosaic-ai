@@ -7,10 +7,13 @@ ADAPTERS = {
     "worldpop_download": "worldpop", "csmar_process_company_info": "csmar",
     "ihme_gbd_fetch_results": "gbd", "gcam_extract_market_sector": "gcam_extract",
     "gcam_extract_technology_components": "gcam_extract", "gcam_aggregate_provinces": "gcam_aggregate",
+    "gcam_inspect_output_structure": "gcam_inspect", "gcam_plot_sector_change": "gcam_plot",
 }
 PATH_PARAMETERS = {
     "core_cli": {}, "worldpop": {"root": "output_directory"},
     "csmar": {"zip": "input_file", "out_dir": "output_directory"},
     "gbd": {"out": "output_file"}, "gcam_extract": {"out_dir": "output_directory"},
     "gcam_aggregate": {"input_csv": "input_file", "out_dir": "output_directory"},
+    "gcam_inspect": {"output_dir": "output_directory"},
+    "gcam_plot": {"input_csv": "input_file", "out_dir": "output_directory"},
 }

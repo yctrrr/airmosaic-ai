@@ -1,8 +1,0 @@
-{
-  "reference_tool_id": "gcam_inspect_output_structure",
-  "execution_supported": false,
-  "workflow_type": "manual_adaptation",
-  "notes": "Not a run-tool parameter file. Inspect the fixed R queries and database layout; adapt a task copy for custom filters.",
-  "input_layout": "${GCAM_RELEASE_DIR}/output/database_basexdb",
-  "output_directory": "${AIRMOSAIC_LOCAL_WORKSPACE}/output/<task_id>/gcam_inspect_output_structure"
-}

@@ -14,6 +14,7 @@ import yaml
 from .tool_readiness import check_readiness
 from .tool_paths import local_path
 from .tool_policies import ADAPTERS, PATH_PARAMETERS
+from .tool_r import R_ADAPTERS
 
 
 CATEGORIES = {"core": "基础工具", "data_acquisition": "数据获取", "model": "模型分析"}
@@ -155,12 +156,17 @@ class ToolRegistryService:
             if (ADAPTERS.get(data["tool_id"]) != adapter
                     or policy["path_parameters"] != PATH_PARAMETERS[adapter]
                     or data["implementation_status"] != "implemented"
-                    or entry["kind"] != ("cli" if adapter == "core_cli" else "python_script")
+                    or entry["kind"] != ("cli" if adapter == "core_cli" else
+                                         "r_script" if adapter in R_ADAPTERS else "python_script")
                     or not set(policy["path_parameters"]).issubset(properties)):
                 raise ToolRegistryError("Execution policy does not match a reviewed adapter.")
             if adapter == "core_cli" and (entry.get("module") != "airmosaic_core.cli"
                     or entry.get("subcommand") != data["tool_id"].removeprefix("airmosaic_").replace("_", "-")):
                 raise ToolRegistryError("CLI execution must match its reviewed subcommand.")
+        if "env:UNIT_PRICE_OUT_DIR" in entry["argument_bindings"].values() and (
+                data["tool_id"] != "gcam_plot_sector_change"
+                or entry["argument_bindings"].get("out_dir") != "env:UNIT_PRICE_OUT_DIR"):
+            raise ToolRegistryError("Environment binding requires the reviewed plotting adapter.")
         if not set(data["input_schema"].get("required", [])).issubset(properties):
             raise ToolRegistryError("Required input names must be declared properties.")
         if set(entry["argument_bindings"]) != set(properties):

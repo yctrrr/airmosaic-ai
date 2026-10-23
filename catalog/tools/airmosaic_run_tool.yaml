@@ -1,6 +1,6 @@
 schema_version: 1
 tool_id: airmosaic_run_tool
-title: 受控运行 CLI 与 Python 工具
+title: 受控运行 CLI、Python 与 R 工具
 description: 校验任务参数与路径，支持 dry-run 和脱敏运行记录；不允许递归调用。
 category: core
 skill_id: core

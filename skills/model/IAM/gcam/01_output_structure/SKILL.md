@@ -1,11 +1,11 @@
 ---
 name: gcam-output-structure
-description: Inspect GCAM output structure using a fixed standalone R script and XQuery references. Use before extraction to check available nodes and units; custom scenario or sector queries require adaptation.
+description: Inspect GCAM output structure through run-tool with a fixed R script and XQuery references. Use before extraction to check available nodes and units; custom scenario or sector queries require adaptation.
 ---
 
 # GCAM Output Structure Exploration
 
-> Invocation status: `gcam_inspect_output_structure` is an implemented standalone R script, disabled in `run-tool`. It has a fixed inspection sequence, not an action/scenario/region query API.
+> Invocation status: `gcam_inspect_output_structure` is an implemented R script enabled in `run-tool`. It has a fixed inspection sequence, not an action/scenario/region query API.
 
 ## Local paths and authentication
 
@@ -49,27 +49,31 @@ collection()/scenario/world/*[@type="region" and @name="China"]
 
 `gcam_inspect_output_structure` needs R, its declared packages, Java/BaseX and explicit `GCAM_RELEASE_DIR`. The current R script reads `${GCAM_RELEASE_DIR}/output/database_basexdb` and `${GCAM_RELEASE_DIR}/database_R/Prov_code_china.csv`. This is different from the Python extractors' per-scenario layout; adapt a task copy if the authorized release uses another structure.
 
-Supported script flags are `--release-dir=...`, `--output-dir=...`, `--max-memory=...`. It also reads `GCAM_BASEX_MAX_MEMORY`; there is no `action`, `scenario`, `region` or `sector` API argument.
+Runner parameters are `max_memory` (default `1g`, e.g. `512m`) and optional task-scoped `output_dir`. The model root comes only from checked `GCAM_RELEASE_DIR`; release_dir is not a runner parameter. Caller GCAM_BASEX_MAX_MEMORY is ignored. There is no `action`, `scenario`, `region` or `sector` API argument. The raw script flags remain an implementation detail.
 
 ## Quick tasks
 
-- Inspect scenarios and the predefined node/sector queries: use the fixed R script after its layout and output directory are reviewed. It does not accept a query selector.
+- Inspect scenarios and the predefined node/sector queries: use the registered tool after its layout and task scope are reviewed. It does not accept a query selector.
 - Custom sector/province queries: read `references/xquery-csv-templates.md` and adapt an authorized task copy.
 - Explore the XML tree: read `references/xpath-structure-guide.md`.
 - Check units: read `references/output-price-quantity-units.md`.
 - Map province codes: read `references/province-region-mapping.md`.
 
-## Standalone execution boundary
+## Unified execution boundary
 
-Use `describe-tool gcam_inspect_output_structure` to locate the reviewed script. It is disabled in `run-tool`. After dependencies and the fixed input layout are checked, the separately authorized R invocation from the repository root is:
+Use the public [parameter example](../../../../../examples/run-tool/gcam-inspect.json) and the installed project interpreter:
 
 ```powershell
-$structureRunId = [guid]::NewGuid().ToString("N")
-$structureOutput = Join-Path $env:AIRMOSAIC_LOCAL_WORKSPACE "output/$structureRunId/gcam_inspect_output_structure"
-Rscript skills/model/IAM/gcam/01_output_structure/scripts/inspect_gcam_xml_structure.R "--release-dir=$env:GCAM_RELEASE_DIR" "--output-dir=$structureOutput" "--max-memory=1g"
+python -m airmosaic_core.cli describe-tool gcam_inspect_output_structure
+python -m airmosaic_core.cli run-tool gcam_inspect_output_structure --params-file examples/run-tool/gcam-inspect.json --dry-run
+python -m airmosaic_core.cli run-tool gcam_inspect_output_structure --params-file examples/run-tool/gcam-inspect.json --timeout 600
 ```
 
-Always supply the output directory: the raw script otherwise writes into the model release. Standalone execution has no runner path checks, environment isolation or sanitized receipt. Inspect each output/error before declaring the inspection complete; custom queries and a per-scenario database layout require manual adaptation.
+Rscript runs with --vanilla, task HOME/TEMP and no personal startup/profile/library settings. Install data.table and rgcam in that R installation's standard library; Java uses rgcam's classpath, whose compatibility still needs verification. check-tool/dry-run do not launch R and leave package loading unverified. Actual execution checks namespaces before sourcing the script; the receipt reports r_dependency_unavailable when loading fails.
+
+The runner allocates output_dir and requires all four non-empty outputs: inspect_scenarios.csv, inspect_province_top_level.csv, inspect_industrial_sector_tree.csv and inspect_industrial_cost_nodes.csv. The original script continues after individual query errors, so missing artifacts cause expected_outputs_missing instead of success. Inspect contents separately; an empty query or existing file is not scientific validation.
+
+Custom queries and a per-scenario database layout require manual adaptation. Preserve the original release and existing outputs; rejected paths/parameters do not authorize bypassing the runner. Direct raw-script calls retain their old defaults and bypass these protections.
 
 ## References
 

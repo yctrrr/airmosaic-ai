@@ -1,4 +1,4 @@
-"""Reviewed adapters for the existing CLI and Python scripts.
+"""Reviewed adapters for the existing CLI, Python and R scripts.
 
 This is a preflight and privacy layer, not an OS sandbox for untrusted code.
 """
@@ -24,6 +24,7 @@ from .tool_process import child_environment, execute
 from .tool_readiness import _configuration, _inside_git, _overlaps
 from .tool_registry import ToolRegistryService, repository_path
 from .tool_policies import ADAPTERS
+from . import tool_r
 
 
 def _now() -> str:
@@ -126,6 +127,10 @@ class ToolRunnerService:
             if check["kind"] in {"entrypoint", "python", "python_package", "executable"} and check["status"] != "available":
                 blockers.append("missing_entrypoint" if check["kind"] == "entrypoint" else "missing_dependency")
         model_root = self._adapter_preflight(tool_id, params, paths, blockers)
+        is_r = policy["adapter"] in tool_r.R_ADAPTERS
+        rscript = tool_r.r_executable() if is_r else None
+        if is_r and rscript is None:
+            blockers.append("missing_dependency")
         entry_path = repository_path(self.registry.repo_root, tool["entrypoint"]["path"])
         record = {
             "schema_version": 1, "run_id": run_id, "tool_id": tool_id,
@@ -139,6 +144,9 @@ class ToolRunnerService:
                           "record": f"${{AIRMOSAIC_LOCAL_WORKSPACE}}/runs/{run_id}/record.json"},
             "scientific_validation": "not_run",
         }
+        if is_r:
+            record["r_dependencies"] = {"packages": tool["requirements"]["r_packages"],
+                                        "status": "unverified"}
         if dry_run:
             return record
         # These digests are public source, never hashes of private arguments.
@@ -160,8 +168,14 @@ class ToolRunnerService:
                 if role.startswith("output_"):
                     target = checked_path(params[name])
                     (target.parent if role == "output_file" else target).mkdir(parents=True, exist_ok=True)
-            code, reason, cleanup, raw = execute(_argv(tool["entrypoint"], params, entry_path), paths.temp,
-                                                child_environment(paths, model_root), timeout,
+            env = child_environment(paths, model_root)
+            if is_r:
+                argv = tool_r.command(tool["entrypoint"], params, rscript)
+                env = tool_r.environment(env, entry_path, tool["requirements"]["r_packages"],
+                                         paths.temp, params.get("out_dir"))
+            else:
+                argv = _argv(tool["entrypoint"], params, entry_path)
+            code, reason, cleanup, raw = execute(argv, paths.temp, env, timeout,
                                                 capture=policy["adapter"] == "core_cli")
             record.update(exit_code=code, status="succeeded" if code == 0 and reason is None else "failed")
             if reason:
@@ -170,6 +184,17 @@ class ToolRunnerService:
                 record["process_tree_cleanup_confirmed"] = cleanup
             if record["status"] == "succeeded" and policy["adapter"] == "core_cli":
                 record["result_summary"] = _core_summary(tool_id, raw)
+            if is_r and reason is None:
+                if code == 70:
+                    record["r_dependencies"]["status"] = "unavailable"
+                    record["reason"] = "r_dependency_unavailable"
+                elif code in (0, 71):
+                    record["r_dependencies"]["status"] = "available"
+                    if code == 71:
+                        record["reason"] = "r_script_failed"
+                if code == 0 and not tool_r.outputs_complete(
+                        policy["adapter"], Path(params.get("output_dir", params.get("out_dir")))):
+                    record.update(status="failed", reason="expected_outputs_missing")
         except (OSError, ValueError):
             record.update(status="failed", reason="execution_or_result_error")
         except KeyboardInterrupt:
@@ -193,6 +218,24 @@ class ToolRunnerService:
             raise ToolExecutionError("receipt_write_failed") from None
 
     def _adapter_preflight(self, tool_id: str, params: dict, paths: ExecutionPaths, blockers: list) -> Path | None:
+        if tool_id == "gcam_plot_sector_change" and "," in params["input_csv"]:
+            # The existing R parser splits every argument on commas, including
+            # this filename. Reject ambiguity without changing its computation.
+            raise ToolExecutionError("r_input_path_contains_comma")
+        if tool_id == "gcam_inspect_output_structure":
+            spec = {"name": "GCAM_RELEASE_DIR", "role": "model", "kind": "directory"}
+            if _configuration(spec, self.registry.repo_root)["status"] != "configured":
+                blockers.append("model_configuration_unavailable")
+                return None
+            model = checked_path(os.environ["GCAM_RELEASE_DIR"])
+            if _overlaps(model, paths.workspace):
+                raise ToolExecutionError("model_overlaps_data_workspace")
+            for relative, kind in (("output/database_basexdb", "directory"),
+                                   ("database_R/Prov_code_china.csv", "file")):
+                resource = checked_path(str(model / relative))
+                if _inside_git(resource) or not (resource.is_dir() if kind == "directory" else resource.is_file()):
+                    blockers.append("model_resource_unavailable")
+            return model
         if tool_id.startswith("gcam_extract_"):
             if any(".." in item for item in params["scenarios"].split(",")):
                 raise ToolExecutionError("invalid_scenario_identifier")

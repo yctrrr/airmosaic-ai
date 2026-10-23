@@ -1,11 +1,11 @@
 ---
 name: gcam-data-extraction
-description: Extract existing GCAM market/sector and technology-component rows, then aggregate province rows with registered run-tool adapters. Plotting remains a standalone R step; additional query types need domain adaptation.
+description: Extract existing GCAM market/sector and technology-component rows, then aggregate province rows with registered run-tool adapters. Plot existing sector rows for 2021/2035 with the registered R adapter; additional query types need domain adaptation.
 ---
 
 # GCAM Data Extraction
 
-> Invocation status: `gcam_extract_market_sector`, `gcam_extract_technology_components` and `gcam_aggregate_provinces` are enabled in `run-tool`. `gcam_plot_sector_change` is a standalone R script, disabled in the runner.
+> Invocation status: `gcam_extract_market_sector`, `gcam_extract_technology_components` and `gcam_aggregate_provinces` are enabled in `run-tool`. `gcam_plot_sector_change` is also enabled through its R adapter.
 
 ## Local paths and authentication
 
@@ -28,10 +28,11 @@ For extraction, supply `scenarios` and `sectors` as comma-separated strings. Exp
 | `gcam_extract_market_sector` | `scenarios`, `sectors`; scope with `regions`, `years` | `market_sector_rows.csv`, `market_sector_summary.csv` |
 | `gcam_extract_technology_components` | Same extraction filters | `technology_component_rows.csv`, `technology_component_summary.csv` |
 | `gcam_aggregate_provinces` | `input_csv` | `province_aggregate.csv` |
+| `gcam_plot_sector_change` | `input_csv`; optional `sectors`, `scenarios` | `sector_change_2021_2035.png`, `sector_change_weighted_mean.csv` |
 
 Lists are comma-separated strings, not arrays. Years are four-digit values; scenario names must be safe identifiers. `out_dir` is optional to callers because the runner supplies it. The technology tool has no `method` parameter. Aggregation excludes China/Global rows and reports `weighted_price`, `quantity_sum`, `province_count` grouped by scenario/source/sector/year; it does not automatically validate unit compatibility or complete national coverage.
 
-`gcam_plot_sector_change` is a separate R script, disabled in `run-tool`. Its flags are `--input-csv`, `--sectors`, `--scenarios`; output uses explicit `UNIT_PRICE_OUT_DIR`, not `--out-dir`, and comparison years are fixed at 2021/2035. See the [manual model steps](../../../../../harness/usage/model-analysis.md).
+`gcam_plot_sector_change` requires an explicit input_csv under workspace data_cache/output, without commas in its path. The runner maps out_dir to the child UNIT_PRICE_OUT_DIR; caller settings are ignored. Rscript --vanilla loads dplyr, ggplot2, readr and tidyr from the selected R installation standard library. dry-run leaves package loading unverified; execution checks namespaces and both expected artifacts. Years remain fixed at 2021/2035. See the [model guide](../../../../../harness/usage/model-analysis.md) for defaults and manual adaptations.
 
 ## Parameter examples and task handoff
 
@@ -65,9 +66,21 @@ python -m airmosaic_core.cli run-tool gcam_aggregate_provinces --params-file $ag
 
 Only `${AIRMOSAIC_LOCAL_WORKSPACE}` is expanded in JSON path values. `<source_run_id>` is explanatory text to replace manually, not another variable. Do not pass receipt JSON, a tool envelope or a technology-component CSV as aggregation parameters. No automatic tool chaining, cache publication or scientific acceptance occurs.
 
+## Plot a reviewed market output
+
+The [plot example](../../../../../examples/run-tool/gcam-plot.json) also requires replacing source_run_id and example_scenario. Preserve the source CSV and check the two years, sectors, province coverage and units. Save the reviewed flat JSON under CONFIG_DIR:
+
+```powershell
+$plotParams = Join-Path $env:AIRMOSAIC_CONFIG_DIR "gcam-plot.json"
+python -m airmosaic_core.cli run-tool gcam_plot_sector_change --params-file $plotParams --dry-run
+python -m airmosaic_core.cli run-tool gcam_plot_sector_change --params-file $plotParams
+```
+
+The original sector_cost filter, China/Global exclusion, nonnegative weights and zero-weight mean fallback remain unchanged. Different comparison years, plot styles or calculation methods require manual adaptation and separate validation. Do not pass province_aggregate.csv or technology-component rows as plot inputs.
+
 ## Agent execution boundary
 
-Use the three enabled registered IDs through `run-tool`; a rejected tool/path is not a reason to run raw Python or Java directly. Check `can_execute`/`blockers` for dry-run, then process status and actual artifacts for execution. Unit compatibility, positive/zero weights, province coverage, method-specific interpretations and additional query logic need separate checks. Do not equate an extracted price with validated revenue or an accepted national unit cost.
+Use the four enabled registered IDs through `run-tool`; a rejected tool/path is not a reason to run raw Python or Java directly. Check `can_execute`/`blockers` for dry-run, then process status and actual artifacts for execution. Unit compatibility, positive/zero weights, province coverage, method-specific interpretations and additional query logic need separate checks. Do not equate an extracted price with validated revenue or an accepted national unit cost.
 
 ## References
 
