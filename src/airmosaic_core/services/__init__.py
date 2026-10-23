@@ -4,6 +4,7 @@ from .causal_design import CausalDesignService
 from .data_access import DataAccessService
 from .data_catalog import DataCatalogService
 from .tool_registry import ToolRegistryError, ToolRegistryService
+from .tool_runner import ToolRunnerService, ToolExecutionError
 
 __all__ = [
     "CausalDesignService",
@@ -11,4 +12,6 @@ __all__ = [
     "DataCatalogService",
     "ToolRegistryError",
     "ToolRegistryService",
+    "ToolRunnerService",
+    "ToolExecutionError",
 ]

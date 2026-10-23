@@ -13,6 +13,7 @@ import yaml
 
 from .tool_readiness import check_readiness
 from .tool_paths import local_path
+from .tool_policies import ADAPTERS, PATH_PARAMETERS
 
 
 CATEGORIES = {"core": "基础工具", "data_acquisition": "数据获取", "model": "模型分析"}
@@ -148,6 +149,18 @@ class ToolRegistryService:
             if not entry["path"].endswith(suffix):
                 raise ToolRegistryError("Script kind and file extension disagree.")
         properties = data["input_schema"].get("properties", {})
+        policy = data.get("execution", {"enabled": False})
+        if policy["enabled"]:
+            adapter = policy["adapter"]
+            if (ADAPTERS.get(data["tool_id"]) != adapter
+                    or policy["path_parameters"] != PATH_PARAMETERS[adapter]
+                    or data["implementation_status"] != "implemented"
+                    or entry["kind"] != ("cli" if adapter == "core_cli" else "python_script")
+                    or not set(policy["path_parameters"]).issubset(properties)):
+                raise ToolRegistryError("Execution policy does not match a reviewed adapter.")
+            if adapter == "core_cli" and (entry.get("module") != "airmosaic_core.cli"
+                    or entry.get("subcommand") != data["tool_id"].removeprefix("airmosaic_").replace("_", "-")):
+                raise ToolRegistryError("CLI execution must match its reviewed subcommand.")
         if not set(data["input_schema"].get("required", [])).issubset(properties):
             raise ToolRegistryError("Required input names must be declared properties.")
         if set(entry["argument_bindings"]) != set(properties):
@@ -201,7 +214,9 @@ class ToolRegistryService:
             "working_directory": "repository_root",
             "argument_bindings": entry["argument_bindings"],
             "default_arguments": entry.get("default_arguments", {}),
-            "execution_supported": False,
+            "execution_supported": result.get("execution", {}).get("enabled", False),
+            "runner_tokens": (["python", "-m", "airmosaic_core.cli", "run-tool", tool_id]
+                              if result.get("execution", {}).get("enabled") else []),
         }
         result["availability"] = self.check_tool(tool_id)
         return result
@@ -235,5 +250,7 @@ def format_tool_table(tools: list[dict[str, Any]]) -> str:
                 f"  dependencies: {', '.join(dependency_names)}; login: {login}",
                 f"  next: {state['next_step']}",
             ])
+            runner = tool["invocation"]["runner_tokens"]
+            lines.append("  runner: " + (" ".join(runner) if runner else "unsupported"))
         lines.append("")
     return "\n".join(lines).rstrip() if lines else "No matching tools."

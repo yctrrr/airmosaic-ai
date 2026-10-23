@@ -51,3 +51,7 @@ effects:
   writes: []
   network: false
 documentation: harness/usage/core.md
+execution:
+  enabled: true
+  adapter: core_cli
+  path_parameters: {}

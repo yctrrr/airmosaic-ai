@@ -19,6 +19,7 @@ AirMosaic contains reusable atmospheric-environment skills, data declarations, s
 |---|---|
 | Understand collaboration and execution | [Harness overview](harness/README.md) |
 | Find commands, scripts and templates | [Tool catalog](harness/tool-catalog.md), [registry queries](harness/usage/tool-registry.md) |
+| Run reviewed CLI/Python adapters | [run-tool](harness/usage/run-tool.md) |
 | Configure separate data/settings/authentication roots | [Storage and credentials](harness/storage-and-credentials.md) |
 | Install core services; inspect datasets/cache | [Core tools](harness/usage/core.md) |
 | Acquire or process source data | [Data acquisition](harness/usage/data-acquisition.md) |
@@ -58,7 +59,7 @@ Acquisition skill IDs include `worldpop`, `csmar`, `ind_yearbook` and `ihme-gbd-
 
 `ToolRegistryService` now validates `catalog/tools/*.yaml` and supports `list-tools`, `describe-tool` and `check-tool`. These read-only queries check static prerequisites; they never execute tools, load personal config or inspect credentials. Authentication/R libraries may remain unverified. Templates and references are catalogued as non-callable.
 
-MCP, REST, a generic tool runner and `WorkflowOrchestrator` are not implemented. Raw entrypoint tokens still require task parameters and execution authorization. Names in old example JSON are not automatically registered aliases. R templates may execute when sourced.
+`run-tool` supports the reviewed core CLI and six Python scripts with schema/path checks, dry-run and sanitized receipts. Read its [guide](harness/usage/run-tool.md) first: all three existing roots are required, output parameters default to a fresh task directory, network requires an explicit flag, and GBD requires session attestation. Never put credentials into parameters. Child processes receive a minimal environment; receipts omit raw values and logs. This is a preflight layer for trusted code, not an OS sandbox. R/templates/references and nested run-tool remain unsupported. MCP, REST and `WorkflowOrchestrator` are not implemented. Raw scripts do not gain these checks automatically.
 
 ## Execution and scientific boundaries
 

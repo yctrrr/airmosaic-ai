@@ -75,7 +75,8 @@
             "draft-causal-plan",
             "list-tools",
             "describe-tool",
-            "check-tool"
+            "check-tool",
+            "run-tool"
           ]
         },
         "argument_bindings": {
@@ -567,6 +568,56 @@
     "documentation": {
       "type": "string",
       "minLength": 1
+    },
+    "execution": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "const": false
+            }
+          },
+          "required": [
+            "enabled"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "const": true
+            },
+            "adapter": {
+              "enum": [
+                "core_cli",
+                "worldpop",
+                "csmar",
+                "gbd",
+                "gcam_extract",
+                "gcam_aggregate"
+              ]
+            },
+            "path_parameters": {
+              "type": "object",
+              "additionalProperties": {
+                "enum": [
+                  "input_file",
+                  "output_directory",
+                  "output_file"
+                ]
+              }
+            }
+          },
+          "required": [
+            "enabled",
+            "adapter",
+            "path_parameters"
+          ],
+          "additionalProperties": false
+        }
+      ]
     }
   },
   "required": [
@@ -585,7 +636,8 @@
     "requirements",
     "authentication",
     "effects",
-    "documentation"
+    "documentation",
+    "execution"
   ],
   "additionalProperties": false,
   "$schema": "https://json-schema.org/draft/2020-12/schema",

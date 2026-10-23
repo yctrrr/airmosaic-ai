@@ -43,3 +43,5 @@ effects:
   - data_cache
   network: true
 documentation: harness/usage/data-acquisition.md
+execution:
+  enabled: false

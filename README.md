@@ -14,6 +14,7 @@ Read the [Harness guide](harness/README.md) for team roles, execution steps, bou
 | Acquire population, enterprise, yearbook or GBD data | [Data acquisition](harness/usage/data-acquisition.md) |
 | Use GCAM scripts or health-impact templates | [Model analysis](harness/usage/model-analysis.md) |
 | Let an agent modify the project | [AGENTS.md](AGENTS.md), [agent boundaries](harness/agent-boundaries.md) |
+| Run reviewed CLI/Python tools | [run-tool](harness/usage/run-tool.md) |
 | Find available capabilities | [Registry queries](harness/usage/tool-registry.md), [tool catalog](harness/tool-catalog.md) |
 | Separate data, personal configuration and authentication | [Storage and credentials](harness/storage-and-credentials.md) |
 | Add skills/tools and configure discovery/display | [Registration specification](harness/tool-registration.md) |
@@ -59,13 +60,21 @@ $amPython = (Resolve-Path ".venv/Scripts/python.exe").Path
 
 The [core guide](harness/usage/core.md) provides Windows and Linux/macOS configuration. Set `AIRMOSAIC_LOCAL_WORKSPACE` before cache checks or data work. `.env` is not loaded automatically. Optional model/browser dependencies must be configured separately. `AIRMOSAIC_CONFIG_DIR` and `AIRMOSAIC_AUTH_DIR` are caller conventions, not automatically loaded stores.
 
+After configuring and creating all three separate roots, preview then run a local adapter:
+
+```powershell
+& $amPython -m airmosaic_core.cli run-tool airmosaic_list_datasets --dry-run
+& $amPython -m airmosaic_core.cli run-tool airmosaic_list_datasets
+& $amPython -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --dry-run
+```
+
 ## Current interfaces
 
-The CLI provides dataset/cache/template commands plus `list-tools`, `describe-tool` and `check-tool`. The SDK also exports `ToolRegistryService`. Tool queries support categories, skill/keyword/status filters, structured details and local prerequisite checks; see the [query guide](harness/usage/tool-registry.md).
+The CLI provides dataset/cache/template commands plus `list-tools`, `describe-tool` and `check-tool`. The SDK also exports `ToolRegistryService` and `ToolRunnerService`. Tool queries support categories, skill/keyword/status filters, structured details and local prerequisite checks; see the [query guide](harness/usage/tool-registry.md).
 
 Dataset listing reads acquisition skill declarations. Cache inspection only finds files; it does not validate contents or checksums. The causal-plan command returns a local template without calling an LLM or producing a causal estimate.
 
-The registry loader validates `catalog/tools/*.yaml` against its schema and distinguishes executable entries from templates/references. Querying never runs scripts, logs in or reads credentials. Login and R-library status remain unverified without independent checks. MCP, REST, a generic tool runner and workflow orchestration remain planned. Symbolic names in old examples are not registered aliases.
+The registry loader validates `catalog/tools/*.yaml` against its schema and distinguishes executable entries from templates/references. Querying never runs scripts, logs in or reads credentials. Login and R-library status remain unverified without independent checks. The reviewed `run-tool` adapters support 8 core CLI commands and 6 Python scripts with parameter validation, dry-run, path preflight and sanitized receipts; see the [execution guide](harness/usage/run-tool.md). R/templates/references are not enabled. This is not an OS sandbox. MCP, REST and workflow orchestration remain planned. Symbolic names in old examples are not registered aliases.
 
 ## Skills and agents
 

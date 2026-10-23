@@ -10,6 +10,7 @@ Usage:
 import argparse
 import zipfile
 from pathlib import Path
+from typing import BinaryIO
 
 import pandas as pd
 
@@ -57,24 +58,18 @@ TARGET_KEYWORDS = {
 }
 
 
-def extract_zip(zip_path: Path) -> Path:
-    extract_dir = zip_path.with_suffix("")
-    extract_dir.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(zip_path) as zf:
-        zf.extractall(extract_dir)
-    return extract_dir
-
-
-def find_data_xlsx(extract_dir: Path) -> Path:
-    matches = list(extract_dir.rglob("STK_LISTEDCOINFOANL.xlsx"))
+def find_data_xlsx(archive: zipfile.ZipFile) -> str:
+    # Read the chosen workbook through ZipFile.open. Archive member names never
+    # become filesystem paths and the downloaded input directory stays read-only.
+    matches = [name for name in archive.namelist() if name.endswith("STK_LISTEDCOINFOANL.xlsx")]
     if not matches:
-        matches = [p for p in extract_dir.rglob("*.xlsx") if "[DES]" not in p.name]
+        matches = [name for name in archive.namelist() if name.endswith(".xlsx") and "[DES]" not in name]
     if not matches:
-        raise FileNotFoundError(f"No data xlsx found under {extract_dir}")
+        raise FileNotFoundError("No data workbook found in archive.")
     return matches[0]
 
 
-def build_candidates(xlsx_path: Path, out_dir: Path) -> None:
+def build_candidates(xlsx_path: Path | BinaryIO, out_dir: Path) -> None:
     df = pd.read_excel(xlsx_path, dtype=str)
     df = df[df["Symbol"].str.match(r"^\d{6}$", na=False)].copy()
     df["EndDate_dt"] = pd.to_datetime(df["EndDate"], errors="coerce")
@@ -164,9 +159,9 @@ def main() -> None:
 
     zip_path = Path(args.zip_path)
     out_dir = Path(args.out_dir)
-    extract_dir = extract_zip(zip_path)
-    xlsx_path = find_data_xlsx(extract_dir)
-    build_candidates(xlsx_path, out_dir)
+    with zipfile.ZipFile(zip_path) as archive:
+        with archive.open(find_data_xlsx(archive)) as workbook:
+            build_candidates(workbook, out_dir)
 
 
 if __name__ == "__main__":

@@ -33,35 +33,49 @@ input_schema:
     context:
       type: string
       description: Value supplied for this task.
+      pattern: ^[a-z][a-z0-9_-]{0,31}$
     years:
       type: string
       description: Value supplied for this task.
+      pattern: ^\d+(,\d+)*$
     locations:
       type: string
       description: Value supplied for this task.
+      pattern: ^\d+(,\d+)*$
     causes:
       type: string
       description: Value supplied for this task.
+      pattern: ^\d+(,\d+)*$
     ages:
       type: string
       description: Value supplied for this task.
+      pattern: ^\d+(,\d+)*$
     sexes:
       type: string
       description: Value supplied for this task.
+      pattern: ^\d+(,\d+)*$
     measures:
       type: string
       description: Value supplied for this task.
+      pattern: ^\d+(,\d+)*$
     metrics:
       type: string
       description: Value supplied for this task.
+      pattern: ^\d+(,\d+)*$
     port:
       type: integer
+      minimum: 1
+      maximum: 65535
     version:
       type: integer
+      minimum: 1
     population_group:
       type: integer
+      minimum: 1
     wait_ms:
       type: integer
+      minimum: 1
+      maximum: 3600000
   required:
   - out
   - years
@@ -101,3 +115,8 @@ effects:
   - data_cache
   network: true
 documentation: harness/usage/data-acquisition.md
+execution:
+  enabled: true
+  adapter: gbd
+  path_parameters:
+    out: output_file

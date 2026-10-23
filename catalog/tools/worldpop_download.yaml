@@ -25,11 +25,15 @@ input_schema:
     project:
       type: string
       description: Value supplied for this task.
+      pattern: ^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$
     iso3:
       type: string
       description: Value supplied for this task.
+      pattern: ^[A-Za-z]{3}$
     year:
       type: integer
+      minimum: 1
+      maximum: 9999
     contains:
       type: string
       description: Value supplied for this task.
@@ -43,6 +47,8 @@ input_schema:
       type: boolean
     limit:
       type: integer
+      minimum: 1
+      maximum: 100
   required:
   - project
   - root
@@ -69,3 +75,8 @@ effects:
   - data_cache
   network: true
 documentation: harness/usage/data-acquisition.md
+execution:
+  enabled: true
+  adapter: worldpop
+  path_parameters:
+    root: output_directory

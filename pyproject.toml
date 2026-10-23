@@ -14,6 +14,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+tools = ["pandas", "openpyxl", "requests", "websocket-client"]
 dev = [
     "pytest>=8.0",
 ]

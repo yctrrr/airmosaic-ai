@@ -78,7 +78,7 @@ def test_real_registry_covers_existing_entries_and_filters(separate_roots):
     detail = registry.describe_tool("worldpop_download")
     assert detail["entrypoint"]["argument_bindings"]["root"] == "--root"
     assert detail["effects"]["network"] is True
-    assert detail["invocation"]["execution_supported"] is False
+    assert detail["invocation"]["execution_supported"] is True
     detail["title"] = "mutated"
     assert registry.describe_tool("worldpop_download")["title"] != "mutated"
 

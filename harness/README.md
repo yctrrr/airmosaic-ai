@@ -2,7 +2,7 @@
 
 本说明面向使用 agent 开发、调用或维护 AirMosaic 的成员。先按任务选择工具，再核对输入、权限和数据条件，最后用验收记录交付结果。
 
-本文规定团队应遵循的操作流程。工具注册加载、分类列表、详情及静态前置条件查询已实现，见[使用说明](usage/tool-registry.md)。统一运行引擎、执行时权限拦截器和 MCP 服务仍待实现；查询侧检查不等于原脚本已被统一隔离。
+本文规定团队应遵循的操作流程。工具注册、分类列表、详情及静态前置条件查询见[查询说明](usage/tool-registry.md)；已实现的 [run-tool](usage/run-tool.md) 为 8 个核心 CLI 和 6 个 Python 脚本提供参数校验、dry-run、路径前置检查与脱敏记录。它不构成 OS 沙箱，原脚本直接调用不经过这些检查；MCP 和工作流编排尚未实现。
 
 ## 1. 从哪里开始
 
@@ -15,6 +15,7 @@
 | 让 agent 修改文档、脚本或配置 | [Agent 行为边界](agent-boundaries.md) |
 | 新增技能、注册工具、配置展示 | [注册与展示规范](tool-registration.md) |
 | 确认某项能力是否真的存在 | [分类查询](usage/tool-registry.md)、[工具清单](tool-catalog.md) |
+| 统一执行 CLI/Python 工具 | [run-tool 使用步骤与边界](usage/run-tool.md) |
 | 查看这版文档已验证到哪一步 | [验证记录与未执行事项](verification.md) |
 
 仓库根目录的 [AGENTS.md](../AGENTS.md) 是 agent 的简明入口。各 skill 保存具体方法；本目录保存跨模块的协作和操作规范。个人项目记录放在仓库外，不复制到这些共享说明中。
@@ -27,8 +28,8 @@
 | Tool | 完成一个明确动作，例如列目录、下载或计算 | CLI、Python 方法、Python/R 脚本；部分能力仅有模板 |
 | Dataset catalog | 声明数据集及其来源、负责技能和缓存约定 | acquisition skill 内的 `datasets.yaml` |
 | Workflow | 描述多个模块的衔接及科学假设 | `workflow/` 中的设计模板 |
-| Runtime harness | 检查前置条件、调用工具、管理状态和记录 | 本文定义操作流程；统一引擎待实现 |
-| Evaluation harness | 检查接口、运行结果和领域正确性 | 已有少量核心测试；领域案例与统一执行器待补齐 |
+| Runtime harness | 检查前置条件、调用工具、管理状态和记录 | 已实现有限适配器 run-tool；工作流编排待实现 |
+| Evaluation harness | 检查接口、运行结果和领域正确性 | 合成及本地接口测试；真实领域案例待补齐 |
 
 ```mermaid
 flowchart LR
@@ -82,7 +83,7 @@ flowchart LR
 ## 5. 路径、配置和数据约定
 
 - 仓库只存可复用代码、文档、schema、模板和不含私人信息的示例。
-- `AIRMOSAIC_LOCAL_WORKSPACE` 指向各成员在本地配置的仓库外目录。`data_cache/` 放原始数据，`output/<run_id>/` 放任务结果，`runs/<run_id>/` 放完整运行记录。
+- `AIRMOSAIC_LOCAL_WORKSPACE` 指向各成员在本地配置的仓库外目录。`data_cache/` 放原始数据，`output/<run_id>/<tool_id>/` 放任务结果，`runs/<run_id>/` 放脱敏运行记录，`temp/<run_id>/` 放任务临时文件。
 - 既有脚本可能使用 `outputs/` 或其他默认位置。新任务显式传入输出参数或对应环境变量，统一落到本次任务目录；不擅自迁移旧文件。
 - 模型发行包可以位于另一个经授权的只读目录，通过 `GCAM_RELEASE_DIR` 等变量引用；修改配置时先创建任务副本。
 - 共享文档使用 `${AIRMOSAIC_LOCAL_WORKSPACE}`、`${GCAM_RELEASE_DIR}`、`<dataset_id>` 等逻辑标识。JSON 中的变量字符串不会自动展开，必须由具体调用方显式解析。
@@ -93,7 +94,7 @@ flowchart LR
 
 ## 6. 成功、失败与恢复
 
-当前 CLI 的退出码和 JSON 字段保持现有形式。未来统一 harness 应采用以下状态语义；这些状态不是当前 CLI 已有字段。
+`run-tool` 的实际状态为 `dry_run / blocked / running / succeeded / failed`，退出码为 0、2、3，定义见[执行指南](usage/run-tool.md)；`succeeded` 仅代表进程退出和核心结果解析成功，科学验收另行记录。以下是更广泛的工作流设计语义，不是所有 CLI 已有字段。
 
 | 状态 | 含义 | 后续动作 |
 |---|---|---|

@@ -1,0 +1,3 @@
+{
+  "input_csv": "${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gcam/example.csv"
+}

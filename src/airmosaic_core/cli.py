@@ -8,10 +8,18 @@ from .services.causal_design import CausalDesignService
 from .services.data_access import DataAccessService
 from .services.data_catalog import DataCatalogService
 from .services.tool_registry import CATEGORIES, STATUSES, ToolRegistryError, ToolRegistryService, format_tool_table
+from .services.tool_runner import ToolRunnerService
+from .services.tool_execution_paths import ToolExecutionError, parse_parameters
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        # argparse's normal errors echo rejected values, including private paths.
+        self.exit(2, json.dumps({"error": "invalid_cli_arguments", "message": "Use --help for accepted arguments."}) + "\n")
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="airmosaic")
+    parser = _PrivateArgumentParser(prog="airmosaic")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     list_datasets = subparsers.add_parser("list-datasets")
@@ -46,6 +54,16 @@ def build_parser() -> argparse.ArgumentParser:
     detail.add_argument("--format", choices=("table", "json"), default="json")
     check = subparsers.add_parser("check-tool", help="Check prerequisites without running or logging in")
     check.add_argument("tool_id")
+    run = subparsers.add_parser("run-tool", help="Run a reviewed CLI/Python adapter with task boundaries")
+    run.add_argument("tool_id")
+    sources = run.add_mutually_exclusive_group()
+    sources.add_argument("--params", help="Non-secret JSON object; prefer --params-file for private task text")
+    sources.add_argument("--params-file", help="Explicit non-secret JSON under config, data or public examples")
+    run.add_argument("--dry-run", action="store_true")
+    run.add_argument("--allow-network", action="store_true")
+    run.add_argument("--confirm-browser-session", action="store_true")
+    run.add_argument("--timeout", type=int, default=300)
+    run.add_argument("--run-id", help="Optional fresh 32-character lowercase hex ID")
     return parser
 
 
@@ -53,6 +71,21 @@ def main() -> None:
     parser = build_parser()
 
     args = parser.parse_args()
+    if args.command == "run-tool":
+        try:
+            payload = ToolRunnerService().run(
+                args.tool_id, parse_parameters(args.params) if args.params is not None else None,
+                params_file=args.params_file, dry_run=args.dry_run, allow_network=args.allow_network,
+                confirm_browser_session=args.confirm_browser_session, timeout=args.timeout, run_id=args.run_id,
+            )
+        except (ToolExecutionError, ToolRegistryError) as error:
+            parser.exit(2, json.dumps({"error": "tool_execution_error", "reason": str(error)}) + "\n")
+        except (OSError, ValueError, RuntimeError):
+            parser.exit(2, json.dumps({"error": "tool_execution_error", "reason": "preflight_failed"}) + "\n")
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
+        if payload["status"] in {"blocked", "failed"}:
+            parser.exit(3)
+        return
     if args.command in {"list-tools", "describe-tool", "check-tool"}:
         try:
             registry = ToolRegistryService()

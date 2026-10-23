@@ -15,6 +15,7 @@
 | 使用 GCAM 脚本或健康影响模板 | [模型分析](harness/usage/model-analysis.md) |
 | 让 agent 修改项目 | [AGENTS.md](AGENTS.md)、[Agent 行为边界](harness/agent-boundaries.md) |
 | 查找可用能力 | [注册查询](harness/usage/tool-registry.md)、[工具清单](harness/tool-catalog.md) |
+| 统一执行 CLI/Python 工具 | [run-tool](harness/usage/run-tool.md) |
 | 分开管理数据、个人配置和认证状态 | [工作区与凭据](harness/storage-and-credentials.md) |
 | 新增技能/工具并配置发现和展示 | [注册规范](harness/tool-registration.md) |
 
@@ -59,13 +60,21 @@ $amPython = (Resolve-Path ".venv/Scripts/python.exe").Path
 
 [基础说明](harness/usage/core.md)提供 Windows 和 Linux/macOS 配置步骤。检查缓存或处理数据前设置 `AIRMOSAIC_LOCAL_WORKSPACE`。当前不会自动加载 `.env`；模型和浏览器依赖需要另行配置。`AIRMOSAIC_CONFIG_DIR` 与 `AIRMOSAIC_AUTH_DIR` 是调用方约定，不是自动加载的存储。
 
+配置并创建三类独立根目录后，先预检，再运行本地适配器：
+
+```powershell
+& $amPython -m airmosaic_core.cli run-tool airmosaic_list_datasets --dry-run
+& $amPython -m airmosaic_core.cli run-tool airmosaic_list_datasets
+& $amPython -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --dry-run
+```
+
 ## 当前接口
 
-CLI 提供数据目录、缓存和模板命令，并新增 `list-tools`、`describe-tool`、`check-tool`。SDK 同时导出 `ToolRegistryService`。工具查询支持分类、skill/关键词/状态筛选、结构化详情和本机前置条件检查，详见[查询说明](harness/usage/tool-registry.md)。
+CLI 提供数据目录、缓存和模板命令，并新增 `list-tools`、`describe-tool`、`check-tool`。SDK 同时导出 `ToolRegistryService` 和 `ToolRunnerService`。工具查询支持分类、skill/关键词/状态筛选、结构化详情和本机前置条件检查，详见[查询说明](harness/usage/tool-registry.md)。
 
 数据列表读取 acquisition skill 的声明。缓存检查只查找文件，不验证内容或校验和。因果设计命令返回本地模板，不调用 LLM，也不生成因果估计结果。
 
-注册加载器已按 schema 校验 `catalog/tools/*.yaml`，并区分可执行入口与模板/参考资料。查询不运行脚本、不登录、不读取凭据；登录与 R 包状态仍需独立核验。MCP、REST、通用工具运行器和工作流编排器仍待实现。旧示例中的名称不是自动注册的别名。
+注册加载器已按 schema 校验 `catalog/tools/*.yaml`，并区分可执行入口与模板/参考资料。查询不运行脚本、不登录、不读取凭据；登录与 R 包状态仍需独立核验。已实现的 `run-tool` 适配器支持 8 个核心 CLI 和 6 个 Python 脚本，提供参数校验、dry-run、路径前置检查及脱敏记录，见[执行指南](harness/usage/run-tool.md)。R、模板和参考资料不能通过它运行；它不是 OS 沙箱。MCP、REST 和工作流编排器仍待实现。旧示例中的名称不是自动注册的别名。
 
 ## Skills 与 agents
 

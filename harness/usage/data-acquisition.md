@@ -100,3 +100,7 @@ $gbdOutput = Join-Path $env:AIRMOSAIC_LOCAL_WORKSPACE "data_cache/gbd_health/raw
 ## 6. 共同限制
 
 上述脚本存在并不意味着已封装为 MCP 工具或统一 harness。`acquire_worldpop_population`、`fetch_gbd_results` 等名称目前是设想中的 wrapper 名称。将其发布为可调用工具之前，按[注册规范](../tool-registration.md)实现参数校验、路径边界和结果检查。
+
+## 通过统一入口运行
+
+WorldPop、CSMAR 本地 ZIP 处理和 GBD 已接入 [run-tool](run-tool.md)。输出自动进入本次任务目录，WorldPop/GBD 需显式网络标志，GBD 还需授权会话声明；CSMAR 直接读取 ZIP 内工作簿，不在输入旁解压。可安装可选依赖组 `python -m pip install -e ".[dev,tools]"`；Java/模型发行包单独配置。不要用下载脚本的 stdout 作为共享记录。

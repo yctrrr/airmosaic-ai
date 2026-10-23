@@ -69,7 +69,7 @@
 - GCAM 提取与展示：`extract_gcam_market_sector_data`、`extract_gcam_technology_components`、`aggregate_gcam_province_data`、`plot_gcam_sector_change`。
 - Workflow：`WorkflowOrchestrator`、`get_workflow_output`、`audit_trace`、`compare_methods`。
 
-已提供 `list-tools`、`describe-tool`、`check-tool` 和 `ToolRegistryService`，读取经 schema 校验的工具声明，展示真实入口、依赖和静态就绪情况。当前未提供统一 `run-tool`、`doctor`、REST、MCP 或自动技能安装器。旧示例名称不是注册 ID 的别名。新成员按查询返回的实际入口及分类说明调用；新增登记遵循[注册规范](tool-registration.md)。
+已提供 `list-tools`、`describe-tool`、`check-tool` 和 `ToolRegistryService`。另有 [run-tool](usage/run-tool.md) / `ToolRunnerService`，支持登记并明确启用的 8 个核心 CLI 和 6 个 Python 脚本；详情中的 `execution_supported` 与 `runner_tokens` 展示受支持入口。`airmosaic_run_tool` 自身登记供查询，禁止嵌套执行。R、模板和参考资料不能通过执行器运行。当前未提供 `doctor`、REST、MCP 或自动技能安装器。旧示例名称不是注册 ID 的别名；新增登记遵循[注册规范](tool-registration.md)。
 
 ## 维护时必须同步的事项
 

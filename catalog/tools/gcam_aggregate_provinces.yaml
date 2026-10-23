@@ -49,3 +49,9 @@ effects:
   - task_output
   network: false
 documentation: harness/usage/model-analysis.md
+execution:
+  enabled: true
+  adapter: gcam_aggregate
+  path_parameters:
+    input_csv: input_file
+    out_dir: output_directory

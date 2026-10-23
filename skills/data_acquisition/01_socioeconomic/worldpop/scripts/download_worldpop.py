@@ -3,8 +3,9 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 from pathlib import Path
-from urllib.parse import urljoin
+from urllib.parse import unquote, urljoin, urlsplit
 
 import requests
 
@@ -56,7 +57,14 @@ def file_url(record: dict) -> str | None:
 
 
 def safe_name(url: str) -> str:
-    return url.rstrip("/").split("/")[-1] or "worldpop_download.dat"
+    # Remote metadata must never supply path components, Windows devices/ADS,
+    # or signed query strings as local filenames.
+    name = unquote(urlsplit(url).path.rsplit("/", 1)[-1])
+    if (not name or name in {".", ".."} or name.endswith((".", " "))
+            or any(ord(char) < 32 or char in '/\\:<>"|?*' for char in name)
+            or re.match(r"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|$)", name, re.I)):
+        raise ValueError("Remote filename is not a safe local basename.")
+    return name
 
 
 def write_manifest(records: list[dict], path: Path) -> None:

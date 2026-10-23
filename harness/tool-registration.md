@@ -1,6 +1,6 @@
 # 技能、数据集与工具的注册和展示
 
-本规范定义 AirMosaic 的协作约定和后续实现要求。当前已实现核心 CLI、Python 类方法、数据声明扫描，以及工具注册加载与只读查询。自动执行器、安装器、工具面板和 MCP 适配器尚未实现。
+本规范定义 AirMosaic 的协作约定和实现要求。已实现核心 CLI、Python 服务、数据声明扫描、工具注册查询及有限适配器 [run-tool](usage/run-tool.md)。安装器、工具面板和 MCP 适配器尚未实现。
 
 ## 1. 四种登记对象分别管理
 
@@ -86,8 +86,9 @@ Workflow YAML 和请求示例属于流程/参数说明。它们不能代替处�
 | `requirements` | Python 发行包、可执行程序、R 包、允许的非秘密配置名、固定模型资源和人工检查 |
 | `authentication` / `effects` | 认证方式/逻辑 profile ID，以及读写对象、联网副作用；不能登记密码、token 或实际 profile 路径 |
 | `documentation` | 存在的仓库相对分类说明路径 |
+| `execution` | 必填；`enabled: false` 表示仅查询。启用时声明受支持 `adapter` 与 `path_parameters`，必须与代码允许清单完全一致 |
 
-加载时拒绝未知字段、重复 YAML 键/工具 ID、缺失绑定、不支持的版本、路径穿越或链接位置、外部 schema 引用。schema 仅描述接口；这里没有参数执行器。Python/脚本仍按原入口调用。
+加载时拒绝未知字段、重复 YAML 键/工具 ID、缺失绑定、不支持的版本、路径穿越或链接位置、外部 schema 引用。仅添加 YAML 不能启用任意代码执行：还必须在 `tool_policies.py` 审查登记 ID/适配器/路径角色，并在 `ToolRunnerService` 实现必要的输入、资源和结果检查，提供合成测试。CLI 适配器必须匹配已审查的子命令；R、参考与模板保持 disabled。schema 本身不授予操作权限。
 
 新增工具步骤：
 

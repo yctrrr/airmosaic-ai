@@ -1,0 +1,81 @@
+schema_version: 1
+tool_id: airmosaic_run_tool
+title: 受控运行 CLI 与 Python 工具
+description: 校验任务参数与路径，支持 dry-run 和脱敏运行记录；不允许递归调用。
+category: core
+skill_id: core
+owner_role: core-maintainer
+implementation_status: implemented
+registration_status: registered
+entrypoint:
+  kind: cli
+  path: src/airmosaic_core/cli.py
+  argument_bindings:
+    tool_id: positional:0
+    params: --params
+    params_file: --params-file
+    dry_run: --dry-run
+    allow_network: --allow-network
+    confirm_browser_session: --confirm-browser-session
+    timeout: --timeout
+    run_id: --run-id
+  module: airmosaic_core.cli
+  subcommand: run-tool
+input_schema:
+  type: object
+  properties:
+    tool_id:
+      type: string
+    params:
+      type: string
+    params_file:
+      type: string
+    dry_run:
+      type: boolean
+    allow_network:
+      type: boolean
+    confirm_browser_session:
+      type: boolean
+    timeout:
+      type: integer
+      minimum: 1
+      maximum: 3600
+    run_id:
+      type: string
+      pattern: ^[a-f0-9]{32}$
+  required:
+  - tool_id
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages:
+  - PyYAML
+  - jsonschema
+  executables: []
+  r_packages: []
+  configuration:
+  - name: AIRMOSAIC_LOCAL_WORKSPACE
+    role: workspace
+    kind: directory
+  - name: AIRMOSAIC_CONFIG_DIR
+    role: config
+    kind: directory
+  - name: AIRMOSAIC_AUTH_DIR
+    role: auth
+    kind: directory
+  resources: []
+  manual_checks: []
+authentication:
+  method: none
+effects:
+  reads:
+  - repository_metadata
+  - data_cache
+  writes:
+  - task_output
+  network: false
+documentation: harness/usage/run-tool.md
+execution:
+  enabled: false

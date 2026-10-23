@@ -56,3 +56,5 @@ effects:
   - task_output
   network: false
 documentation: harness/usage/model-analysis.md
+execution:
+  enabled: false

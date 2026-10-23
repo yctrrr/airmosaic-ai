@@ -56,7 +56,7 @@ python -m airmosaic_core.cli check-tool ihme_gbd_fetch_results
 - 输出只展示配置名、逻辑资源路径、依赖名和受控错误，不展示解释器位置、PATH 命中位置、实际数据目录或环境变量值。
 - 为避免探测时跟随网络或链接，拒绝 UNC、Windows 网络/未知驱动器、检测到的 Linux 网络/FUSE 挂载、`..` 和符号链接/reparse 路径；可执行程序不隐式搜索当前目录。合法本地链接也需要另行确认，不自动当成可用。macOS 和其他平台的挂载识别尚未实测；这些前置检查不构成操作系统级隔离。
 - 不打开 cookie、token、profile 内容或私人配置；不把 profile 目录存在作为已登录证据；不连 CDP 或网站检查账号。
-- 不调用原脚本或任意 shell，不写状态缓存。第一版未提供统一 `run-tool`、MCP、自动下载或登录代理；原工具按[基础](core.md)、[数据获取](data-acquisition.md)和[模型分析](model-analysis.md)说明显式调用。
+- 查询不调用原脚本或任意 shell，不写状态缓存。需要执行时使用独立的 [run-tool](run-tool.md)，按 `execution_supported` / `runner_tokens` 判断适配器是否已实现；查询的 `ready` 不是运行授权。MCP 和自动登录代理尚未实现。
 
 完整管理规则见[工作区与凭据](../storage-and-credentials.md)。查询前置检查不能代替原脚本执行时的路径约束和结果验收。
 

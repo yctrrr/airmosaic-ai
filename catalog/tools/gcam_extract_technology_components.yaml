@@ -22,6 +22,7 @@ input_schema:
     scenarios:
       type: string
       description: Value supplied for this task.
+      pattern: ^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}(,[A-Za-z0-9][A-Za-z0-9_.-]{0,127})*$
     regions:
       type: string
       description: Value supplied for this task.
@@ -31,6 +32,7 @@ input_schema:
     years:
       type: string
       description: Value supplied for this task.
+      pattern: ^\d{4}(,\d{4})*$
     out_dir:
       type: string
       description: Explicit task output directory under ${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/.
@@ -70,3 +72,8 @@ effects:
   - task_output
   network: false
 documentation: harness/usage/model-analysis.md
+execution:
+  enabled: true
+  adapter: gcam_extract
+  path_parameters:
+    out_dir: output_directory

@@ -26,3 +26,5 @@ foreach ($amDir in @($env:AIRMOSAIC_LOCAL_WORKSPACE, $env:AIRMOSAIC_CONFIG_DIR, 
 `AIRMOSAIC_LOCAL_WORKSPACE` 已由核心缓存服务读取。`AIRMOSAIC_CONFIG_DIR` 与 `AIRMOSAIC_AUTH_DIR` 是文档、配置示例和调用方共用的约定；核心服务不会自动加载其中的文件。当前 `.env`、YAML、JSON 中的变量也不会自动展开，需调用方显式处理。
 
 Linux/macOS 可在自己的 shell 配置中显式设置这三个变量，详见[工作区与凭据管理](../../harness/storage-and-credentials.md)。
+
+`run-tool` 要求三类根目录均已存在且互不包含。它不会自动加载个人环境脚本，仅显式读取 `--params-file` 指定的非秘密 JSON；该路径可以在 CONFIG_DIR。路径参数只展开 `${AIRMOSAIC_LOCAL_WORKSPACE}`，不展开 shell 表达式或其他环境变量。公共参数示例位于 `examples/run-tool/`，完整步骤见[执行说明](../../harness/usage/run-tool.md)。
