@@ -1,34 +1,37 @@
-# 当前工具与技能清单
+# 工具能力与执行边界
 
-首版手工清单按 2026-10-15 的源码核对；工具注册与查询现已实现。实时工具元数据以 `catalog/tools/*.yaml` 和 `list-tools` 为准，详见[查询说明](usage/tool-registry.md)。此清单描述仓库能力，不证明当前成员已经安装依赖、具备数据权限或通过真实数据验证。源码变更时同步更新清单及对应类别说明。
+真实 ID、参数与执行支持以 `catalog/tools/*.yaml` 和 list-tools/describe-tool 为准。当前 23 个登记条目中 14 个支持 run-tool（8 个核心 CLI、6 个 Python 脚本）；登记不证明本机就绪、登录或科学验证通过。操作见[查询指南](usage/tool-registry.md)和[执行指南](usage/run-tool.md)，验证层级见[记录](verification.md)。
 
-本次核对的方法和限制见[验证记录](verification.md)。
+## 核心工具
 
-## 基础工具
+使用同一项目 Python 环境从仓库根调用 CLI，或通过下列真实 ID 调用 run-tool。查询命令保留公共详情；runner 的核心结果只返回允许的脱敏摘要。
 
-入口位于 [CLI](../src/airmosaic_core/cli.py)，安装后可运行 `airmosaic` 或同一 Python 环境中的 `python -m airmosaic_core.cli`。详见[基础工具使用](usage/core.md)。
-
-| 实际命令 | 功能 | 输出 | 边界 |
+| 工具 ID | 原 CLI 子命令 | runner | 范围 |
 |---|---|---|---|
-| `list-datasets` | 按 layer / skill / domain 筛选数据声明 | JSON 数组 | 只扫描 acquisition 声明，不查远端或本机数据内容 |
-| `describe-dataset <dataset_id>` | 返回数据详情，支持现有别名 | JSON 对象 | 可后备查找 `catalog/datasets/` |
-| `search-datasets <query>` | 检索声明元数据 | JSON 数组 | 按空白切词，各词均需匹配；不是互联网搜索 |
-| `check-availability <dataset_id>` | 查找缓存根中匹配的文件 | JSON 对象 | 不验证文件内容、年份或校验和；结果可含本机绝对路径 |
-| `draft-causal-plan` | 生成本地因果设计模板 | JSON 对象 | 不调用 LLM，不生成实际 DAG 或因果估计结果 |
+| `airmosaic_list_datasets` | list-datasets | 是 | acquisition 声明，不查实际内容 |
+| `airmosaic_describe_dataset` | describe-dataset | 是 | 数据详情及既有数据别名 |
+| `airmosaic_search_datasets` | search-datasets | 是 | 本地元数据关键词匹配 |
+| `airmosaic_check_availability` | check-availability | 是 | 文件存在性，不验年限/单位/质量；原 CLI 会输出本机路径 |
+| `airmosaic_draft_causal_plan` | draft-causal-plan | 是 | 本地模板，不调用 LLM 或建立因果结论 |
+| `airmosaic_list_tools` | list-tools | 是 | 工具分类、筛选与静态状态 |
+| `airmosaic_describe_tool` | describe-tool | 是 | manifest、参数、实际入口 |
+| `airmosaic_check_tool` | check-tool | 是 | 静态前置条件，不验证登录 |
+| `airmosaic_run_tool` | run-tool | 否，禁止递归 | 此条目用于展示执行器自身 |
 
-核心 SDK 导出 `DataCatalogService`、`DataAccessService`、`CausalDesignService` 三个类；未导出可直接导入的同名自由函数。分类文档给出真实方法调用。
+SDK 导出 DataCatalogService、DataAccessService、CausalDesignService、ToolRegistryService 和 ToolRunnerService；详见[基础工具](usage/core.md)。MCP、REST、自动技能安装器和跨层编排未实现。
 
 ## 数据获取与处理
 
-详见[数据获取使用说明](usage/data-acquisition.md)。脚本入口存在的项目仍需单独核对依赖及数据条件。
+具体步骤及参数见[数据获取](usage/data-acquisition.md)。
 
-| 能力与 skill | 当前入口 | 实现状态 | 执行条件/副作用 |
+| 工具 ID | skill | runner | 边界 |
 |---|---|---|---|
-| [WorldPop](../skills/data_acquisition/01_socioeconomic/worldpop/SKILL.md) | [download_worldpop.py](../skills/data_acquisition/01_socioeconomic/worldpop/scripts/download_worldpop.py) | Python 脚本 | 联网；发现也写元数据；`--download` 额外下载文件 |
-| [CSMAR](../skills/data_acquisition/01_socioeconomic/csmar/SKILL.md) 下载 | 技能描述的浏览器流程 | 操作流程 | 个人授权登录；未提供统一下载 CLI |
-| CSMAR 企业信息处理 | [process_listed_company_basic_info.py](../skills/data_acquisition/01_socioeconomic/csmar/scripts/process_listed_company_basic_info.py) | Python 脚本 | 读取已下载 ZIP，写候选企业表；不代表所有财务表处理器 |
-| [工业年鉴](../skills/data_acquisition/01_socioeconomic/ind_yearbook/SKILL.md) | [地区模板](../skills/data_acquisition/01_socioeconomic/ind_yearbook/templates/process_regional_sector.R)、[产品模板](../skills/data_acquisition/01_socioeconomic/ind_yearbook/templates/process_product_output.R) | R 模板 | 需适配本地输入、年份和输出；未提供独立 national-sector 模板 |
-| [IHME GBD](../skills/data_acquisition/04_impact/ihme-gbd-results/SKILL.md) | [fetch_gbd_results_redux.py](../skills/data_acquisition/04_impact/ihme-gbd-results/scripts/fetch_gbd_results_redux.py) | Python 脚本 | 已登录浏览器、CDP、页面结构兼容；写 CSV 和 JSON sidecar |
+| `worldpop_download` | [WorldPop](../skills/data_acquisition/01_socioeconomic/worldpop/SKILL.md) | 是 | requests；发现也联网写元数据，下载由参数显式启用 |
+| `csmar_process_company_info` | [CSMAR](../skills/data_acquisition/01_socioeconomic/csmar/SKILL.md) | 是 | pandas/openpyxl；只处理已有企业基础信息 ZIP |
+| `ihme_gbd_fetch_results` | [GBD](../skills/data_acquisition/04_impact/ihme-gbd-results/SKILL.md) | 是 | 本机已登录浏览器，网络许可与会话声明；版本/维度需核对 |
+| `csmar_browser_download` | CSMAR | 否，参考 | 浏览器获取需要本人机构权限及实际可用工具 |
+| `yearbook_regional_sector_template` | [工业年鉴](../skills/data_acquisition/01_socioeconomic/ind_yearbook/SKILL.md) | 否，模板 | 人工适配地区行业表头、编码、年份和输出 |
+| `yearbook_product_output_template` | 工业年鉴 | 否，模板 | 人工适配产品、单位与缺失规则；无独立全国行业实现 |
 
 `list-datasets` 当前可读取 9 条声明，数量是此版本快照，不是未来固定验收标准：
 
@@ -46,33 +49,23 @@
 
 ## 模型分析
 
-详见[模型使用说明](usage/model-analysis.md)。
+参考 [GCAM 总导航](../skills/model/IAM/gcam/SKILL.md)和[模型分类说明](usage/model-analysis.md)。
 
-| 能力 | 当前入口 | 状态与范围 |
+| 工具 ID | runner | 范围 |
 |---|---|---|
-| [GCAM 总导航](../skills/model/IAM/gcam/SKILL.md) | 输出结构、配置、提取三个子 skill | 参考/路由技能 |
-| GCAM 输出结构 | [inspect_gcam_xml_structure.R](../skills/model/IAM/gcam/01_output_structure/scripts/inspect_gcam_xml_structure.R) | R 脚本；读取特定数据库布局并导出检查表 |
-| GCAM 配置 | [配置 skill](../skills/model/IAM/gcam/02_configuration/SKILL.md) | 参考说明；没有通用配置读写工具处理函数 |
-| GCAM 市场/行业提取 | [xquery_market_sector.py](../skills/model/IAM/gcam/03_data_extraction/scripts/xquery_market_sector.py) | Python 脚本；需要 Java/BaseX 及模型输出 |
-| GCAM 技术组件提取 | [xquery_technology_components.py](../skills/model/IAM/gcam/03_data_extraction/scripts/xquery_technology_components.py) | Python 脚本；当前没有 `--method` 参数 |
-| GCAM 省级汇总 | [xquery_province_aggregator.py](../skills/model/IAM/gcam/03_data_extraction/scripts/xquery_province_aggregator.py) | Python 脚本；读取提取 CSV 并写汇总 |
-| GCAM 变化绘图 | [plot_sector_change.R](../skills/model/IAM/gcam/03_data_extraction/scripts/plot_sector_change.R) | R 脚本；当前固定比较 2021/2035，输出由环境变量控制 |
-| [PM2.5 健康影响](../skills/model/04_impact/health_impact_analysis/SKILL.md) | [计算模板](../skills/model/04_impact/health_impact_analysis/templates/calculate_pm25_deaths.R)、[绘图模板](../skills/model/04_impact/health_impact_analysis/templates/visualize_pm25_deaths.R) | R 模板；数据适配与科学验收待各任务完成 |
+| `gcam_extract_market_sector` | 是 | 已有数据库的市场/行业行，需 pandas、Java/BaseX 和模型根 |
+| `gcam_extract_technology_components` | 是 | 已有技术组件行及汇总，不提供 method 参数 |
+| `gcam_aggregate_provinces` | 是 | 已有市场 CSV；排除 China/Global，人工核对覆盖、单位和权重 |
+| `gcam_inspect_output_structure` | 否，独立 R | 固定查询、output/database_basexdb 布局；必要时适配副本 |
+| `gcam_plot_sector_change` | 否，独立 R | 固定 2021/2035，显式设置 UNIT_PRICE_OUT_DIR |
+| `gcam_configuration_reference` | 否，参考 | 只读说明或授权任务副本修改；没有配置 API 或模拟启动器 |
+| `pm25_hia_calculate_template` | 否，模板 | [健康影响](../skills/model/04_impact/health_impact_analysis/SKILL.md)输入和方法需适配验收 |
+| `pm25_hia_visualize_template` | 否，模板 | 绘图输入、网格、依赖与输出需人工检查 |
 
-## 哪些名称尚未注册为工具
+## 参数、模板与注册的区别
 
-以下名称见于技能契约、请求示例或流程设计。它们当前没有相应 AirMosaic MCP 注册或统一工具处理器；部分有可供未来封装的脚本。
+可执行 JSON 示例只含 manifest 参数，工具 ID 在 run-tool 命令行指定。列表使用逗号分隔字符串，输出通常省略以自动分配任务目录。标为人工计划的配置/结构 JSON 使用 reference_tool_id 和 execution_supported: false，只供阅读，不能传给 run-tool。其余领域蓝图也不会成为可调用 action。
 
-- WorldPop：`discover_worldpop`、`acquire_worldpop_population`。
-- GBD：`fetch_gbd_results`。
-- GCAM 结构与配置：`explore_gcam_output_structure`、`inspect_gcam_config`、`update_gcam_configuration`、`explain_scenario_setup`、`trace_input_to_output`、`diagnose_ccs_config`。
-- GCAM 提取与展示：`extract_gcam_market_sector_data`、`extract_gcam_technology_components`、`aggregate_gcam_province_data`、`plot_gcam_sector_change`。
-- Workflow：`WorkflowOrchestrator`、`get_workflow_output`、`audit_trace`、`compare_methods`。
+新增工具需同步 manifest、允许清单、参数解析、分类说明和 skill，遵循[注册规范](tool-registration.md)。状态查询的 ready 不表示任务 can_execute；进程 succeeded 不表示科学验收通过。
 
-已提供 `list-tools`、`describe-tool`、`check-tool` 和 `ToolRegistryService`。另有 [run-tool](usage/run-tool.md) / `ToolRunnerService`，支持登记并明确启用的 8 个核心 CLI 和 6 个 Python 脚本；详情中的 `execution_supported` 与 `runner_tokens` 展示受支持入口。`airmosaic_run_tool` 自身登记供查询，禁止嵌套执行。R、模板和参考资料不能通过执行器运行。当前未提供 `doctor`、REST、MCP 或自动技能安装器。旧示例名称不是注册 ID 的别名；新增登记遵循[注册规范](tool-registration.md)。
-
-## 维护时必须同步的事项
-
-新增或更改一个入口时，核对其参数解析器/方法签名、分类说明、skill 元数据、数据声明及本清单。记录验证层级；只有静态读取源码的能力不能标成真实数据集成通过。
-
-现有 `workflow/SKILL.md` 是工作流设计说明，未含标准 skill frontmatter；不能因文件名相同就把它计入宿主技能发现清单。
+`workflow/SKILL.md` 保留四层设计，没有标准 skill frontmatter，也没有自动执行器。数据获取、处理、模型使用和结果验收需要显式传递产物及方法，不会自动串联。

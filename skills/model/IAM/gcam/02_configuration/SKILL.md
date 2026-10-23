@@ -1,15 +1,15 @@
 ---
 name: gcam-configuration
-description: Understand GCAM configuration files, scenario components, SSP-RCP setup, input data processing chains, CCS configuration, and sector naming conventions. Use when an agent needs to inspect, explain, or modify GCAM configuration XML files; understand how scenarios are defined; trace an input parameter from CSV through R processing to XML and BaseX output; or diagnose CCS-related configuration issues.
+description: Read GCAM configuration and input-chain references to explain scenario components, SSP/RCP settings and CCS inputs. Authorized configuration edits require task copies and manual validation; no automated configuration tool exists.
 ---
 
 # GCAM Configuration Reference
 
-> Invocation status: named wrappers in Agent Contract sections are proposed, not registered APIs. Verify actual scripts and template requirements in the [tool catalog](../../../../../harness/tool-catalog.md).
+> Invocation status: `gcam_configuration_reference` is a catalogued reference, disabled in `run-tool`. Inspection and authorized edits are manual agent work on task copies; no configuration mutation API or simulation launcher exists.
 
 ## Local paths and authentication
 
-Follow the [shared storage contract](../../../../../harness/storage-and-credentials.md): data and results use `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret configuration uses `AIRMOSAIC_CONFIG_DIR`, and browser authentication state uses `AIRMOSAIC_AUTH_DIR`. Read only task-needed configuration; never inspect, print or copy credential values or browser state. Set module output arguments explicitly for each run. These conventions do not imply automatic config loading or runtime isolation.
+Follow the [shared storage contract](../../../../../harness/storage-and-credentials.md) and [execution guide](../../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_LOCAL_WORKSPACE` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `output/<run_id>/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
 
 ## Purpose
 
@@ -24,11 +24,7 @@ This layer provides reference documentation for GCAM configuration. It is not de
 
 ## Prerequisites
 
-Access to a GCAM release package directory, set via:
-
-```powershell
-$env:GCAM_RELEASE_DIR = "<path to gcam-china-v8-Windows-Release-Package>"
-```
+Use an explicitly configured `GCAM_RELEASE_DIR` for authorized read-only source inspection. The model release stays outside Git and the data/config/auth roots; do not put its private absolute mapping into shared examples. No configuration file is automatically loaded from the personal settings root.
 
 ## Quick Tasks
 
@@ -39,12 +35,8 @@ $env:GCAM_RELEASE_DIR = "<path to gcam-china-v8-Windows-Release-Package>"
 - Diagnose CCS configuration issues: read `references/ccs-configuration-in-depth.md`
 - Look up sector names and mappings: read `references/sector-naming-conventions.md`
 
-## Agent Contract
+## Manual configuration boundary
 
-External agents should call controlled wrappers such as:
-- `inspect_gcam_config`: list scenario components, their order, and file paths
-- `explain_scenario_setup`: describe what a scenario configuration does
-- `trace_input_to_output`: trace a parameter from input CSV to BaseX output
-- `diagnose_ccs_config`: check CCS file compatibility with current model
+`gcam_configuration_reference` is the real catalog ID. `describe-tool gcam_configuration_reference` shows its reference status; `run-tool` rejects execution. The JSON files in `examples/` are marked manual plans, not `--params-file` payloads or registered actions.
 
-The agent must not receive direct filesystem write access outside the configured local workspace.
+For explanation, inspect only the requested XML, component order and referenced files. For an authorized change, copy the required configuration/dependencies to a fresh local task directory, edit the copy, check XML parsing, order and reference resolution, then review a scoped diff. Do not modify shared model originals or launch a new simulation without task-specific authorization. Read-only configuration review, modification and model execution are separate operations.

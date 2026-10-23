@@ -1,5 +1,7 @@
 {
-  "tool": "inspect_gcam_config",
-  "action": "list_scenario_components",
-  "config_file": "${GCAM_RELEASE_DIR}/exe/DPEC_China/configuration_dpec_ssp1.xml"
+  "reference_tool_id": "gcam_configuration_reference",
+  "execution_supported": false,
+  "workflow_type": "manual_review",
+  "notes": "Not an API request or run-tool parameter file. Read only the authorized XML and component references.",
+  "config_file": "${GCAM_RELEASE_DIR}/exe/configuration_example.xml"
 }

@@ -1,106 +1,104 @@
-# 数据获取与处理工具
+# 数据获取与处理
 
-先完成[核心环境](core.md)，设置 `AIRMOSAIC_LOCAL_WORKSPACE`，阅读相关 skill。下列 PowerShell 示例从仓库根目录执行，沿用 `$amPython`。样例年份/地区只演示参数形式，实际任务由用户范围确定。
+从仓库根目录使用已安装项目的 Python 环境。按[环境示例](../../config/examples/README.md)配置并创建独立、Git 外的数据/config/auth 根；不会自动加载个人配置或登录。可选依赖组：`python -m pip install -e ".[dev,tools]"`。浏览器与数据权限单独准备。
 
-## 1. 通用步骤
+## 1. 真实入口与调用顺序
 
-1. 查数据声明和公开来源，确认产品、年份、地区、字段、单位及使用权限。
-2. 检查本地已有文件；确认缺口后决定是否下载，避免重复获取。
-3. 核对依赖和登录状态；认证在成员自己的本地会话完成，profile 位于 `AIRMOSAIC_AUTH_DIR`，私人非秘密映射位于 `AIRMOSAIC_CONFIG_DIR`。详见[存储约定](../storage-and-credentials.md)。
-4. 明确请求规模和保存位置，先小范围检查，再执行已授权范围。
-5. 校验实际文件与请求范围，保存原始导出和处理产物的对应关系。
-6. 交付脱敏摘要：来源、产品版本、覆盖范围、数量、验证结论和缺失项。
+```powershell
+python -m airmosaic_core.cli list-tools --category data_acquisition
+python -m airmosaic_core.cli describe-tool worldpop_download
+python -m airmosaic_core.cli check-tool ihme_gbd_fetch_results
+```
 
-元数据发现也可能写文件、联网或消耗配额。按照具体工具的副作用执行，不能仅因名称含“查询”而判定完全只读。
+| 工具 ID | run-tool 支持 | 边界 |
+|---|---|---|
+| `worldpop_download` | 是 | 元数据发现、可选下载；发现也联网并写文件 |
+| `csmar_process_company_info` | 是 | 已下载企业基础信息 ZIP；不覆盖所有财务表 |
+| `ihme_gbd_fetch_results` | 是 | 已有的本机授权浏览器会话；不启动浏览器或登录 |
+| `csmar_browser_download` | 否，流程参考 | 使用本人机构权限，由可用浏览器工具或人工完成 |
+| `yearbook_regional_sector_template` | 否，R 模板 | 适配地区行业 Excel 与方法 |
+| `yearbook_product_output_template` | 否，R 模板 | 适配产品表、单位、年份与缺失处理 |
+
+先读对应 skill、核对任务范围，再查询真实 ID、准备非秘密参数 JSON、dry-run、按授权执行并验收。工具 ID 在命令行选择，`--params-file` 只接受扁平参数，不包含 `tool`、`tool_id`、`parameters` 外层字段。未知字段被拒绝，schema 通过不代表产品或 ID 的业务含义正确。
 
 ## 2. WorldPop：发现与下载
 
-入口：[WorldPop skill](../../skills/data_acquisition/01_socioeconomic/worldpop/SKILL.md)。脚本依赖 requests，访问远端并写本地元数据。核心安装不包含此依赖：
+阅读 [WorldPop skill](../../skills/data_acquisition/01_socioeconomic/worldpop/SKILL.md)。[公开参数](../../examples/run-tool/worldpop.json)：
 
-```powershell
-& $amPython -m pip install requests
+```json
+{"project":"wpgp","iso3":"CHN","year":2020,"download":false,"limit":1}
 ```
 
-先发现一个候选记录；这会联网并在指定缓存根写 `metadata/`：
+| 参数 | 类型和含义 |
+|---|---|
+| `project` | 必填字符串，核对远端产品别名 |
+| `iso3`、`year` | 国家代码字符串、年份整数；实际任务明确范围，避免省略后扩大请求 |
+| `contains`、`extensions` | 逗号分隔字符串，如 `"population"`、`".tif,.zip"`，不是数组 |
+| `download`、`limit` | 布尔值、1–100 的整数；false 仍会发现并写元数据 |
+| `root` | 通常省略，由执行器分配任务目录 |
 
 ```powershell
-$worldpopScript = "skills/data_acquisition/01_socioeconomic/worldpop/scripts/download_worldpop.py"
-$worldpopRoot = Join-Path $env:AIRMOSAIC_LOCAL_WORKSPACE "data_cache/worldpop"
-& $amPython $worldpopScript --project wpgp --iso3 CHN --year 2020 --limit 1 --root $worldpopRoot
+# 未给网络标志时返回 permission blocker；不联网、不创建目录
+python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --dry-run
+# 显式许可后的预检仍不执行请求
+python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --dry-run --allow-network
+# 按授权执行元数据发现
+python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --allow-network
 ```
 
-核对返回的产品、年份和文件后，在已授权下载范围内使用：
+下载时在已审查的个人 JSON 中设 `download: true`，用同一 ID 调用；不把 `--download` 追加给 run-tool。结果位于 `output/<run_id>/worldpop_download/metadata/` 和 `raw/`，不自动发布缓存。核对产品、年份、文件、CRS、分辨率、单位和人口总量后，才按授权发布到 `data_cache/worldpop/`。重采样和分区统计没有独立执行入口。
+
+## 3. CSMAR：浏览器获取和本地处理分开
+
+阅读 [CSMAR skill](../../skills/data_acquisition/01_socioeconomic/csmar/SKILL.md)。`csmar_browser_download` 仅供查询说明。成员在自己的机构会话中登录；浏览器调用方显式使用 `${AIRMOSAIC_AUTH_DIR}/browser_profiles/csmar/`，变量不自动启动或选定会话。按任务选择表、年份和字段，提交查询后用下载记录中的最终保存动作取得文件。核对实际落盘文件及字段说明，不导出 cookie 或分享认证链接。
+
+本地 `csmar_process_company_info` 需要 pandas/openpyxl 和 ZIP，不需要登录。[参数示例](../../examples/run-tool/csmar.json)：
+
+```json
+{"zip":"${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/csmar/company_basic.zip"}
+```
 
 ```powershell
-& $amPython $worldpopScript --project wpgp --iso3 CHN --year 2020 --limit 1 --root $worldpopRoot --download
+python -m airmosaic_core.cli run-tool csmar_process_company_info --params-file examples/run-tool/csmar.json --dry-run
+python -m airmosaic_core.cli run-tool csmar_process_company_info --params-file examples/run-tool/csmar.json
 ```
 
-实际参数：`--project`、`--iso3`、`--year`、`--contains`、`--extensions`、`--root`、`--download`、`--limit`。多个过滤词/扩展名按脚本要求传逗号分隔字符串。
+先将示例名映射到实际授权 ZIP；不存在的输入会被拒绝。执行器自动分配 out_dir，脚本直接读 ZIP 中工作簿，不在输入旁解压。输出行业候选表、最新企业列表 CSV/XLSX。核对固定列及关键词匹配；其他表、CSV/TXT 需要人工适配。企业身份不能直接推断成本承担者或物理生产边界。
 
-发现结果不是数据质量保证；检查文件非空、年份和产品含义，再按任务核对栅格 CRS、像元值单位、分辨率和人口总量。脚本没有受控 wrapper 的统一路径约束；运行前由成员/agent 确认 `--root` 属于授权工作区。分区统计有目录声明，但尚无独立本地工具入口。
+## 4. IHME GBD：已有会话与明确维度
 
-## 3. CSMAR：浏览器获取与本地处理
+阅读 [GBD skill](../../skills/data_acquisition/04_impact/ihme-gbd-results/SKILL.md)。需要 pandas、requests、websocket-client，及已打开页面、已登录、仅监听 loopback 的任务浏览器。核对 CDP 端口归属，本人 profile 由浏览器调用方放在 `${AIRMOSAIC_AUTH_DIR}/browser_profiles/ihme-gbd/`；不复制登录状态。
 
-入口：[CSMAR skill](../../skills/data_acquisition/01_socioeconomic/csmar/SKILL.md)。获取数据依赖成员自己的机构权限和浏览器会话。当前统一 CLI 不提供 CSMAR 下载命令。
+[公开参数](../../examples/run-tool/gbd.json)只展示历史语法例子，须按当前页面核对并修改版本及所有维度：
 
-步骤：登录目标站点，确认当前账号与表权限；按任务选择字段、年份和记录；预览并提交下载；从下载记录保存到本地缓存；核对字段说明和实际导出列。
+```json
+{
+  "years":"2020","locations":"6","causes":"494","ages":"10",
+  "sexes":"1","measures":"1","metrics":"3",
+  "version":8352,"context":"cause","population_group":1,
+  "port":9222,"wait_ms":120000
+}
+```
 
-CSMAR profile 使用 `${AIRMOSAIC_AUTH_DIR}/browser_profiles/csmar/`，与数据根分开；这需要浏览器调用方显式配置，并非设置变量后自动生效。账号登录由成员完成。不要把密码、cookie、浏览器配置目录或带认证参数的下载地址写入共享代码。若浏览器工具不可用，给出手动操作步骤；不要宣称已有自动浏览器适配器。
-
-已有企业基础信息 ZIP 后，处理器需要 pandas 和 openpyxl；在项目环境中安装后处理：
+前七个字段必填，是逗号分隔的数字 ID 字符串，不接受数组或 `6:20` 范围。port/version/population_group/wait_ms 为整数；out 通常省略。将核对后的非秘密 JSON 保存到 CONFIG_DIR，例如 gbd-task.json：
 
 ```powershell
-& $amPython -m pip install pandas openpyxl
-$companyScript = "skills/data_acquisition/01_socioeconomic/csmar/scripts/process_listed_company_basic_info.py"
-$companyZip = Join-Path $env:AIRMOSAIC_LOCAL_WORKSPACE "data_cache/csmar/company_basic.zip"
-$companyOutput = Join-Path $env:AIRMOSAIC_LOCAL_WORKSPACE "output/example/csmar"
-& $amPython $companyScript --zip $companyZip --out-dir $companyOutput
+$gbdParams = Join-Path $env:AIRMOSAIC_CONFIG_DIR "gbd-task.json"
+python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdParams --dry-run --allow-network --confirm-browser-session
+python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdParams --allow-network --confirm-browser-session --timeout 300
 ```
 
-`company_basic.zip` 是通用示例文件名，先在本地映射到真实已下载文件。脚本输出行业候选表、最新企业列表 CSV 和 Excel。它处理企业基础信息，不自动解释所有财务表，也不能据企业身份元数据推断成本承担者或物理生产边界。
+两项标志必须符合任务授权；会话声明不是登录验证，认证仍显示 unverified。输出 `output/<run_id>/ihme_gbd_fetch_results/results.csv` 与 JSON sidecar。同时核对请求维度、错误、行数和缺失；人数、每十万人率及比例分开，错误时不沿用旧表格，不自动补零。页面内部结构变化需适配，raw-to-processed 对应关系保留在本地。
 
-## 4. 工业年鉴：需适配的 R 模板
+## 5. 工业年鉴：人工适配
 
-入口：[工业年鉴 skill](../../skills/data_acquisition/01_socioeconomic/ind_yearbook/SKILL.md)。当前提供地区行业和产品产量模板；没有独立的 `process_national_sector.R`。全国行业声明不能直接作为该脚本已存在的证据。
+阅读 [工业年鉴 skill](../../skills/data_acquisition/01_socioeconomic/ind_yearbook/SKILL.md)，用真实模板 ID 查询位置。两项模板不支持 run-tool；没有独立全国行业实现。
 
-1. 确定年鉴版次与表内数据年份，检查样例表及合并表头。
-2. 将需要适配的模板复制到本地任务目录，保留共享模板的通用性。
-3. 明确设置输入根、年份和输出目录；部分模板在加载时会给变量重新赋值，并可能向输入目录写文件。适配副本时将全部写入位置路由到 `output/<run_id>/industrial_yearbook/`，核对后再执行，不在原始数据树直接试跑。YAML 示例需调用方解析，不是自动加载配置。
-4. 安装当前模板实际使用的 R 包，至少核对 `data.table`、`readxl`、`stringr` 等 `library()` 声明。
-5. 先用小型合成表或获准的少量输入核对地区、行业、产品、单位和缺失标记，再处理完整范围。
-6. 保存字段映射、排除项、数值转换失败和缺失组合清单。
+1. 复制需要的 R 模板到新任务目录，检查全部赋值和写入位置；source 会执行，不是帮助命令。
+2. 适配表头、版次/数据年份、行业编码、单位、输入、R 依赖和输出。YAML 只是映射示例，不会自动加载。
+3. 对补零、插值、外推和外部补充明确方法依据，不把默认值当成已批准选择。
+4. 用合成表或授权小样本核对覆盖、缺失、数值转换，再处理任务范围，保存排除项和映射。
 
-示例与模板仍需按真实表结构适配，不默认一键可用。任何插值、外推、补零或外部数据补充都须在任务方法中明确依据；模板中的默认规则不能自动当成项目已批准的科学选择。
+## 6. 共同执行边界
 
-## 5. IHME GBD：已认证浏览器会话
-
-入口：[GBD skill](../../skills/data_acquisition/04_impact/ihme-gbd-results/SKILL.md)。脚本需要 pandas、requests、websocket-client，以及可访问的已登录 Chromium 调试会话。
-
-```powershell
-& $amPython -m pip install pandas requests websocket-client
-```
-
-1. 使用 `${AIRMOSAIC_AUTH_DIR}/browser_profiles/ihme-gbd/` 下的成员专用会话，由成员完成登录；调用方解析环境变量。脚本只连接已启动的浏览器，不自动读取认证根。
-2. 在页面核对数据版本和所有维度 ID；不假定历史示例 ID 永久有效。
-3. 调试端点只在本机使用，核对所选端口属于本次会话；不把认证状态复制给其他人。
-4. 使用最小范围请求验证页面行为和返回参数，再运行已授权范围。
-
-以下是参数形式示例，需要先核对页面当前版本及维度：
-
-```powershell
-$gbdScript = "skills/data_acquisition/04_impact/ihme-gbd-results/scripts/fetch_gbd_results_redux.py"
-$gbdOutput = Join-Path $env:AIRMOSAIC_LOCAL_WORKSPACE "data_cache/gbd_health/raw/mortality_example.csv"
-& $amPython $gbdScript --out $gbdOutput --years 2020 --locations 6 --causes 494 --ages 10 --sexes 1 --measures 1 --metrics 3 --port 9222
-```
-
-其他参数包含 `--version`、`--context`、`--population-group`、`--wait-ms`。默认版本 ID 是实现中的历史值，不代表自动选择最新版本。
-
-脚本操作页面内部状态，页面更新后可能失效。执行后同时检查 CSV 和 JSON sidecar 的请求、行数及错误状态；错误状态下不能沿用浏览器残留表格。死亡人数、每十万人死亡率和比例必须按实际 metric 区分，缺失组合不能自动补零。
-
-## 6. 共同限制
-
-上述脚本存在并不意味着已封装为 MCP 工具或统一 harness。`acquire_worldpop_population`、`fetch_gbd_results` 等名称目前是设想中的 wrapper 名称。将其发布为可调用工具之前，按[注册规范](../tool-registration.md)实现参数校验、路径边界和结果检查。
-
-## 通过统一入口运行
-
-WorldPop、CSMAR 本地 ZIP 处理和 GBD 已接入 [run-tool](run-tool.md)。输出自动进入本次任务目录，WorldPop/GBD 需显式网络标志，GBD 还需授权会话声明；CSMAR 直接读取 ZIP 内工作簿，不在输入旁解压。可安装可选依赖组 `python -m pip install -e ".[dev,tools]"`；Java/模型发行包单独配置。不要用下载脚本的 stdout 作为共享记录。
+run-tool 检查只覆盖启用的适配器，不因失败而绕过它直接运行脚本。dry-run 检查 can_execute/blockers，不能只看退出码 0。记录位于 `runs/<run_id>/record.json`，仅含允许的脱敏字段；科学文件本身仍须审核。获取、处理与模型使用是独立任务，不自动串联、发布缓存或完成科学验收。规则见[执行指南](run-tool.md)。

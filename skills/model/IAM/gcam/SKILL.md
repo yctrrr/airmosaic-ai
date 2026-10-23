@@ -1,15 +1,15 @@
 ---
 name: gcam
-description: Explore GCAM output structure, understand configuration files, and extract scenario data from BaseX XML databases. Use when an agent needs to inspect scenario results, compare model outputs, trace input data chains, extract sector prices or technology components, understand CCS configuration, or navigate GCAM-China specifics. Three sub-layers handle output structure (01), configuration (02), and data extraction (03).
+description: Navigate GCAM existing-output inspection, configuration references, and registered result-extraction and aggregation tools. Use for analyzing existing scenario databases; this skill does not launch GCAM simulations.
 ---
 
 # GCAM Model Analysis
 
-> Invocation status: named wrappers in Agent Contract sections are proposed, not registered APIs. Verify actual scripts and template requirements in the [tool catalog](../../../../harness/tool-catalog.md).
+> Invocation status: Use `gcam_extract_market_sector`, `gcam_extract_technology_components` and `gcam_aggregate_provinces` through `run-tool`. Structure inspection and plotting remain standalone R scripts; configuration is a reference workflow. No GCAM simulation launcher is registered.
 
 ## Local paths and authentication
 
-Follow the [shared storage contract](../../../../harness/storage-and-credentials.md): data and results use `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret configuration uses `AIRMOSAIC_CONFIG_DIR`, and browser authentication state uses `AIRMOSAIC_AUTH_DIR`. Read only task-needed configuration; never inspect, print or copy credential values or browser state. Set module output arguments explicitly for each run. These conventions do not imply automatic config loading or runtime isolation.
+Follow the [shared storage contract](../../../../harness/storage-and-credentials.md) and [execution guide](../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_LOCAL_WORKSPACE` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `output/<run_id>/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
 
 ## Layer Navigation
 
@@ -31,14 +31,20 @@ Choose the right layer based on the task:
 | Plot sector price/quantity change over time | [03_data_extraction](03_data_extraction/SKILL.md) |
 | Interpret price units and sector-specific quirks | [03_data_extraction](03_data_extraction/SKILL.md) |
 
-## Prerequisites
+## Execution routing and prerequisites
 
-Set environment variables before using any layer:
+| Tool ID | Invocation | Scope |
+|---|---|---|
+| `gcam_extract_market_sector` | `run-tool` | Existing market/sector rows |
+| `gcam_extract_technology_components` | `run-tool` | Existing technology-component rows |
+| `gcam_aggregate_provinces` | `run-tool` | Existing market/sector CSV |
+| `gcam_inspect_output_structure` | Standalone R, runner disabled | Fixed inspection queries and database layout |
+| `gcam_plot_sector_change` | Standalone R, runner disabled | Fixed comparison years and explicit output mapping |
+| `gcam_configuration_reference` | Reference only, runner disabled | Manual inspection/authorized task-copy edits |
 
-```powershell
-$env:GCAM_RELEASE_DIR = "<path to gcam-china-v8-Windows-Release-Package>"
-$env:UNIT_PRICE_OUT_DIR = Join-Path $env:AIRMOSAIC_LOCAL_WORKSPACE "output/example/gcam"
-```
+Use `describe-tool <tool_id>` to inspect each record, then follow the linked sub-skill and [model guide](../../../../harness/usage/model-analysis.md). Enabled adapters use the configured project Python; extraction needs pandas, local Java, a compatible BaseX JAR and selected scenario databases. `GCAM_RELEASE_DIR` must be explicitly configured outside Git and the data/config/auth roots; it is not bundled or auto-discovered. Aggregation only needs pandas and its input CSV.
+
+The runner supplies output paths; setting `UNIT_PRICE_OUT_DIR` is only necessary for the standalone plotting script. An authorized configuration change requires a task copy and separate checks; it never authorizes simulation execution. No automatic workflow stitching, GCAM simulation launcher or scientific acceptance service is implemented.
 
 ## Data Boundary
 

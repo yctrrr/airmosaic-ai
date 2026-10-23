@@ -1,5 +1,6 @@
 # 工具注册与查询：第一版实现范围
 
+本文件保留注册查询第一版的设计范围；执行器已在后续实现，当前行为以[run-tool 指南](usage/run-tool.md)及真实 manifest 为准。
 本轮按已有注册规范实现仓库工具目录，接入现有 CLI、Python/R 脚本，同时区分需适配模板和操作参考。
 
 1. `catalog/tools/*.yaml` 是工具元数据唯一来源，`catalog/schemas/tool.schema.json` 校验版本、必需字段、类型与允许的参数绑定。重复 ID、重复 YAML 键、未知字段、越界路径或外部 schema 引用均拒绝。

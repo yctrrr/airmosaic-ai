@@ -1,19 +1,19 @@
 ---
 name: ind-yearbook
-description: Process industrial statistical yearbook data (Excel) into standardized CSV tables. Handles national/regional sector-level economic indicators and product output across multiple yearbook editions. Use when an agent or analyst needs to extract, clean, combine, and code industrial yearbook panels into analysis-ready structured tables.
+description: Adapt industrial-yearbook regional-sector and product-output R templates to authorized Excel inputs. National-sector processing needs a separate implementation; these templates are not runnable via run-tool.
 ---
 
 # Industrial Yearbook Data Processing
 
-> Invocation status: named wrappers in Agent Contract sections are proposed, not registered APIs. Verify actual scripts and template requirements in the [tool catalog](../../../../harness/tool-catalog.md).
+> Invocation status: `yearbook_regional_sector_template` and `yearbook_product_output_template` are catalogued R templates, disabled in `run-tool`. A dedicated national-sector implementation is absent.
 
 ## Local paths and authentication
 
-Follow the [shared storage contract](../../../../harness/storage-and-credentials.md): data and results use `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret configuration uses `AIRMOSAIC_CONFIG_DIR`, and browser authentication state uses `AIRMOSAIC_AUTH_DIR`. Read only task-needed configuration; never inspect, print or copy credential values or browser state. Set module output arguments explicitly for each run. These conventions do not imply automatic config loading or runtime isolation.
+Follow the [shared storage contract](../../../../harness/storage-and-credentials.md) and [execution guide](../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_LOCAL_WORKSPACE` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `output/<run_id>/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
 
 ## Purpose
 
-Extract, clean, standardize, and combine multi-year industrial statistical yearbook Excel data into structured CSV tables. Supports three standard pipelines:
+Extract, clean, standardize, and combine multi-year industrial statistical yearbook Excel data into structured CSV tables. The following three workflow types are described; only regional-sector and product-output R templates are bundled, and both require adaptation:
 
 - **Sector-level economic indicators** (national by industry category)
 - **Regional sector-level indicators** (province × sector panels)
@@ -133,7 +133,7 @@ Parse product name and unit from column headers via product_name(unit) pattern, 
 
 ### 11. Cleaning Report Generation
 
-Each processing run generates a markdown report with:
+An adapted task should generate a local cleaning report with (not a guaranteed output of every bundled template):
 - Input/output file paths
 - Processing scope and rules
 - Per-file processing logs (header rows, data rows, column counts, issues)
@@ -155,21 +155,19 @@ Exclude tables organized by enterprise registration type rather than industry cl
 | 外商投资 | Foreign-invested |
 | 大型/中型/小型 | Large/medium/small scale |
 
-## Agent Contract
+## Manual adaptation boundary
 
-External agents should interact through a wrapper that validates:
+Query `yearbook_regional_sector_template` and `yearbook_product_output_template` with `describe-tool` to locate the actual R files. Both are disabled in `run-tool`; a dedicated national-sector template is not implemented. The examples and YAML below are adaptation material, not executable API payloads or auto-loaded configuration.
 
-- Yearbook root directory path
-- Which pipeline to run (sector/region/product)
-- Year range
-- Output directory (must stay within configured workspace)
-- Whether to generate cleaning reports
-
-Agents should not receive unrestricted filesystem access or paths outside the workspace root.
+1. Copy only the required template into a new local task directory; preserve source tables and shared templates.
+2. Adapt input paths, sheet/header parsing, yearbook-edition/data-year mapping, industry codes, units and output destinations. Read all template assignments: sourcing can execute work, reset settings or write files.
+3. Route every output/report to the task's output directory and resolve R dependencies explicitly. Shared model/data roots are inputs, not scratch space.
+4. Approve and document any missing-value, zero-fill, interpolation or extrapolation rule before applying it; the techniques above describe candidate/template behavior, not accepted project methods.
+5. Validate synthetic/small authorized examples, coverage and conversion failures before a full task. Do not claim a ready-to-run national or end-to-end pipeline.
 
 ## Configuration
 
-See templates/config.yaml for adjustable parameters:
+Read templates/config.yaml as a non-executable mapping example; inspect each template and apply its settings explicitly. Candidate fields include:
 - Year range
 - Region whitelist
 - Sector code lookup path
@@ -185,5 +183,5 @@ See templates/config.yaml for adjustable parameters:
 ## Examples
 
 - examples/workflow_national_sector.R: National-sector adaptation example; verify its input and source paths before use
-- examples/workflow_regional_sector.R: End-to-end regional sector pipeline
-- examples/workflow_product_output.R: End-to-end product output pipeline
+- examples/workflow_regional_sector.R: Regional-sector adaptation example; inspect paths and source calls before execution
+- examples/workflow_product_output.R: Product-output adaptation example; review missing-data rules and all writes before execution

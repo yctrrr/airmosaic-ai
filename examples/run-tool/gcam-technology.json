@@ -1,0 +1,6 @@
+{
+  "scenarios": "example_scenario",
+  "regions": "AH,BJ",
+  "sectors": "cement",
+  "years": "2021,2035"
+}

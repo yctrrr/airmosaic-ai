@@ -1,19 +1,19 @@
 ---
 name: health-impact-analysis
-description: Calculate and visualize PM2.5-attributable premature deaths using grid-level Population Attributable Fraction (PAF) methodology. Supports GEMM-5COD and IER concentration-response curves with GBD baseline mortality. Use when an agent or analyst needs to estimate health burden from air pollution exposure at sub-national resolution.
+description: Adapt PM2.5 health-impact calculation and visualization R templates to aligned concentration, population, baseline mortality and RR data. Use for method preparation and validation; no ready-to-run health model is registered.
 ---
 
 # PM2.5 Health Impact Analysis
 
-> Invocation status: named wrappers in Agent Contract sections are proposed, not registered APIs. Verify actual scripts and template requirements in the [tool catalog](../../../../harness/tool-catalog.md).
+> Invocation status: `pm25_hia_calculate_template` and `pm25_hia_visualize_template` are catalogued R templates, disabled in `run-tool`. Input adaptation and independent scientific validation are required.
 
 ## Local paths and authentication
 
-Follow the [shared storage contract](../../../../harness/storage-and-credentials.md): data and results use `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret configuration uses `AIRMOSAIC_CONFIG_DIR`, and browser authentication state uses `AIRMOSAIC_AUTH_DIR`. Read only task-needed configuration; never inspect, print or copy credential values or browser state. Set module output arguments explicitly for each run. These conventions do not imply automatic config loading or runtime isolation.
+Follow the [shared storage contract](../../../../harness/storage-and-credentials.md) and [execution guide](../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_LOCAL_WORKSPACE` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `output/<run_id>/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
 
 ## Purpose
 
-Estimate PM2.5-attributable premature mortality at grid resolution using the standard environmental epidemiology Population Attributable Fraction (PAF) framework. This skill covers the full pipeline from exposure-population-mortality integration through visualization.
+Prepare a PM2.5-attributable mortality analysis using the Population Attributable Fraction (PAF) framework. This skill provides method references and adaptable calculation/visualization templates; it is not an executable end-to-end service.
 
 ## Methodology
 
@@ -25,9 +25,9 @@ The health impact is calculated per grid cell using the standard PAF approach:
 Attributable Deaths = Population x PAF Mortality Rate
 
 PAF Mortality Rate = sum over (endpoint, sex, age):
-    AgeStruc(age, sex) x BaselineMortRate(endpoint, sex, age) x PAF(conc, endpoint, age)
+    AgeStruc(age, sex) x BaselineMortRate(endpoint, sex, age) / 100,000 x PAF(conc, endpoint, age)
 
-PAF(conc, endpoint, age) = (RR(conc, endpoint, age) - 1) / RR(conc, endpoint, age) / 100,000
+PAF(conc, endpoint, age) = (RR(conc, endpoint, age) - 1) / RR(conc, endpoint, age)
 ```
 
 Where:
@@ -53,7 +53,7 @@ Concentrations are binned at 0.1 ug/m3 resolution. Values above the maximum curv
 ### Age Group Handling
 
 - Standard GBD 5-year age groups: 0, 5, 10, ..., 75, 80+
-- For 80+ (open-ended group): WorldPop keeps 80 as the single 80+ bin. GBD mortality for 85, 90, 95 sub-groups is summed into the 80+ age structure before PAF calculation.
+- Harmonizing an 80+ open-ended group with finer mortality ages requires explicit population denominators and a reviewed mapping. Inspect the template's age handling rather than accepting sums of rates or historical age IDs as a validated aggregation.
 
 ## Required Input Data
 
@@ -81,7 +81,7 @@ Concentrations are binned at 0.1 ug/m3 resolution. Values above the maximum curv
 ### 5. RR Curve Lookup Table
 - Format: CSV with columns curve_name, endpoint, concentration, agegroup, RR
 - Concentration values as character (rounded to 0.1 for matching)
-- RR = 1.0 at theoretical minimum risk exposure level (TMREL = 0 ug/m3)
+- Verify RR = 1 at the lookup table's documented reference concentration; do not assume zero as a universal curve threshold.
 
 ## Output
 
@@ -111,23 +111,15 @@ Aggregated by Year, curve_name, urarea:
 - Spectral color palette (reversed), units: deaths per grid cell
 - China boundary overlay with South China Sea inset
 
-## Agent Contract
+## Manual adaptation and scientific boundary
 
-External agents should call a wrapper that validates:
-- Year(s) to process
-- RR curve selection (GEMM-5COD or IER)
-- Input data paths for all five required components
-- Output directory (must stay within workspace)
-- Whether to run calculation, visualization, or both
+Query `pm25_hia_calculate_template` and `pm25_hia_visualize_template` with `describe-tool` for their real locations and requirements. Both are templates disabled in `run-tool`; there is no ready-to-run health-impact service.
 
-Agents should not receive unrestricted filesystem access. Output paths must be scoped to the configured workspace.
+Copy the needed template to a new local task directory, then adapt the concentration grid, population/age denominators, baseline mortality, RR curves, years, sex/age mappings, missing values and all output paths. Sourcing these R files executes work; it is not a safe help/discovery action. Current hardcoded assumptions, including mortality-year selection and age harmonization, need domain review. Validate simple cases and group totals before a real analysis; a template's presence or exit code proves neither epidemiological validity nor scientific acceptance. See the [model guide](../../../../harness/usage/model-analysis.md) for exact environment names and checkpoints.
 
-## Configuration
+## Explicit template configuration
 
-Controlled via environment variables or config file:
-- PM25_HIA_YEARS: comma-separated years (default: 2023)
-- PM25_HIA_CURVE: curve name (default: GEMM-5COD)
-- Input path overrides for each data component
+There is no automatic YAML/config-file loader. Set the variables read by the adapted R task explicitly: `PM25_HIA_CONC_DIR`, `PM25_HIA_POP_DIR`, `PM25_HIA_MORT_FILE`, `PM25_HIA_RR_FILE`, `PM25_HIA_OUTPUT_DIR`, `PM25_HIA_YEARS`, `PM25_HIA_CURVE`. Visualization additionally uses `PM25_HIA_POP_FILE` and `PM25_HIA_SHP_DIR`. Use new task outputs outside Git, preserve originals, and sanitize any standalone logs before sharing.
 
 ## References
 

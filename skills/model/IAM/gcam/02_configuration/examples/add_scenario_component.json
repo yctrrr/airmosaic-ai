@@ -1,9 +1,10 @@
 {
-  "tool": "update_gcam_configuration",
-  "action": "add_scenario_component",
-  "config_file": "${GCAM_RELEASE_DIR}/exe/configuration_china_ssp1.xml",
-  "component_name": "ccs_china_shareweights",
-  "component_file": "../input/gcamdata/xml/CCS_shrwt_CHINA.xml",
-  "insert_after": "detailed_industry_CHINA",
-  "output_config": "${AIRMOSAIC_LOCAL_WORKSPACE}/output/example/gcam/config/modified_config.xml"
+  "reference_tool_id": "gcam_configuration_reference",
+  "execution_supported": false,
+  "workflow_type": "manual_adaptation",
+  "notes": "Not an API request. Copy configuration/dependencies to a task directory before an authorized edit; model execution requires separate scope.",
+  "source_config": "${GCAM_RELEASE_DIR}/exe/configuration_example.xml",
+  "component_name": "example_component",
+  "component_file": "input/example_component.xml",
+  "output_config": "${AIRMOSAIC_LOCAL_WORKSPACE}/output/<task_id>/gcam_configuration/modified_config.xml"
 }

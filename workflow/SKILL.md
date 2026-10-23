@@ -26,7 +26,7 @@ Layer 4: Socioeconomic Impact
 
 ## Data Volume Branching
 
-以下是待领域验证的方法分支设计，当前没有自动执行器。样本量、标签质量、任务适用性和独立验证需要共同审查：
+以下是待领域验证的方法分支设计，当前没有自动模型选择或跨层编排。样本量、标签质量、任务适用性和独立验证需要共同审查：
 
 - **数据充足且适用性得到验证** → 可考虑 AI 建模；因果识别另需成立的研究设计与假设
 - **数据不足** → 经验公式 / 人工修正
@@ -40,21 +40,17 @@ Layer 4: Socioeconomic Impact
 | 3 | `layers/03_atmospheric_transport.yaml` | Atmospheric chemistry transport template |
 | 4 | `layers/04_impact.yaml` | Impact assessment template |
 
-## Usage
+## Current invocation boundary
 
-Proposed future orchestrator interaction, shown as design pseudocode only. The following import and class do not currently exist; do not run this example:
+This file is a workflow design, not an executable skill or service. Choose the actual registered tool IDs in the [catalog](../harness/tool-catalog.md), then use the [run-tool guide](../harness/usage/run-tool.md) for supported single-tool tasks:
 
-```text
-from workflow import WorkflowOrchestrator
-
-orchestrator = WorkflowOrchestrator()
-result = orchestrator.run(
-    question="评估2030年碳达峰政策对京津冀PM2.5浓度和居民健康的影响",
-    layers=[1, 2, 3, 4],
-    spatial_scope="Beijing-Tianjin-Hebei",
-    temporal_scope={"start": 2020, "end": 2035}
-)
+```powershell
+python -m airmosaic_core.cli list-tools --category data_acquisition
+python -m airmosaic_core.cli list-tools --category model
+python -m airmosaic_core.cli run-tool airmosaic_list_datasets --dry-run
 ```
+
+The existing adapters do not implement all four layers or automatically connect data acquisition, simulation, health templates and acceptance. Pass validated task artifacts explicitly; unsupported methods need separate implementation or manual adaptation and authorization.
 
 ## Traceability
 

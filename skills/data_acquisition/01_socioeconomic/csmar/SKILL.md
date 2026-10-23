@@ -1,15 +1,15 @@
 ---
 name: csmar-downloader
-description: Download CSMAR financial and enterprise data after browser login. Extracts listed-company basic information and filters target-industry candidates for socioeconomic analysis.
+description: Guide authorized CSMAR browser downloads and process an existing listed-company basic-information ZIP with csmar_process_company_info. Browser download is not automated by run-tool.
 ---
 
 # CSMAR Data Downloader
 
-> Invocation status: named wrappers in Agent Contract sections are proposed, not registered APIs. Verify actual scripts and template requirements in the [tool catalog](../../../../harness/tool-catalog.md).
+> Invocation status: `csmar_browser_download` is a non-executable browser-workflow reference. Only `csmar_process_company_info` is enabled in `run-tool` for an existing company-info ZIP.
 
 ## Local paths and authentication
 
-Follow the [shared storage contract](../../../../harness/storage-and-credentials.md): data and results use `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret configuration uses `AIRMOSAIC_CONFIG_DIR`, and browser authentication state uses `AIRMOSAIC_AUTH_DIR`. Read only task-needed configuration; never inspect, print or copy credential values or browser state. Set module output arguments explicitly for each run. These conventions do not imply automatic config loading or runtime isolation.
+Follow the [shared storage contract](../../../../harness/storage-and-credentials.md) and [execution guide](../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_LOCAL_WORKSPACE` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `output/<run_id>/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
 
 Download CSMAR (China Stock Market & Accounting Research) data tables from `https://data.csmar.com/` for socioeconomic driver analysis (workflow Layer 1).
 
@@ -23,54 +23,17 @@ Download CSMAR (China Stock Market & Accounting Research) data tables from `http
 - CSMAR account with institutional access
 - Python 3.10+ with pandas, openpyxl
 
-## Download Workflow
+## Browser download reference: csmar_browser_download
 
-CSMAR downloads require two steps:
-1. Submit a query in the CSMAR web UI to create a download record.
-2. Open the generated `sdownload.html?...` page and click the final local-save button.
+This catalogued reference has `execution_supported: false`; `run-tool` rejects it. Use `describe-tool csmar_browser_download` for metadata, then follow the authorized browser workflow with a tool actually available in the host, or perform it manually. No project browser-launch/login adapter is registered.
 
-### Browser Automation
+1. Use the member's own profile under `${AIRMOSAIC_AUTH_DIR}/browser_profiles/csmar/`. Configure the browser explicitly; setting the root variable alone does not launch or select a profile.
+2. Let the member authenticate and verify institutional table access. Do not export cookies or automate password entry.
+3. Select the requested table, dates, records and needed fields. Select all fields only when the task requires the complete table; verify the selection and query size before submission.
+4. Submit the query to create a download record, then open that record and use the final local-save action. Keep signed download links and account details local.
+5. Save the export in the authorized data cache and retain its field description. Existing download records are not proof that a file was saved successfully.
 
-```js
-const { chromium } = await import("playwright");
-const { join } = await import("node:path");
-const authRoot = process.env.AIRMOSAIC_AUTH_DIR;
-if (!authRoot) throw new Error("Configure AIRMOSAIC_AUTH_DIR locally first.");
-const context = await chromium.launchPersistentContext(
-  join(authRoot, "browser_profiles", "csmar"),
-  {
-    headless: false,
-    viewport: null,
-    acceptDownloads: true,
-    args: ["--start-maximized"]
-  }
-);
-```
-
-### Step-by-Step
-
-1. Open `https://data.csmar.com/` in the browser.
-2. Check login state. If not authenticated or logged into a wrong account, stop and ask user to log in manually. Continue only after user confirms login.
-3. Navigate to the target table (e.g., listed-company basic information: `https://data.csmar.com/csmar.html#/datacenter/singletable/search?databaseId=176`).
-4. Click **全选** (Select All) in the field selection panel. Verify the selection changes to `已选：N/N`.
-5. Preview data to validate field selection and query size.
-6. Submit the download task.
-7. Open the download records page or directly open: `https://data.csmar.com/sdownload.html?intro=<outlineId>&dbName=<encoded_db>&tbName=<encoded_table>&tbId=<table_id>&namePhy=<physical_table>#/`
-8. Click the local-save data button. Save the zip to `${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/csmar/`.
-
-### Field Selection Rules
-
-- Always click **全选** for each table. Do not rely on default fields.
-- Verify the final `sdownload.html` page lists all expected fields.
-- If Excel export contains fewer columns than selected, retry with CSV or TXT format.
-- Validate: exported column count >= field description file column count.
-
-### Manual Login Policy
-
-Do not automate CSMAR login. When login is needed:
-1. Open visible browser.
-2. Ask user to complete login manually.
-3. Continue only after user confirms.
+CSV/TXT may be alternatives for browser exports, but the processor below specifically expects a ZIP containing an XLSX workbook; other formats require a separate adaptation. Browser operations have their own authorization and do not inherit runner path enforcement.
 
 ## Core Table: Listed Company Basic Information
 
@@ -89,32 +52,38 @@ Key fields to include:
 - Main business
 - Listing status
 
-## Postprocessing
+## Registered local processing: csmar_process_company_info
 
-Use the bundled script to extract target-industry company candidates from the CSMAR company info zip:
+Use the existing downloaded ZIP; this step needs pandas/openpyxl and no browser login. [The public parameter example](../../../../examples/run-tool/csmar.json) is a flat JSON object:
 
-```powershell
-# Run from this skill directory after configuring the local workspace.
-python scripts/process_listed_company_basic_info.py `
-  --zip "$env:AIRMOSAIC_LOCAL_WORKSPACE/data_cache/csmar/company_basic.zip" `
-  --out-dir "$env:AIRMOSAIC_LOCAL_WORKSPACE/output/example/csmar"
+```json
+{"zip":"${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/csmar/company_basic.zip"}
 ```
 
-Outputs:
-- `csmar_target_industry_company_candidates.csv` — all sector-matched rows
-- `csmar_target_industry_company_list_latest.csv` — deduplicated latest company records
-- `csmar_target_industry_company_list_latest.xlsx` — Excel with both sheets
+Map that filename to the authorized input, then run from the repository root:
 
-Target sectors screened: thermal power, district heating, iron/steel, non-ferrous metals, cement, lime, brick/tile, glass, chemical industry.
+```powershell
+python -m airmosaic_core.cli describe-tool csmar_process_company_info
+python -m airmosaic_core.cli run-tool csmar_process_company_info --params-file examples/run-tool/csmar.json --dry-run
+python -m airmosaic_core.cli run-tool csmar_process_company_info --params-file examples/run-tool/csmar.json
+```
+
+The runner supplies `out_dir`. The script reads the workbook directly inside the ZIP, without extracting next to or modifying the input. Results go under `output/<run_id>/csmar_process_company_info/`:
+
+- `csmar_target_industry_company_candidates.csv`: sector-matched rows.
+- `csmar_target_industry_company_list_latest.csv`: latest company records.
+- `csmar_target_industry_company_list_latest.xlsx`: both sheets.
+
+The fixed keyword groups cover thermal power, district heating, iron/steel, nonferrous metals, cement, lime, brick/tile, glass and chemicals. Review matches and required columns; unsupported tables and formats need adaptation. Company identity alone establishes neither cost payer nor physical production boundary. This is not a general financial-statement processor.
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| Excel export missing fields | Retry with CSV or TXT format |
+| Excel export missing fields | Review browser-export alternatives; the local ZIP/XLSX processor needs adaptation for CSV/TXT |
 | Download canceled by browser | Check `chrome://downloads/`; retry the final page click |
 | Wrong account logged in | Use user menu logout, ask user to re-login |
-| Field count mismatch | Re-select all fields, re-submit query |
+| Field count mismatch | Re-select the task-required fields and verify the final export |
 
 ## References
 

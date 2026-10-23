@@ -74,7 +74,7 @@ The CLI provides dataset/cache/template commands plus `list-tools`, `describe-to
 
 Dataset listing reads acquisition skill declarations. Cache inspection only finds files; it does not validate contents or checksums. The causal-plan command returns a local template without calling an LLM or producing a causal estimate.
 
-The registry loader validates `catalog/tools/*.yaml` against its schema and distinguishes executable entries from templates/references. Querying never runs scripts, logs in or reads credentials. Login and R-library status remain unverified without independent checks. The reviewed `run-tool` adapters support 8 core CLI commands and 6 Python scripts with parameter validation, dry-run, path preflight and sanitized receipts; see the [execution guide](harness/usage/run-tool.md). R/templates/references are not enabled. This is not an OS sandbox. MCP, REST and workflow orchestration remain planned. Symbolic names in old examples are not registered aliases.
+The registry loader validates `catalog/tools/*.yaml` against its schema and distinguishes executable entries from templates/references. Querying never runs scripts, logs in or reads credentials. Login and R-library status remain unverified without independent checks. The reviewed `run-tool` adapters support 8 core CLI commands and 6 Python scripts with parameter validation, dry-run, path preflight and sanitized receipts; see the [execution guide](harness/usage/run-tool.md). R/templates/references are not enabled. This is not an OS sandbox. MCP, REST and workflow orchestration remain planned. Use actual tool IDs with flat parameter JSON; browser references and R templates require the manual preparation described in the classified guides.
 
 ## Skills and agents
 

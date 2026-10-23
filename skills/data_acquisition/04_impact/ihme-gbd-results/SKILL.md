@@ -1,36 +1,30 @@
 ---
 name: ihme-gbd-results
-description: Fetch and process IHME GBD Results data from vizhub.healthdata.org through a user-authenticated browser session. Use when an external agent or analyst needs GBD mortality, population, cause, age, sex, location, measure, metric, or year data and direct API/download requests are blocked, rate-limited, or need to match IHME web UI output schemas.
+description: Fetch IHME GBD Results with ihme_gbd_fetch_results through an existing user-authenticated browser. Use for scoped mortality or population exports after checking current page version and dimension IDs.
 ---
 
 # IHME GBD Results
 
-> Invocation status: named wrappers in Agent Contract sections are proposed, not registered APIs. Verify actual scripts and template requirements in the [tool catalog](../../../../harness/tool-catalog.md).
+> Invocation status: `ihme_gbd_fetch_results` is enabled in `run-tool` for an existing authorized loopback browser session. It does not launch a browser or authenticate the user.
 
 ## Local paths and authentication
 
-Follow the [shared storage contract](../../../../harness/storage-and-credentials.md): data and results use `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret configuration uses `AIRMOSAIC_CONFIG_DIR`, and browser authentication state uses `AIRMOSAIC_AUTH_DIR`. Read only task-needed configuration; never inspect, print or copy credential values or browser state. Set module output arguments explicitly for each run. These conventions do not imply automatic config loading or runtime isolation.
+Follow the [shared storage contract](../../../../harness/storage-and-credentials.md) and [execution guide](../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_LOCAL_WORKSPACE` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `output/<run_id>/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
 
 ## Purpose
 
 Use this skill for IHME GBD Results acquisition and local processing. The skill does not store credentials, cookies, tokens, browser profiles, or personal paths. Raw exports and processed mortality tables must stay under the AirMosaic local workspace.
 
-## Local Cache Boundary
+## Results and cache boundary
 
-Default local-only cache:
-
-```text
-${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gbd_health
-```
-
-Do not commit raw IHME exports, processed health tables, cookies, browser profiles, or login artifacts to GitHub.
+`run-tool` writes `output/<run_id>/ihme_gbd_fetch_results/results.csv` and its JSON sidecar. Raw/processed health tables stay local. Publishing a validated export into `${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gbd_health/` is a separate authorized operation, not automatic runner behavior. Do not commit exports, account identity or browser artifacts.
 
 ## Workflow
 
 1. Open `https://vizhub.healthdata.org/gbd-results/` in a Chromium browser with remote debugging enabled.
 2. Let the user log in and complete any verification manually.
 3. Prefer the page's own search flow over direct `fetch` or `requests` calls. Direct calls to internal PHP endpoints can be blocked or return stale/error state.
-4. Use `scripts/fetch_gbd_results_redux.py` to drive the loaded page's Redux store and collect `tableData`.
+4. Invoke `ihme_gbd_fetch_results` through `run-tool` to drive the loaded page and collect `tableData`; do not call the raw script to bypass runner checks.
 5. Save raw IHME output separately from project-specific processed outputs.
 6. Map IHME display names to local schemas explicitly; do not infer endpoint or age mappings from sort order alone.
 7. Validate every processed output against raw IHME rows by key columns and numeric values.
@@ -41,60 +35,29 @@ Use a locally configured Chromium executable or browser tool and a member-specif
 
 Keep the executable path mapping in `${AIRMOSAIC_CONFIG_DIR}`; keep the profile in the authentication root. Do not commit the executable path, profile path, cookies or account identity. See the repository's classified data-acquisition guide for the complete sequence.
 
-## Fetch Command
+## Registered execution
 
-Run the following script command from this skill directory.
+From the repository root, inspect `ihme_gbd_fetch_results`. [The public example](../../../../examples/run-tool/gbd.json) and the local `examples/gbd_mortality_rate_request.json` are parameter-only JSON. They contain historical example IDs, not a validated current request. Confirm version and all dimensions in the current page, then save a reviewed non-secret copy under CONFIG_DIR.
 
 ```powershell
-if (-not $env:AIRMOSAIC_LOCAL_WORKSPACE) { throw "Configure AIRMOSAIC_LOCAL_WORKSPACE locally first." }
-$out = "$env:AIRMOSAIC_LOCAL_WORKSPACE\data_cache\gbd_health\raw\gbd_2019_2023_mortality_rate.csv"
-
-python ".\scripts\fetch_gbd_results_redux.py" `
-  --out $out `
-  --years 2019,2020,2021,2022,2023 `
-  --locations 1,6,101,102 `
-  --causes 426,493,322,494,976,509,409 `
-  --ages 1,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,30,31,32,235 `
-  --sexes 1,2 `
-  --measures 1 `
-  --metrics 3 `
-  --port 9222
+python -m airmosaic_core.cli describe-tool ihme_gbd_fetch_results
+$gbdParams = Join-Path $env:AIRMOSAIC_CONFIG_DIR "gbd-task.json"
+python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdParams --dry-run --allow-network --confirm-browser-session
+# Execute only after the parameter file and the existing authorized session have been checked.
+python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdParams --allow-network --confirm-browser-session --timeout 300
 ```
 
-The script writes:
+Required caller fields: `years`, `locations`, `causes`, `ages`, `sexes`, `measures`, `metrics`; each is a comma-separated string of numeric IDs. Use `"ages":"10,11"`, not a JSON array or colon range. Optional fields include integer `port`, `version`, `population_group`, `wait_ms` and string `context`; `out` is automatically allocated. No field accepts cookies, passwords, profile paths or login tokens.
 
-- output CSV;
-- JSON sidecar with parameters, returned row count, and error state.
+`--allow-network` permits the declared operation; `--confirm-browser-session` attests that the loopback CDP port belongs to the authorized task. Neither validates login or semantic correctness of dimension IDs. The runner does not launch a browser, log in, or export its authentication state.
 
-If the sidecar contains an error such as `ERROR_NO_RESULTS`, do not trust stale rows left in the browser table.
+Check both CSV and JSON sidecar for returned dimensions, row counts and error state. A zero exit code is not proof of a complete export. Never use stale browser rows after an error.
 
-## Common IDs
+## Version and ID checks
 
-- GBD 2023 version: `8352`
-- Context: `cause`
-- Population group: `1`
-- Measure deaths: `1`
-- Metric rate: `3`
-- Example locations: `1` Global, `6` China, `101` Canada, `102` United States of America
-- Sexes: `1` Male, `2` Female
+The script's historical defaults include version `8352`, context `cause`, population group `1` and CDP port `9222`. The public example uses these as syntax examples only. Check the page's current version, location, cause, age, sex, measure and metric selections before an actual request; no mapping to the latest release is automatic.
 
-Cause IDs used in the AirMosaic mortality workflow:
-
-- `426` Tracheal, bronchus, and lung cancer
-- `493` Ischemic heart disease
-- `322` Lower respiratory infections
-- `494` Stroke
-- `976` Diabetes mellitus type 2
-- `509` Chronic obstructive pulmonary disease
-- `409` Non-communicable diseases
-- `294` All causes
-- `956` Respiratory infections and tuberculosis
-- `491` Cardiovascular diseases
-
-Age IDs:
-
-- Standard mortality ages: `1,6:20,30,31,32,235`, mapping to `0,5,...,95`.
-- GEMM-style ages: `1,6:20,21`, mapping to `0,5,...,80`.
+Distinguish counts, rates per 100000 and proportions by the selected metric. The numeric schema validates shape, not availability, labeling or scientific suitability of an ID. Age-group harmonization needs an explicit mapping and compatible population denominators; never infer it from sorted row positions.
 
 ## Processing Rules
 
@@ -106,11 +69,9 @@ Keep project-specific processing in local project code, not in this skill. Recom
 4. If GBD omits low-age cause combinations, leave them absent or fill only with a documented method.
 5. Write a missing-combination report and provenance summary separately from the main table.
 
-## Agent Contract
+## Agent execution boundary
 
-External agents should call a controlled wrapper such as `fetch_gbd_results`. The wrapper should validate requested year, location, cause, age, sex, measure, and metric IDs, then invoke the script against a user-authenticated browser session.
-
-The agent must not receive cookies, tokens, browser profile paths, or unrestricted filesystem access.
+Use only `ihme_gbd_fetch_results` for this runner task. Browser authentication must already exist in the member's own session. The runner uses a minimal environment and task-owned output directory; the script still depends on the page's internal state and can break after UI changes. Review error/partial outputs before retrying, and preserve raw-to-processed provenance locally.
 
 ## Validation Checklist
 

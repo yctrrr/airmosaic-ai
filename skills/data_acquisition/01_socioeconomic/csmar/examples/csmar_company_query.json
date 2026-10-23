@@ -1,9 +1,15 @@
-﻿{
-  "dataset_id": "csmar_listed_company_basic_info",
+{
+  "reference_tool_id": "csmar_browser_download",
+  "execution_supported": false,
+  "workflow_type": "manual_browser",
+  "notes": "Planning example only, not run-tool parameters. Review requested table, scope and fields before browser submission.",
+  "dataset_id": "csmar_listed_company_basic",
   "table": "Listed Company Basic Information",
   "entry_url": "https://data.csmar.com/csmar.html#/datacenter/singletable/search?databaseId=176",
   "parameters": {
-    "fields": ["all"],
+    "fields": [
+      "task-required columns"
+    ],
     "stock_type": "A-share",
     "status": "active"
   },
@@ -12,11 +18,8 @@
     "save_to": "${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/csmar/"
   },
   "postprocess": {
-    "script": "scripts/process_listed_company_basic_info.py",
-    "outputs": [
-      "csmar_target_industry_company_candidates.csv",
-      "csmar_target_industry_company_list_latest.csv",
-      "csmar_target_industry_company_list_latest.xlsx"
-    ]
+    "tool_id": "csmar_process_company_info",
+    "parameter_file": "examples/run-tool/csmar.json",
+    "notes": "Separate local task after the authorized ZIP is downloaded; not an automatic chain."
   }
 }

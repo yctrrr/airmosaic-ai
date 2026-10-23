@@ -1,37 +1,47 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "WorldPop acquisition request",
+  "title": "worldpop_download caller parameters",
+  "$comment": "Parameter-only snapshot of catalog/tools/worldpop_download.yaml input_schema before automatic output allocation. The manifest is authoritative; path and permission checks require run-tool.",
   "type": "object",
-  "required": ["tool", "project", "iso3", "root"],
   "properties": {
-    "tool": {
-      "type": "string",
-      "enum": ["discover_worldpop", "acquire_worldpop_population"]
-    },
     "project": {
       "type": "string",
-      "description": "WorldPop project/product alias, for example wpgp."
+      "description": "Value supplied for this task.",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
     },
     "iso3": {
       "type": "string",
+      "description": "Value supplied for this task.",
       "pattern": "^[A-Za-z]{3}$"
     },
-    "year": { "type": "integer" },
+    "year": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9999
+    },
     "contains": {
-      "type": "array",
-      "items": { "type": "string" }
+      "type": "string",
+      "description": "Value supplied for this task."
     },
     "extensions": {
-      "type": "array",
-      "items": { "type": "string" },
-      "default": [".tif", ".tiff", ".zip"]
+      "type": "string",
+      "description": "Value supplied for this task."
     },
-    "download": { "type": "boolean", "default": false },
-    "limit": { "type": "integer", "minimum": 1 },
     "root": {
       "type": "string",
-      "description": "Local-only cache root under the configured AirMosaic local workspace."
+      "description": "Must be under the authorized data workspace."
+    },
+    "download": {
+      "type": "boolean"
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100
     }
   },
+  "required": [
+    "project"
+  ],
   "additionalProperties": false
 }

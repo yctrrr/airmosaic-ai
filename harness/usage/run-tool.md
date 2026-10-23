@@ -17,13 +17,26 @@ python -m airmosaic_core.cli run-tool airmosaic_list_datasets
 
 # 公开示例 JSON，不需要处理 shell 内嵌 JSON 的引号
 python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --dry-run
-python -m airmosaic_core.cli run-tool gcam_aggregate_provinces --params-file examples/run-tool/aggregate.json --dry-run
+# 汇总示例先替换 source_run_id、检查来源市场 CSV，再用个人 JSON 调用
 
 # 确认项目、年份和网络授权后再执行；即使只发现元数据也会联网和写入
 python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --allow-network --timeout 300
 ```
 
 相对 `--params-file` 仅以当前仓库内的 `examples/` 为基准解析；其他文件必须使用绝对路径。也可用 `--params '{"project":"wpgp","year":2020}'`，但不同 shell 引号规则不同，私人任务文本还可能留在 shell 历史和进程参数中，因此优先用显式 JSON 文件。SDK：`ToolRunnerService().run("airmosaic_list_datasets", {}, dry_run=True)`。
+
+## 参数示例与真实 ID
+
+| 工具 ID | 参数文件 | 使用前核对 |
+|---|---|---|
+| `worldpop_download` | [worldpop.json](../../examples/run-tool/worldpop.json) | 国家、年份、产品和 download 标志 |
+| `csmar_process_company_info` | [csmar.json](../../examples/run-tool/csmar.json) | 映射到已有授权 ZIP，核对表结构 |
+| `ihme_gbd_fetch_results` | [gbd.json](../../examples/run-tool/gbd.json) | 历史语法例子；当前页面版本、维度及已授权会话须另行核对 |
+| `gcam_extract_market_sector` | [gcam-market.json](../../examples/run-tool/gcam-market.json) | 替换示例情景，明确地区、年份；两省样例不是全国 |
+| `gcam_extract_technology_components` | [gcam-technology.json](../../examples/run-tool/gcam-technology.json) | 同上；没有 method 参数 |
+| `gcam_aggregate_provinces` | [aggregate.json](../../examples/run-tool/aggregate.json) | 把 source_run_id 换成成功市场提取的实际 ID，并检查 CSV |
+
+JSON 是参数对象，不含 tool/tool_id/parameters 外层字段；ID 在命令行选择。列表型筛选使用逗号分隔字符串，不是数组。输入/输出路径仅展开工作区变量；示例中的尖括号必须人工替换。输出参数通常省略，由执行器补充。人工计划与 R 模板不能作为参数文件执行。各任务的业务检查见[数据获取](data-acquisition.md)与[模型分析](model-analysis.md)。
 
 ## 路径和写入边界
 

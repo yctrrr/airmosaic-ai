@@ -10,7 +10,7 @@ AirMosaic contains reusable atmospheric-environment skills, data declarations, s
 - Use repository-relative code paths and locally configured environment variables for data/model roots. Do not print whole environments, credential files or authenticated browser state. Report suspected secrets by location and category without repeating their values.
 - Keep data/results under `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret settings under `AIRMOSAIC_CONFIG_DIR`, and browser authentication state under `AIRMOSAIC_AUTH_DIR`. All roots must be separate and outside Git checkouts. Store passwords/tokens in a credential manager; do not create plaintext secret files. Read only task-needed configuration and use authorized tools without exporting authentication state.
 - Keep model releases outside the repository. Use `output/<run_id>/<tool>/` for new results and share only a reviewed, sanitized summary. Preserve legacy output locations unless migration is authorized.
-- Distinguish source inspection, local smoke checks, real-data integration and scientific validation. Do not report skipped tests or planned wrappers as implemented capabilities.
+- Distinguish source inspection, local smoke checks, real-data integration and scientific validation. Do not report skipped tests or planned capabilities as implemented capabilities.
 - Follow [agent boundaries](harness/agent-boundaries.md) for scope, privacy, general-purpose scripts and sharing. These rules are operating instructions; they are not evidence that runtime enforcement exists.
 
 ## Documentation map
@@ -49,7 +49,7 @@ python -m airmosaic_core.cli draft-causal-plan --question 'Did the policy change
 - `list-datasets` reads acquisition `datasets.yaml` declarations. It is not a catalog of every executable tool or of downloaded files.
 - `check-availability` searches for files only. It does not validate contents, years, checksums or scientific suitability. Its local output may contain absolute paths; sanitize before sharing.
 - `draft-causal-plan` returns a local template. It does not invoke an LLM, generate an actual DAG or establish a causal effect.
-- SDK entry points are the `DataCatalogService`, `DataAccessService` and `CausalDesignService` classes in `airmosaic_core.services`.
+- SDK entry points are the `DataCatalogService`, `DataAccessService`, `CausalDesignService`, `ToolRegistryService` and `ToolRunnerService` classes in `airmosaic_core.services`.
 
 ## Skill and tool discovery
 
@@ -59,7 +59,7 @@ Acquisition skill IDs include `worldpop`, `csmar`, `ind_yearbook` and `ihme-gbd-
 
 `ToolRegistryService` now validates `catalog/tools/*.yaml` and supports `list-tools`, `describe-tool` and `check-tool`. These read-only queries check static prerequisites; they never execute tools, load personal config or inspect credentials. Authentication/R libraries may remain unverified. Templates and references are catalogued as non-callable.
 
-`run-tool` supports the reviewed core CLI and six Python scripts with schema/path checks, dry-run and sanitized receipts. Read its [guide](harness/usage/run-tool.md) first: all three existing roots are required, output parameters default to a fresh task directory, network requires an explicit flag, and GBD requires session attestation. Never put credentials into parameters. Child processes receive a minimal environment; receipts omit raw values and logs. This is a preflight layer for trusted code, not an OS sandbox. R/templates/references and nested run-tool remain unsupported. MCP, REST and `WorkflowOrchestrator` are not implemented. Raw scripts do not gain these checks automatically.
+`run-tool` supports the reviewed core CLI and six Python scripts with schema/path checks, dry-run and sanitized receipts. Read its [guide](harness/usage/run-tool.md) first: all three existing roots are required, output parameters default to a fresh task directory, network requires an explicit flag, and GBD requires session attestation. Never put credentials into parameters. Child processes receive a minimal environment; receipts omit raw values and logs. This is a preflight layer for trusted code, not an OS sandbox. R/templates/references and nested run-tool remain unsupported. MCP, REST and cross-layer workflow orchestration are not implemented. Raw scripts do not gain these checks automatically.
 
 ## Execution and scientific boundaries
 

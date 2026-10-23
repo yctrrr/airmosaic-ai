@@ -1,0 +1,14 @@
+{
+  "years": "2020",
+  "locations": "6",
+  "causes": "494",
+  "ages": "10",
+  "sexes": "1",
+  "measures": "1",
+  "metrics": "3",
+  "version": 8352,
+  "context": "cause",
+  "population_group": 1,
+  "port": 9222,
+  "wait_ms": 120000
+}

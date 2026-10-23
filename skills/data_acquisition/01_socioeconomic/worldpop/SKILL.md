@@ -1,15 +1,15 @@
 ---
 name: worldpop
-description: Discover, download, organize, and validate WorldPop gridded population data from official WorldPop APIs and data files. Use when an external agent or analyst needs population rasters by country, year, sex, age group, UN-adjusted/unadjusted product, constrained/unconstrained product, or WorldPop zonal/statistical services for exposure weighting and health burden workflows.
+description: Discover and optionally download WorldPop population files with worldpop_download. Use for country, year and product acquisition; zonal analysis requires separate implementation.
 ---
 
 # WorldPop Data Acquisition
 
-> Invocation status: named wrappers in Agent Contract sections are proposed, not registered APIs. Verify actual scripts and template requirements in the [tool catalog](../../../../harness/tool-catalog.md).
+> Invocation status: `worldpop_download` supports metadata discovery and optional download through `run-tool`. Zonal statistics have no standalone executable tool.
 
 ## Local paths and authentication
 
-Follow the [shared storage contract](../../../../harness/storage-and-credentials.md): data and results use `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret configuration uses `AIRMOSAIC_CONFIG_DIR`, and browser authentication state uses `AIRMOSAIC_AUTH_DIR`. Read only task-needed configuration; never inspect, print or copy credential values or browser state. Set module output arguments explicitly for each run. These conventions do not imply automatic config loading or runtime isolation.
+Follow the [shared storage contract](../../../../harness/storage-and-credentials.md) and [execution guide](../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_LOCAL_WORKSPACE` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `output/<run_id>/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
 
 ## Purpose
 
@@ -23,54 +23,34 @@ Use this skill to acquire WorldPop population products on demand for AirMosaic A
 
 WorldPop documents an API rate limit. Cache metadata and downloaded files locally rather than repeatedly querying the same products.
 
-## Default Local Cache
+## Results and cache
 
-```text
-${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/worldpop
-```
+`run-tool` writes this task to `${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/worldpop_download/`: metadata JSON/CSV under `metadata/`, downloaded files under `raw/<iso3>/<project>/<year>/`. The receipt is under `runs/<run_id>/record.json` and omits parameter values and filenames.
 
-Suggested layout:
+`${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/worldpop/` is the reusable cache location, not the runner's output destination. Publishing validated task files into that cache is a separate authorized operation; no automatic cache promotion, raster resampling or zonal statistics is implemented.
 
-```text
-worldpop/
-  raw/
-    <iso3>/
-      <project>/
-        <year>/
-  metadata/
-  derived/
-```
+## Registered execution
 
-## Discover And Download
-
-Run the following script command from this skill directory.
-
-Use the bundled script for metadata discovery and optional download:
+Use `worldpop_download` from the repository root. Inspect its manifest with `describe-tool`; the tool ID is the CLI argument, not a key in the parameter JSON.
 
 ```powershell
-if (-not $env:AIRMOSAIC_LOCAL_WORKSPACE) { throw "Configure AIRMOSAIC_LOCAL_WORKSPACE locally first." }
-
-python ".\scripts\download_worldpop.py" `
-  --project "wpgp" `
-  --iso3 "CHN" `
-  --year 2020 `
-  --root "$env:AIRMOSAIC_LOCAL_WORKSPACE\data_cache\worldpop" `
-  --download
+python -m airmosaic_core.cli describe-tool worldpop_download
+python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --dry-run
+# Discovery also uses the network and writes metadata; execute only within task authorization.
+python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --allow-network
 ```
 
-The script writes metadata JSON/CSV to `metadata/` and downloads matching files under `raw/<iso3>/<project>/<year>/`.
+The public example contains:
 
-## Agent Contract
+```json
+{"project":"wpgp","iso3":"CHN","year":2020,"download":false,"limit":1}
+```
 
-External agents should call a wrapper such as `acquire_worldpop_population`. The wrapper should validate:
+Only `project` is required from the caller; the runner supplies `root`. `year` and `limit` are integers, `download` is boolean, and `contains` / `extensions` are comma-separated strings, not arrays. Use an explicit non-secret JSON in CONFIG_DIR for task-specific parameters. Set `download` to `true` only for an authorized file download; even `false` still performs remote metadata discovery. A dry-run without `--allow-network` reports a permission blocker and performs no request.
 
-- `iso3` country code;
-- project/product alias;
-- year range;
-- whether download or metadata-only discovery is requested;
-- output root stays under `${AIRMOSAIC_LOCAL_WORKSPACE}`.
+## Agent execution boundary
 
-Agents should not receive unrestricted local paths or write access outside the configured cache root.
+Call only the registered ID through `run-tool`; do not invoke the script directly to bypass a rejected path or permission check. Metadata filters are not proof of year/product suitability. A schema-valid ISO3 or project alias may still be unavailable remotely. No automatic download-result, raster CRS, population-total or scientific validation is provided; complete the checklist below on local task artifacts before sharing or reuse.
 
 ## Product Selection Notes
 

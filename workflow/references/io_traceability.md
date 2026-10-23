@@ -2,7 +2,7 @@
 
 How each workflow layer's inputs/outputs connect, and how causal effects propagate through the pipeline for auditability.
 
-**Design status:** The contracts, fixed thresholds and example parameters below are proposals requiring domain review. The repository does not enforce them through a workflow engine. Hash chains support reproducibility; they do not establish causal identification or verify assumptions. The functions in "Agent Integration" are proposed interfaces, not registered tools. See the [harness guide](../../harness/README.md) for the current execution and validation process.
+**Design status:** The contracts, fixed thresholds and example parameters below are proposals requiring domain review. The repository does not enforce them through a workflow engine. Hash chains support reproducibility; they do not establish causal identification or verify assumptions. Agent integration remains a design requirement, not an executable API. See the [harness guide](../../harness/README.md) for the current execution and validation process.
 
 ---
 
@@ -177,23 +177,8 @@ The baseline scenario is defined by:
 
 The counterfactual input hash is stored alongside the policy scenario hash in the trace record, enabling exact reproduction of the estimated causal effect.
 
-## 6. Agent Integration
+## 6. Current agent integration boundary
 
-External agents query workflow results via:
+Use the registered IDs in the project tool catalog for supported single-tool tasks. Existing run-tool receipts are at `${AIRMOSAIC_LOCAL_WORKSPACE}/runs/<run_id>/record.json`; they contain sanitized execution metadata, not a complete cross-layer input hash chain, counterfactual ledger or method-comparison service.
 
-```
-get_workflow_output(workflow_run_id, layer_id, output_id)
-  → {value, unit, trace_record, counterfactual_value}
-
-audit_trace(workflow_run_id, output_id)
-  → full trace chain with hash verification
-
-compare_methods(workflow_run_id, module_id)
-  → [high_data_method_result, low_data_method_result, difference, reason_used]
-```
-
-The trace record enables an external causal agent to:
-1. Verify that confounders were properly adjusted
-2. Check that identification assumptions hold
-3. Test sensitivity to parametric choices
-4. Recompute with alternative methods without re-running full pipeline
+For an authorized analysis, preserve domain provenance and validated input/output relationships in the local task record. Review model assumptions, confounders, method sensitivity and counterfactual definitions separately. Trace metadata alone cannot establish causal identification or prove that scientific assumptions hold. There is no automatic workflow-result query, trace-audit or alternative-method API.

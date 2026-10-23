@@ -5,14 +5,14 @@
 - XQuery/XPath templates and patterns
 - Python/R scripts that query BaseX via parameterized calls
 - Reference documentation about GCAM output structure, configuration, and input chain
-- Example JSON request payloads for agent wrappers
+- Flat parameter JSON for registered run-tool adapters, and clearly marked non-executable manual plans
 - Unit and scenario naming conventions
 
 ## Does NOT Belong In This Skill
 
 - GCAM model releases, executables, or Java binaries
 - BaseX database directories or their contents
-- Scenario output files (CSV, XML, PNG): keep in `${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/gcam/`
+- Scenario output files (CSV, XML, PNG): keep in `${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/<tool_id>/`
 - Raw input CSV data used to build model scenarios
 - Generated intermediate files (sector registries, method registries)
 - Project-specific analysis outputs
@@ -23,19 +23,14 @@
 
 ## Where Outputs Go
 
-All extracted data, plots, and generated files go to:
+Enabled adapters allocate new files under:
 
 ```text
-${AIRMOSAIC_LOCAL_WORKSPACE}/output/example/gcam/
+${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/<tool_id>/
+${AIRMOSAIC_LOCAL_WORKSPACE}/runs/<run_id>/record.json
 ```
 
-or a directory configured by:
-
-```text
-${UNIT_PRICE_OUT_DIR}
-```
-
-This directory is local-only and is not committed to GitHub.
+Standalone R steps must explicitly select a fresh task output; plotting reads `UNIT_PRICE_OUT_DIR`. They do not inherit runner checks or sanitized receipts. Keep all artifacts local; only reviewed summaries may be shared. No automatic cache promotion or file cleanup occurs.
 
 ## Where GCAM Release Package Lives
 
