@@ -1,9 +1,15 @@
-﻿---
+---
 name: gcam-data-extraction
 description: Extract GCAM scenario output data using parameterized XQuery. Supports market rows, sector costs, technology components, provincial aggregation, and plotting. Use unit price extraction as the first worked example; apply the same pattern to industrial output, technology I/O, emissions, or energy demand.
 ---
 
 # GCAM Data Extraction
+
+> Invocation status: named wrappers in Agent Contract sections are proposed, not registered APIs. Verify actual scripts and template requirements in the [tool catalog](../../../../../harness/tool-catalog.md).
+
+## Local paths and authentication
+
+Follow the [shared storage contract](../../../../../harness/storage-and-credentials.md): data and results use `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret configuration uses `AIRMOSAIC_CONFIG_DIR`, and browser authentication state uses `AIRMOSAIC_AUTH_DIR`. Read only task-needed configuration; never inspect, print or copy credential values or browser state. Set module output arguments explicitly for each run. These conventions do not imply automatic config loading or runtime isolation.
 
 ## Purpose
 
@@ -15,7 +21,7 @@ The unit price workflow serves as the first worked example. The same patterns ap
 
 ```powershell
 $env:GCAM_RELEASE_DIR = "<path to gcam-china-v8-Windows-Release-Package>"
-$env:UNIT_PRICE_OUT_DIR = "${AIRMOSAIC_LOCAL_WORKSPACE}/outputs/gcam"
+$env:UNIT_PRICE_OUT_DIR = Join-Path $env:AIRMOSAIC_LOCAL_WORKSPACE "output/example/gcam"
 ```
 
 BaseX database must exist at:
@@ -35,7 +41,7 @@ Parameters: `--scenarios`, `--regions`, `--sectors`, `--years`, `--out-dir`
 
 Extracts technology-level component rows including input coefficients, demand, prices, secondary outputs, and CO2 emissions. Decomposes sector cost into energy, non-energy, capital, and carbon components.
 
-Parameters: `--scenarios`, `--regions`, `--sectors`, `--years`, `--out-dir`, `--method` (generic or transport)
+Parameters: `--scenarios`, `--regions`, `--sectors`, `--years`, `--out-dir`. The current script does not implement `--method`.
 
 ### `xquery_province_aggregator.py`
 
@@ -47,32 +53,11 @@ Parameters: `--input-csv`, `--out-dir`
 
 Plots sector price or quantity changes between two years, with boxplots, weighted means, and change arrows.
 
-Parameters: `--sectors`, `--scenarios`, `--input-csv`, `--out-dir`
+Parameters: `--sectors`, `--scenarios`, `--input-csv`. Set `UNIT_PRICE_OUT_DIR` for output; `--out-dir` is not implemented. The current comparison years are fixed at 2021 and 2035.
 
 ## Workflow Example: Unit Price
 
-```powershell
-# Step 1: Extract market and sector rows
-python xquery_market_sector.py \
-  --scenarios DPEC_SSP1,DPEC_SSP1_Peak2030_NDC2035 \
-  --sectors cement,"iron and steel",coke \
-  --years 2021,2025,2030,2035
-
-# Step 2: Extract technology components
-python xquery_technology_components.py \
-  --scenarios DPEC_SSP1 \
-  --sectors cement \
-  --years 2021,2025,2030,2035
-
-# Step 3: Aggregate province rows
-python xquery_province_aggregator.py \
-  --input-csv $env:UNIT_PRICE_OUT_DIR/market_sector_rows.csv
-
-# Step 4: Plot
-Rscript plot_sector_change.R \
-  --sectors "cement,coke,iron and steel" \
-  --input-csv $env:UNIT_PRICE_OUT_DIR/market_sector_rows.csv
-```
+Use the repository's classified model-analysis guide for repository-root PowerShell commands. The sequence is: inspect actual scenario/region names, extract market and technology rows, validate units and provincial coverage, aggregate provincial rows, then plot. China-only rows cannot be used for provincial aggregation.
 
 ## Agent Contract
 

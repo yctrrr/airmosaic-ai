@@ -1,9 +1,15 @@
-﻿---
+---
 name: gcam-output-structure
 description: Explore GCAM BaseX XML output structure. Use when an agent needs to list scenarios, regions, sectors, subsectors, technologies, outputs, inputs, or their tree structure; discover which data nodes exist before writing extraction queries.
 ---
 
 # GCAM Output Structure Exploration
+
+> Invocation status: named wrappers in Agent Contract sections are proposed, not registered APIs. Verify actual scripts and template requirements in the [tool catalog](../../../../../harness/tool-catalog.md).
+
+## Local paths and authentication
+
+Follow the [shared storage contract](../../../../../harness/storage-and-credentials.md): data and results use `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret configuration uses `AIRMOSAIC_CONFIG_DIR`, and browser authentication state uses `AIRMOSAIC_AUTH_DIR`. Read only task-needed configuration; never inspect, print or copy credential values or browser state. Set module output arguments explicitly for each run. These conventions do not imply automatic config loading or runtime isolation.
 
 ## Purpose
 

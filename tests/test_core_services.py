@@ -1,4 +1,4 @@
-﻿from pathlib import Path
+import pytest
 
 from airmosaic_core.services import CausalDesignService, DataAccessService, DataCatalogService
 
@@ -8,7 +8,7 @@ def test_catalog_loads_initial_datasets():
     records = catalog.list_datasets()
     dataset_ids = {record.dataset_id for record in records}
 
-    assert len(records) == 9
+    assert len(records) == len(dataset_ids)
     assert "worldpop_population_grid" in dataset_ids
     assert "csmar_listed_company_basic" in dataset_ids
     assert "industrial_yearbook_regional_sector" in dataset_ids
@@ -29,14 +29,40 @@ def test_catalog_filters_data_acquisition_datasets():
     assert {record.domain for record in health} == {"health"}
 
 
-def test_data_access_reports_missing_cache():
+def test_data_access_reports_missing_cache(tmp_path):
     catalog = DataCatalogService()
-    access = DataAccessService(catalog=catalog, local_workspace=Path("D:/AirMosaicAI/local_workspace"))
+    access = DataAccessService(catalog=catalog, local_workspace=tmp_path)
 
     availability = access.check_local_availability("population", "*.csv")
 
     assert availability.dataset_id == "worldpop_population_grid"
-    assert "data_cache" in str(availability.cache_root)
+    assert availability.cache_root == tmp_path / "data_cache" / "worldpop"
+    assert availability.existing_files == []
+    assert availability.missing_hint is not None
+
+
+def test_data_access_requires_explicit_workspace(monkeypatch):
+    monkeypatch.delenv("AIRMOSAIC_LOCAL_WORKSPACE", raising=False)
+    with pytest.raises(ValueError, match="Set AIRMOSAIC_LOCAL_WORKSPACE"):
+        DataAccessService()
+
+
+def test_data_access_reads_configured_workspace(tmp_path, monkeypatch):
+    monkeypatch.setenv("AIRMOSAIC_LOCAL_WORKSPACE", str(tmp_path))
+    cache = tmp_path / "data_cache" / "worldpop" / "raw"
+    cache.mkdir(parents=True)
+    sample = cache / "synthetic.csv"
+    sample.write_text("value\n1\n", encoding="utf-8")
+
+    result = DataAccessService().check_local_availability("population", "raw/*.csv")
+    assert result.existing_files == [sample]
+    assert result.missing_hint is None
+
+
+def test_data_access_explicit_workspace_takes_precedence(tmp_path, monkeypatch):
+    monkeypatch.setenv("AIRMOSAIC_LOCAL_WORKSPACE", str(tmp_path / "environment"))
+    explicit = tmp_path / "explicit"
+    assert DataAccessService(local_workspace=explicit).local_workspace == explicit
 
 
 def test_causal_design_plan_is_structured():

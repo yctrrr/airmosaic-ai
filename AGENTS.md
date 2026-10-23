@@ -1,134 +1,75 @@
-# AirMosaic AI — Agent Integration Guide
+# AirMosaic AI — Agent Operating Guide
 
-AirMosaic AI is a locally deployed atmospheric environment decision intelligence platform. This document tells you (the agent) how to discover capabilities, load skills, access local data, and run analyses safely.
+AirMosaic contains reusable atmospheric-environment skills, data declarations, scripts and local Python services. Start from the repository root. Read the relevant skill before using or changing its workflow.
 
-## What You Can Do
+## Required operating boundaries
 
-- Acquire environmental and socioeconomic data from registered sources
-- Run model analyses (GCAM scenario extraction, health impact PAF calculations)
-- Generate local template causal-design drafts for policy evaluation
-- Query the local data catalog and check availability
-- Select modeling strategy by data availability: use transformer-based or other AI models when samples are sufficient; use empirical formulas and expert-reviewed rules when observations are sparse
+- Work within the user's requested files, datasets, years, regions and operations. Continue necessary, authorized reversible work without repeated confirmation; ask only when essential information or authorization is missing.
+- Preserve originals, existing results and other contributors' changes. Check the branch and working tree before editing. Do not launch additional model runs, bulk downloads, publication or external messages merely because a workflow mentions them.
+- Never put private usernames, passwords, keys, tokens, cookies, browser profiles, private hostnames, signed links or machine-specific paths in shared code, documentation, examples, Issues, PRs or logs.
+- Use repository-relative code paths and locally configured environment variables for data/model roots. Do not print whole environments, credential files or authenticated browser state. Report suspected secrets by location and category without repeating their values.
+- Keep data/results under `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret settings under `AIRMOSAIC_CONFIG_DIR`, and browser authentication state under `AIRMOSAIC_AUTH_DIR`. All roots must be separate and outside Git checkouts. Store passwords/tokens in a credential manager; do not create plaintext secret files. Read only task-needed configuration and use authorized tools without exporting authentication state.
+- Keep model releases outside the repository. Use `output/<run_id>/<tool>/` for new results and share only a reviewed, sanitized summary. Preserve legacy output locations unless migration is authorized.
+- Distinguish source inspection, local smoke checks, real-data integration and scientific validation. Do not report skipped tests or planned wrappers as implemented capabilities.
+- Follow [agent boundaries](harness/agent-boundaries.md) for scope, privacy, general-purpose scripts and sharing. These rules are operating instructions; they are not evidence that runtime enforcement exists.
 
-## Agent Runtime Setup
+## Documentation map
 
-Install a local coding agent, then open this repository root.
+| Task | Guide |
+|---|---|
+| Understand collaboration and execution | [Harness overview](harness/README.md) |
+| Find commands, scripts and templates | [Tool catalog](harness/tool-catalog.md) |
+| Configure separate data/settings/authentication roots | [Storage and credentials](harness/storage-and-credentials.md) |
+| Install core services; inspect datasets/cache | [Core tools](harness/usage/core.md) |
+| Acquire or process source data | [Data acquisition](harness/usage/data-acquisition.md) |
+| Inspect GCAM outputs or adapt health templates | [Model analysis](harness/usage/model-analysis.md) |
+| Register a capability or configure host discovery | [Registration and display](harness/tool-registration.md) |
 
-### Codex CLI
+Read only guides and references relevant to the task. Detailed harness guides are currently in Chinese; the root README has English and Chinese versions.
 
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://chatgpt.com/codex/install.ps1 | iex"
-cd D:\AirMosaicAI\airmosaic-ai-core
-codex
+## Environment and existing entry points
+
+Use Python 3.10+ in a project virtual environment and install with `python -m pip install -e '.[dev]'`. Configure `AIRMOSAIC_LOCAL_WORKSPACE` locally to a directory outside the repository. `.env` is not automatically loaded. Cache checks require this variable or an explicit SDK workspace argument. The [environment example](config/examples/README.md) configures session path variables explicitly; CONFIG_DIR/AUTH_DIR are caller conventions, not core loaders.
+
+Core commands, with the same interpreter used for installation:
+
+```sh
+python -m airmosaic_core.cli --help
+python -m airmosaic_core.cli list-datasets
+python -m airmosaic_core.cli describe-dataset worldpop_population_grid
+python -m airmosaic_core.cli search-datasets "population grid"
+python -m airmosaic_core.cli check-availability worldpop_population_grid --pattern 'raw/**/*.tif'
+python -m airmosaic_core.cli draft-causal-plan --question 'Did the policy change exposure?' --treatment 'target policy' --outcome 'exposure'
 ```
 
-Codex should read this `AGENTS.md` file from the repository root before operating on the project.
+- `list-datasets` reads acquisition `datasets.yaml` declarations. It is not a catalog of every executable tool or of downloaded files.
+- `check-availability` searches for files only. It does not validate contents, years, checksums or scientific suitability. Its local output may contain absolute paths; sanitize before sharing.
+- `draft-causal-plan` returns a local template. It does not invoke an LLM, generate an actual DAG or establish a causal effect.
+- SDK entry points are the `DataCatalogService`, `DataAccessService` and `CausalDesignService` classes in `airmosaic_core.services`.
 
-If an agent does not load this file automatically, ask it to read `AGENTS.md` before running commands or editing files.
+## Skill and tool discovery
 
-## Project Setup (One-Time)
+Skill sources live under `skills/`. Read their `SKILL.md` files explicitly when working in this repository. Standard host discovery requires installation or a supported location; `agents/openai.yaml` supplies optional host metadata, not executable tool registration.
 
-```powershell
-cd D:\AirMosaicAI\airmosaic-ai-core
-pip install -e .[dev]
-```
+Acquisition skill IDs include `worldpop`, `csmar`, `ind_yearbook` and `ihme-gbd-results`. Some differ from skill frontmatter names; use the [mapping](harness/tool-registration.md) when filtering datasets or selecting skills.
 
-Required environment variable:
+The repository currently has no unified tool-registry loader, MCP server, REST service or `WorkflowOrchestrator`. Names in example JSON and agent contracts are proposed wrappers unless an actual handler is verified. R templates may require adaptation and can execute when sourced.
 
-```powershell
-$env:AIRMOSAIC_LOCAL_WORKSPACE = "D:\AirMosaicAI\local_workspace"
-```
+## Execution and scientific boundaries
 
-This must point to a directory that holds raw data, model releases, API credentials, and runtime outputs. Never write data into the repo directory itself.
+1. Determine scope and choose an implemented entry point.
+2. Check dependencies, authentication, inputs, parameters and output destinations.
+3. Verify units, years, spatial alignment, missing-value semantics and method assumptions before chaining modules.
+4. Execute within existing authorization, record outcomes, and verify required artifacts and domain checks.
+5. Deliver results with their validation scope and unresolved limitations; sanitize shared material.
 
-## Skill Discovery
+Select methods using evidence, data suitability, baselines and domain review. Workflow thresholds and AI/empirical branches are design proposals, not automatic execution rules or proof of causal identification. Do not silently change scientific scope to make a run pass.
 
-All skills live under `skills/`. Each skill is registered via `agents/openai.yaml` with a display name, description, and default prompt:
+## Contribution checks
 
-```
-skills/
-  data_acquisition/
-    01_socioeconomic/
-      worldpop/agents/openai.yaml   -> "WorldPop Data Acquisition"
-      csmar/agents/openai.yaml       -> "CSMAR Data Downloader"
-      ind_yearbook/SKILL.md          -> Industrial yearbook processing
-    04_impact/
-      ihme-gbd-results/agents/openai.yaml -> "IHME GBD Results"
-  model/
-    IAM/
-      gcam/agents/openai.yaml        -> "GCAM Model Analysis"
-    04_impact/
-      health_impact_analysis/SKILL.md -> PM2.5 PAF mortality estimation
-```
-
-To use a skill, read its `SKILL.md` completely, then follow the instructions in `scripts/`, `templates/`, and `references/` as directed.
-
-## How to Run Analyses
-
-### CLI (for quick checks)
-
-```powershell
-airmosaic list-datasets
-airmosaic list-datasets --layer 01_socioeconomic
-airmosaic list-datasets --skill worldpop
-airmosaic list-datasets --domain health
-airmosaic check-availability population
-airmosaic draft-causal-plan --question "..." --treatment "..." --outcome "..."
-```
-
-`list-datasets` reads `skills/data_acquisition/**/datasets.yaml`, not a remote live catalog. It tells agents which datasets can be acquired or processed by the currently installed skills and where to find the responsible skill.
-
-`draft-causal-plan` is a local template generator. It does not call an external LLM or agent. Treat its JSON output as a structured starting point, then extend it with your own reasoning, project skills, and data checks.
-
-### External Agent Workflow
-
-When using Codex or another agent system:
-
-1. Open `D:\AirMosaicAI\airmosaic-ai-core` as the workspace root.
-2. Read `AGENTS.md`.
-3. Use `airmosaic list-datasets` to inspect datasets declared by data acquisition skills.
-4. Use `airmosaic check-availability <dataset_id>` to verify local cache availability.
-5. Read the relevant `skills/**/SKILL.md` before running a skill workflow.
-6. Use `airmosaic draft-causal-plan ...` only as a local JSON scaffold for causal design.
-7. Expand or revise the scaffold through the external agent's own reasoning and, when needed, by reading `workflow/`, `catalog/`, and skill references.
-
-### R Templates (for skill workflows)
-
-Each skill provides template scripts under `templates/` or `scripts/`. Source them in an R session with the required environment variables set:
-
-```r
-Sys.setenv(AIRMOSAIC_LOCAL_WORKSPACE = "D:/AirMosaicAI/local_workspace")
-source("skills/model/04_impact/health_impact_analysis/templates/calculate_pm25_deaths.R")
-```
-
-### Python SDK
-
-```python
-from airmosaic_core.services.data_catalog import list_datasets
-from airmosaic_core.services.data_access import check_availability
-datasets = list_datasets(layer="01_socioeconomic")
-available = check_availability("population")
-```
-
-## Modeling Strategy
-
-Use data availability to choose the modeling path:
-
-- **Sufficient samples**: prefer transformer-based or other AI models for pattern recognition, high-dimensional interaction discovery, surrogate modeling, and candidate causal-effect screening.
-- **Limited samples**: prefer empirical formulas, process-based assumptions, scenario rules, and expert-reviewed correction factors.
-- **Borderline cases**: start with empirical formulas as the baseline, then use AI models only for residual pattern detection or sensitivity analysis.
-
-## Data Boundary (Critical)
-
-This repo contains only code, schemas, templates, and documentation. All raw data, model outputs, API keys, and intermediate files go into `$env:AIRMOSAIC_LOCAL_WORKSPACE`.
-
-- Read data from: `$env:AIRMOSAIC_LOCAL_WORKSPACE/data_cache/`
-- Write outputs to: `$env:AIRMOSAIC_LOCAL_WORKSPACE/output/`
-- Never commit data files to this repo
-
-## Conventions
-
-- **Paths**: Use forward slashes in R (`D:/AirMosaicAI/...`), backslashes in PowerShell
-- **Encoding**: All files are UTF-8. R scripts may use Unicode code points (`intToUtf8`) for Chinese strings
-- **Skills**: Each skill is self-contained. Read SKILL.md before acting. Templates/ are generic; examples/ show end-to-end usage
-- **Agent interface**: Skill-level `agents/openai.yaml` is the canonical registry. If you add a skill, also add its agent yaml
+- Keep tool arguments, examples, skill metadata and catalog entries consistent with actual code.
+- Update classified guides and the catalog when interfaces change; update both root README variants when shared entry instructions change.
+- Use synthetic inputs in temporary directories for ordinary tests. Keep real-data validation receipts local and sanitize shared summaries.
+- Run relevant checks; core tests use `python -m pytest -q -p no:cacheprovider`. They do not validate every connector or scientific model.
+- Review diff, filenames, logs and attachments for private information before authorized sharing. Inspect only locations/categories of suspected secrets, never their values. Do not bundle auth/config directories into data archives or copy browser profiles between members.
+- Commit and push when the current task explicitly authorizes them, after relevant validation and privacy review. Do not force-push, rewrite history or include unrelated repositories. A role name or a roadmap does not grant additional authority.

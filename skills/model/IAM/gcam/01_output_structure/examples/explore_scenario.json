@@ -3,5 +3,5 @@
   "action": "list_sectors",
   "scenario": "${SCENARIO_NAME}",
   "region": "AH",
-  "output_dir": "${AIRMOSAIC_LOCAL_WORKSPACE}/outputs/gcam/explore"
+  "output_dir": "${AIRMOSAIC_LOCAL_WORKSPACE}/output/example/gcam/explore"
 }

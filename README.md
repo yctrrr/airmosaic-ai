@@ -1,136 +1,80 @@
 # AirMosaic AI / 清空智枢
 
-**Atmospheric environment decision intelligence platform** — locally deployed, integrating AI agents, multimodal data acquisition, model analysis, and causal inference.
+Atmospheric environment decision intelligence: reusable domain skills, data acquisition workflows, model-analysis templates and local Python services.
 
 [**中文**](README_ZH.md)
 
----
+## Start here
 
-## Architecture
+Read the [Harness guide](harness/README.md) for team roles, execution steps, boundaries and validation. Shared detailed guides are currently in Chinese.
 
-```
-D:\AirMosaicAI\
-  airmosaic-ai-core\     ← This repo (GitHub)
-  local_workspace\        ← Raw data, model releases, credentials (local only)
-  docs\                   ← Design docs (local only)
-```
+| Goal | Documentation |
+|---|---|
+| Install and call existing CLI/SDK services | [Core tools](harness/usage/core.md) |
+| Acquire population, enterprise, yearbook or GBD data | [Data acquisition](harness/usage/data-acquisition.md) |
+| Use GCAM scripts or health-impact templates | [Model analysis](harness/usage/model-analysis.md) |
+| Let an agent modify the project | [AGENTS.md](AGENTS.md), [agent boundaries](harness/agent-boundaries.md) |
+| Find available capabilities | [Current tool catalog](harness/tool-catalog.md) |
+| Separate data, personal configuration and authentication | [Storage and credentials](harness/storage-and-credentials.md) |
+| Add skills/tools and configure discovery/display | [Registration specification](harness/tool-registration.md) |
 
-## Repository Layout
-
-```
-catalog/                   Dataset metadata (YAML schemas)
-workflow/                  Analysis pipeline templates (4 layers)
-AGENTS.md                  Agent-facing setup and operating guide
-skills/
-  data_acquisition/        Data source connectors — organized by workflow layer
-    01_socioeconomic/      WorldPop, CSMAR, industrial yearbook
-    02_emission_inventory/ Emission data acquisition
-    03_atmospheric_transport/ Air quality & transport data
-    04_impact/             GBD Results, health data
-  model/                   Model analysis — organized by workflow layer + model type
-    01_socioeconomic/      Socioeconomic modeling
-    02_emission_inventory/ Emission modeling
-    03_atmospheric_transport/ Atmospheric modeling
-    04_impact/             Health impact analysis, PM2.5 PAF mortality
-    IAM/                   Integrated Assessment Models
-      gcam/                GCAM scenario analysis, output structure, config, extraction
-src/airmosaic_core/        Python service layer (CLI / SDK backend)
-  services/
-    data_catalog.py        Dataset registry: query available datasets by layer, domain, format
-    data_access.py         Local cache resolution: path lookups, availability checks, checksum validation
-    causal_design.py       Causal inference plan generator: treatment/outcome spec -> DAG + estimator
-examples/                  Agent call examples (JSON templates)
-tests/                     Unit tests
-```
-
-## Workflow Pipeline
-
-Four-layer analysis pipeline with AI/empirical method branching:
-
-```
-Layer 1: Socioeconomic -> activity levels, energy, end-of-pipe tech
-Layer 2: Emission Inventory -> pollutant & carbon emissions
-Layer 3: Atmospheric Transport -> concentration field
-Layer 4: Impact Assessment -> health burden, economic damage, inequality
-```
-
-Method selection follows data availability. For modules with sufficient historical or spatial samples, AirMosaic AI recommends transformer-based or other AI models to accelerate pattern recognition, variable interaction discovery, and causal-effect identification. For modules with limited data, sparse observations, or weak labels, the recommended default is empirical formulas, process-based assumptions, and expert-reviewed correction rules.
-
-## Quick Start
-
-```powershell
-# Install
-cd D:\AirMosaicAI\airmosaic-ai-core
-pip install -e .[dev]
-
-# CLI: list data acquisition datasets declared by skills
-airmosaic list-datasets
-airmosaic list-datasets --layer 01_socioeconomic
-airmosaic list-datasets --skill worldpop
-airmosaic list-datasets --domain health
-
-# CLI: check local data availability
-airmosaic check-availability population
-
-# CLI: generate a local template causal analysis plan
-airmosaic draft-causal-plan --question "Did clean air policy reduce mortality?" --treatment "clean air policy" --outcome "mortality"
-```
-
-### External Agent Example
-
-For Codex or another local agent, start from the repository root and ask the agent to read the project instructions before taking actions:
+## Repository layout
 
 ```text
-Open D:\AirMosaicAI\airmosaic-ai-core.
-Read AGENTS.md first.
-List skill-declared datasets with `airmosaic list-datasets`.
-Check population cache availability with `airmosaic check-availability population`.
-Read the relevant `skills/**/SKILL.md` before running any workflow.
-Use `airmosaic draft-causal-plan ...` only as a local JSON scaffold, then extend it with your own reasoning.
+AGENTS.md                 Agent operating instructions
+harness/                  Shared collaboration and tool-use documentation
+catalog/                  Dataset metadata and schemas
+config/examples/          Public templates for private environment configuration
+workflow/                 Four-layer workflow design templates
+skills/
+  data_acquisition/       WorldPop, CSMAR, industrial yearbook, IHME GBD
+  model/                  Health-impact templates and GCAM analysis skills
+src/airmosaic_core/        Python CLI and service classes
+tests/                    Core service tests
 ```
 
-## Skills
+Data and runtime outputs use `AIRMOSAIC_LOCAL_WORKSPACE`; personal non-secret settings use `AIRMOSAIC_CONFIG_DIR`; browser sessions use `AIRMOSAIC_AUTH_DIR`. Keep all three roots outside Git checkouts and separate from each other. Passwords and tokens belong in a credential manager. Model releases and private notes also remain outside the repository. See the [environment example](config/examples/README.md) for explicit session setup.
 
-Skills are self-contained modules with SKILL.md, scripts/, references/, and examples/. Each skill encapsulates a specific data source, model, or analysis method with its own tooling, documentation, and agent contract.
+## Workflow scope
 
-Data acquisition skills may also include `datasets.yaml`, which declares the datasets that the skill can acquire or process. `airmosaic list-datasets` reads these files, so the command reflects the currently available acquisition capabilities in `skills/data_acquisition/`.
+```text
+Socioeconomic drivers → emissions → atmospheric transport/chemistry → impacts
+```
 
-**data_acquisition/** — connectors for external data sources, organized by the four workflow layers:
+These layers organize the research workflow. They are not all implemented as executable services. Method selection requires suitable data, baselines and domain review; sample counts alone do not establish that an AI model or causal method is appropriate.
 
-- **01 Socioeconomic**: WorldPop population grids, CSMAR financial data, industrial yearbook extraction
-- **02 Emission Inventory**: emission factor datasets, sectoral activity data
-- **03 Atmospheric Transport**: satellite-derived concentration fields, reanalysis products
-- **04 Impact**: IHME GBD mortality/disease burden results
+## Quick start
 
-**model/** — analysis and modeling methods, also organized by workflow layer:
-
-- **01-04**: Layer-specific modeling (socioeconomic projection, emission compilation, transport simulation, health impact PAF calculation)
-- **IAM/**: Integrated Assessment Models, such as GCAM (scenario config interpretation, BaseX output structure exploration, market price extraction)
-
-## External Agent Interface
-
-*Under development.* The services layer (src/airmosaic_core/services/) exposes a Python SDK and CLI that external agents (Codex or custom tools) can invoke for data discovery, local cache resolution, and local causal-design templates. MCP tool definitions and REST API are planned.
-
-## Data Boundary
-
-This repo does **NOT** contain: raw environmental data, API keys, or model outputs. Those live in $env:AIRMOSAIC_LOCAL_WORKSPACE.
-
-## Agent Integration
-
-AirMosaic AI is designed to be invoked by AI agents (Codex or custom tools). See [AGENTS.md](AGENTS.md) for setup instructions, skill discovery, and usage conventions.
-
-**Quick start for an agent:**
+From the repository root, with Python 3.10+:
 
 ```powershell
-$env:AIRMOSAIC_LOCAL_WORKSPACE = "D:\AirMosaicAI\local_workspace"
-pip install -e .[dev]
-airmosaic list-datasets
+python -m venv .venv
+$amPython = (Resolve-Path ".venv/Scripts/python.exe").Path
+& $amPython -m pip install -e ".[dev]"
+& $amPython -m airmosaic_core.cli --help
+& $amPython -m airmosaic_core.cli list-datasets
 ```
 
-External agents should read `AGENTS.md` from the repository root. Each skill registers its interface in `agents/openai.yaml`; read the relevant `SKILL.md` before running a workflow.
+The [core guide](harness/usage/core.md) provides Windows and Linux/macOS configuration. Set `AIRMOSAIC_LOCAL_WORKSPACE` before cache checks or data work. `.env` is not loaded automatically. Optional model/browser dependencies must be configured separately. `AIRMOSAIC_CONFIG_DIR` and `AIRMOSAIC_AUTH_DIR` are caller conventions, not automatically loaded stores.
 
-For external agents, the recommended pattern is: open this repository root, read `AGENTS.md`, inspect the relevant `SKILL.md`, call `airmosaic` CLI commands for catalog/cache/template tasks, and then use the agent's own reasoning to extend the returned JSON into a full analysis plan. The CLI does not call an external LLM by itself.
+## Current interfaces
+
+The CLI provides `list-datasets`, `describe-dataset`, `search-datasets`, `check-availability` and `draft-causal-plan`. The SDK exports `DataCatalogService`, `DataAccessService` and `CausalDesignService`.
+
+Dataset listing reads acquisition skill declarations. Cache inspection only finds files; it does not validate contents or checksums. The causal-plan command returns a local template without calling an LLM or producing a causal estimate.
+
+MCP, REST, a unified tool runner, an automated registry loader and a workflow orchestrator are planned. Symbolic tool names in request examples are not registered APIs. See the [catalog](harness/tool-catalog.md) for actual scripts and their limitations.
+
+## Skills and agents
+
+Open the repository root and ask the agent to read `AGENTS.md`, locate the relevant skill and verify its actual entry point before running it. Skills may contain instructions, scripts, references, templates and examples.
+
+`datasets.yaml` registers acquisition data declarations with the current catalog service. `agents/openai.yaml` is optional host metadata; it does not register an executable tool. Codex skill discovery requires a supported location or installation, as described in the [registration guide](harness/tool-registration.md).
+
+## Contributing and privacy
+
+Contribute a bounded capability with documented inputs/outputs and validation cases. Follow the [contribution steps](harness/README.md) and [agent boundaries](harness/agent-boundaries.md). Keep private paths, usernames, credentials, authenticated browser state and real datasets out of shared artifacts. Report unrun validation explicitly.
 
 ## License
 
-Apache-2.0.
+Apache-2.0; see [LICENSE](LICENSE).

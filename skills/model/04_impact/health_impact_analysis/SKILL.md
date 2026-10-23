@@ -5,6 +5,12 @@ description: Calculate and visualize PM2.5-attributable premature deaths using g
 
 # PM2.5 Health Impact Analysis
 
+> Invocation status: named wrappers in Agent Contract sections are proposed, not registered APIs. Verify actual scripts and template requirements in the [tool catalog](../../../../harness/tool-catalog.md).
+
+## Local paths and authentication
+
+Follow the [shared storage contract](../../../../harness/storage-and-credentials.md): data and results use `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret configuration uses `AIRMOSAIC_CONFIG_DIR`, and browser authentication state uses `AIRMOSAIC_AUTH_DIR`. Read only task-needed configuration; never inspect, print or copy credential values or browser state. Set module output arguments explicitly for each run. These conventions do not imply automatic config loading or runtime isolation.
+
 ## Purpose
 
 Estimate PM2.5-attributable premature mortality at grid resolution using the standard environmental epidemiology Population Attributable Fraction (PAF) framework. This skill covers the full pipeline from exposure-population-mortality integration through visualization.
@@ -15,14 +21,14 @@ Estimate PM2.5-attributable premature mortality at grid resolution using the sta
 
 The health impact is calculated per grid cell using the standard PAF approach:
 
-`
+```
 Attributable Deaths = Population x PAF Mortality Rate
 
 PAF Mortality Rate = sum over (endpoint, sex, age):
     AgeStruc(age, sex) x BaselineMortRate(endpoint, sex, age) x PAF(conc, endpoint, age)
 
 PAF(conc, endpoint, age) = (RR(conc, endpoint, age) - 1) / RR(conc, endpoint, age) / 100,000
-`
+```
 
 Where:
 - **RR** = Relative Risk from concentration-response curve (GEMM-5COD or IER)
@@ -119,21 +125,19 @@ Agents should not receive unrestricted filesystem access. Output paths must be s
 ## Configuration
 
 Controlled via environment variables or config file:
-- PM25_DEATH_YEARS: comma-separated years (default: 2023)
-- PM25_DEATH_CURVE: curve name (default: GEMM-5COD)
+- PM25_HIA_YEARS: comma-separated years (default: 2023)
+- PM25_HIA_CURVE: curve name (default: GEMM-5COD)
 - Input path overrides for each data component
 
 ## References
 
-- 
-eferences/methodology.md: Full PAF derivation, GEMM vs IER comparison, uncertainty considerations
-- 
-eferences/data_requirements.md: Detailed data specifications, expected schemas, preprocessing notes
+- references/methodology.md: Full PAF derivation, GEMM vs IER comparison, uncertainty considerations
+- references/data_requirements.md: Detailed data specifications, expected schemas, preprocessing notes
 
 ## Templates
 
-- 	emplates/calculate_pm25_deaths.R: Generalized grid-level PAF death calculation
-- 	emplates/visualize_pm25_deaths.R: Generalized mortality map generation
+- templates/calculate_pm25_deaths.R: Generalized grid-level PAF death calculation
+- templates/visualize_pm25_deaths.R: Generalized mortality map generation
 
 ## Examples
 

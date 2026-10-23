@@ -1,136 +1,80 @@
 # AirMosaic AI / 清空智枢
 
-**大气环境决策智能分析平台** —— 本地化部署，集成 AI Agent、多模态数据获取、模型分析与因果推断。
+大气环境决策智能分析：可复用的领域技能、数据获取流程、模型分析模板和本地 Python 服务。
 
 [**English**](README.md)
 
----
+## 从这里开始
 
-## 本地部署架构
+先阅读 [Harness 总体说明](harness/README.md)，了解成员分工、执行步骤、行为边界和验收方式。共享的详细说明目前以中文编写。
 
-```
-D:\AirMosaicAI\
-  airmosaic-ai-core\     ← 本仓库（GitHub）
-  local_workspace\        ← 原始数据、模型发行包、密钥（仅本地）
-  docs\                   ← 设计文档（仅本地）
-```
+| 目标 | 文档 |
+|---|---|
+| 安装并调用现有 CLI/SDK | [基础工具](harness/usage/core.md) |
+| 获取人口、企业、年鉴或 GBD 数据 | [数据获取](harness/usage/data-acquisition.md) |
+| 使用 GCAM 脚本或健康影响模板 | [模型分析](harness/usage/model-analysis.md) |
+| 让 agent 修改项目 | [AGENTS.md](AGENTS.md)、[Agent 行为边界](harness/agent-boundaries.md) |
+| 查找可用能力 | [当前工具清单](harness/tool-catalog.md) |
+| 分开管理数据、个人配置和认证状态 | [工作区与凭据](harness/storage-and-credentials.md) |
+| 新增技能/工具并配置发现和展示 | [注册规范](harness/tool-registration.md) |
 
 ## 仓库结构
 
-```
-catalog/                   数据集元数据（YAML schema）
-workflow/                  分析流水线模板（4层架构）
-AGENTS.md                  面向外部 agent 的安装、读取与操作说明
+```text
+AGENTS.md                 Agent operating instructions
+harness/                  Shared collaboration and tool-use documentation
+catalog/                  Dataset metadata and schemas
+config/examples/          Public templates for private environment configuration
+workflow/                 Four-layer workflow design templates
 skills/
-  data_acquisition/        数据源连接器，按 workflow 层级组织
-    01_socioeconomic/      WorldPop、CSMAR、工业年鉴
-    02_emission_inventory/ 排放清单数据获取
-    03_atmospheric_transport/ 空气质量与传输相关数据
-    04_impact/             GBD Results、健康数据
-  model/                   模型分析方法，按 workflow 层级与模型类型组织
-    01_socioeconomic/      社会经济建模
-    02_emission_inventory/ 排放建模
-    03_atmospheric_transport/ 大气传输建模
-    04_impact/             健康影响分析、PM2.5 PAF 死亡负担评估
-    IAM/                   综合评估模型
-      gcam/                GCAM 情景分析、输出结构探索、配置解读、数据提取
-src/airmosaic_core/        Python 服务层（CLI / SDK backend）
-  services/
-    data_catalog.py        数据集注册表：按层级、领域、格式查询数据
-    data_access.py         本地缓存解析：路径查找、可用性检查、校验和验证
-    causal_design.py       因果推断本地模板：treatment/outcome 定义 -> DAG + estimator 草案
-examples/                  Agent 调用示例（JSON 模板）
-tests/                     单元测试
+  data_acquisition/       WorldPop, CSMAR, industrial yearbook, IHME GBD
+  model/                  Health-impact templates and GCAM analysis skills
+src/airmosaic_core/        Python CLI and service classes
+tests/                    Core service tests
 ```
 
-## 分析流水线
+数据和运行输出使用 `AIRMOSAIC_LOCAL_WORKSPACE`，个人非秘密配置使用 `AIRMOSAIC_CONFIG_DIR`，浏览器认证状态使用 `AIRMOSAIC_AUTH_DIR`。三类根分别设置，均位于 Git 仓库外。密码和 token 交由凭据管理器保管。模型发行包和私人记录也保留在仓库外。按[环境配置示例](config/examples/README.md)显式配置当前会话。
 
-四层分析架构，每层支持 AI 方法与经验/专家方法分支：
+## 工作流范围
 
-```
-Layer 1: 社会经济驱动力 -> 活动水平、能源使用、末端治理技术
-Layer 2: 排放清单编制 -> 污染物与碳排放
-Layer 3: 大气化学传输 -> 浓度场模拟
-Layer 4: 社会经济影响 -> 健康负担、经济损失、不平等评估
+```text
+Socioeconomic drivers → emissions → atmospheric transport/chemistry → impacts
 ```
 
-方法选择取决于数据可用性。对于历史样本、空间样本或标签数据足够多的模块，AirMosaic AI 推荐使用 transformer 等 AI model 加快模式识别、变量交互发现和候选因果效应识别。对于数据量不足、观测稀疏或标签不足的模块，推荐优先使用经验公式、过程假设和专家审核规则。
+这四层组织了社会经济、排放、大气输送/化学和影响研究流程；并非每一层都已实现为可执行服务。方法选择需要数据适用性、基线和领域审核，不能仅由样本数量判断 AI 或因果方法是否适用。
 
 ## 快速启动
 
-```powershell
-# 安装
-cd D:\AirMosaicAI\airmosaic-ai-core
-pip install -e .[dev]
-
-# CLI：列出 data acquisition skills 声明可获取/处理的数据集
-airmosaic list-datasets
-airmosaic list-datasets --layer 01_socioeconomic
-airmosaic list-datasets --skill worldpop
-airmosaic list-datasets --domain health
-
-# CLI：检查本地数据可用性
-airmosaic check-availability population
-
-# CLI：生成本地因果分析模板草案
-airmosaic draft-causal-plan --question "清洁空气政策是否降低了死亡率？" --treatment "清洁空气政策" --outcome "死亡率"
-```
-
-### 外部 Agent 读取示例
-
-对于 Codex 或其他本地 agent，建议从仓库根目录开始，并要求 agent 先读取项目说明：
-
-```text
-打开 D:\AirMosaicAI\airmosaic-ai-core。
-先读取 AGENTS.md。
-使用 `airmosaic list-datasets` 查看各 data acquisition skill 声明的数据集。
-使用 `airmosaic check-availability population` 检查人口数据缓存。
-运行任何 workflow 前，先读取相关的 `skills/**/SKILL.md`。
-`airmosaic draft-causal-plan ...` 只生成本地 JSON 草案，不会调用外部 LLM；后续分析需要由外部 agent 继续推理和扩展。
-```
-
-## 技能模块
-
-每个 skill 是自包含模块，包含 `SKILL.md`、`scripts/`、`references/` 和 `examples/`。每个 skill 封装一个数据源、模型或分析方法，并提供对应工具、说明文档和 agent 调用约定。
-
-数据获取类 skill 可额外包含 `datasets.yaml`，用于声明该 skill 可以获取或处理的数据集。`airmosaic list-datasets` 会同步读取这些文件，因此输出反映的是当前 `skills/data_acquisition/` 中可用的数据获取能力。
-
-**data_acquisition/** —— 面向外部数据源的连接器，按四层 workflow 组织：
-
-- **01 Socioeconomic**：WorldPop 人口网格、CSMAR 金融数据、工业年鉴提取
-- **02 Emission Inventory**：排放因子数据、部门活动水平数据
-- **03 Atmospheric Transport**：卫星反演浓度场、再分析产品
-- **04 Impact**：IHME GBD 死亡率和疾病负担结果
-
-**model/** —— 分析和建模方法，也按 workflow 层级组织：
-
-- **01-04**：层级化模型方法，包括社会经济预测、排放编制、大气传输模拟、健康影响 PAF 计算
-- **IAM/**：综合评估模型，例如 GCAM（情景配置解读、BaseX 输出结构探索、市场价格提取）
-
-## 外部 Agent 接口
-
-*正在开发中。* `src/airmosaic_core/services/` 服务层提供 Python SDK 和 CLI，供 Codex 或自定义 agent 调用，用于数据发现、本地缓存解析和本地因果设计模板生成。MCP 工具定义和 REST API 仍在规划中。
-
-## 数据边界
-
-本仓库**不含**：原始环境数据、API 密钥、模型运行结果。以上存放于 `$env:AIRMOSAIC_LOCAL_WORKSPACE`。
-
-## Agent 集成
-
-AirMosaic AI 被设计为可由 Codex 或其他外部 agent 读取和调用。详见 [AGENTS.md](AGENTS.md)，其中包含 agent 安装、skill 发现、数据边界和操作约定。
-
-**Agent 快速启动：**
+在仓库根目录使用 Python 3.10 或以上：
 
 ```powershell
-$env:AIRMOSAIC_LOCAL_WORKSPACE = "D:\AirMosaicAI\local_workspace"
-pip install -e .[dev]
-airmosaic list-datasets
+python -m venv .venv
+$amPython = (Resolve-Path ".venv/Scripts/python.exe").Path
+& $amPython -m pip install -e ".[dev]"
+& $amPython -m airmosaic_core.cli --help
+& $amPython -m airmosaic_core.cli list-datasets
 ```
 
-外部 agent 应从仓库根目录读取 `AGENTS.md`。每个 skill 通过 `agents/openai.yaml` 注册接口；运行 workflow 前应读取对应的 `SKILL.md`。
+[基础说明](harness/usage/core.md)提供 Windows 和 Linux/macOS 配置步骤。检查缓存或处理数据前设置 `AIRMOSAIC_LOCAL_WORKSPACE`。当前不会自动加载 `.env`；模型和浏览器依赖需要另行配置。`AIRMOSAIC_CONFIG_DIR` 与 `AIRMOSAIC_AUTH_DIR` 是调用方约定，不是自动加载的存储。
 
-对于外部 agent，推荐流程是：打开仓库根目录，读取 `AGENTS.md`，检查相关 `SKILL.md`，调用 `airmosaic` CLI 完成 catalog/cache/template 类任务，然后由 agent 自身推理将返回的 JSON 扩展为完整分析计划。CLI 本身不会调用外部 LLM。
+## 当前接口
 
-## License
+CLI 提供 `list-datasets`、`describe-dataset`、`search-datasets`、`check-availability` 和 `draft-causal-plan`。SDK 导出 `DataCatalogService`、`DataAccessService` 和 `CausalDesignService`。
 
-Apache-2.0.
+数据列表读取 acquisition skill 的声明。缓存检查只查找文件，不验证内容或校验和。因果设计命令返回本地模板，不调用 LLM，也不生成因果估计结果。
+
+MCP、REST、统一工具运行器、自动注册表加载器和工作流编排器尚在规划中。请求示例里的工具名称不等于已注册 API。实际脚本及限制见[工具清单](harness/tool-catalog.md)。
+
+## Skills 与 agents
+
+打开仓库根目录，让 agent 读取 `AGENTS.md`，查找相关 skill，并确认实际入口后再执行。技能可以包含说明、脚本、参考资料、模板和示例。
+
+`datasets.yaml` 将数据获取声明登记到现有目录服务。`agents/openai.yaml` 是可选宿主元数据，不负责注册可执行工具。Codex 技能发现需要正确位置或安装步骤，详见[注册说明](harness/tool-registration.md)。
+
+## 贡献与隐私
+
+每次贡献围绕范围明确的一项能力，配套输入输出说明和验证案例。遵循[协作步骤](harness/README.md)及 [Agent 行为边界](harness/agent-boundaries.md)。共享内容不包含私人路径、账号名、凭据、已认证浏览器状态或真实数据；未执行的验证明确说明。
+
+## 许可证
+
+Apache-2.0，见 [LICENSE](LICENSE)。

@@ -4,5 +4,5 @@
   "regions": ["AH","BJ","GD","JS","SH","ZJ"],
   "sectors": ["cement","iron and steel","ammonia","chemical","other industry"],
   "years": [2015, 2020, 2025, 2030, 2035, 2050],
-  "output_dir": "${AIRMOSAIC_LOCAL_WORKSPACE}/outputs/gcam/industrial"
+  "output_dir": "${AIRMOSAIC_LOCAL_WORKSPACE}/output/example/gcam/industrial"
 }

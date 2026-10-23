@@ -1,9 +1,15 @@
-﻿---
+---
 name: ind-yearbook
 description: Process industrial statistical yearbook data (Excel) into standardized CSV tables. Handles national/regional sector-level economic indicators and product output across multiple yearbook editions. Use when an agent or analyst needs to extract, clean, combine, and code industrial yearbook panels into analysis-ready structured tables.
 ---
 
 # Industrial Yearbook Data Processing
+
+> Invocation status: named wrappers in Agent Contract sections are proposed, not registered APIs. Verify actual scripts and template requirements in the [tool catalog](../../../../harness/tool-catalog.md).
+
+## Local paths and authentication
+
+Follow the [shared storage contract](../../../../harness/storage-and-credentials.md): data and results use `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret configuration uses `AIRMOSAIC_CONFIG_DIR`, and browser authentication state uses `AIRMOSAIC_AUTH_DIR`. Read only task-needed configuration; never inspect, print or copy credential values or browser state. Set module output arguments explicitly for each run. These conventions do not imply automatic config loading or runtime isolation.
 
 ## Purpose
 
@@ -17,7 +23,7 @@ Extract, clean, standardize, and combine multi-year industrial statistical yearb
 
 Yearbook Excel files are organized as:
 
-`	ext
+```text
 <yearbook_root>/
   中国工业统计年鉴2013（Excel）/
     2分行业数据/                     # Cat2 sector tables
@@ -26,7 +32,7 @@ Yearbook Excel files are organized as:
       按地区分组的<industry_name>主要经济指标.xlsx
   中国工业统计年鉴2014（Excel）/
     ...
-`
+```
 
 Each regional Excel contains one or more **panels** identified by a 地区 (region) header cell. Panels share the same structure: region/province names in one column, metric headers spanning one or more merged rows above the data.
 
@@ -34,9 +40,9 @@ Each regional Excel contains one or more **panels** identified by a 地区 (regi
 
 | Pipeline | Entry Script | Input | Output |
 |---|---|---|---|
-| National sector | 	emplates/process_national_sector.R | 2分行业数据/ Excel files | economic_indicators/规模以上工业企业主要经济指标{year_range}.csv |
-| Regional sector | 	emplates/process_regional_sector.R | 3分地区数据/ Excel files | economic_indicators/分地区规模以上工业企业主要经济指标{year_range}.csv |
-| Product output | 	emplates/process_product_output.R | Product Excel files + optional MEIC | physical_output/provincial_industrial_products_{year_range}_estimated.csv |
+| National sector | Adaptation example; dedicated template not implemented | National industry Excel tables | Output contract requires domain adaptation |
+| Regional sector | templates/process_regional_sector.R | 3分地区数据/ Excel files | economic_indicators/分地区规模以上工业企业主要经济指标{year_range}.csv |
+| Product output | templates/process_product_output.R | Product Excel files + optional MEIC | physical_output/provincial_industrial_products_{year_range}_estimated.csv |
 
 ## Generalized Processing Techniques
 
@@ -44,7 +50,7 @@ Each regional Excel contains one or more **panels** identified by a 地区 (regi
 
 Yearbook Excel files use a "地区" cell as the panel anchor. Core algorithm:
 
-`
+```
 1. Read entire Excel sheet as character matrix (no type inference)
 2. Locate all "地区" cells → each defines a panel's position
 3. For each panel:
@@ -53,7 +59,7 @@ Yearbook Excel files use a "地区" cell as the panel anchor. Core algorithm:
    c. Merge multi-row headers above data start
    d. Filter rows against region whitelist
    e. Convert metric columns to numeric with issue logging
-`
+```
 
 ### 2. Industry Name Standardization + Code Matching
 
@@ -66,14 +72,14 @@ Yearbook Excel files use a "地区" cell as the panel anchor. Core algorithm:
 
 Keep only recognized 31 mainland China provinces + 全国:
 
-`
+```
 region_names <- c(
   "全国", "北京", "天津", "河北", "山西", "内蒙古", "辽宁", "吉林", "黑龙江",
   "上海", "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北",
   "湖南", "广东", "广西", "海南", "重庆", "四川", "贵州", "云南", "西藏",
   "陕西", "甘肃", "青海", "宁夏", "新疆"
 )
-`
+```
 
 Normalize: 合计 and 总计 → 全国; remove all spaces and invisible characters.
 
@@ -97,9 +103,9 @@ The 2023 yearbook splits each industry into a main table and continuation tables
 
 Exclude files whose names match organization-type keywords that are not industry classifications:
 
-`
+```
 国有控股 | 有限责任公司 | 股份有限公司 | 私营 | 港澳台商 | 外商投资 | 大型 | 中型 | 小型
-`
+```
 
 ### 8. Numeric Conversion with Issue Tracking
 
@@ -112,11 +118,11 @@ Convert cell text to numeric:
 ### 9. Wide-to-Long Transformation (Product Output)
 
 Product output data starts as wide tables (products as columns). Transform:
-`
+```
 Year, province, 水泥(万吨), 粗钢(万吨), ...
 →
 Year, province, product_name, unit, output
-`
+```
 Parse product name and unit from column headers via product_name(unit) pattern, compute unit coefficients (万 → 10000, 亿 → 100000000).
 
 ### 10. Missing Data Imputation
@@ -163,7 +169,7 @@ Agents should not receive unrestricted filesystem access or paths outside the wo
 
 ## Configuration
 
-See 	emplates/config.yaml for adjustable parameters:
+See templates/config.yaml for adjustable parameters:
 - Year range
 - Region whitelist
 - Sector code lookup path
@@ -172,12 +178,12 @@ See 	emplates/config.yaml for adjustable parameters:
 
 ## References
 
-- eferences/pipeline_blueprint.md: Full technical description of each pipeline and data flow
-- eferences/industry_code_matching.md: Sector code matching rules and manual override cases
-- eferences/encoding_repair.md: GB18030 detection and repair methods
+- references/pipeline_blueprint.md: Full technical description of each pipeline and data flow
+- references/industry_code_matching.md: Sector code matching rules and manual override cases
+- references/encoding_repair.md: GB18030 detection and repair methods
 
 ## Examples
 
-- examples/workflow_national_sector.R: End-to-end national sector pipeline
+- examples/workflow_national_sector.R: National-sector adaptation example; verify its input and source paths before use
 - examples/workflow_regional_sector.R: End-to-end regional sector pipeline
 - examples/workflow_product_output.R: End-to-end product output pipeline

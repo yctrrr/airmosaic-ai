@@ -1,7 +1,8 @@
-﻿# yearbook_processing_config.yaml
-# 
-# Adjust these parameters before running any pipeline.
-# Paths may use either / or \ (normalized at runtime).
+# yearbook_processing_config.yaml
+#
+# Adapt this declaration in a personal/task copy before running any pipeline.
+# No current template automatically loads this YAML or expands ${...} values.
+# The caller maps inputs explicitly and routes all writes to output_root.
 
 # --- Year range ---
 yearbook_years:
@@ -11,15 +12,16 @@ yearbook_years:
 # --- Directory structure ---
 paths:
   # Root directory containing yearbook folders named like: 中国工业统计年鉴{year}（Excel）
-  yearbook_root: ""
-  
-  # Output subdirectories (relative to yearbook_root, created if necessary)
+  yearbook_root: "${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/industrial_yearbook"
+
+  output_root: "${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/industrial_yearbook"
+  # Output subdirectories relative to output_root, never to original inputs.
   output:
     economic_indicators: "economic_indicators"
     physical_output: "physical_output"
-  
+
   # Sector code lookup table (GB/T 4754-2012)
-  sector_code_lookup: "RESSET_NLC_INDUSTRYCODE_2012__N_1.csv"
+  sector_code_lookup: "${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/industrial_yearbook/industry_code_lookup.csv"
 
 # --- Region whitelist ---
 regions:

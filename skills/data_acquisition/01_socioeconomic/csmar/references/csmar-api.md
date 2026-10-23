@@ -1,4 +1,4 @@
-﻿# CSMAR API Reference
+# CSMAR API Reference
 
 Key API endpoints observed during CSMAR table download flow.
 
@@ -45,7 +45,7 @@ CSMAR web UI uses a dual-list field selector:
 Use a persistent browser profile to maintain login session across downloads:
 
 ```
-${AIRMOSAIC_LOCAL_WORKSPACE}/.browser_profiles/csmar/
+${AIRMOSAIC_AUTH_DIR}/browser_profiles/csmar/
 ```
 
-The profile stores cookies and login state. Do not commit to version control.
+The profile stores cookies and login state. Keep it separate from data/configuration, restrict local access, and exclude it from version control and ordinary data backups. The caller resolves AIRMOSAIC_AUTH_DIR; a placeholder string is not automatic JavaScript environment expansion.

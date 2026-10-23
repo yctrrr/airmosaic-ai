@@ -4,5 +4,5 @@
   "regions": ["AH","BJ","CQ","FJ","GS","GD","GX","GZ","HI","HE","HL","HA","HB","HN","NM","JS","JX","JL","LN","NX","QH","SN","SD","SH","SX","SC","TJ","XZ","XJ","YN","ZJ"],
   "sectors": ["cement","coke","iron and steel"],
   "years": [2021, 2025, 2030, 2035],
-  "output_dir": "${AIRMOSAIC_LOCAL_WORKSPACE}/outputs/gcam/unit_price"
+  "output_dir": "${AIRMOSAIC_LOCAL_WORKSPACE}/output/example/gcam/unit_price"
 }

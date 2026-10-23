@@ -5,5 +5,5 @@
   "component_name": "ccs_china_shareweights",
   "component_file": "../input/gcamdata/xml/CCS_shrwt_CHINA.xml",
   "insert_after": "detailed_industry_CHINA",
-  "output_config": "${AIRMOSAIC_LOCAL_WORKSPACE}/configs/modified_config.xml"
+  "output_config": "${AIRMOSAIC_LOCAL_WORKSPACE}/output/example/gcam/config/modified_config.xml"
 }

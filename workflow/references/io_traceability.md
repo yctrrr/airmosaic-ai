@@ -1,6 +1,8 @@
-﻿# Workflow I/O Contract and Causal Traceability
+# Workflow I/O Contract and Causal Traceability
 
 How each workflow layer's inputs/outputs connect, and how causal effects propagate through the pipeline for auditability.
+
+**Design status:** The contracts, fixed thresholds and example parameters below are proposals requiring domain review. The repository does not enforce them through a workflow engine. Hash chains support reproducibility; they do not establish causal identification or verify assumptions. The functions in "Agent Integration" are proposed interfaces, not registered tools. See the [harness guide](../../harness/README.md) for the current execution and validation process.
 
 ---
 

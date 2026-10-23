@@ -17,7 +17,7 @@ class FileAvailability:
 
 
 class DataAccessService:
-    """Inspect local dataset availability without exposing arbitrary paths."""
+    """Inspect catalog-defined caches; returned paths are for local use."""
 
     def __init__(
         self,
@@ -25,10 +25,11 @@ class DataAccessService:
         local_workspace: str | Path | None = None,
     ) -> None:
         self.catalog = catalog or DataCatalogService()
-        workspace = local_workspace or os.environ.get(
-            "AIRMOSAIC_LOCAL_WORKSPACE",
-            r"D:\AirMosaicAI\local_workspace",
-        )
+        workspace = local_workspace or os.environ.get("AIRMOSAIC_LOCAL_WORKSPACE")
+        if workspace is None or not str(workspace).strip():
+            raise ValueError(
+                "Set AIRMOSAIC_LOCAL_WORKSPACE or pass local_workspace explicitly."
+            )
         self.local_workspace = Path(workspace)
 
     def check_local_availability(

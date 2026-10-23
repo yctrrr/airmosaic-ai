@@ -12,7 +12,7 @@
 
 - GCAM model releases, executables, or Java binaries
 - BaseX database directories or their contents
-- Scenario output files (CSV, XML, PNG) ? keep in `${AIRMOSAIC_LOCAL_WORKSPACE}`
+- Scenario output files (CSV, XML, PNG): keep in `${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/gcam/`
 - Raw input CSV data used to build model scenarios
 - Generated intermediate files (sector registries, method registries)
 - Project-specific analysis outputs
@@ -26,7 +26,7 @@
 All extracted data, plots, and generated files go to:
 
 ```text
-${AIRMOSAIC_LOCAL_WORKSPACE}/outputs/gcam/
+${AIRMOSAIC_LOCAL_WORKSPACE}/output/example/gcam/
 ```
 
 or a directory configured by:
@@ -45,4 +45,4 @@ The GCAM release package (containing `exe/`, `input/`, `output/`, `libs/`) must 
 $env:GCAM_RELEASE_DIR = "<path to release package>"
 ```
 
-This path is not stored in skill files.
+Store the private mapping in `${AIRMOSAIC_CONFIG_DIR}` and load it explicitly. Authentication state, if separately needed, belongs under `${AIRMOSAIC_AUTH_DIR}` or in a credential manager. This skill does not provide a credential loader.

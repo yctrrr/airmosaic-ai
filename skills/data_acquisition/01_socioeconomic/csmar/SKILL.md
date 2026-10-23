@@ -1,9 +1,15 @@
-﻿---
+---
 name: csmar-downloader
 description: Download CSMAR financial and enterprise data after browser login. Extracts listed-company basic information and filters target-industry candidates for socioeconomic analysis.
 ---
 
 # CSMAR Data Downloader
+
+> Invocation status: named wrappers in Agent Contract sections are proposed, not registered APIs. Verify actual scripts and template requirements in the [tool catalog](../../../../harness/tool-catalog.md).
+
+## Local paths and authentication
+
+Follow the [shared storage contract](../../../../harness/storage-and-credentials.md): data and results use `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret configuration uses `AIRMOSAIC_CONFIG_DIR`, and browser authentication state uses `AIRMOSAIC_AUTH_DIR`. Read only task-needed configuration; never inspect, print or copy credential values or browser state. Set module output arguments explicitly for each run. These conventions do not imply automatic config loading or runtime isolation.
 
 Download CSMAR (China Stock Market & Accounting Research) data tables from `https://data.csmar.com/` for socioeconomic driver analysis (workflow Layer 1).
 
@@ -13,7 +19,7 @@ Download CSMAR (China Stock Market & Accounting Research) data tables from `http
 
 ## Prerequisites
 
-- Playwright installed: `pip install playwright && playwright install chromium`
+- An authorized browser tool, or Node.js Playwright for the JavaScript example below
 - CSMAR account with institutional access
 - Python 3.10+ with pandas, openpyxl
 
@@ -27,8 +33,11 @@ CSMAR downloads require two steps:
 
 ```js
 const { chromium } = await import("playwright");
+const { join } = await import("node:path");
+const authRoot = process.env.AIRMOSAIC_AUTH_DIR;
+if (!authRoot) throw new Error("Configure AIRMOSAIC_AUTH_DIR locally first.");
 const context = await chromium.launchPersistentContext(
-  "${AIRMOSAIC_LOCAL_WORKSPACE}/.browser_profiles/csmar",
+  join(authRoot, "browser_profiles", "csmar"),
   {
     headless: false,
     viewport: null,
@@ -85,9 +94,10 @@ Key fields to include:
 Use the bundled script to extract target-industry company candidates from the CSMAR company info zip:
 
 ```powershell
-python scripts/process_listed_company_basic_info.py \
-  --zip "${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/csmar/<downloaded>.zip" \
-  --out-dir "${AIRMOSAIC_LOCAL_WORKSPACE}/outputs/csmar"
+# Run from this skill directory after configuring the local workspace.
+python scripts/process_listed_company_basic_info.py `
+  --zip "$env:AIRMOSAIC_LOCAL_WORKSPACE/data_cache/csmar/company_basic.zip" `
+  --out-dir "$env:AIRMOSAIC_LOCAL_WORKSPACE/output/example/csmar"
 ```
 
 Outputs:

@@ -1,4 +1,4 @@
-﻿# Python
+# Python
 .venv/
 __pycache__/
 *.py[cod]
@@ -20,7 +20,7 @@ coverage/
 !.env.example
 *.log
 
-# Local dev docs (kept outside repo at D:\AirMosaicAI\docs)
+# Private development notes (shared operating guides live in harness/)
 docs/
 
 # Local data and outputs
@@ -29,6 +29,17 @@ data_cache/
 outputs/
 logs/
 secrets/
+auth/
+local_workspace/
+output/
+runs/
+.browser_profiles/
+browser_profiles/
+playwright/.auth/
+storage-state*.json
+# Only reusable examples belong in the repository config directory.
+/config/*
+!/config/examples/
 temp/
 *.nc
 *.tif

@@ -1,9 +1,15 @@
-﻿---
+---
 name: gcam-configuration
 description: Understand GCAM configuration files, scenario components, SSP-RCP setup, input data processing chains, CCS configuration, and sector naming conventions. Use when an agent needs to inspect, explain, or modify GCAM configuration XML files; understand how scenarios are defined; trace an input parameter from CSV through R processing to XML and BaseX output; or diagnose CCS-related configuration issues.
 ---
 
 # GCAM Configuration Reference
+
+> Invocation status: named wrappers in Agent Contract sections are proposed, not registered APIs. Verify actual scripts and template requirements in the [tool catalog](../../../../../harness/tool-catalog.md).
+
+## Local paths and authentication
+
+Follow the [shared storage contract](../../../../../harness/storage-and-credentials.md): data and results use `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret configuration uses `AIRMOSAIC_CONFIG_DIR`, and browser authentication state uses `AIRMOSAIC_AUTH_DIR`. Read only task-needed configuration; never inspect, print or copy credential values or browser state. Set module output arguments explicitly for each run. These conventions do not imply automatic config loading or runtime isolation.
 
 ## Purpose
 

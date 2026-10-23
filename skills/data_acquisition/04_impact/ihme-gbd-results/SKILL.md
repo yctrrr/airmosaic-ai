@@ -5,6 +5,12 @@ description: Fetch and process IHME GBD Results data from vizhub.healthdata.org 
 
 # IHME GBD Results
 
+> Invocation status: named wrappers in Agent Contract sections are proposed, not registered APIs. Verify actual scripts and template requirements in the [tool catalog](../../../../harness/tool-catalog.md).
+
+## Local paths and authentication
+
+Follow the [shared storage contract](../../../../harness/storage-and-credentials.md): data and results use `AIRMOSAIC_LOCAL_WORKSPACE`, personal non-secret configuration uses `AIRMOSAIC_CONFIG_DIR`, and browser authentication state uses `AIRMOSAIC_AUTH_DIR`. Read only task-needed configuration; never inspect, print or copy credential values or browser state. Set module output arguments explicitly for each run. These conventions do not imply automatic config loading or runtime isolation.
+
 ## Purpose
 
 Use this skill for IHME GBD Results acquisition and local processing. The skill does not store credentials, cookies, tokens, browser profiles, or personal paths. Raw exports and processed mortality tables must stay under the AirMosaic local workspace.
@@ -31,25 +37,16 @@ Do not commit raw IHME exports, processed health tables, cookies, browser profil
 
 ## Browser Setup
 
-Use a user-chosen temporary profile path. Do not write personal profile paths into reusable scripts or docs.
+Use a locally configured Chromium executable or browser tool and a member-specific profile under `${AIRMOSAIC_AUTH_DIR}/browser_profiles/ihme-gbd/`, separate from data and personal configuration. Let the user authenticate in that profile. Enable a loopback-only CDP endpoint on a task-owned port, and check that the port belongs to this browser before connecting.
 
-```powershell
-$chrome = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-$profile = "$env:TEMP\airmosaic-gbd-browser-profile"
-Start-Process -FilePath $chrome -ArgumentList @(
-  "--remote-debugging-port=9222",
-  "--remote-allow-origins=*",
-  "--user-data-dir=$profile",
-  "--no-first-run",
-  "--no-default-browser-check",
-  "https://vizhub.healthdata.org/gbd-results/"
-)
-```
+Keep the executable path mapping in `${AIRMOSAIC_CONFIG_DIR}`; keep the profile in the authentication root. Do not commit the executable path, profile path, cookies or account identity. See the repository's classified data-acquisition guide for the complete sequence.
 
 ## Fetch Command
 
+Run the following script command from this skill directory.
+
 ```powershell
-$env:AIRMOSAIC_LOCAL_WORKSPACE = "D:\AirMosaicAI\local_workspace"
+if (-not $env:AIRMOSAIC_LOCAL_WORKSPACE) { throw "Configure AIRMOSAIC_LOCAL_WORKSPACE locally first." }
 $out = "$env:AIRMOSAIC_LOCAL_WORKSPACE\data_cache\gbd_health\raw\gbd_2019_2023_mortality_rate.csv"
 
 python ".\scripts\fetch_gbd_results_redux.py" `
