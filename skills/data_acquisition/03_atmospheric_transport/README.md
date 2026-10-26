@@ -5,6 +5,7 @@
 ## 本步入口
 
 - [输入准备](atmospheric-inputs/SKILL.md)
+- [PM2.5 站点监测：获取与整理参考](pm25-stations/SKILL.md)（无下载或整理执行适配器）
 
 ## 使用流程与交接
 

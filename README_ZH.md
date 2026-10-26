@@ -13,6 +13,7 @@
 | 按四个研究步骤查找入口、流程和执行状态 | [四步导航](harness/four-step-workflow.md) |
 | 安装并调用现有 CLI/SDK | [基础工具](harness/usage/core.md) |
 | 获取人口、企业、年鉴或 GBD 数据 | [数据获取](harness/usage/data-acquisition.md) |
+| 规划 PM2.5 站点获取、整理与质控（人工参考） | [站点技能](skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md) |
 | 使用 GCAM 脚本或健康影响模板 | [模型分析](harness/usage/model-analysis.md) |
 | 使用 mlr3 / TimeXer 方法并跟踪参考项目 | [机器学习](harness/usage/machine-learning.md) |
 | 查找近期本地实践中的可复用方法 | [方法库](methods/README.md) |

@@ -1,5 +1,5 @@
 schema_version: 2
-reviewed_on: '2026-10-23'
+reviewed_on: '2026-10-26'
 purpose: Four-step documentation inventory and skill mapping; not a tool registry
   or workflow executor.
 execution_performed_this_review: false
@@ -231,6 +231,20 @@ methods:
   skills:
   - skills/data_acquisition/03_atmospheric_transport/atmospheric-inputs/SKILL.md
   - skills/model/03_atmospheric_transport/geos-chem/SKILL.md
+- method_id: pm25_station_acquisition
+  category: data_acquisition
+  title: PM2.5 站点监测获取与整理
+  document: 03_atmospheric_transport/pm25_stations.md
+  status: reference
+  evidence: public_source_guidance_and_prior_document_interface_review
+  source_projects: []
+  tool_ids: []
+  primary_stage: 03_atmospheric_transport
+  applies_to:
+  - 03_atmospheric_transport
+  - 04_impact
+  skills:
+  - skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md
 stages:
   01_socioeconomic: 01_socioeconomic
   02_emission_inventory: 02_emission_inventory

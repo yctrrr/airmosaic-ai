@@ -11,6 +11,8 @@
 | 03 大气输送与化学 | [03_atmospheric_transport](../skills/data_acquisition/03_atmospheric_transport/README.md) | [03_atmospheric_transport](../skills/model/03_atmospheric_transport/README.md) | GEOS-Chem 输入、编译、配置与排错参考；没有下载、编译、调度或模拟适配器 |
 | 04 社会经济影响 | [04_impact](../skills/data_acquisition/04_impact/README.md) | [04_impact](../skills/model/04_impact/README.md) | GBD 获取支持 run-tool；健康模板和完整成本/分配方法需人工适配 |
 
+03 还提供 [PM2.5 站点获取与整理参考](../skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md)，用于浓度比较与观测交接；04 引用同一方法。该能力没有下载/整理适配器，不改变本表的执行范围。
+
 [methods 方法库](../methods/README.md)按相同四步维护方法；[index.yaml](../methods/index.yaml)逐项映射真实 SKILL.md、适用阶段及已有 tool_id。方法索引不是运行器注册表。
 
 ## 01 社会经济驱动
@@ -38,6 +40,8 @@
 4. 模型自身 dry-run 会执行程序并可能写日志；后续下载又有网络和落盘副作用。它不同于 run-tool 的无执行预检。
 5. 后续获授权运行时，先短时测试，再核对退出码、时间终点、诊断、restart、单位和边界。浓度校正消费已有浓度，不能替代模拟。
 6. 交接浓度契约、覆盖与验证摘要。当前没有本阶段的 run-tool 模拟入口，不使用虚构工具 ID。
+
+站点观测支线：明确网络与时间范围 → 核对来源和站点表 → 分开制定获取/整理计划 → 按授权读取与质控 → 交接浓度和元数据。具体步骤及人工适配见 [PM2.5 方法卡](../methods/03_atmospheric_transport/pm25_stations.md)；不必为站点资料任务启动 GEOS-Chem，也不把站点记录直接当作模型驱动。
 
 ## 04 社会经济影响
 

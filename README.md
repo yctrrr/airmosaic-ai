@@ -13,6 +13,7 @@ Read the [Harness guide](harness/README.md) for team roles, execution steps, bou
 | Follow the four research steps and their current execution status | [Four-step guide](harness/four-step-workflow.md) |
 | Install and call existing CLI/SDK services | [Core tools](harness/usage/core.md) |
 | Acquire population, enterprise, yearbook or GBD data | [Data acquisition](harness/usage/data-acquisition.md) |
+| Plan PM2.5 station acquisition, preparation and quality checks (reference only) | [Station skill](skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md) |
 | Use GCAM scripts or health-impact templates | [Model analysis](harness/usage/model-analysis.md) |
 | Use mlr3 / TimeXer methods and track reference projects | [Machine learning](harness/usage/machine-learning.md) |
 | Find reusable methods from recent local practice | [Methods library](methods/README.md) |

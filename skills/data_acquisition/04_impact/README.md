@@ -6,6 +6,8 @@
 
 - [GBD](ihme-gbd-results/SKILL.md)
 
+站点浓度需求引用第三步的 [PM2.5 站点技能](../03_atmospheric_transport/pm25-stations/SKILL.md)；这是获取与整理参考，不能直接替代人口暴露输入或健康计算。
+
 ## 使用流程与交接
 
 按[四步使用流程](../../../harness/four-step-workflow.md)的本步顺序确认范围、选择方法、核对前置条件并交接。方法目录见[本步方法卡](../../../methods/04_impact/README.md)；跨阶段方法见[共享目录](../../../methods/shared/README.md)。

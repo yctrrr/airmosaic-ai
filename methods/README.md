@@ -1,6 +1,6 @@
 # 四步方法库
 
-复核日期：2026-10-23。主导航与 skills 和 workflow 一致：01 社会经济驱动 → 02 排放清单 → 03 大气输送与化学 → 04 社会经济影响；跨阶段方法放 shared。本库只保存通用说明与合成接口约定，不存原始数据。当前共 13 张方法卡。
+复核日期：2026-10-26。主导航与 skills 和 workflow 一致：01 社会经济驱动 → 02 排放清单 → 03 大气输送与化学 → 04 社会经济影响；跨阶段方法放 shared。本库只保存通用说明与合成接口约定，不存原始数据。当前共 14 张方法卡。
 
 ## 按研究步骤进入
 
@@ -31,6 +31,7 @@
 | [GCAM 输出分析](shared/gcam.md) | shared | [gcam](../skills/model/IAM/gcam/SKILL.md) | registered_tools |
 | [mlr3 与 TimeXer](shared/machine_learning.md) | shared | [mlr3](../skills/model/machine_learning/mlr3/SKILL.md)、[timexer](../skills/model/machine_learning/timexer/SKILL.md) | reference |
 | [GEOS-Chem 输入、编译与浓度交接](03_atmospheric_transport/geos_chem.md) | 03_atmospheric_transport | [atmospheric-inputs](../skills/data_acquisition/03_atmospheric_transport/atmospheric-inputs/SKILL.md)、[geos-chem](../skills/model/03_atmospheric_transport/geos-chem/SKILL.md) | reference |
+| [PM2.5 站点监测获取与整理](03_atmospheric_transport/pm25_stations.md) | 03_atmospheric_transport | [pm25-station-acquisition](../skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md) | reference |
 
 local_source：外部项目方法，未接入；mixed：仅部分相关工具存在；registered_tools：列出的部分适配器已登记，reference 仍不可执行；reference：仅指导；methods_only：只列概念方法。单工具执行支持以 manifest 为准，不从方法状态推断整套流程能运行。
 

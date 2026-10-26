@@ -4,6 +4,8 @@
 
 近期本地使用过的文献、统计年鉴、企业披露和人口健康方法另见[方法库](../../methods/README.md)；其中的外部项目方法不会自动注册为本页工具。
 
+PM2.5 站点观测见正式 [获取与整理 skill](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md) 和[方法卡](../../methods/03_atmospheric_transport/pm25_stations.md)：来源选择、人工获取、宽表整理和质控交接均为 reference，尚无工具 ID 或 run-tool 入口；旧脚本不直接注册。
+
 从仓库根目录使用已安装项目的 Python 环境。按[环境示例](../../config/examples/README.md)配置并创建独立、Git 外的数据/config/auth 根；不会自动加载个人配置或登录。可选依赖组：`python -m pip install -e ".[dev,tools]"`。浏览器与数据权限单独准备。
 
 ## 1. 真实入口与调用顺序
