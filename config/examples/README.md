@@ -27,4 +27,6 @@ foreach ($amDir in @($env:AIRMOSAIC_LOCAL_WORKSPACE, $env:AIRMOSAIC_CONFIG_DIR, 
 
 Linux/macOS 可在自己的 shell 配置中显式设置这三个变量，详见[工作区与凭据管理](../../harness/storage-and-credentials.md)。
 
+`copernicus/` 提供 ERA5 单层、CAMS EAC4 和 CAMS 预报的非秘密请求 JSON。只将选中的文件复制到个人 `CONFIG_DIR/copernicus/`，保留现有配置并按当前门户表单核对。这些是官方 API 的 request 示例，不是 run-tool 参数；不包含令牌或自动配置凭据的逻辑。使用步骤见 [Copernicus 下载指南](../../harness/usage/copernicus-downloads.md)。
+
 `run-tool` 要求三类根目录均已存在且互不包含。它不会自动加载个人环境脚本，仅显式读取 `--params-file` 指定的非秘密 JSON；该路径可以在 CONFIG_DIR。路径参数只展开 `${AIRMOSAIC_LOCAL_WORKSPACE}`，不展开 shell 表达式或其他环境变量。公共参数示例位于 `examples/run-tool/`，完整步骤见[执行说明](../../harness/usage/run-tool.md)。

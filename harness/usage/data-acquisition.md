@@ -105,6 +105,12 @@ python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdP
 3. 对补零、插值、外推和外部补充明确方法依据，不把默认值当成已批准选择。
 4. 用合成表或授权小样本核对覆盖、缺失、数值转换，再处理任务范围，保存排除项和映射。
 
-## 6. 共同执行边界
+## 6. ERA5 / CAMS：人工下载参考
+
+第三步新增 [ERA5 skill](../../skills/data_acquisition/03_atmospheric_transport/era5/SKILL.md) 与 [CAMS skill](../../skills/data_acquisition/03_atmospheric_transport/cams/SKILL.md)。按 [Copernicus 下载指南](copernicus-downloads.md)区分 CDS/ADS、ERA5 单层/气压层、CAMS EAC4/预报，再选择网页或 Python API。
+
+指南包含本人登录与许可、运行时令牌、3 份非秘密请求 JSON、分批下载、格式/单位/有效时间检查和旧脚本迁移边界。当前没有对应 tool_id 或数据声明，不出现在工具/数据查询列表，也不能通过 run-tool 执行；请求 JSON 不属于 runner 参数格式。没有真实下载、登录或接口集成验证。
+
+## 7. 共同执行边界
 
 run-tool 检查只覆盖启用的适配器，不因失败而绕过它直接运行脚本。dry-run 检查 can_execute/blockers，不能只看退出码 0。记录位于 `runs/<run_id>/record.json`，仅含允许的脱敏字段；科学文件本身仍须审核。获取、处理与模型使用是独立任务，不自动串联、发布缓存或完成科学验收。规则见[执行指南](run-tool.md)。

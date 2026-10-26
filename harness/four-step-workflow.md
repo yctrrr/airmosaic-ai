@@ -8,7 +8,7 @@
 |---|---|---|---|
 | 01 社会经济驱动 | [01_socioeconomic](../skills/data_acquisition/01_socioeconomic/README.md) | [01_socioeconomic](../skills/model/01_socioeconomic/README.md) | WorldPop、企业基础 ZIP 处理支持 run-tool；年鉴为模板，其他方法需适配 |
 | 02 排放清单 | [02_emission_inventory](../skills/data_acquisition/02_emission_inventory/README.md) | [02_emission_inventory](../skills/model/02_emission_inventory/README.md) | 只列方法，无具体数据、实现代码或执行适配器 |
-| 03 大气输送与化学 | [03_atmospheric_transport](../skills/data_acquisition/03_atmospheric_transport/README.md) | [03_atmospheric_transport](../skills/model/03_atmospheric_transport/README.md) | GEOS-Chem 输入、编译、配置与排错参考；没有下载、编译、调度或模拟适配器 |
+| 03 大气输送与化学 | [03_atmospheric_transport](../skills/data_acquisition/03_atmospheric_transport/README.md) | [03_atmospheric_transport](../skills/model/03_atmospheric_transport/README.md) | ERA5/CAMS 人工下载及 GEOS-Chem 输入、编译、配置与排错参考；没有下载、编译、调度或模拟适配器 |
 | 04 社会经济影响 | [04_impact](../skills/data_acquisition/04_impact/README.md) | [04_impact](../skills/model/04_impact/README.md) | GBD 获取支持 run-tool；健康模板和完整成本/分配方法需人工适配 |
 
 03 还提供 [PM2.5 站点获取与整理参考](../skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md)，用于浓度比较与观测交接；04 引用同一方法。该能力没有下载/整理适配器，不改变本表的执行范围。
@@ -36,6 +36,7 @@
 
 1. 确定 Classic 或 GCHP、固定版本、模拟类型及全局/嵌套网格，不混用运行目录与配置。
 2. 按[输入准备 skill](../skills/data_acquisition/03_atmospheric_transport/atmospheric-inputs/SKILL.md)列出气象、排放、初始/边界条件和诊断的接口需求。
+   如需气象协变量或大气成分资料，参考 [ERA5/CAMS 下载指南](usage/copernicus-downloads.md)；获取这些数据不等于完成 GEOS-Chem 驱动或边界条件转换。
 3. 按 [GEOS-Chem skill](../skills/model/03_atmospheric_transport/geos-chem/SKILL.md)核对编译器、库、CMake、并行模式及独立运行目录，参考编译排错说明。
 4. 模型自身 dry-run 会执行程序并可能写日志；后续下载又有网络和落盘副作用。它不同于 run-tool 的无执行预检。
 5. 后续获授权运行时，先短时测试，再核对退出码、时间终点、诊断、restart、单位和边界。浓度校正消费已有浓度，不能替代模拟。

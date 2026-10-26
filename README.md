@@ -13,6 +13,7 @@ Read the [Harness guide](harness/README.md) for team roles, execution steps, bou
 | Follow the four research steps and their current execution status | [Four-step guide](harness/four-step-workflow.md) |
 | Install and call existing CLI/SDK services | [Core tools](harness/usage/core.md) |
 | Acquire population, enterprise, yearbook or GBD data | [Data acquisition](harness/usage/data-acquisition.md) |
+| Plan ERA5 / CAMS downloads through CDS / ADS (manual reference) | [Copernicus downloads](harness/usage/copernicus-downloads.md) |
 | Plan PM2.5 station acquisition, preparation and quality checks (reference only) | [Station skill](skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md) |
 | Use GCAM scripts or health-impact templates | [Model analysis](harness/usage/model-analysis.md) |
 | Use mlr3 / TimeXer methods and track reference projects | [Machine learning](harness/usage/machine-learning.md) |
@@ -51,7 +52,7 @@ Socioeconomic drivers → emissions → atmospheric transport/chemistry → impa
 
 These layers organize the research workflow. They are not all implemented as executable services. Method selection requires suitable data, baselines and domain review; sample counts alone do not establish that an AI model or causal method is appropriate.
 
-Operational mapping: [four-step workflow](harness/four-step-workflow.md), [skills](skills/README.md) and [methods](methods/README.md). Step 02 lists methods only, with no concrete data or implementation code. Step 03 includes GEOS-Chem setup/build guidance; no model compilation or simulation adapter is enabled. Documentation maintenance uses descriptions, interfaces and synthetic inputs, without reading original data.
+Operational mapping: [four-step workflow](harness/four-step-workflow.md), [skills](skills/README.md) and [methods](methods/README.md). Step 02 lists methods only, with no concrete data or implementation code. Step 03 includes GEOS-Chem setup/build guidance, ERA5/CAMS manual download references and PM2.5 station acquisition/preparation guidance; no download, preparation, model compilation or simulation adapter is enabled for these workflows. Step 04 links to the same references, preserving the distinction between gridded products and station observations. Documentation maintenance uses descriptions, interfaces and synthetic inputs, without reading original data.
 
 ## Quick start
 

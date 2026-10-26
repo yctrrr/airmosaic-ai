@@ -1,11 +1,15 @@
 # 03_atmospheric_transport：大气输送与化学
 
-用途：排放接口到浓度的模型方法。当前状态：GEOS-Chem 编译、配置及排错为人工参考；没有下载、编译、模拟或调度适配器。
+用途：气象与大气成分获取、PM2.5 站点观测整理，以及排放接口到浓度的模型输入准备。当前状态：ERA5/CAMS、PM2.5 站点及 GEOS-Chem 输入、配置均为人工参考；没有本阶段的下载、整理、编译、模拟或调度适配器。
 
 ## 本步入口
 
 - [输入准备](atmospheric-inputs/SKILL.md)
 - [PM2.5 站点监测：获取与整理参考](pm25-stations/SKILL.md)（无下载或整理执行适配器）
+- [ERA5：CDS 气象数据获取](era5/SKILL.md)
+- [CAMS：ADS 再分析与预报获取](cams/SKILL.md)
+
+ERA5/CAMS 先选择产品，再按 [Copernicus 下载指南](../../../harness/usage/copernicus-downloads.md)核对账号、非秘密请求、目录和验收；站点观测按 PM2.5 skill 的独立来源流程处理。下载与整理分别限定范围，不自动触发。
 
 ## 使用流程与交接
 

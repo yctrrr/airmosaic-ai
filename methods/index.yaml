@@ -9,8 +9,7 @@ status_definitions:
     here.
   registered_tools: Listed executable adapters exist; individual reference IDs remain
     disabled and task readiness requires separate checks.
-  reference: Method guidance only; model training or inference is not implemented
-    here.
+  reference: Method guidance only; no executable adapter for the described workflow.
   methods_only: Conceptual methods only; no concrete data, implementation code, source-script
     references or executable adapter.
 methods:
@@ -231,6 +230,34 @@ methods:
   skills:
   - skills/data_acquisition/03_atmospheric_transport/atmospheric-inputs/SKILL.md
   - skills/model/03_atmospheric_transport/geos-chem/SKILL.md
+- method_id: era5_acquisition
+  category: data_acquisition
+  title: ERA5 气象数据获取
+  document: 03_atmospheric_transport/era5.md
+  status: reference
+  evidence: official_documentation_and_public_request_form_review
+  source_projects: []
+  tool_ids: []
+  primary_stage: 03_atmospheric_transport
+  applies_to:
+  - 03_atmospheric_transport
+  - 04_impact
+  skills:
+  - skills/data_acquisition/03_atmospheric_transport/era5/SKILL.md
+- method_id: cams_acquisition
+  category: data_acquisition
+  title: CAMS 大气成分再分析与预报获取
+  document: 03_atmospheric_transport/cams.md
+  status: reference
+  evidence: official_documentation_and_public_request_form_review
+  source_projects: []
+  tool_ids: []
+  primary_stage: 03_atmospheric_transport
+  applies_to:
+  - 03_atmospheric_transport
+  - 04_impact
+  skills:
+  - skills/data_acquisition/03_atmospheric_transport/cams/SKILL.md
 - method_id: pm25_station_acquisition
   category: data_acquisition
   title: PM2.5 站点监测获取与整理

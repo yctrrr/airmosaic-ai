@@ -13,6 +13,7 @@
 | 按四个研究步骤查找入口、流程和执行状态 | [四步导航](harness/four-step-workflow.md) |
 | 安装并调用现有 CLI/SDK | [基础工具](harness/usage/core.md) |
 | 获取人口、企业、年鉴或 GBD 数据 | [数据获取](harness/usage/data-acquisition.md) |
+| 规划 ERA5 / CAMS 的 CDS / ADS 下载（人工参考） | [Copernicus 下载](harness/usage/copernicus-downloads.md) |
 | 规划 PM2.5 站点获取、整理与质控（人工参考） | [站点技能](skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md) |
 | 使用 GCAM 脚本或健康影响模板 | [模型分析](harness/usage/model-analysis.md) |
 | 使用 mlr3 / TimeXer 方法并跟踪参考项目 | [机器学习](harness/usage/machine-learning.md) |
@@ -51,7 +52,7 @@ Socioeconomic drivers → emissions → atmospheric transport/chemistry → impa
 
 这四层组织了社会经济、排放、大气输送/化学和影响研究流程；并非每一层都已实现为可执行服务。方法选择需要数据适用性、基线和领域审核，不能仅由样本数量判断 AI 或因果方法是否适用。
 
-具体对应见[四步流程](harness/four-step-workflow.md)、[skills 导航](skills/README.md)和[方法库](methods/README.md)。02 只列方法，不提供具体数据和实现代码；03 新增 GEOS-Chem 使用与编译排错参考，没有启用模型编译或模拟适配器。文档维护只使用说明、接口和合成输入，不读取原始数据。
+具体对应见[四步流程](harness/four-step-workflow.md)、[skills 导航](skills/README.md)和[方法库](methods/README.md)。02 只列方法，不提供具体数据和实现代码；03 包含 GEOS-Chem 使用与编译排错、ERA5/CAMS 人工下载及 PM2.5 站点获取与整理参考，这些流程没有启用下载、整理、模型编译或模拟适配器。04 引用同一说明，区分网格产品与站点观测。文档维护只使用说明、接口和合成输入，不读取原始数据。
 
 ## 快速启动
 

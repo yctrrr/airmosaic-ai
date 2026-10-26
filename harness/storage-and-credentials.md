@@ -77,6 +77,8 @@ Windows 的认证目录使用个人账户目录权限，并按实际协作需要
 | CSMAR | 工作区 `data_cache/csmar/` | 企业处理器显式 `--out-dir`；个人路径映射在配置根 | 认证根 `browser_profiles/csmar/` |
 | 工业年鉴 | 工作区 `data_cache/industrial_yearbook/` 或授权只读源 | 模板需适配输出；任务配置副本在本次输出目录，长期私人路径映射在配置根 | 无统一在线登录实现 |
 | IHME GBD | 工作区 `data_cache/gbd_health/` | `--out` 指定原始 CSV；认证状态不写 sidecar；派生计算进任务输出 | 认证根 `browser_profiles/ihme-gbd/`，已有脚本连接该浏览器的本机 CDP |
+| ERA5 / CAMS（参考） | 验收后按授权进入 `data_cache/era5/` / `data_cache/cams/` | 人工下载先放 `output/<run_id>/era5/` / `cams/`；非秘密请求放 CONFIG_DIR 的 `copernicus/` | API 令牌留在秘密管理器、运行时传入；网页专用会话在 AUTH_DIR 的 `browser_profiles/copernicus-cds/` / `copernicus-ads/` |
+| PM2.5 站点（参考） | 验收后按授权进入 `data_cache/pm25_stations/<source>/` | 获取与整理分开，任务产物放 `output/<run_id>/pm25-stations/`；非秘密计划/来源映射放 CONFIG_DIR 的 `pm25-stations/` | 如来源需专用浏览器，会话在 AUTH_DIR 的 `browser_profiles/<source>/`；密码/token 留在秘密管理器，不复用 Copernicus 会话 |
 | GCAM 总入口 | `GCAM_RELEASE_DIR` 只读引用 | 按子 skill 显式映射输出 | 当前本地分析不要求网站凭据 |
 | GCAM 输出结构 | 模型已有数据库布局 | 显式 `--output-dir`，使用任务输出 | 无 |
 | GCAM 配置 | 模型原始配置只读参考 | 修改写入任务副本；不要覆盖发行包 | 无 |
