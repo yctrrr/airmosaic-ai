@@ -1,13 +1,17 @@
 # Design proposal only; no automatic execution. Operational guide: harness/four-step-workflow.md
-# Layer 4: Socioeconomic Impact Assessment
+# Layer 4: Integrated Impact Assessment
 # 浓度/排放 → 健康损失 → 碳社会成本 → 不平等效应
 
 layer:
   id: "04_integrated_impacts"
-  name: "社会经济影响评估"
+  name: "综合影响评估"
   description: >
     Assess how changes in pollution concentration and carbon emissions
-    translate to health burden, economic damage, and distributional inequality.
+    translate to health burden, economic damage, distributional inequality,
+    ecosystem, agricultural and climate impacts. The modules below remain
+    health/economic design examples; natural-system assessment needs separate
+    methods and adapters. Required inputs below belong to these examples,
+    rather than every possible impact assessment.
 
 inputs:
   required:

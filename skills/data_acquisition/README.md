@@ -1,10 +1,17 @@
-# 数据获取与输入准备
+# Data acquisition and input preparation
 
-按[四步流程](../../harness/four-step-workflow.md)进入：
+<!-- README-I18N:START -->
 
-- [01_socioeconomic_natural_change：社会经济驱动](01_socioeconomic_natural_change/README.md)
-- [02_emission_inventory：排放清单](02_emission_inventory/README.md)
-- [03_atmospheric_transport：大气输送与化学](03_atmospheric_transport/README.md)
-- [04_integrated_impacts：社会经济影响](04_integrated_impacts/README.md)
+**English** | [中文](README_ZH.md)
 
-跨阶段见[共享目录](shared/README.md)，每步对应方法见[方法库](../../methods/README.md)。
+<!-- README-I18N:END -->
+
+
+Start from the [four-step workflow](../../harness/four-step-workflow.md):
+
+- [01: Socioeconomic and Natural Change](01_socioeconomic_natural_change/README.md)
+- [02: Emission Inventory](02_emission_inventory/README.md)
+- [03: Atmospheric Transport and Chemistry](03_atmospheric_transport/README.md)
+- [04: Integrated Impacts](04_integrated_impacts/README.md)
+
+Cross-stage capabilities are in [shared](shared/README.md). See the [methods library](../../methods/README.md) for each stage's methods.

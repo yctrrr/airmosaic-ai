@@ -3,37 +3,44 @@ name: mlr3-modeling
 description: Guide use of mlr3 and mlr3verse for tabular regression or classification, learner comparison, tuning and prediction in AirMosaic. Track the zhjx19/ml-mlr3 reference project and adapt its workflow to local data, validation and privacy boundaries.
 ---
 
-# mlr3 模型使用与项目跟踪
+# mlr3 modeling and reference-project tracking
 
-本 skill 用于指导 mlr3 模型的使用，并跟踪 [zhjx19/ml-mlr3](https://github.com/zhjx19/ml-mlr3) 项目。来源提交、版本和复核方式见 [UPSTREAM.md](UPSTREAM.md)。这里维护 AirMosaic 的使用说明与本地适配约定，不会自动同步、安装或执行上游代码。
+<!-- README-I18N:START -->
 
-**调用状态**：目录条目为 `mlr3_workflow_reference`，`implementation_status: reference`、`execution.enabled: false`。可查询说明，不能当作 run-tool 的训练、调参或预测入口。mlr3 的 `lrn()`、`resample()` 等是 R 包 API，不是 AirMosaic 工具 ID。
+**English** | [中文](SKILL_ZH.md)
 
-## 适用范围与依赖
+<!-- README-I18N:END -->
 
-- 表格数据的回归、分类、基线比较、重抽样验证、调参与新数据预测。
-- 基础示例使用 R、mlr3 和 rpart；PipeOp 预处理另需 mlr3pipelines，调参另需 mlr3tuning/paradox，其他 learner 需要相应扩展和后端包。安装 mlr3verse 不代表所有后端均已可用。
-- 生存、聚类、空间/时间重抽样与大规模训练需要单独选择扩展、切分方法和验证案例；当前示例不覆盖这些任务，也不提供深度学习或远程部署入口。
-- 使用前在任务环境核对 namespace、字典键和参数名，记录包版本；不把上游测试记录当成本机验证结果。
 
-## Agent 操作步骤
+Use this skill for mlr3 modeling and tracking [zhjx19/ml-mlr3](https://github.com/zhjx19/ml-mlr3). See [upstream tracking](UPSTREAM.md) for the reviewed commit, version and review method. AirMosaic maintains usage/adaptation guidance; it does not automatically sync, install or execute upstream code.
 
-1. **定义任务**：确定目标列、预测时点、样本单位、可用特征、评价指标和结果用途。排除目标派生列、未来信息及不能用于建模的身份字段。
-2. **确定数据边界**：只读取授权输入。数据、模型与预测留在工作区，个人非秘密映射留在 CONFIG_DIR；本地建模不需要账号/API key，也不读取 AUTH_DIR 中的内容。
-3. **先定划分再拟合**：按研究设计确定训练/验证/最终测试数据。企业、站点、地区重复观测或时间序列不能默认按行随机 CV。保留可复核的本地行标识和划分依据。
-4. **构建开发流程**：Task/Learner 修改前在必要处 deep clone，避免覆盖原对象；拟合型插补、编码、标准化、特征筛选等放进重抽样内的 PipeOp 图，预测复用同一图。
-5. **约束模型选择**：从简单基线开始；提前确定候选模型、指标方向、折数、调参次数/时限和资源上限。比较与调参仅使用开发数据；需要选择后性能估计时采用合适的外层验证。
-6. **固定后评估**：冻结特征、预处理、超参数和阈值后，在已有任务授权涵盖的最终测试集上执行约定评估。不因不满意而反复改模型再报告同一测试集为独立验证；缺少必要授权或测试设计时先说明缺口。
-7. **拟合与预测**：记录最终训练范围；检查新数据的列名、类型、因子水平、单位和预处理契约，用已拟合 learner/GraphLearner 预测，不能在新批次重新拟合预处理。
-8. **验收与共享**：检查失败折、缺失预测、基线对比与适用范围；保留本地复现记录。模型对象、预测明细、训练后端和 sessionInfo 可能含敏感信息，分享前单独审查。
+**Invocation status:** `mlr3_workflow_reference` is `implementation_status: reference`, `execution.enabled: false`. It supports documentation queries, not run-tool training, tuning or prediction. R APIs such as `lrn()` and `resample()` are not AirMosaic tool IDs.
 
-## 按需阅读
+## Scope and dependencies
 
-| 任务 | 文档 |
+- Tabular regression/classification, baseline comparisons, resampling, tuning and prediction on new data.
+- Basic examples require R, mlr3 and rpart; preprocessing PipeOps require mlr3pipelines; tuning needs mlr3tuning/paradox. Other learners require their extensions and backends. Installing mlr3verse does not establish that every backend works.
+- Survival, clustering, spatial/temporal resampling and large training tasks require separately selected extensions, splits and validation cases. Examples do not cover these tasks, deep learning or remote deployment.
+- Verify namespaces, dictionary keys and parameter names in the task environment and record package versions. Upstream checks are not local validation.
+
+## Agent workflow
+
+1. **Define the task:** target, prediction time, sample unit, available features, metrics and intended use. Exclude target-derived features, future information and identities unsuitable for modeling.
+2. **Set data boundaries:** read authorized inputs only. Keep data, models and predictions in the workspace and non-secret mappings in CONFIG_DIR. Local modeling requires no account/API key or AUTH_DIR access.
+3. **Split before fitting:** define training, validation and final tests from the study design. Repeated firms/stations/regions and time series do not automatically permit random row-wise CV. Retain local row IDs and split rationale.
+4. **Build the development workflow:** deep-clone Task/Learner objects where needed. Put fitted imputation, encoding, scaling and feature selection inside resampling PipeOp graphs and reuse the same graph for prediction.
+5. **Constrain selection:** begin with simple baselines and specify candidates, metric direction, folds, tuning count/time and resource budgets. Use development data only; use suitable outer validation for post-selection performance estimates.
+6. **Evaluate frozen choices:** freeze features, preprocessing, hyperparameters and thresholds before the agreed final test within existing authorization. Do not repeatedly revise against the test and still label it independent. State gaps if authorization or test design is missing.
+7. **Fit and predict:** record the final training scope and check new columns, types, factor levels, units and preprocessing contracts. Predict with the fitted learner/GraphLearner; do not refit preprocessing per new batch.
+8. **Validate and share:** review failed folds, missing predictions, baselines and applicability. Preserve local reproduction records. Models, detailed predictions, backends and sessionInfo may contain sensitive information; inspect before sharing.
+
+## Read as needed
+
+| Task | Document |
 |---|---|
-| 数据划分、PipeOp、调参、最终拟合与推理 | [工作流与验收](references/workflow.md) |
-| 回归/分类的基本 R API 使用 | [合成模型使用示例](examples/basic-model-use.md) |
-| 查看参考版本或同步上游变化 | [上游项目跟踪](UPSTREAM.md) |
-| 查找目录条目和管理路径 | [机器学习分类说明](../../../../harness/usage/machine-learning.md) |
+| Splits, PipeOps, tuning, final fitting and inference | [Workflow and validation](references/workflow.md) |
+| Basic regression/classification R APIs | [Synthetic example](examples/basic-model-use.md) |
+| Reference version and upstream updates | [Upstream tracking](UPSTREAM.md) |
+| Catalog entry and paths | [Machine-learning guide](../../../../harness/usage/machine-learning.md) |
 
-遵守[共享存储约定](../../../../harness/storage-and-credentials.md)和[agent 行为边界](../../../../harness/agent-boundaries.md)。新任务产物可约定为 `${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/mlr3_workflow/`；`mlr3_workflow` 只是本地工作流目录标签，不是可执行工具 ID。不会因阅读或选择此 skill 而自动获得数据访问、软件安装、外发或模型部署授权。
+Follow the [storage contract](../../../../harness/storage-and-credentials.md) and [agent boundaries](../../../../harness/agent-boundaries.md). New outputs may use `${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/mlr3_workflow/`; this directory label is not an executable tool ID. Selecting the skill does not authorize data access, installation, external sharing or deployment.

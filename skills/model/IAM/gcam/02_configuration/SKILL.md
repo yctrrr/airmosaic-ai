@@ -5,6 +5,13 @@ description: Read GCAM configuration and input-chain references to explain scena
 
 # GCAM Configuration Reference
 
+<!-- README-I18N:START -->
+
+**English** | [中文](SKILL_ZH.md)
+
+<!-- README-I18N:END -->
+
+
 > Invocation status: `gcam_configuration_reference` is a catalogued reference, disabled in `run-tool`. Inspection and authorized edits are manual agent work on task copies; no configuration mutation API or simulation launcher exists.
 
 ## Local paths and authentication

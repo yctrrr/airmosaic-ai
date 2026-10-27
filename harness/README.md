@@ -1,156 +1,87 @@
-# AirMosaic AI：多人协作与 Agent Harness
+# AirMosaic AI collaboration and execution harness
 
-本说明面向使用 agent 开发、调用或维护 AirMosaic 的成员。先按任务选择工具，再核对输入、权限和数据条件，最后用验收记录交付结果。
+<!-- README-I18N:START -->
 
-本文规定团队应遵循的操作流程。工具注册、分类列表、详情及静态前置条件查询见[查询说明](usage/tool-registry.md)；已实现的 [run-tool](usage/run-tool.md) 为 8 个核心 CLI、6 个 Python 脚本和 2 个 GCAM R 脚本提供参数校验、dry-run、路径前置检查与脱敏记录。它不构成 OS 沙箱，原脚本直接调用不经过这些检查；MCP 和工作流编排尚未实现。
+**English** | [中文](README_ZH.md)
 
-## 1. 从哪里开始
+<!-- README-I18N:END -->
 
-以[四步流程](four-step-workflow.md)为研究主导航；[methods](../methods/README.md)逐项映射 skills，共享能力保留单一入口。02 只列方法；03 GEOS-Chem 为参考，不提供模拟执行器。文档维护不用原始数据。
 
-| 需要完成的事情 | 阅读入口 |
+Choose an actual capability, check inputs, permissions and data contracts, then deliver verified results with sanitized records. General rules do not prescribe a named model, framework or technology category. Concrete capabilities belong in [skill navigation](../skills/README.md) and [classified usage](tool-catalog.md).
+
+## 1. Start here
+
+Use the [four-step workflow](four-step-workflow.md) and [methods](../methods/README.md). Methods-only stages do not provide implementation; reference entries do not imply executability. Documentation work does not read original data.
+
+| Need | Guide |
 |---|---|
-| 第一次安装、查看数据目录、检查本地文件 | [基础工具使用](usage/core.md) |
-| 区分数据、个人配置和认证存储 | [工作区与凭据](storage-and-credentials.md) |
-| 获取人口、企业、年鉴或 GBD 数据 | [数据获取与处理](usage/data-acquisition.md) |
-| 使用 GCAM 或健康影响模板 | [模型分析](usage/model-analysis.md) |
-| 使用 mlr3 / TimeXer 方法与跟踪参考项目 | [机器学习](usage/machine-learning.md) |
-| 按类型查找近期本地数据与模型方法 | [方法库](../methods/README.md) |
-| 让 agent 修改文档、脚本或配置 | [Agent 行为边界](agent-boundaries.md) |
-| 新增技能、注册工具、配置展示 | [注册与展示规范](tool-registration.md) |
-| 确认某项能力是否真的存在 | [分类查询](usage/tool-registry.md)、[工具清单](tool-catalog.md) |
-| 统一执行 CLI/Python/R 工具 | [run-tool 使用步骤与边界](usage/run-tool.md) |
-| 查看这版文档已验证到哪一步 | [验证记录与未执行事项](verification.md) |
+| Install, inspect catalogs and local files | [Core tools](usage/core.md) |
+| Separate data, configuration and authentication | [Storage](storage-and-credentials.md) |
+| Acquire/prepare data | [Classified acquisition](usage/data-acquisition.md) |
+| Check provenance, uncertainty and normalization | [Data quality](../methods/shared/data_quality.md) |
+| Analyze existing results or adapt templates | [Classified analysis](usage/model-analysis.md) |
+| Find reusable specialist workflows | [Skills](../skills/README.md), [methods](../methods/README.md) |
+| Modify the project safely | [Agent boundaries](agent-boundaries.md), [AGENTS.md](../AGENTS.md) |
+| Add a capability | [Authoring](skill-authoring.md), [registration](tool-registration.md) |
+| Inspect readiness or execute an adapter | [Queries](usage/tool-registry.md), [run-tool](usage/run-tool.md) |
+| Review evidence and unperformed checks | [Verification](verification.md) |
 
-仓库根目录的 [AGENTS.md](../AGENTS.md) 是 agent 的简明入口。各 skill 保存具体方法；本目录保存跨模块的协作和操作规范。个人项目记录放在仓库外，不复制到这些共享说明中。
+Keep personal task records outside Git. Shared rules describe collaboration; skills describe concrete domain workflows.
 
-## 2. 各部分负责什么
+## 2. Responsibilities of each layer
 
-| 部分 | 责任 | 当前形态 |
-|---|---|---|
-| Skill | 描述适用任务、专业步骤、输入输出和限制 | `skills/**/SKILL.md` 及其参考资料 |
-| Tool | 完成一个明确动作，例如列目录、下载或计算 | CLI、Python 方法、Python/R 脚本；部分能力仅有模板 |
-| Dataset catalog | 声明数据集及其来源、负责技能和缓存约定 | acquisition skill 内的 `datasets.yaml` |
-| Workflow | 描述多个模块的衔接及科学假设 | `workflow/` 中的设计模板 |
-| Runtime harness | 检查前置条件、调用工具、管理状态和记录 | 已实现有限适配器 run-tool；工作流编排待实现 |
-| Evaluation harness | 检查接口、运行结果和领域正确性 | 合成及本地接口测试；真实领域案例待补齐 |
-
-```mermaid
-flowchart LR
-    A[用户任务与授权范围] --> B[发现技能和工具]
-    B --> C[核对数据、依赖、输入和写入范围]
-    C --> D[调用已实现入口]
-    D --> E[检查输出与科学口径]
-    E --> F[本地完整记录]
-    F --> G[脱敏后的共享交付]
-```
-
-## 3. 不同成员如何使用
-
-| 角色 | 日常操作 | 交付责任 |
-|---|---|---|
-| 分析使用者 | 选择数据与方法，调用已实现工具 | 提供研究范围、确认结果用途 |
-| 领域贡献者 | 编写 skill、方法代码和专业案例 | 说明公式、单位、限制和判定标准 |
-| 平台维护者 | 维护 CLI、适配器、注册规范和环境检查 | 保持入口、参数及版本兼容 |
-| 审核者 | 复现最小案例、核对科学口径和变更范围 | 给出可追溯的通过或退回理由 |
-
-角色可以兼任。科学计算变更至少由另一位了解方法的成员复核。目录负责人、实际仓库权限和用户对本次任务的授权分别管理，角色名称本身不赋予数据访问或外部操作权限。
-
-每位成员使用自己的账号、仓库副本、虚拟环境和本地工作区。同一服务器上也应划分各自的任务目录；共用只读数据可通过本地配置引用，避免并发修改同一缓存或输出文件。
-
-## 4. 一次任务的执行步骤
-
-| 步骤 | Agent 应执行的动作 | 进入下一步的条件 |
-|---|---|---|
-| 1. 确定任务 | 记录地区、年份、对象、所需结果及允许的操作 | 能明确判断任务是否超出范围 |
-| 2. 发现能力 | 阅读本清单和相关 `SKILL.md`，核对实际入口 | 不把示例中的名称当成已注册工具 |
-| 3. 检查环境 | 核对解释器、依赖、登录状态、输入存在性及版本 | 不缺少影响执行的必要条件 |
-| 4. 校验输入 | 核对 schema、单位、时间、空间、来源及数据覆盖 | 不默默补零、换年份、改分辨率或扩大对象 |
-| 5. 明确执行范围 | 确定输入、输出、网络访问、覆盖行为及资源上限 | 已有授权覆盖具体操作；缺失时只问必要问题 |
-| 6. 执行 | 调用已核实的命令，记录退出状态和输出位置 | 运行结束或进入明确的等待/失败状态 |
-| 7. 验收 | 检查文件、数量、字段、单位及领域标准 | 计算成功与科学验收分别有证据 |
-| 8. 交付 | 给用户结果与限制，生成脱敏的协作记录 | 共享内容不包含身份信息、凭据或本机路径 |
-
-在已授权任务内，读取相关文件、修改指定代码、运行无外部副作用的验证可持续完成。依赖安装、下载、耗时计算等先核对已有授权和资源限制，不对每一步重复请求确认。具体边界见[行为规范](agent-boundaries.md)。
-
-可直接交给 agent 的任务描述：
-
-```text
-从当前仓库根目录开始，先阅读 AGENTS.md 和 harness/tool-catalog.md。
-任务：检查指定地区和年份的人口数据能否用于暴露分析。
-先查数据声明，再检查实际文件的年份、产品、单位和空间分辨率。
-本次范围：只读本地目录与输入；缺少数据时报告缺口和获取入口。
-共享报告仅使用数据集 ID、仓库相对路径和脱敏后的参数。
-完成时说明已执行的检查、证据和仍未验证的事项。
-```
-
-## 5. 路径、配置和数据约定
-
-- 仓库只存可复用代码、文档、schema、模板和不含私人信息的示例。
-- `AIRMOSAIC_LOCAL_WORKSPACE` 指向各成员在本地配置的仓库外目录。`data_cache/` 放原始数据，`output/<run_id>/<tool_id>/` 放任务结果，`runs/<run_id>/` 放脱敏运行记录，`temp/<run_id>/` 放任务临时文件。
-- 既有脚本可能使用 `outputs/` 或其他默认位置。新任务显式传入输出参数或对应环境变量，统一落到本次任务目录；不擅自迁移旧文件。
-- 模型发行包可以位于另一个经授权的只读目录，通过 `GCAM_RELEASE_DIR` 等变量引用；修改配置时先创建任务副本。
-- 共享文档使用 `${AIRMOSAIC_LOCAL_WORKSPACE}`、`${GCAM_RELEASE_DIR}`、`<dataset_id>` 等逻辑标识。JSON 中的变量字符串不会自动展开，必须由具体调用方显式解析。
-- `AIRMOSAIC_CONFIG_DIR` 保存个人非秘密路径映射；`AIRMOSAIC_AUTH_DIR` 保存必要的浏览器认证状态。两者与数据根分别设置，均在 Git 仓库外；密码/token 优先交由凭据管理器保存。
-- `.env.example` 只列通用配置名和说明；实际 `.env`、浏览器状态和凭据不入库。通过[环境配置示例](../config/examples/README.md)显式设置会话变量；当前 Python 服务不会自动读取 `.env`、个人配置目录或认证目录。
-- 所有 skill 遵循[统一路径映射](storage-and-credentials.md)。配置根和认证根不进入数据备份、共享附件或公开运行记录；旧数据和会话不自动迁移。
-- 测试用代码在临时目录生成合成输入，避免提交真实业务数据。临时目录也不应在公开日志中展开成本机路径。
-
-## 6. 成功、失败与恢复
-
-`run-tool` 的实际状态为 `dry_run / blocked / running / succeeded / failed`，退出码为 0、2、3，定义见[执行指南](usage/run-tool.md)；`succeeded` 仅代表进程退出和核心结果解析成功，科学验收另行记录。以下是更广泛的工作流设计语义，不是所有 CLI 已有字段。
-
-| 状态 | 含义 | 后续动作 |
-|---|---|---|
-| `succeeded` | 操作完成且本任务要求的验收通过 | 交付结果和验证范围 |
-| `needs_input` | 缺少范围、路径映射或必要参数 | 说明缺少什么，保留已完成检查 |
-| `needs_auth` | 需要用户在自己的会话中登录 | 等待登录，不读取或分享账号凭据 |
-| `blocked_dependency` | 必要软件、数据或权限缺失 | 给出最小恢复步骤 |
-| `failed` | 执行失败或验收不通过 | 保留错误类别、阶段和复现信息 |
-| `cancelled` | 用户取消了任务 | 记录已完成阶段及残留输出 |
-
-检查“没有缓存文件”是一次成功完成的检查，但并不表示数据已可用。未执行的验证使用 `not_run`；跳过必须记录原因，不能与通过合并统计。获取了部分年份时，标记输出范围不完整，并阻止要求完整覆盖的下游步骤。
-
-网络短暂故障可在既定范围内有限重试；凭据错误、schema 错误和科学验收失败不能靠重复运行解决。对提交下载任务、模型运行等操作，先查已有任务和产物，再决定是否重试，避免重复提交。取消操作只针对本次任务拥有的进程或作业。
-
-## 7. 运行记录与科学验收
-
-完整记录在本地保留：任务范围、代码提交和未提交变更标识、skill/工具版本、输入版本或哈希、参数、依赖版本、起止时间、退出状态、输出清单以及各项验收结果。使用 AI 时补充模型标识、配置和必要的脱敏调用记录；种子只能在实际支持时记录，不能承诺完全确定性。
-
-共享记录保留逻辑数据 ID、版本、方法、数量、单位和验证结论。完整记录中的用户名、绝对路径、私有下载链接和敏感业务内容先移除；认证秘密本身不得写入任何运行记录；不直接复制终端或浏览器原始日志。
-
-各领域至少定义以下验收：
-
-| 领域 | 示例检查 |
+| Layer | Responsibility |
 |---|---|
-| 数据获取 | 来源与产品版本、请求/实际年份、行列数、文件完整性 |
-| 社会经济与排放 | 行业映射、单位换算、缺失值、适用范围内的总量闭合 |
-| 大气与空间数据 | 坐标系、网格/时间对齐、独立验证与模型适用范围 |
-| 健康与经济影响 | 分母、年龄/性别权重、基线/反事实、重复计算与不确定性 |
-| AI 调用 | 正确触发、参数和工具选择、失败处理、未参与开发的案例 |
+| Skill | Task suitability, steps, inputs/outputs and limits |
+| Tool | One explicit action using an implemented entry or a clearly labeled template |
+| Dataset catalog | Source, owning skill and cache metadata, not acquisition |
+| Workflow | Handoffs and assumptions; design is not orchestration |
+| Runtime harness | Preflight, reviewed calls, states and receipts; supported adapters only |
+| Evaluation | Interface checks, artifact checks and separate scientific validation |
 
-科学阈值由领域负责人依据方法和数据制定，容差有单位和理由。样本量、哈希链或一次程序成功都不能单独证明因果识别成立。`workflow/` 内的固定阈值和方法分支应作为待验证设计审查，不能直接升级成生产验收标准。
+Task authorization → discover capability → check inputs/dependencies/write scope → execute implemented entry → validate artifacts/method → retain local evidence → share sanitized results.
 
-## 8. 多人贡献与发布步骤
+## 3. Team roles
 
-1. 在任务说明中列出范围、涉及目录、输入输出、验收方法和审核者；共享说明先脱敏。
-2. 从约定基线建立自己的分支；记录 `git status`，保留他人的未提交修改。
-3. 完成单项能力及其文档、调用示例和对应案例；修改公共接口时同时记录兼容性和迁移方式。
-4. 按[注册规范](tool-registration.md)登记真实入口和状态。新增文件不能仅因“已登记”就宣称可调用。
-5. 先运行无账号、无真实数据的检查；需要专有数据的验证由有权限成员在本地完成，记录 `passed/failed/not_run`。
-6. 审查 diff、文件名和文档中的私人信息；核对声明与参数解析器一致。
-7. 默认通过 PR 提交；任务明确授权直接提交推送且分支策略允许时，完成同等检查后执行。工程审核检查接口与可复现性，领域审核检查方法和数值口径。
-8. 维护者按授权合并、发布版本；其他成员明确更新到该版本，再复查环境就绪状态。
+Users define scope and intended use. Domain contributors explain methods, units, assumptions and acceptance criteria. Platform maintainers keep interfaces, metadata and environments compatible. Reviewers check a minimal reproducible case, scientific scope and the actual diff.
 
-建议后续配置 `CODEOWNERS`、PR 模板和 CI。它们尚未由本说明自动创建；文档中的角色划分也不会修改 GitHub 权限。
+Roles may overlap, but a scientific calculation change should receive independent domain review. Roles, repository permissions and task authorization are separate. Use individual accounts, checkouts, environments and task directories; shared input roots remain read-only and caches/outputs must not be concurrently overwritten.
 
-## 9. 实现顺序
+## 4. Task execution
 
-| 阶段 | 交付 | 验收条件 |
-|---|---|---|
-| 当前文档基线 | 行为边界、分类用法、能力清单、注册规范 | 命令与源码一致、无私人配置、可区分现状与设计 |
-| 工具目录与环境检查（已实现第一版） | 注册 schema、加载器、分类列表/详情、只读依赖诊断 | 当前目录可查；登录/R 包/真实输入等保持未验证，见查询说明 |
-| 受控运行与验收 | 参数绑定、路径边界、运行记录、领域案例 | 无越界写入；失败可诊断；验收结果可复现 |
-| 多客户端分发 | Codex skill 安装或插件、可选 MCP 适配器 | 安装后可发现；实际调用及权限检查通过 |
+1. Define objects, years, regions, outputs, operations and resource limits.
+2. Read the relevant skill and check a real entry point.
+3. Check environment, access, input presence and versions.
+4. Validate schema, units, time/space alignment, provenance and coverage.
+5. Confirm authorized reads, writes, network effects and overwrite behavior.
+6. Execute the reviewed command and record completion, waiting or failure.
+7. Check artifacts and scientific scope separately from process success.
+8. Deliver results, evidence and limits without private identities, credentials or machine paths.
 
-先完成一个公开数据连接器和一个本地分析模块的全过程，再扩展到更多领域。每个阶段的实现须经过对应任务授权与验收，不能因文档写了路线图就自动启动后续工程。
+Continue authorized reversible work without repeated confirmation. Missing authorization or necessary information requires clarification; documentation does not authorize installation, downloads or costly work.
+
+A task brief should specify the repository entry, bounded question, allowed inputs and operations, expected evidence, missing-data behavior and sanitized reporting. Do not silently replace missing inputs with zeros, change years/resolution or expand scope.
+
+## 5. Paths and data
+
+Keep reusable code, documentation, schemas and general examples in Git. Use `AIRMOSAIC_LOCAL_WORKSPACE` for `data_cache/`, fresh `output/<run_id>/<tool_id>/`, `runs/<run_id>/` and `temp/<run_id>/`. Personal settings and authentication use separate roots outside Git.
+
+Explicitly override legacy output defaults for new tasks without moving old files. External releases remain separately configured read-only inputs; configuration edits use task copies. Use logical roots and IDs in shared documents. Variable strings are not automatically expanded unless the caller implements it.
+
+## 6. Tool use
+
+Read-only discovery and readiness checks do not execute actions or validate scientific content. Inspect real manifests and use the [runner](usage/run-tool.md) for supported adapters. Review `can_execute`/`blockers` in dry-run, then actual state and artifacts.
+
+Implemented preflight, minimal environments and sanitized receipts apply only to reviewed adapters, not direct scripts. The runner is not an OS sandbox. Authentication, dependency loading, live integration and scientific acceptance are distinct. Unimplemented orchestration or external service interfaces remain proposals.
+
+## 7. Validation and handoff
+
+Record source/configuration versions, scope, parameters, inputs, outputs and validation status locally. Preserve complete diagnostics only in authorized locations without secrets. Share logical IDs, relative paths, counts, units and sanitized errors. Distinguish source review, synthetic checks, real integration and scientific validation. An existing file or successful process is not enough.
+
+Handoffs specify unique keys, units, time/space support, missingness, mappings, uncertainty and acceptance evidence. Do not automatically chain modules or publish a cache merely because an upstream task succeeded.
+
+## 8. Contribution and release
+
+Define a bounded change, inspect existing work, use a task branch/check-out when appropriate, maintain both documentation languages, and follow [authoring](skill-authoring.md) and [registration](tool-registration.md). Run relevant checks and privacy review before an authorized commit, push or release.
+
+Separate approved prerequisites and unrelated work. Do not force-push, rewrite history, start later roadmap tasks or change repository permissions merely because a role or plan mentions them. Future distribution/interfaces require implementation and task-specific validation before being described as operational.

@@ -5,6 +5,13 @@ description: Guide authorized CSMAR browser downloads and process an existing li
 
 # CSMAR Data Downloader
 
+<!-- README-I18N:START -->
+
+**English** | [中文](SKILL_ZH.md)
+
+<!-- README-I18N:END -->
+
+
 > Invocation status: `csmar_browser_download` is a non-executable browser-workflow reference. Only `csmar_process_company_info` is enabled in `run-tool` for an existing company-info ZIP.
 
 ## Local paths and authentication
@@ -19,7 +26,7 @@ Download CSMAR (China Stock Market & Accounting Research) data tables from `http
 
 ## Prerequisites
 
-- An authorized browser tool, or Node.js Playwright for the JavaScript example below
+- An authorized browser tool; Node.js/Playwright is needed only when using a JavaScript browser workflow
 - CSMAR account with institutional access
 - Python 3.10+ with pandas, openpyxl
 

@@ -1,76 +1,84 @@
-# Agent 行为边界与通用编写规范
+# Agent boundaries and general authoring rules
 
-适用于本仓库的读取、修改、运行、文档生成和共享交付。具体任务的授权范围必须落实到对象、输入、写入位置和外部操作；本规范不扩大权限。
+<!-- README-I18N:START -->
 
-## 1. 开始和结束时做什么
+**English** | [中文](agent-boundaries_ZH.md)
 
-1. 先读根目录 `AGENTS.md` 和涉及模块的 `SKILL.md`，检查当前分支、未提交修改和真实入口。
-2. 将请求落实为有限范围：哪些文件、地区/年份/数据、输出、网络行为和计算资源。
-3. 按相关类别的使用说明执行；发现文档与代码不一致时，报告具体差异并修正本任务范围内的调用说明。
-4. 只修改实现任务所需的内容。保留原始数据、既有结果和他人修改；覆盖前明确目标及授权。
-5. 验证结果后检查 diff 和待交付文件，清除私人信息，报告实际完成和未验证事项。
+<!-- README-I18N:END -->
 
-## 2. 信息边界
 
-| 信息 | 本地使用方式 | 共享文档、代码、Issue、PR、示例及公开日志 |
+Applies to reading, editing, execution, documentation and sharing. Authorization must identify objects, inputs, writes and external actions; these rules grant no additional authority.
+
+## 1. Start and finish
+
+1. Read root `AGENTS.md` and relevant `SKILL.md`; inspect branch, uncommitted work and real entries.
+2. Bound files, data/regions/years, outputs, network behavior and resources.
+3. Follow classified usage. Report documentation/code differences and fix invocation guidance within scope.
+4. Change only necessary content, preserving originals, results and others' edits. Check target and authorization before overwriting.
+5. Validate, inspect the final diff/artifacts, remove private information and report completed/unverified work.
+
+## 2. Information boundaries
+
+| Material | Local use | Shared artifacts |
 |---|---|---|
-| 用户名、密码、密钥、token、cookie | 密码/token 优先存凭据管理器；浏览器认证状态在独立认证根，只在授权工具内部使用 | 禁止写入；不可通过编码、截断或哈希替代后发布 |
-| 用户主目录、盘符目录、专用服务器路径 | 通过本地环境变量或配置解析 | 使用逻辑根、数据 ID 和仓库相对路径 |
-| 邮箱、姓名、机构账户、内部主机/IP | 仅在任务确有需要且已授权时使用 | 使用角色或通用占位符；用户明确要求公开的信息按其范围处理 |
-| 签名下载链接、内网 URL、认证请求头 | 留在本地授权调用中 | 用公开来源入口与参数类别代替 |
-| 浏览器配置、会话和登录状态 | 属于各成员自己的本地环境 | 不复制到仓库、其他成员环境或共享附件 |
-| 原始数据、模型发行包、业务输出 | 存在授权工作区或只读数据根 | 只提交元数据、方法、合成案例和获准分享的摘要 |
+| Usernames, credentials, keys, tokens and cookies | Secret manager and authorized internal tool use | Never publish, including encoded, truncated or hashed substitutes |
+| Home directories, drives and private server paths | Explicit local variables/configuration | Logical roots, IDs and repository-relative paths |
+| Email, identities, accounts and internal endpoints | Only when needed and authorized | Roles/placeholders, except specifically authorized disclosure |
+| Signed/private links and authentication headers | Authorized local calls only | Public entry and parameter categories |
+| Browser profiles and sessions | Member-owned local environment | Do not copy to Git, other members or shared attachments |
+| Original data, releases and business outputs | Authorized workspace/read-only roots | Metadata, methods, synthetic cases and approved summaries only |
 
-官方公开网址、公共论文标识和仓库公开地址可以作为参考来源。任何疑似凭据均不在对话中复述原值，只指出所在文件、行号和类别。
+Public source URLs, paper identifiers and repository addresses may be cited. Report suspected credentials only by file, line and category, never values.
 
-日志与截图同样可能包含私人信息。共享前检查终端提示符、异常栈、文件名、表格内容、浏览器账户区域和 URL 查询参数；仅替换主目录不能保证整个记录已脱敏。
+Logs/screenshots can expose prompts, stacks, filenames, tables, account areas and URL queries. Replacing only a home directory is not sufficient sanitization.
 
-发现真实凭据已经进入版本历史时，停止继续传播并通知维护者，通过服务提供方撤销或轮换。清理当前文件不代表历史泄漏已经消除。改写历史、删除远端内容或执行轮换，按具体授权另行处理。
+If a secret entered history, stop propagation and notify the maintainer for provider-side revocation/rotation. Removing the current text does not erase historical exposure. History rewriting, remote deletion and rotation need specific authorization.
 
-数据根、配置根和认证根遵循[统一存储约定](storage-and-credentials.md)。读取个人配置仅限任务所需文件；不得为“查找登录信息”遍历配置/认证目录、导出 cookie、打印整个环境或将会话打包分享。认证操作与数据下载分别授权，拥有文件访问能力不等于获准读取凭据。
+Follow the [storage contract](storage-and-credentials.md). Read only needed non-secret configuration; never traverse configuration/authentication to find login details, export cookies, print full environments or package sessions. Authentication and downloads have separate scope; filesystem access does not authorize secret inspection.
 
-## 3. 授权与副作用
+A user-prepared client secret file may be internally reused only by its explicitly authorized trusted client/task. The agent must not open, parse, print, copy or hash its contents, or publish its path/fingerprint. Documentation/tests use temporary substitutes, not real secret reads or authenticated-client initialization just to confirm preparation. User-reported preparation is not verified authentication.
 
-| 操作 | 行为要求 |
+## 3. Authorization and effects
+
+| Action | Rule |
 |---|---|
-| 读取相关代码、公开说明，运行无外部副作用的检查 | 在任务范围内继续，不重复索要确认 |
-| 修改指定文档、脚本，生成新的本地结果 | 使用任务目录，保留原件与他人改动，记录变更 |
-| 安装依赖、下载数据、调用付费服务、运行耗时模型 | 检查已有授权、目标范围和资源限制；缺少关键条件时先补齐 |
-| 登录或切换账号 | 使用成员自己的会话；遵循来源的认证流程，不采集密码或复制登录态 |
-| 删除、覆盖原始数据、修改共享模型、取消作业 | 必须有针对目标的明确授权；检查实际目标和可恢复性 |
-| 推送、合并、发布、上传结果或对外发消息 | 核对本次任务是否已授权该外部动作；先准备可审查、已脱敏的内容 |
+| Relevant code/public documentation and checks without external effects | Continue within scope without repeated confirmation |
+| Requested edits and new local artifacts | Preserve originals/others' work, use task outputs and record changes |
+| Installation, acquisition, paid calls or costly computation | Check existing authorization, target and resource limits |
+| Login/account changes | Use the member's session and source flow; do not collect passwords or copy sessions |
+| Deletion/overwrite, shared-resource changes or job cancellation | Require target-specific authority and check recoverability |
+| Push, merge, publish, upload or send messages | Verify current-task authorization after preparing reviewable sanitized content |
 
-已有明确授权覆盖后续必要步骤时继续完成。不要把权限确认变成每一步都问；也不要把“查看可用工具”解释为“下载全部数据”或“运行全部分析”。
+Existing authorization covers necessary follow-up steps. Tool discovery is not permission for bulk acquisition or all analyses.
 
-## 4. 通用文档和脚本写法
+## 4. General documentation and script rules
 
-方法整理和常规工程验证只读相关说明、接口定义并使用合成输入；真实原始数据的读取、复制或运行须另有明确任务范围。排放清单阶段只列方法，不附具体数据、参数值、实现代码、项目脚本名或源码指纹。
+Write general guidance in terms of task responsibilities, capability state and boundaries, without enumerating models, frameworks or technology categories. Concrete names, dependencies and invocations belong in skills and classified guides.
 
-- 从仓库相对位置定位代码、schema 和模板；不依赖作者的盘符、账号名、工作目录或某个 IDE。
-- 本地数据通过明确参数或环境变量传入；私人非秘密配置在 `AIRMOSAIC_CONFIG_DIR`，浏览器状态在 `AIRMOSAIC_AUTH_DIR`，密码/token 由受控工具从凭据存储按需使用。变量名稳定且有说明；必需配置缺失时给出清楚的错误，不回退到作者的私人目录。
-- 示例说明运行目录、解释器、必要参数、预期输出及副作用。PowerShell 使用其自身语法，不能在 PowerShell 块内使用 Bash 的续行反斜杠。
-- 用参数数组启动命令；不把用户内容拼接为 shell 代码，不以 `eval` 运行文档或模型输出。
-- 工具仅接受任务所需参数。已实现的 [run-tool](usage/run-tool.md) 按 schema 和路径角色检查任务参数，拒绝越界输出、网络路径和链接，使用独立任务目录与环境白名单。优先调用该入口；未支持的工具按分类说明使用。它是可信代码的前置检查，不等于 OS 沙箱或原脚本直接调用已被完整隔离。
-- 输入默认只读，结果写入独立任务目录；不能用默默覆盖、默默换年份、默默补零来恢复执行。
-- 对外日志采用允许字段清单，只保留操作 ID、状态、数量、单位和可公开错误摘要。保留诊断所需的完整记录时，限制在本地授权位置；本地日志也不能写入密码、token、cookie 或认证请求头。
-- 不把整个进程环境、浏览器存储、认证请求或本地配置文件打印出来“用于调试”。输出错误应指向缺少的配置名，不展示敏感值。
-- 依赖声明到模块级。核心安装不应隐式拉取模型发行包或执行真实下载、登录和分析任务。
+Routine method/engineering maintenance uses descriptions, interfaces and synthetic inputs; original-data access requires a bounded task. Methods-only stages contain no concrete data, values, code, project scripts or source fingerprints.
 
-## 5. 结果陈述边界
+- Locate code/schemas/templates relative to the repository, not an author's machine or editor.
+- Pass inputs explicitly; keep non-secret mappings in CONFIG_DIR, browser state in AUTH_DIR and credentials in protected storage. Missing settings cause clear errors, not fallback to personal directories.
+- Examples specify interpreter, working directory, parameters, outputs and effects using the actual execution environment's syntax.
+- Use argument arrays; never splice user text into shell code or evaluate documentation/model output as commands.
+- Tools accept only necessary arguments. Prefer [run-tool](usage/run-tool.md) for supported adapters, with declared parameter/path checks and fresh task/environment boundaries. This trusted-code preflight is not OS isolation or protection for arbitrary direct scripts.
+- Inputs default to read-only and outputs to fresh tasks. Do not silently overwrite, change years or fill zeros to recover execution.
+- Shared logs use allowed fields: operation IDs, states, counts, units and public error summaries. Complete local diagnostics still exclude credentials, cookies and authentication headers.
+- Never print whole environments, browser storage, authentication requests or configuration for debugging. Name missing settings without exposing values.
+- Declare module-level dependencies. Core installation does not implicitly fetch releases or perform live acquisition, login or analysis.
 
-- 说明文件存在不代表数据年份、质量或权限已验证。
-- 数据目录中的声明不代表本机已下载；本地找到文件不代表校验和、schema 或科学口径已通过。
-- 有脚本不代表已经安装为宿主工具；有 JSON 示例不代表存在该名称的 API。
-- 进程退出成功不代表结果完整；验证跳过、依赖缺失与通过分别记录。
-- 场景差值、统计关联、模型推演与经识别的因果效应使用各自准确的名称。
-- 基于合成数据的验证不能描述为真实数据全流程通过。
+## 5. Result claims
 
-## 6. 共享前的检查步骤
+Document existence does not verify years, quality or permission. Catalog metadata is not acquisition; file presence is not content, checksum or scientific acceptance. Scripts are not installed tools and JSON examples are not implemented APIs.
 
-1. 查看变更清单和新增文件，确认没有夹带缓存、账户文件、真实数据或模型包。
-2. 检查机器专用路径、账号信息、密钥格式、认证头、带签名参数的链接；命中只报告位置和类别。
-3. 将机器值替换为通用参数，确认命令仍然表达正确的操作，且占位符不会被误认为实际配置。
-4. 校对入口、参数和输出描述；标记尚未实现或未运行的内容。
-5. 查看最终 diff 与附件，再执行已获授权的共享动作。
+Process success does not prove completeness. Report skipped, failed/missing and passed checks separately. Distinguish scenario differences, associations, modeled results and identified causal effects. Synthetic validation is not a successful real-data pipeline.
 
-自动扫描只能发现部分模式，不能代替人工审查或保证不存在秘密。发现真实敏感值时，不把该值放入测试快照、错误示例或修复说明。
+## 6. Before sharing
+
+1. Inspect changed/new files for caches, accounts, real data and releases.
+2. Scan machine paths, identities, keys, authentication headers and signed links; report locations/categories only.
+3. Replace machine-specific values with general parameters while retaining correct operations and clear placeholders.
+4. Check actual entries, parameters and outputs; mark unimplemented or unrun behavior.
+5. Review final diffs/attachments before the authorized sharing action.
+
+Pattern scans supplement review; they do not prove all secrets absent. Do not propagate a discovered secret into tests, error examples or repair notes.

@@ -5,7 +5,18 @@ description: Discover and optionally download WorldPop population files with wor
 
 # WorldPop Data Acquisition
 
+<!-- README-I18N:START -->
+
+**English** | [中文](SKILL_ZH.md)
+
+<!-- README-I18N:END -->
+
+
 > Invocation status: `worldpop_download` supports metadata discovery and optional download through `run-tool`. Zonal statistics have no standalone executable tool.
+
+Current local status: official Hub metadata and a direct Global2 small-file acquisition are verified. Runner preflight passes, but the real catalog call has not passed. See [interface status](references/worldpop-api.md). The year filter matches popyear exactly, accepting integer values or integer text and rejecting missing, boolean, floating-point or non-exact years. Check other product conditions separately.
+
+Read the [WorldPop method](../../../../methods/01_socioeconomic_natural_change/worldpop.md) for products, provenance, uncertainty and normalization. Follow the [public-catalog small-file example](references/first-download-example.md) for first acquisition; no account or token is required.
 
 ## Local paths and authentication
 
@@ -17,8 +28,8 @@ Use this skill to acquire WorldPop population products on demand for AirMosaic A
 
 ## Official Interfaces
 
-- Data catalog/download discovery: `https://www.worldpop.org/rest/data`
-- Spatial services and stats API: `https://api.worldpop.org/v1/services`
+- Current data catalog and script endpoint: `https://hub.worldpop.org/rest/data`; the script does not start from the legacy redirecting address.
+- Separate Global2 regional statistics service: `https://api.worldpop.org/v2/`; no registered adapter or live statistics validation here.
 - Data file host commonly returned by metadata: `https://data.worldpop.org`
 
 WorldPop documents an API rate limit. Cache metadata and downloaded files locally rather than repeatedly querying the same products.
@@ -58,6 +69,8 @@ Use exact WorldPop project/product names when known. For ambiguous requests, fir
 
 Population discovery uses project aliases under the `pop` API group, for example `wpgp` for Global per country 2000-2020.
 
+Current Global2 products are a separate family. The verified small example uses `G2_CN_POP_R25A_1km`, LIE, `popyear = 2020`, R2025A v1, constrained and UN-adjusted. Query actual aliases and inspect metadata rather than infer Global2 support from an old alias or date match.
+
 Typical filtering dimensions:
 
 - country ISO3 code;
@@ -73,6 +86,7 @@ Typical filtering dimensions:
 - Confirm files are non-empty and match expected extension.
 - Preserve metadata sidecars next to downloaded files.
 - Record WorldPop project/product alias, country, year, and download URL.
+- Verify the explicit `popyear`, unit, product version, constraint/adjustment choice, CRS, grid, NoData and finite nonnegative valid values; metadata release dates and a text match are insufficient.
 - Do not unzip or resample rasters unless the caller requests it.
 - Do not commit raw rasters, derived rasters, cache manifests, or local paths to GitHub.
 

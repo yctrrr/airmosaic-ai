@@ -8,7 +8,7 @@ datasets:
     description: Population raster products by country, year, age, sex, and WorldPop product family.
     access_mode: api_download
     geography: global
-    temporal_coverage: product-dependent, commonly 2000-2020
+    temporal_coverage: 'Product-dependent: Global1 2000-2020; Global2 2015-2030, with release-specific coverage and reference dates.'
     formats: [tif, csv, json]
     cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/worldpop
     acquisition_skill: skills/data_acquisition/01_socioeconomic_natural_change/worldpop

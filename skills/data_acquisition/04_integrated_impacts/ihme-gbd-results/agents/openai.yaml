@@ -1,4 +1,4 @@
 interface:
   display_name: "IHME GBD Results"
   short_description: "Fetch IHME GBD results through a logged-in browser."
-  default_prompt: "Use the IHME GBD Results skill to fetch mortality, population, cause, age, sex, location, metric, or year data."
+  default_prompt: "Use the IHME GBD Results skill to fetch scoped cause and mortality results after checking the current round and dimensions. Consult the data-range guide for population, risk and other products requiring separate workflows."

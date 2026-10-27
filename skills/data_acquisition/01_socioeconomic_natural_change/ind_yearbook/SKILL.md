@@ -5,6 +5,13 @@ description: Adapt industrial-yearbook regional-sector and product-output R temp
 
 # Industrial Yearbook Data Processing
 
+<!-- README-I18N:START -->
+
+**English** | [中文](SKILL_ZH.md)
+
+<!-- README-I18N:END -->
+
+
 > Invocation status: `yearbook_regional_sector_template` and `yearbook_product_output_template` are catalogued R templates, disabled in `run-tool`. A dedicated national-sector implementation is absent.
 
 ## Local paths and authentication
@@ -34,21 +41,21 @@ Yearbook Excel files are organized as:
     ...
 ```
 
-Each regional Excel contains one or more **panels** identified by a 地区 (region) header cell. Panels share the same structure: region/province names in one column, metric headers spanning one or more merged rows above the data.
+Each regional Excel contains one or more **panels** identified by a `地区` (region) header cell. Panels share the same structure: region/province names in one column, metric headers spanning one or more merged rows above the data.
 
 ## Pipelines At a Glance
 
 | Pipeline | Entry Script | Input | Output |
 |---|---|---|---|
 | National sector | Adaptation example; dedicated template not implemented | National industry Excel tables | Output contract requires domain adaptation |
-| Regional sector | templates/process_regional_sector.R | 3分地区数据/ Excel files | economic_indicators/分地区规模以上工业企业主要经济指标{year_range}.csv |
+| Regional sector | templates/process_regional_sector.R | `3分地区数据/` Excel files | `economic_indicators/分地区规模以上工业企业主要经济指标{year_range}.csv` |
 | Product output | templates/process_product_output.R | Product Excel files + optional MEIC | physical_output/provincial_industrial_products_{year_range}_estimated.csv |
 
 ## Generalized Processing Techniques
 
 ### 1. Panel-Based Excel Reading
 
-Yearbook Excel files use a "地区" cell as the panel anchor. Core algorithm:
+Yearbook Excel files use a `地区` cell as the panel anchor. Core algorithm:
 
 ```
 1. Read entire Excel sheet as character matrix (no type inference)
@@ -65,12 +72,12 @@ Yearbook Excel files use a "地区" cell as the panel anchor. Core algorithm:
 
 - Normalize: remove spaces, invisible chars, trailing dots; unify parentheses; apply regex rewrite rules for known variants
 - Match against a sector code lookup table (GB/T 4754 categories)
-- Fall back to **manual override rules** for ambiguous names (e.g., 其他采矿业 → code 1200)
+- Fall back to **manual override rules** for ambiguous names (e.g., `其他采矿业` → code 1200)
 - Handle GB18030 bytes misread as other encodings: iconv(x, from="GB18030", to="UTF-8") with heuristic detection
 
 ### 3. Region Whitelist
 
-Keep only recognized 31 mainland China provinces + 全国:
+Keep only recognized 31 mainland China provinces + `全国`:
 
 ```
 region_names <- c(
@@ -81,7 +88,7 @@ region_names <- c(
 )
 ```
 
-Normalize: 合计 and 总计 → 全国; remove all spaces and invisible characters.
+Normalize: `合计` and `总计` → `全国`; remove all spaces and invisible characters.
 
 ### 4. Encoding Repair
 
@@ -91,7 +98,7 @@ Chinese text misread as GB18030 bytes is common in yearbook files. Detection: co
 
 Headers may span 2-3 rows. Merge logic:
 - Collect all non-empty cells from header rows above the first data row
-- Filter out unit annotations (e.g., 单位亿元)
+- Filter out unit annotations (e.g., `单位亿元`)
 - Concatenate unique parts, remove spaces
 - Fill empty columns with col_<index>
 
@@ -123,7 +130,7 @@ Year, province, 水泥(万吨), 粗钢(万吨), ...
 →
 Year, province, product_name, unit, output
 ```
-Parse product name and unit from column headers via product_name(unit) pattern, compute unit coefficients (万 → 10000, 亿 → 100000000).
+Parse product name and unit from column headers via product_name(unit) pattern, compute unit coefficients (`万` → 10000, `亿` → 100000000).
 
 ### 10. Missing Data Imputation
 
@@ -147,13 +154,13 @@ Exclude tables organized by enterprise registration type rather than industry cl
 
 | Keyword | Meaning |
 |---|---|
-| 国有控股 | State-controlled |
-| 有限责任公司 | Limited liability |
-| 股份有限公司 | Joint-stock |
-| 私营 | Private |
-| 港澳台商 | HK/Macau/Taiwan |
-| 外商投资 | Foreign-invested |
-| 大型/中型/小型 | Large/medium/small scale |
+| `国有控股` | State-controlled |
+| `有限责任公司` | Limited liability |
+| `股份有限公司` | Joint-stock |
+| `私营` | Private |
+| `港澳台商` | HK/Macau/Taiwan |
+| `外商投资` | Foreign-invested |
+| `大型/中型/小型` | Large/medium/small scale |
 
 ## Manual adaptation boundary
 

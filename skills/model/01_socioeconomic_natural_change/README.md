@@ -1,13 +1,20 @@
-# 01_socioeconomic_natural_change：社会经济驱动
+# 01: Socioeconomic and Natural Change
 
-用途：活动水平、能源、技术和社会经济变量。当前状态：WorldPop、企业基础 ZIP 处理支持 run-tool；年鉴模板、能源和企业披露需适配。社会经济模型当前是方法指导。
+<!-- README-I18N:START -->
 
-## 本步入口
+**English** | [中文](README_ZH.md)
 
-- [驱动方法](socioeconomic-drivers/SKILL.md)
+<!-- README-I18N:END -->
 
-## 使用流程与交接
 
-按[四步使用流程](../../../harness/four-step-workflow.md)的本步顺序确认范围、选择方法、核对前置条件并交接。方法目录见[本步方法卡](../../../methods/01_socioeconomic_natural_change/README.md)；跨阶段方法见[共享目录](../../../methods/shared/README.md)。
+Activity, energy, technology, population and natural conditions. WorldPop and company-basic-information ZIP processing support run-tool; yearbook, energy and disclosure workflows need adaptation. Socioeconomic modeling is method guidance.
 
-本轮维护只查看说明与接口，不使用原始数据。能否执行以真实工具 manifest 为准；文档目录和 SKILL.md 都不自动注册工具。
+## Entry points
+
+- [Driver methods](socioeconomic-drivers/SKILL.md)
+
+## Workflow and handoff
+
+Follow the [four-step workflow](../../../harness/four-step-workflow.md): confirm scope, choose methods, check prerequisites and hand off validated artifacts. See the [stage methods](../../../methods/01_socioeconomic_natural_change/README.md) and [shared methods](../../../methods/shared/README.md).
+
+Documentation maintenance reads descriptions and interfaces only, not original data. Actual execution depends on tool manifests; directories and SKILL.md do not register tools.

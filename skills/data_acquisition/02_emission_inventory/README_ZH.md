@@ -1,0 +1,20 @@
+# 02_emission_inventory：排放清单
+
+<!-- README-I18N:START -->
+
+[English](README.md) | **中文**
+
+<!-- README-I18N:END -->
+
+
+用途：活动和技术转成排放的方法。当前状态：仅方法；不提供具体数据、参数值、实现代码、脚本名称、源码指纹或命令。没有执行工具。
+
+## 本步入口
+
+- [输入方法](inventory-input-methods/SKILL_ZH.md)
+
+## 使用流程与交接
+
+按[四步使用流程](../../../harness/four-step-workflow.md)的本步顺序确认范围、选择方法、核对前置条件并交接。方法目录见[本步方法卡](../../../methods/02_emission_inventory/README.md)；跨阶段方法见[共享目录](../../../methods/shared/README.md)。
+
+本轮维护只查看说明与接口，不使用原始数据。能否执行以真实工具 工具声明 为准；文档目录和 SKILL.md 都不自动注册工具。

@@ -2,21 +2,25 @@
 
 Atmospheric environment decision intelligence: reusable domain skills, data acquisition workflows, model-analysis templates and local Python services.
 
-[**中文**](README_ZH.md)
+<!-- README-I18N:START -->
+
+**English** | [中文](README_ZH.md)
+
+<!-- README-I18N:END -->
 
 ## Start here
 
-Read the [Harness guide](harness/README.md) for team roles, execution steps, boundaries and validation. Shared detailed guides are currently in Chinese.
+Read the [Harness guide](harness/README.md) for team roles, execution steps, boundaries and validation. General rules and skill navigation have separate English and Chinese versions; historical specialist references retain their existing language.
 
 | Goal | Documentation |
 |---|---|
 | Follow the four research steps and their current execution status | [Four-step guide](harness/four-step-workflow.md) |
 | Install and call existing CLI/SDK services | [Core tools](harness/usage/core.md) |
-| Acquire population, enterprise, yearbook or GBD data | [Data acquisition](harness/usage/data-acquisition.md) |
-| Plan ERA5 / CAMS downloads through CDS / ADS (manual reference) | [Copernicus downloads](harness/usage/copernicus-downloads.md) |
-| Plan PM2.5 station acquisition, preparation and quality checks (reference only) | [Station skill](skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md) |
-| Use GCAM scripts or health-impact templates | [Model analysis](harness/usage/model-analysis.md) |
-| Use mlr3 / TimeXer methods and track reference projects | [Machine learning](harness/usage/machine-learning.md) |
+| Acquire and prepare task-scoped data | [Data acquisition](harness/usage/data-acquisition.md) |
+| Follow source-specific acquisition onboarding | [Source onboarding](harness/usage/copernicus-downloads.md) |
+| Plan observation acquisition, preparation and quality checks | [Observation reference](skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md) |
+| Analyze existing results or adapt calculation templates | [Model analysis](harness/usage/model-analysis.md) |
+| Use specialized methods and track reference projects | [Specialized workflows](skills/model/README.md) |
 | Find reusable methods from recent local practice | [Methods library](methods/README.md) |
 | Let an agent modify the project | [AGENTS.md](AGENTS.md), [agent boundaries](harness/agent-boundaries.md) |
 | Run reviewed CLI/Python/R tools | [run-tool](harness/usage/run-tool.md) |
@@ -34,10 +38,8 @@ catalog/                  Dataset metadata and schemas
 config/examples/          Public templates for private environment configuration
 workflow/                 Four-layer workflow design templates
 skills/
-  data_acquisition/       01 socioeconomic / 02 emissions / 03 atmosphere / 04 impacts / shared
-  model/                  Same four steps; shared IAM and machine-learning references
-    machine_learning/     Machine-learning guides: mlr3 and TimeXer
-    IAM/                  Shared GCAM output analysis and build guidance
+  data_acquisition/       01 socioeconomic & natural change / 02 emissions / 03 atmosphere / 04 integrated impacts / shared
+  model/                  Same four steps, with shared capabilities
 src/airmosaic_core/        Python CLI and service classes
 tests/                    Core service tests
 ```
@@ -47,12 +49,12 @@ Data and runtime outputs use `AIRMOSAIC_LOCAL_WORKSPACE`; personal non-secret se
 ## Workflow scope
 
 ```text
-Socioeconomic drivers → emissions → atmospheric transport/chemistry → impacts
+Socioeconomic & natural change → emissions → atmospheric transport/chemistry → integrated impacts
 ```
 
-These layers organize the research workflow. They are not all implemented as executable services. Method selection requires suitable data, baselines and domain review; sample counts alone do not establish that an AI model or causal method is appropriate.
+These layers organize the research workflow, not a promise that every stage is executable. Select methods using suitable inputs, baselines and domain review; sample counts alone do not establish method suitability or scientific validity.
 
-Operational mapping: [four-step workflow](harness/four-step-workflow.md), [skills](skills/README.md) and [methods](methods/README.md). Step 02 lists methods only, with no concrete data or implementation code. Step 03 includes GEOS-Chem setup/build guidance, ERA5/CAMS manual download references and PM2.5 station acquisition/preparation guidance; no download, preparation, model compilation or simulation adapter is enabled for these workflows. Step 04 links to the same references, preserving the distinction between gridded products and station observations. Documentation maintenance uses descriptions, interfaces and synthetic inputs, without reading original data.
+Operational mapping: [four-step workflow](harness/four-step-workflow.md), [skills](skills/README.md) and [methods](methods/README.md). Methods-only stages contain no concrete data or implementation code. Other stages reference shared capabilities instead of duplicating them. Check each entry's actual execution state and input contract; documentation maintenance uses descriptions, interfaces and synthetic inputs without reading original data.
 
 ## Quick start
 
@@ -75,7 +77,6 @@ After configuring and creating all three separate roots, preview then run a loca
 ```powershell
 & $amPython -m airmosaic_core.cli run-tool airmosaic_list_datasets --dry-run
 & $amPython -m airmosaic_core.cli run-tool airmosaic_list_datasets
-& $amPython -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --dry-run
 ```
 
 ## Current interfaces
@@ -84,7 +85,7 @@ The CLI provides dataset/cache/template commands plus `list-tools`, `describe-to
 
 Dataset listing reads acquisition skill declarations. Cache inspection only finds files; it does not validate contents or checksums. The causal-plan command returns a local template without calling an LLM or producing a causal estimate.
 
-The registry loader validates `catalog/tools/*.yaml` against its schema and distinguishes executable entries from templates/references. Querying never runs scripts, logs in or reads credentials. Login and R-library status remain unverified without independent checks. The reviewed `run-tool` adapters support 8 core CLI commands, 6 Python scripts and 2 GCAM R scripts with parameter validation, dry-run, path preflight and sanitized receipts; see the [execution guide](harness/usage/run-tool.md). Templates/references are not enabled. R namespaces are checked during isolated execution; dry-run does not launch R. This is not an OS sandbox. MCP, REST and workflow orchestration remain planned. Use actual tool IDs with flat parameter JSON; browser references and R templates require the manual preparation described in the classified guides.
+The registry validates `catalog/tools/*.yaml` and separates executable entries from templates/references. Queries do not execute tools, authenticate users or read credentials. Enabled adapters provide parameter checks, dry-run, path preflight and sanitized receipts as described in the [execution guide](harness/usage/run-tool.md). Check actual dependencies and authorization per task; a dry-run does not prove live execution. The runner is not an OS sandbox. Cross-tool orchestration and additional service interfaces remain unimplemented. Use real tool IDs and flat task JSON; unsupported workflows require manual preparation or separate adaptation.
 
 ## Skills and agents
 
@@ -93,6 +94,8 @@ Open the repository root and ask the agent to read `AGENTS.md`, locate the relev
 `datasets.yaml` registers acquisition data declarations with the current catalog service. `agents/openai.yaml` is optional host metadata; it does not register an executable tool. Codex skill discovery requires a supported location or installation, as described in the [registration guide](harness/tool-registration.md).
 
 ## Contributing and privacy
+
+Use the [skill authoring checklist](harness/skill-authoring.md) for bilingual entry points, content requirements and registration boundaries.
 
 Contribute a bounded capability with documented inputs/outputs and validation cases. Follow the [contribution steps](harness/README.md) and [agent boundaries](harness/agent-boundaries.md). Keep private paths, usernames, credentials, authenticated browser state and real datasets out of shared artifacts. Report unrun validation explicitly.
 

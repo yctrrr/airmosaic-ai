@@ -1,13 +1,20 @@
-# 03_atmospheric_transport：大气输送与化学
+# 03: Atmospheric Transport and Chemistry
 
-用途：排放接口到浓度的模型方法。当前状态：GEOS-Chem 编译、配置及排错为人工参考；没有下载、编译、模拟或调度适配器。
+<!-- README-I18N:START -->
 
-## 本步入口
+**English** | [中文](README_ZH.md)
+
+<!-- README-I18N:END -->
+
+
+Model methods from emission interfaces to concentrations. GEOS-Chem compilation, configuration and troubleshooting are manual references; no download, compilation, simulation or scheduler adapter.
+
+## Entry points
 
 - [GEOS-Chem](geos-chem/SKILL.md)
 
-## 使用流程与交接
+## Workflow and handoff
 
-按[四步使用流程](../../../harness/four-step-workflow.md)的本步顺序确认范围、选择方法、核对前置条件并交接。方法目录见[本步方法卡](../../../methods/03_atmospheric_transport/README.md)；跨阶段方法见[共享目录](../../../methods/shared/README.md)。
+Follow the [four-step workflow](../../../harness/four-step-workflow.md): confirm scope, choose methods, check prerequisites and hand off validated artifacts. See the [stage methods](../../../methods/03_atmospheric_transport/README.md) and [shared methods](../../../methods/shared/README.md).
 
-本轮维护只查看说明与接口，不使用原始数据。能否执行以真实工具 manifest 为准；文档目录和 SKILL.md 都不自动注册工具。
+Documentation maintenance reads descriptions and interfaces only, not original data. Actual execution depends on tool manifests; directories and SKILL.md do not register tools.

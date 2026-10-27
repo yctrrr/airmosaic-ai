@@ -5,6 +5,13 @@ description: Inspect GCAM output structure through run-tool with a fixed R scrip
 
 # GCAM Output Structure Exploration
 
+<!-- README-I18N:START -->
+
+**English** | [中文](SKILL_ZH.md)
+
+<!-- README-I18N:END -->
+
+
 > Invocation status: `gcam_inspect_output_structure` is an implemented R script enabled in `run-tool`. It has a fixed inspection sequence, not an action/scenario/region query API.
 
 ## Local paths and authentication

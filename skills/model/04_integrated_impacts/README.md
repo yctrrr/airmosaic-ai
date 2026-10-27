@@ -1,13 +1,22 @@
-# 04_integrated_impacts：社会经济影响
+# 04: Integrated Impacts
 
-用途：浓度与健康、经济及分配的联系。当前状态：GBD 获取可执行；健康计算/绘图是模板，完整成本和分配流程需适配。
+<!-- README-I18N:START -->
 
-## 本步入口
+**English** | [中文](README_ZH.md)
 
-- [健康模板](health_impact_analysis/SKILL.md)
+<!-- README-I18N:END -->
 
-## 使用流程与交接
 
-按[四步使用流程](../../../harness/four-step-workflow.md)的本步顺序确认范围、选择方法、核对前置条件并交接。方法目录见[本步方法卡](../../../methods/04_integrated_impacts/README.md)；跨阶段方法见[共享目录](../../../methods/shared/README.md)。
+Health, economic, distributional, ecological, agricultural and climate impacts. GBD has a controlled adapter and a verified one-record website download; real run-tool acquisition remains unverified. Health calculations/plots are templates, while full cost/distribution workflows require adaptation.
 
-本轮维护只查看说明与接口，不使用原始数据。能否执行以真实工具 manifest 为准；文档目录和 SKILL.md 都不自动注册工具。
+## Entry points
+
+- [Health templates](health_impact_analysis/SKILL.md)
+
+## Workflow and handoff
+
+Follow the [four-step workflow](../../../harness/four-step-workflow.md): confirm scope, choose methods, check prerequisites and hand off validated artifacts. See the [stage methods](../../../methods/04_integrated_impacts/README.md) and [shared methods](../../../methods/shared/README.md).
+
+Documentation maintenance reads descriptions and interfaces only, not original data. Actual execution depends on tool manifests; directories and SKILL.md do not register tools.
+
+Ecology, agriculture and climate impacts are scope navigation, requiring manual receptor, indicator, method and evidence selection. No dedicated executor exists. Natural conditions are upstream drivers in 01 and evaluated responses here.

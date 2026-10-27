@@ -5,6 +5,13 @@ description: Adapt PM2.5 health-impact calculation and visualization R templates
 
 # PM2.5 Health Impact Analysis
 
+<!-- README-I18N:START -->
+
+**English** | [中文](SKILL_ZH.md)
+
+<!-- README-I18N:END -->
+
+
 > Invocation status: `pm25_hia_calculate_template` and `pm25_hia_visualize_template` are catalogued R templates, disabled in `run-tool`. Input adaptation and independent scientific validation are required.
 
 ## Local paths and authentication

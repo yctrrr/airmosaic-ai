@@ -1,6 +1,10 @@
 # 人口与健康基础数据
 
-**状态**：AirMosaic 已登记 WorldPop 和 IHME GBD 的受控适配器。本次检查目录与说明，没有发起真实下载、检查私人会话或验证新数据版本。
+**状态**：AirMosaic 已登记 WorldPop 和 IHME GBD 的受控适配器。WorldPop 官方目录和 Global2 小文件直接获取已验证，run-tool 本机实际目录调用尚未通过；GBD 2023 全球全因死亡数量的单条网页查询、下载与 CSV 内容检查已通过，未执行 run-tool 真实调用。不检查或复制私人会话。
+
+WorldPop 的产品来源、误差和规范化见 [01 人口栅格方法](../01_socioeconomic_natural_change/worldpop.md)，获取与时间记录见[小文件示例](../../skills/data_acquisition/01_socioeconomic_natural_change/worldpop/references/first-download-example.md)。已验证的是人数/像元的单个 Global2 文件，区域汇总和健康计算另行适配。
+
+GBD 的来源、估计误差、数量/率、年龄与不确定区间见 [04 GBD 方法](../04_integrated_impacts/ihme_gbd.md)，网页首次操作见[最小查询向导](../../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/references/first-download-guide.md)。人口分母产品需单独核对，不能从病因结果适配器推断已实现人口导出。
 
 | 数据 | 真实 tool_id | 输入与前置条件 |
 |---|---|---|

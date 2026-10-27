@@ -3,18 +3,25 @@ name: cost-scenario-methods
 description: Guide cross-stage control-cost and distributional scenario boundaries and handoff review. No executable pipeline.
 ---
 
-# 跨阶段成本与分配方法
+# Cross-stage cost and distribution methods
 
-**状态**：文档指导，未注册执行适配器；没有可供 run-tool 调用的工具 ID。
+<!-- README-I18N:START -->
 
-## 使用顺序
+**English** | [中文](SKILL_ZH.md)
 
-确定资源成本和转移支付口径 → 明确价格基准与单位 → 区分历史与新增 → 核对同代交接、资格与预算 → 设计配对情景验收。
+<!-- README-I18N:END -->
 
-具体方法与交接见[对应说明](../../../../methods/shared/cost_scenarios.md)。
 
-## 行为边界
+**Status:** documentation only; no execution adapter or tool ID for run-tool.
 
-仅方法；不启动外部管线或作业，不提供排放清单实现。身份信息不能授予承担主体或物理资格。
+## Workflow
 
-方法维护和常规验证只使用文档、接口与合成输入。真实数据任务须另有明确范围。个人路径与非秘密参数在 CONFIG_DIR，凭据在凭据管理器，会话在 AUTH_DIR；三类根独立且位于 Git 外。参考型 skill 不提供自动路径检查或脱敏记录。
+Define resource costs and transfer payments → specify price basis and units → distinguish historical and incremental components → review same-generation handoffs, eligibility and budgets → design paired-scenario acceptance.
+
+See the [method and handoff guidance](../../../../methods/shared/cost_scenarios.md).
+
+## Boundaries
+
+Methods only. Do not launch external pipelines or jobs or provide inventory implementations. Identity information does not establish cost incidence or physical eligibility.
+
+Documentation maintenance and routine validation use only documents, interfaces and synthetic inputs. Real-data work requires an explicit scope. Keep personal paths and non-secret settings in CONFIG_DIR, credentials in a credential manager, and sessions in AUTH_DIR; data, configuration and authentication roots must be separate and outside Git. Reference skills do not automatically enforce paths or create sanitized run receipts.

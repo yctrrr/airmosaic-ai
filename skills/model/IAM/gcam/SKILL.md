@@ -5,6 +5,13 @@ description: Navigate GCAM existing-output inspection, configuration references,
 
 # GCAM Model Analysis
 
+<!-- README-I18N:START -->
+
+**English** | [中文](SKILL_ZH.md)
+
+<!-- README-I18N:END -->
+
+
 > Invocation status: Use `gcam_extract_market_sector`, `gcam_extract_technology_components` and `gcam_aggregate_provinces` through `run-tool`. `gcam_inspect_output_structure` and `gcam_plot_sector_change` also use `run-tool`; configuration is a reference workflow. No GCAM simulation launcher is registered.
 
 ## Local paths and authentication
@@ -13,7 +20,7 @@ Follow the [shared storage contract](../../../../harness/storage-and-credentials
 
 ## Layer Navigation
 
-GCAM 是跨阶段共享能力，见[四步导航](../../../../harness/four-step-workflow.md)。源码编译、链接依赖与运行错误的区分见[构建排错](references/build-troubleshooting.md)。该说明不启动编译或模拟，不扩大现有输出分析工具的权限。
+GCAM is a cross-stage capability; see the [four-step guide](../../../../harness/four-step-workflow.md). Distinguish compilation, linking and runtime failures using [build troubleshooting](references/build-troubleshooting.md). The reference neither starts a build/simulation nor expands existing-output analysis permissions.
 
 Choose the right layer based on the task:
 

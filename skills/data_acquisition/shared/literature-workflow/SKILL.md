@@ -3,18 +3,25 @@ name: literature-workflow-methods
 description: Guide cross-stage literature discovery, attachment review and import planning without executing collectors or modifying a library.
 ---
 
-# 跨阶段文献工作流
+# Cross-stage literature workflow
 
-**状态**：文档指导，未注册执行适配器；没有可供 run-tool 调用的工具 ID。
+<!-- README-I18N:START -->
 
-## 使用顺序
+**English** | [中文](SKILL_ZH.md)
 
-界定主题 → DOI/标题去重 → 核对全文和附件来源 → 区分归档、摘要与导入计划 → 审核证据。
+<!-- README-I18N:END -->
 
-具体方法与交接见[对应说明](../../../../methods/shared/literature.md)。
 
-## 行为边界
+**Status:** documentation only; no execution adapter or tool ID for run-tool.
 
-外部收集器的 dry-run 可能联网和写文件。生成导入清单不等于实际导入；当前没有 run-tool 适配器。
+## Workflow
 
-方法维护和常规验证只使用文档、接口与合成输入。真实数据任务须另有明确范围。个人路径与非秘密参数在 CONFIG_DIR，凭据在凭据管理器，会话在 AUTH_DIR；三类根独立且位于 Git 外。参考型 skill 不提供自动路径检查或脱敏记录。
+Define the topic → deduplicate DOI/title → check full-text and attachment sources → separate archiving, summaries and import plans → review evidence.
+
+See the [method and handoff guidance](../../../../methods/shared/literature.md).
+
+## Boundaries
+
+An external collector's dry-run may access the network and write files. An import plan is not an actual library import. No run-tool adapter is provided.
+
+Documentation maintenance and routine validation use only documents, interfaces and synthetic inputs. Real-data work requires an explicit scope. Keep personal paths and non-secret settings in CONFIG_DIR, credentials in a credential manager, and sessions in AUTH_DIR; data, configuration and authentication roots must be separate and outside Git. Reference skills do not automatically enforce paths or create sanitized run receipts.

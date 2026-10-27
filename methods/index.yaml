@@ -2,7 +2,9 @@ schema_version: 2
 reviewed_on: '2026-10-26'
 purpose: Four-step documentation inventory and skill mapping; not a tool registry
   or workflow executor.
-execution_performed_this_review: false
+execution_performed_this_review: true
+execution_scope: Three authorized API requests for ERA5 single levels, CAMS EAC4
+  surface PM2.5 and CAMS global PM2.5 forecasts, plus one public PM2.5 station daily CSV and hourly long-table check, and one PANGAEA homogenized release archive with a seven-day sample, and one WorldPop Global2 official GeoTIFF with metadata and raster checks, using newly downloaded files only.
 status_definitions:
   local_source: Source exists in a separate local project; no AirMosaic adapter.
   mixed: Some related AirMosaic tools exist; the whole workflow is not executable
@@ -70,6 +72,13 @@ methods:
   category: data_acquisition
   title: 人口与健康基础数据
   document: shared/population_health.md
+  supporting_documents:
+  - 01_socioeconomic_natural_change/worldpop.md
+  - 04_integrated_impacts/ihme_gbd.md
+  - 04_integrated_impacts/ihme_gbd_ZH.md
+  - 04_integrated_impacts/ihme_gbd_availability.md
+  - 04_integrated_impacts/ihme_gbd_availability_ZH.md
+  - shared/data_quality.md
   status: registered_tools
   evidence: current_manifest_and_skill_guides
   source_projects:
@@ -233,13 +242,16 @@ methods:
 - method_id: era5_acquisition
   category: data_acquisition
   title: ERA5 气象数据获取
-  document: 03_atmospheric_transport/era5.md
+  document: 01_socioeconomic_natural_change/era5.md
+  supporting_documents:
+  - shared/data_quality.md
   status: reference
-  evidence: official_documentation_and_public_request_form_review
+  evidence: official_documentation_public_form_review_and_scoped_API_smoke_test
   source_projects: []
   tool_ids: []
-  primary_stage: 03_atmospheric_transport
+  primary_stage: 01_socioeconomic_natural_change
   applies_to:
+  - 01_socioeconomic_natural_change
   - 03_atmospheric_transport
   - 04_integrated_impacts
   skills:
@@ -247,13 +259,16 @@ methods:
 - method_id: cams_acquisition
   category: data_acquisition
   title: CAMS 大气成分再分析与预报获取
-  document: 03_atmospheric_transport/cams.md
+  document: 01_socioeconomic_natural_change/cams.md
+  supporting_documents:
+  - shared/data_quality.md
   status: reference
-  evidence: official_documentation_and_public_request_form_review
+  evidence: official_documentation_public_form_review_and_scoped_EAC4_and_forecast_API_tests
   source_projects: []
   tool_ids: []
-  primary_stage: 03_atmospheric_transport
+  primary_stage: 01_socioeconomic_natural_change
   applies_to:
+  - 01_socioeconomic_natural_change
   - 03_atmospheric_transport
   - 04_integrated_impacts
   skills:
@@ -262,8 +277,13 @@ methods:
   category: data_acquisition
   title: PM2.5 站点监测获取与整理
   document: 03_atmospheric_transport/pm25_stations.md
+  supporting_documents:
+  - shared/data_quality.md
+  - 03_atmospheric_transport/pm25_stations_sources.md
+  - 03_atmospheric_transport/pm25_stations_preparation.md
+  - 03_atmospheric_transport/pm25_homogenized.md
   status: reference
-  evidence: public_source_guidance_and_prior_document_interface_review
+  evidence: public_sources_scoped_hourly_archive_and_homogenized_release_sample_checks
   source_projects: []
   tool_ids: []
   primary_stage: 03_atmospheric_transport

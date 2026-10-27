@@ -3,22 +3,52 @@ name: cams-acquisition
 description: Plan CAMS atmospheric composition downloads through the Copernicus ADS web form or cdsapi, separating EAC4 reanalysis from forecasts and checking species, levels and valid time. Documentation only; no run-tool adapter.
 ---
 
-# CAMS 大气成分数据获取
+# CAMS atmospheric-composition acquisition
 
-**状态：reference。** 有人工下载指南和非秘密请求示例；没有注册工具 ID、下载器或 run-tool dry-run。官方 dataset ID 不可传给 run-tool。
+<!-- README-I18N:START -->
 
-## 使用流程
+**English** | [中文](SKILL_ZH.md)
 
-1. 阅读 [CAMS 方法卡](../../../../methods/01_socioeconomic_natural_change/cams.md)，先选历史再分析 EAC4 或业务预报；不依据旧脚本的 NRT 文件名判断产品。
-2. 明确变量、单层/模式层/气压层、区域、日期及时次。预报还要确定起报时间和 leadtime，并说明有效时间与重复预报的选择规则。
-3. 按[下载指南](../../../../harness/usage/copernicus-downloads.md)访问 ADS，成员本人登录并接受条款，依据当前表单生成请求；CDS 地址不能替代 ADS 地址。
-4. 将核对后的非秘密请求放在 CONFIG_DIR，在后续获授权的小批次下载中验证，再规划批量。不要在文档维护时下载或读取原始数据。
-5. 核对实际格式、变量/物种、垂直坐标、有效时间、网格和单位，交接数据来源与验证限制；不得将再分析或预报直接标成站点观测。
+<!-- README-I18N:END -->
 
-## 边界
 
-- 请求在 `AIRMOSAIC_CONFIG_DIR/copernicus/`，任务下载在 `AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/cams/`，验收后的缓存在 `data_cache/cams/`。专用浏览器会话可放 `AIRMOSAIC_AUTH_DIR/browser_profiles/copernicus-ads/`；路径变量不会自动创建会话或完成认证。
-- 令牌由个人秘密管理器保管；不要创建明文秘密模板、复制 cookie 或记录签名下载链接。官方客户端调用需显式选择 ADS 与授权凭据，不能依赖未经审查的默认配置。
-- 不把 CAMS 柱总量、混合比、地表质量浓度或 AOD 混用；不自动拼接 EAC4 和预报序列。
-- [PM2.5 站点技能](../../03_atmospheric_transport/pm25-stations/SKILL.md)负责观测来源和整理；CAMS 即使包含 PM2.5 变量也仍是网格产品。比较时另行核对站点元数据有效期、时间区间、单位和空间代表性，不默认启动匹配或校正。主阶段为 03，04 仅引用。
-- CAMS 数据到 GEOS-Chem 的物种/网格/边界条件适配及健康模型输入转换均未实现。本说明不提供操作系统隔离、自动脱敏或正式科学验收。
+**Status: reference.** Includes website instructions, Python API examples and request JSON; no run-tool adapter.
+
+## Workflow
+
+Read the [EAC4/forecast data method](../../../../methods/01_socioeconomic_natural_change/cams.md) before selecting a product: producer, model/assimilation and representativeness errors, units, initialization/valid times, system versions and daily coverage. Gridded composition fields are not station observations.
+
+1. Read the [method](../../../../methods/01_socioeconomic_natural_change/cams.md) and choose EAC4 historical reanalysis or operational forecasts; do not infer products from old NRT filenames.
+2. Define variables, single/model/pressure levels, region, dates and times. Forecasts also require initialization, leadtime and a rule for valid times and overlapping forecasts.
+3. Use ADS through the [download guide](../../../../harness/usage/copernicus-downloads.md). The user logs in and accepts applicable terms; generate requests from the current form. A CDS endpoint cannot substitute for ADS.
+4. Save reviewed non-secret requests in CONFIG_DIR. Validate a separately authorized small batch before planning bulk acquisition; documentation maintenance does not download/read original data.
+5. Check format, species, vertical coordinates, valid times, grid and units; hand off provenance and limitations without labeling reanalysis/forecast as station observations.
+
+## Two acquisition routes
+
+| Route | Sequence |
+|---|---|
+| Website | User logs into ADS → opens product Download page → checks parameters and terms → submits → waits → saves → decodes and validates |
+| Python API | Prepare request JSON → choose `cams-eac4` or `cams-forecast` → fix ADS endpoint → official client uses authorized credentials → submit → save → decode and validate |
+
+The public ADS API endpoint is `https://ads.atmosphere.copernicus.eu/api`. With explicit authorization, the official client may internally reuse the user's existing `.cdsapirc`; code sets ADS explicitly without editing the secret file. User-hidden terminal input is another mode. The user handles access, terms and token storage; the agent does not inspect token pages or file contents.
+
+## Verified EAC4 example
+
+Verified on 2026-10-26: surface `particulate_matter_2.5um`, 2024-01-01 00:00 UTC, north/west/south/east `[40.5, 110.25, 35.25, 115.5]`, GRIB. Accepted 17:57:05, downloaded 17:57:58, validated 17:57:59 Beijing time (UTC+8).
+
+Follow the [EAC4 example](references/eac4-api-download-example.md) with `selection = "cams-eac4"` and `credential_mode = "existing_file"`. The sample is a 0.75°, 8×8 grid in kg/m³.
+
+## Verified global-forecast example
+
+Verified on 2026-10-26: surface PM2.5, initialization 2026-10-25 00:00 UTC, leads 0/3/6 hours, north/west/south/east `[40, 110, 36, 114]`, GRIB. Accepted 18:11:02; downloaded and validated 18:12:23 Beijing time (UTC+8).
+
+Follow the [forecast example](references/forecast-api-download-example.md) with `selection = "cams-forecast"` and `credential_mode = "existing_file"`. Preserve initialization, lead and valid time as separate keys. Three 0.4°, 11×11 fields were checked in kg/m³.
+
+## Boundaries
+
+- Requests: `AIRMOSAIC_CONFIG_DIR/copernicus/`; downloads: `AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/cams/`; validated cache: `data_cache/cams/`. Dedicated browser sessions may use `AIRMOSAIC_AUTH_DIR/browser_profiles/copernicus-ads/`; variables do not create sessions or authenticate users.
+- Tokens belong in a secret manager. Do not create plaintext secret templates, copy cookies or record signed links. Explicitly select ADS and authorized credentials rather than relying on unreviewed defaults.
+- Do not interchange column totals, mixing ratios, surface mass concentrations and AOD, or automatically splice EAC4 and forecasts.
+- The [PM2.5 station skill](../../03_atmospheric_transport/pm25-stations/SKILL.md) handles observational provenance and preparation. CAMS remains gridded even for PM2.5. Check station-history validity, periods, units and representativeness before comparison; no automatic matching/correction. Primary stage is 01, referenced by 03/04.
+- Conversion to GEOS-Chem species/grids/boundaries and health-model inputs is not implemented. This guide supplies no OS isolation, automatic sanitization or formal scientific acceptance.

@@ -1,27 +1,29 @@
 # 四步导航、使用流程与交接
 
-研究流程：社会经济驱动 → 排放清单 → 大气输送与化学 → 社会经济影响。数据获取和模型使用在每一步各有入口；共享方法只维护一份。编号不表示已实现自动流水线。
+研究流程：社会经济与自然变化 → 排放清单 → 大气输送与化学 → 综合影响评估。数据获取和模型使用在每一步各有入口；共享方法只维护一份。编号不表示已实现自动流水线。
+
+01 描述上游条件与驱动，包括经济、人口、能源、技术、土地利用、气象和自然过程；04 评估变化对人类社会、健康、生态、农业和气候等受体的影响。同一变量按研究角色区分驱动与响应。ERA5、CAMS EAC4 和 CAMS 全球预报统一在 01 获取，03/04 引用，不复制技能。生态、农业与气候影响目前仅界定范围，没有新增计算工具。
 
 ## 入口与状态
 
 | 步骤 | 数据获取 | 模型使用 | 当前可执行范围 |
 |---|---|---|---|
-| 01 社会经济驱动 | [01_socioeconomic_natural_change](../skills/data_acquisition/01_socioeconomic_natural_change/README.md) | [01_socioeconomic_natural_change](../skills/model/01_socioeconomic_natural_change/README.md) | WorldPop、企业基础 ZIP 处理支持 run-tool；年鉴为模板，其他方法需适配 |
+| 01 社会经济与自然变化 | [01_socioeconomic_natural_change](../skills/data_acquisition/01_socioeconomic_natural_change/README.md) | [01_socioeconomic_natural_change](../skills/model/01_socioeconomic_natural_change/README.md) | WorldPop、企业基础 ZIP 处理支持 run-tool；ERA5、EAC4、CAMS 预报有已验证 API 示例，未接入 run-tool；其他方法需适配 |
 | 02 排放清单 | [02_emission_inventory](../skills/data_acquisition/02_emission_inventory/README.md) | [02_emission_inventory](../skills/model/02_emission_inventory/README.md) | 只列方法，无具体数据、实现代码或执行适配器 |
-| 03 大气输送与化学 | [03_atmospheric_transport](../skills/data_acquisition/03_atmospheric_transport/README.md) | [03_atmospheric_transport](../skills/model/03_atmospheric_transport/README.md) | ERA5/CAMS 人工下载及 GEOS-Chem 输入、编译、配置与排错参考；没有下载、编译、调度或模拟适配器 |
-| 04 社会经济影响 | [04_integrated_impacts](../skills/data_acquisition/04_integrated_impacts/README.md) | [04_integrated_impacts](../skills/model/04_integrated_impacts/README.md) | GBD 获取支持 run-tool；健康模板和完整成本/分配方法需人工适配 |
+| 03 大气输送与化学 | [03_atmospheric_transport](../skills/data_acquisition/03_atmospheric_transport/README.md) | [03_atmospheric_transport](../skills/model/03_atmospheric_transport/README.md) | PM2.5 站点获取/整理及 GEOS-Chem 输入、编译、配置与排错参考；引用 01 气象和成分资料；没有下载、编译、调度或模拟适配器 |
+| 04 综合影响评估 | [04_integrated_impacts](../skills/data_acquisition/04_integrated_impacts/README.md) | [04_integrated_impacts](../skills/model/04_integrated_impacts/README.md) | GBD 获取支持 run-tool；健康模板和完整成本/分配方法需人工适配 |
 
 03 还提供 [PM2.5 站点获取与整理参考](../skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md)，用于浓度比较与观测交接；04 引用同一方法。该能力没有下载/整理适配器，不改变本表的执行范围。
 
 [methods 方法库](../methods/README.md)按相同四步维护方法；[index.yaml](../methods/index.yaml)逐项映射真实 SKILL.md、适用阶段及已有 tool_id。方法索引不是运行器注册表。
 
-## 01 社会经济驱动
+## 01 社会经济与自然变化
 
-1. 明确实体、地区、时间、行业、单位和待解释变量，列出输入与缺口。
-2. 选择企业、年鉴、能源或人口方法；先读获取 skill，再查询已有工具的 schema、依赖和认证边界。
+1. 明确实体或自然系统、地区、时间、行业/变量、单位和驱动条件，列出输入与缺口。
+2. 选择企业、年鉴、能源、人口、ERA5 或 CAMS 方法；先读获取 skill，再查询已有工具的 schema、依赖和认证边界。EAC4 是历史再分析，CAMS 全球预报保留起报和时效。
 3. 获取与处理分开设计，说明去重、行业映射、单位换算、缺失语义和来源版本。
 4. 预测任务引用共享 mlr3/TimeXer，预先确定时间/实体划分和特征可用性；GCAM 用于已有情景输出分析。
-5. 用合成输入验证接口，交接活动、能源、技术信息的字段说明、覆盖与来源清单。真实数据获取和建模须另有明确任务范围。
+5. 用合成输入验证接口，交接活动、能源、技术及自然条件的字段说明、覆盖与来源清单。自然资料可直接交接 03/04，不必经过排放核算；真实获取和建模须限定任务范围。
 
 ## 02 排放清单：仅方法
 
@@ -44,13 +46,18 @@
 
 站点观测支线：明确网络与时间范围 → 核对来源和站点表 → 分开制定获取/整理计划 → 按授权读取与质控 → 交接浓度和元数据。具体步骤及人工适配见 [PM2.5 方法卡](../methods/03_atmospheric_transport/pm25_stations.md)；不必为站点资料任务启动 GEOS-Chem，也不把站点记录直接当作模型驱动。
 
-## 04 社会经济影响
+## 04 综合影响评估
 
-1. 接收浓度契约，明确基准/干预情景、共同人口范围与风险及经济口径。
+1. 接收浓度及相关环境条件，明确基准/干预情景、受体、评价指标、共同空间/时间范围和归因口径。健康、经济、生态、农业及气候分别选择方法。
 2. 通过共享人口方法和 GBD skill 确认维度、单位及许可；获取不自动启动健康计算。
 3. 阅读健康模板，适配年龄、病因、死亡率、风险函数、网格与时间，以合成输入核对接口。
 4. 成本分析引用共享方法，区分资源成本、价格基准、转移支付、承担主体和物理约束。
-5. 交付配对差值、有效范围、缺失及不确定性。成功退出或单个汇总闭合不代表全部科学验收。
+5. 自然系统评估先定义生态/作物响应、沉降/暴露或辐射相关指标及所需输入；当前没有这些分支的执行适配器，需人工补齐方法和验证。
+6. 交付配对差值、有效范围、缺失及不确定性。成功退出或单个汇总闭合不代表全部科学验收。
+
+## 阶段命名与迁移
+
+01 目录和阶段筛选值统一为 `01_socioeconomic_natural_change`，04 为 `04_integrated_impacts`。skills、methods、workflow/layers、数据声明与工具入口路径同步更新；已有 tool_id、dataset_id、skill frontmatter 名称和缓存目录保持稳定。个人脚本若保存过旧目录或 `list-datasets --layer` 值，需改用当前值。
 
 ## 共享目录与执行边界
 

@@ -5,6 +5,13 @@ description: Extract existing GCAM market/sector and technology-component rows, 
 
 # GCAM Data Extraction
 
+<!-- README-I18N:START -->
+
+**English** | [中文](SKILL_ZH.md)
+
+<!-- README-I18N:END -->
+
+
 > Invocation status: `gcam_extract_market_sector`, `gcam_extract_technology_components` and `gcam_aggregate_provinces` are enabled in `run-tool`. `gcam_plot_sector_change` is also enabled through its R adapter.
 
 ## Local paths and authentication

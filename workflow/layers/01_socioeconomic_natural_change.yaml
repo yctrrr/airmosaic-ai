@@ -1,13 +1,16 @@
 # Design proposal only; no automatic execution. Operational guide: harness/four-step-workflow.md
-# Layer 1: Socioeconomic Driver
+# Layer 1: Socioeconomic and Natural Change
 # 宏观经济/微观经济 → 活动水平 → 能源使用 → 末端治理技术
 
 layer:
   id: "01_socioeconomic_natural_change"
-  name: "社会经济驱动力分析"
+  name: "社会经济与自然变化"
   description: >
     Model how macroeconomic and microeconomic variables drive
     activity levels, energy consumption, and end-of-pipe technology adoption.
+    This stage also organizes meteorological, land-use and natural-condition
+    changes; ERA5 and CAMS acquisition guides are available, while additional
+    natural-process modeling requires separate adaptation.
 
 inputs:
   required:

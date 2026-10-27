@@ -1,17 +1,28 @@
-# 04_integrated_impacts：社会经济影响
+# 04: Integrated Impacts
 
-用途：浓度与健康、经济及分配的联系。当前状态：GBD 获取可执行；健康计算/绘图是模板，完整成本和分配流程需适配。
+<!-- README-I18N:START -->
 
-## 本步入口
+**English** | [中文](README_ZH.md)
+
+<!-- README-I18N:END -->
+
+
+Health, economic, distributional, ecological, agricultural and climate impacts of pollution/environmental change. GBD has a controlled adapter; one website query/download passed content checks, while real runner acquisition remains unverified. Health calculations/plots are templates; complete cost/distribution workflows need adaptation.
+
+## Entry points
 
 - [GBD](ihme-gbd-results/SKILL.md)
 
-站点浓度需求引用第三步的 [PM2.5 站点技能](../03_atmospheric_transport/pm25-stations/SKILL.md)；这是获取与整理参考，不能直接替代人口暴露输入或健康计算。
+Begin with the [login/minimal-query guide](ihme-gbd-results/references/first-download-guide.md). Data provenance, uncertainty, counts/rates and age standardization live in the [method](../../../methods/04_integrated_impacts/ihme_gbd.md). Check website access and task CDP prerequisites separately.
 
-气象协变量和大气成分网格分别引用第三步的 [ERA5](../01_socioeconomic_natural_change/era5/SKILL.md) 和 [CAMS](../01_socioeconomic_natural_change/cams/SKILL.md)。三者均为 reference，先核对时空口径与代表性，不复制获取流程或自动串联健康模型。
+Reference [stage 03 stations](../03_atmospheric_transport/pm25-stations/SKILL.md) for concentration observations; they do not directly replace exposure or health calculations.
 
-## 使用流程与交接
+Reference [ERA5](../01_socioeconomic_natural_change/era5/SKILL.md) and [CAMS](../01_socioeconomic_natural_change/cams/SKILL.md) in stage 01 for covariates/gridded composition. These acquisition references require time/space and representativeness checks; do not duplicate workflows or automatically chain a health model.
 
-按[四步使用流程](../../../harness/four-step-workflow.md)的本步顺序确认范围、选择方法、核对前置条件并交接。方法目录见[本步方法卡](../../../methods/04_integrated_impacts/README.md)；跨阶段方法见[共享目录](../../../methods/shared/README.md)。
+## Workflow and handoff
 
-本轮维护只查看说明与接口，不使用原始数据。能否执行以真实工具 manifest 为准；文档目录和 SKILL.md 都不自动注册工具。
+Follow the [four-step workflow](../../../harness/four-step-workflow.md): confirm scope, choose methods, check prerequisites and hand off validated artifacts. See the [stage methods](../../../methods/04_integrated_impacts/README.md) and [shared methods](../../../methods/shared/README.md).
+
+Documentation maintenance reads descriptions and interfaces only, not original data. Actual execution depends on tool manifests; directories and SKILL.md do not register tools.
+
+Ecology, agriculture and climate impacts currently provide scope navigation only. Select receptors, indicators, methods and evidence manually; no dedicated executor exists. Natural conditions are upstream drivers in 01 and evaluated responses here.

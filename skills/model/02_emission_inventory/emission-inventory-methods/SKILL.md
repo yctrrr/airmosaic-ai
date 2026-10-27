@@ -3,18 +3,25 @@ name: emission-inventory-methods
 description: List conceptual emission accounting, control-efficiency and spatial allocation methods without concrete data, code or execution entrypoints.
 ---
 
-# 排放清单模型方法
+# Emission-inventory modeling methods
 
-**状态**：文档指导，未注册执行适配器；没有可供 run-tool 调用的工具 ID。
+<!-- README-I18N:START -->
 
-## 使用顺序
+**English** | [中文](SKILL_ZH.md)
 
-选择核算与治理效率方法 → 区分变化来源 → 设计守恒及重复计量检查 → 选择空间分配与时间/物种交接方法。
+<!-- README-I18N:END -->
 
-具体方法与交接见[对应说明](../../../../methods/02_emission_inventory/README.md)。
 
-## 行为边界
+**Status:** documentation only; no execution adapter or tool ID for run-tool.
 
-仅列方法；没有数据集声明、可执行工具 ID、实现公式代码或本地源码锚点。
+## Workflow
 
-方法维护和常规验证只使用文档、接口与合成输入。真实数据任务须另有明确范围。个人路径与非秘密参数在 CONFIG_DIR，凭据在凭据管理器，会话在 AUTH_DIR；三类根独立且位于 Git 外。参考型 skill 不提供自动路径检查或脱敏记录。
+Select accounting and control-efficiency methods → distinguish sources of change → design conservation and double-counting checks → select spatial-allocation and temporal/species handoff methods.
+
+See the [method and handoff guidance](../../../../methods/02_emission_inventory/README.md).
+
+## Boundaries
+
+Conceptual methods only: no dataset declaration, executable tool ID, implementation formula/code or local source anchor.
+
+Documentation maintenance and routine validation use only documents, interfaces and synthetic inputs. Real-data work requires an explicit scope. Keep personal paths and non-secret settings in CONFIG_DIR, credentials in a credential manager, and sessions in AUTH_DIR; data, configuration and authentication roots must be separate and outside Git. Reference skills do not automatically enforce paths or create sanitized run receipts.

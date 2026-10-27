@@ -3,52 +3,68 @@ name: pm25-station-acquisition
 description: Plan PM2.5 station observation acquisition and preparation, distinguish official exports, historical archives and homogenized products, and specify station/time quality checks and manual adaptation. Reference guidance only; no downloader or run-tool adapter.
 ---
 
-# PM2.5 站点监测：获取与整理
+# PM2.5 station monitoring: acquisition and preparation
 
-**状态：reference。** 本 skill 已提供正式操作说明，但没有可执行脚本、注册工具 ID、数据集声明或 run-tool dry-run。不能把 skill 名称、来源标识或旧脚本名作为工具 ID。
+<!-- README-I18N:START -->
 
-主阶段是 **03_atmospheric_transport**：为浓度比较、模型评估和站点观测整理提供参考；04 暴露/健康评估引用同一份[方法卡](../../../../methods/03_atmospheric_transport/pm25_stations.md)。不提供排放清单实现，不自动启动下载、插值、训练或健康计算。
+**English** | [中文](SKILL_ZH.md)
 
-## 先确认任务边界
+<!-- README-I18N:END -->
 
-- 文档维护、来源梳理和接口设计：只查看相关说明、接口和文件清单，不打开监测原始表、坐标表或模型结果。存在文件不等于来源、覆盖和质量已经核实。
-- 获取任务：用户须明确监测网络、日期、污染物、站点范围和目标位置；依已有任务授权执行，不因阅读本 skill 获得批量下载授权。
-- 整理任务：用户须明确允许读取的输入、输出范围和统计口径；获取授权不自动扩展为汇总、补值或模型运算。
 
-## A. 获取流程
+**Status: reference.** Source selection, direct acquisition and preparation guidance. A public single-day hourly CSV/long-table example and a PANGAEA homogenized release/seven-day sample have been verified. No executable script, tool ID, dataset declaration or run-tool dry-run is provided. Skill/source/legacy-script names are not tool IDs.
 
-1. **定义观测产品**：确定监测网络、站点或城市、小时或日尺度、原始/已质控发布观测或均一化产品。AQI 不是 PM2.5 浓度，网格估计也不是站点实测。
-2. **选择来源**：按[来源与格式](references/sources-and-formats.md)核对官方发布、第三方历史归档或研究产品。记录原发布机构、实际提供者、产品版本和许可；不从本地文件名反推来源。
-3. **准备非秘密计划**：列明日期批次、站点表版本、单位、时区和时间标签、预期文件、请求数量、目标相对位置、缺失处理及验收方式。未确认字段显式标为待核实，不默认套用 UTC 或固定有效小时门槛。
-4. **人工获取或适配渠道**：在已有明确下载任务内，先做小批次，再按验收结果扩展；只使用已核对且获授权的网页或客户端。失败记录为失败，不用零值替代，不静默改源、放宽 TLS 检查或绕过登录限制。
-5. **核验交接**：检查响应/文件类型、实际落盘、批次覆盖与来源清单；内容检查仅在授权范围内进行。原文件保持只读；下载成功、格式验证和科学验收分开记录。
+Primary stage: **03_atmospheric_transport**, for concentration comparison, model evaluation and station observations. Stage 04 exposure/health work references the same [method](../../../../methods/03_atmospheric_transport/pm25_stations.md). No inventory implementation, automatic downloads, interpolation, training or health calculations.
 
-本项目没有实现上述下载器。直接使用浏览器或来源客户端不会继承 run-tool 的参数、路径与记录保护，须由人工调用方核对。
+## Define task boundaries first
 
-## B. 整理流程
+- Documentation/source/interface work reads relevant descriptions, interfaces and file inventories, not original observations, coordinates or model results. File existence does not establish provenance, coverage or quality.
+- Acquisition requires a defined network, dates, pollutants, station scope and destination. Follow existing authorization; reading this skill does not authorize bulk downloading.
+- Preparation requires authorized inputs, output scope and statistics. Acquisition authorization does not automatically include aggregation, imputation or modeling.
 
-1. **核对接口**：先审查来源字段和目标契约；真实任务获准后再检查实际 schema、缺失编码和单位。大陆、台湾、加拿大及均一化产品分别适配。
-2. **规范化观测**：按来源展开站点宽列或小时字段，保留字符串站号、原时间和来源；明确筛选污染物及平均时段。保留原始质量标记，不伪造“已质控”。
-3. **关联站点历史**：按显式键及有效期连接元数据，核验唯一性、迁站和坐标参考；不按列位置或城市名称永久匹配，不以最新坐标替换全部历史。
-4. **处理重叠和汇总**：先定义唯一观测键、重复/冲突处理，再统计有效唯一时次。日均/年均有效性按明确标准版本、适用日期与研究目的判断，行数不能替代有效小时数。
-5. **验收交接**：按[质量与交接](references/quality-and-handoff.md)输出长表、元数据版本、覆盖/缺失摘要和处理说明。补值、异常截断、迁站合并或均一化须另有方法与授权，不能静默改变观测。
+## A. Acquisition
 
-## 人工适配与当前能力
+Select the product first:
 
-历史资料中可复用的是宽表展开、日值汇总及坐标关联思路。旧流程包含固定路径/年份、交互式工作目录、隐式连接键与计数假设；没有证据证明它们是可直接复用的下载器。详见[适配清单](references/quality-and-handoff.md#人工适配清单)。
+- **Hourly published archive:** follow the [single-day example](references/single-day-example.md), checking types, missingness and original time labels.
+- **Homogenized daily values:** read the [product method](../../../../methods/03_atmospheric_transport/pm25_homogenized.md), then the [PANGAEA example](references/homogenized-download-example.md). Preserve product IDs such as `S0001`; they are not original national station codes or evidence of valid-hour counts.
 
-不复制旧脚本到本 skill，不直接调用或注册它们。未来适配器须有显式参数/依赖、只读输入、新输出目录、失败状态、路径检查和脱敏回执；先通过合成数据与 HTTP 替身测试，再考虑单独登记工具。
+Both verified routes require no account/API key. Examples record procedures, results and times. Keep originally published values separate from adjusted/imputed daily products.
 
-## 路径、凭据与 Agent 边界
+1. **Define the observation product:** network, station/city, hourly/daily support and original/quality-controlled/homogenized status. AQI is not PM2.5 concentration; gridded estimates are not station measurements.
+2. **Choose provenance:** use the [source/format guide](../../../../methods/03_atmospheric_transport/pm25_stations_sources.md) for official publication, third-party archives or research products. Record producer, provider, version and license; do not infer provenance from local filenames.
+3. **Prepare a non-secret plan:** batches, station-list version, units, time zone/labels, files, request counts, relative destinations, missingness and acceptance. Mark unknown fields; do not assume UTC or a fixed valid-hour threshold.
+4. **Acquire/adapt the route:** start small within an authorized acquisition task, then expand based on checks. Use verified authorized websites/clients only. Record failures as failures; do not fill zeros, silently switch sources, weaken TLS or bypass access restrictions.
+5. **Verify handoff:** response/file types, actual saved files, coverage and source manifests. Inspect contents only within scope; preserve originals read-only and distinguish download, format and scientific acceptance.
 
-遵守[统一存储约定](../../../../harness/storage-and-credentials.md)和 [Agent 边界](../../../../harness/agent-boundaries.md)：
+No downloader implements this procedure in AirMosaic. Direct website/client use does not inherit runner parameter, path or receipt protections.
 
-- 非秘密计划/来源映射：`AIRMOSAIC_CONFIG_DIR/pm25-stations/`。来源根由成员配置，不自动加载；公开示例不用个人绝对路径。
-- 任务下载及派生产物：`AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/pm25-stations/`，原文件、处理结果、站点元数据和质控摘要分开；按授权发布的缓存使用 `data_cache/pm25_stations/<source>/`。
-- 运行与验收摘要：`AIRMOSAIC_LOCAL_WORKSPACE/runs/<run_id>/`；共享记录仅含逻辑来源、相对位置和脱敏状态，不写签名 URL 或原始认证日志。
-- 如渠道需浏览器，会话位于 `AIRMOSAIC_AUTH_DIR/browser_profiles/<source>/`；密码/token 放秘密管理器。三根独立、位于 Git 外；目录约定不是 OS 隔离证明。
-- 远程检查只复用已授权的客户端/配置/别名组合，核验最终计算端点并限定目录；不读完整 SSH 配置、密钥或无关任务日志，不将管理节点作为处理入口。技能不包含个人连接映射。
+## B. Preparation
 
-## 完成条件
+Read the [data and normalization method](../../../../methods/03_atmospheric_transport/pm25_stations.md) for producer/archive provenance, instrument/acquisition/representativeness errors, concentration state, GB 3095's 20-hour daily rule and literature-specific scope. Do not aggregate daily means while time zone/hour-interval semantics remain unknown.
 
-说明类任务交付来源选择、缺口及适配清单即可，不声称数据已下载或验收。获取/整理类任务分别交付其授权范围内的产物与验证证据；范围、来源、时间语义或权限无法确认时，保留待核实项，不推测结果。
+1. **Check interfaces:** review source fields and target contracts, then inspect actual schema, missing encodings and units only in the authorized task. Adapt mainland China, Taiwan, Canada and homogenized products separately.
+2. **Normalize observations:** reshape station/hour fields as appropriate, retaining string IDs, original time and source. Select pollutant and averaging period explicitly. Preserve original quality flags; do not invent quality-control status.
+3. **Join station history:** use explicit keys and validity periods, checking uniqueness, relocations and coordinate reference. Do not permanently match by column position/city or apply current coordinates to all history.
+4. **Resolve overlap/aggregate:** define unique keys and duplicate/conflict handling before counting valid unique times. Apply dated standards and study-specific daily/annual completeness rules; row count is not valid hours.
+5. **Validate handoff:** follow [quality/handoff guidance](../../../../methods/03_atmospheric_transport/pm25_stations_preparation.md) for long tables, station versions, coverage/missingness and methods. Imputation, clipping, relocation merging or homogenization requires its own method/authorization.
+
+## Manual adaptation and present capability
+
+Legacy ideas include reshaping, daily aggregation and coordinate joins, but fixed paths/years, interactive working directories, implicit keys and counting assumptions prevent treating old scripts as ready downloaders. See the [adaptation checklist](../../../../methods/03_atmospheric_transport/pm25_stations_preparation.md#人工适配清单).
+
+Do not copy, directly invoke or register old scripts. Future adapters need explicit parameters/dependencies, read-only inputs, fresh outputs, failure states, path checks and sanitized receipts; synthetic/HTTP-substitute tests precede registration.
+
+## Paths, credentials and agent boundaries
+
+Follow the [storage contract](../../../../harness/storage-and-credentials.md) and [agent boundaries](../../../../harness/agent-boundaries.md):
+
+- Plans/mappings: `AIRMOSAIC_CONFIG_DIR/pm25-stations/`; member-configured roots are not automatically loaded. Public examples contain no personal absolute paths.
+- Downloads/derived outputs: `AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/pm25-stations/`, separating raw files, processed data, station metadata and quality summaries. Authorized reusable cache: `data_cache/pm25_stations/<source>/`.
+- Receipts: `AIRMOSAIC_LOCAL_WORKSPACE/runs/<run_id>/`; shared records contain logical sources, relative locations and sanitized states, not signed URLs or raw authentication logs.
+- Browser sessions, when required: `AIRMOSAIC_AUTH_DIR/browser_profiles/<source>/`; credentials stay in a secret manager. Three roots remain separate/outside Git; directory conventions are not OS isolation.
+- Remote inspection uses only authorized client/configuration/alias combinations, verifies the final compute endpoint and scopes directories. Do not read full SSH configurations, keys or unrelated logs, or process on management nodes. Personal connection mappings are excluded.
+
+## Completion criteria
+
+Documentation tasks deliver source choices, gaps and adaptation plans without claiming acquisition. Acquisition/preparation tasks deliver authorized artifacts and evidence separately. Leave unresolved source, time, scope or permission questions explicit rather than guessing.

@@ -2,44 +2,46 @@
 
 大气环境决策智能分析：可复用的领域技能、数据获取流程、模型分析模板和本地 Python 服务。
 
-[**English**](README.md)
+<!-- README-I18N:START -->
+
+[English](README.md) | **中文**
+
+<!-- README-I18N:END -->
 
 ## 从这里开始
 
-先阅读 [Harness 总体说明](harness/README.md)，了解成员分工、执行步骤、行为边界和验收方式。共享的详细说明目前以中文编写。
+先阅读 [Harness 总体说明](harness/README_ZH.md)，了解成员分工、执行步骤、行为边界和验收方式。通用规范与技能导航分别提供中英文版本；历史专业参考资料保留现有语言。
 
 | 目标 | 文档 |
 |---|---|
 | 按四个研究步骤查找入口、流程和执行状态 | [四步导航](harness/four-step-workflow.md) |
 | 安装并调用现有 CLI/SDK | [基础工具](harness/usage/core.md) |
-| 获取人口、企业、年鉴或 GBD 数据 | [数据获取](harness/usage/data-acquisition.md) |
-| 规划 ERA5 / CAMS 的 CDS / ADS 下载（人工参考） | [Copernicus 下载](harness/usage/copernicus-downloads.md) |
-| 规划 PM2.5 站点获取、整理与质控（人工参考） | [站点技能](skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md) |
-| 使用 GCAM 脚本或健康影响模板 | [模型分析](harness/usage/model-analysis.md) |
-| 使用 mlr3 / TimeXer 方法并跟踪参考项目 | [机器学习](harness/usage/machine-learning.md) |
+| 获取与整理限定范围的数据 | [数据获取](harness/usage/data-acquisition.md) |
+| 按来源完成获取前的准备 | [来源操作指南](harness/usage/copernicus-downloads.md) |
+| 规划观测资料获取、整理与质控 | [观测资料参考](skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL_ZH.md) |
+| 分析已有结果或适配计算模板 | [模型分析](harness/usage/model-analysis.md) |
+| 使用专项方法并跟踪参考项目 | [专项流程](skills/model/README_ZH.md) |
 | 查找近期本地实践中的可复用方法 | [方法库](methods/README.md) |
-| 让 agent 修改项目 | [AGENTS.md](AGENTS.md)、[Agent 行为边界](harness/agent-boundaries.md) |
+| 让 agent 修改项目 | [AGENTS.md](AGENTS_ZH.md)、[Agent 行为边界](harness/agent-boundaries_ZH.md) |
 | 查找可用能力 | [注册查询](harness/usage/tool-registry.md)、[工具清单](harness/tool-catalog.md) |
 | 统一执行 CLI/Python/R 工具 | [run-tool](harness/usage/run-tool.md) |
-| 分开管理数据、个人配置和认证状态 | [工作区与凭据](harness/storage-and-credentials.md) |
-| 新增技能/工具并配置发现和展示 | [注册规范](harness/tool-registration.md) |
+| 分开管理数据、个人配置和认证状态 | [工作区与凭据](harness/storage-and-credentials_ZH.md) |
+| 新增技能/工具并配置发现和展示 | [注册规范](harness/tool-registration_ZH.md) |
 
 ## 仓库结构
 
 ```text
-AGENTS.md                 Agent operating instructions
-harness/                  Shared collaboration and tool-use documentation
-methods/                  Four-step methods and shared references; documentation only
-catalog/                  Dataset metadata and schemas
-config/examples/          Public templates for private environment configuration
-workflow/                 Four-layer workflow design templates
+AGENTS.md                 代理操作规则
+harness/                  通用协作与使用说明
+methods/                  四步方法与共享参考，不提供执行入口
+catalog/                  数据和工具元数据及结构定义
+config/examples/          通用配置示例
+workflow/                 分阶段流程设计
 skills/
-  data_acquisition/       01 socioeconomic / 02 emissions / 03 atmosphere / 04 impacts / shared
-  model/                  Same four steps; shared IAM and machine-learning references
-    machine_learning/     Machine-learning guides: mlr3 and TimeXer
-    IAM/                  Shared GCAM output analysis and build guidance
-src/airmosaic_core/        Python CLI and service classes
-tests/                    Core service tests
+  data_acquisition/       分步骤及共享的获取入口
+  model/                  分步骤及共享的使用入口
+src/airmosaic_core/        命令与服务实现
+tests/                    合成及接口检查
 ```
 
 数据和运行输出使用 `AIRMOSAIC_LOCAL_WORKSPACE`，个人非秘密配置使用 `AIRMOSAIC_CONFIG_DIR`，浏览器认证状态使用 `AIRMOSAIC_AUTH_DIR`。三类根分别设置，均位于 Git 仓库外。密码和 token 交由凭据管理器保管。模型发行包和私人记录也保留在仓库外。按[环境配置示例](config/examples/README.md)显式配置当前会话。
@@ -47,12 +49,12 @@ tests/                    Core service tests
 ## 工作流范围
 
 ```text
-Socioeconomic drivers → emissions → atmospheric transport/chemistry → impacts
+社会经济与自然变化 → 排放 → 大气输送与化学 → 综合影响评估
 ```
 
-这四层组织了社会经济、排放、大气输送/化学和影响研究流程；并非每一层都已实现为可执行服务。方法选择需要数据适用性、基线和领域审核，不能仅由样本数量判断 AI 或因果方法是否适用。
+这四层组织研究流程，不表示每一步都有可执行服务。方法选择需要合适的输入、基线和领域审核；样本量不能单独证明方法适用性或科学有效性。
 
-具体对应见[四步流程](harness/four-step-workflow.md)、[skills 导航](skills/README.md)和[方法库](methods/README.md)。02 只列方法，不提供具体数据和实现代码；03 包含 GEOS-Chem 使用与编译排错、ERA5/CAMS 人工下载及 PM2.5 站点获取与整理参考，这些流程没有启用下载、整理、模型编译或模拟适配器。04 引用同一说明，区分网格产品与站点观测。文档维护只使用说明、接口和合成输入，不读取原始数据。
+具体对应见[四步流程](harness/four-step-workflow.md)、[技能导航](skills/README_ZH.md)和[方法库](methods/README.md)。仅方法的阶段不提供具体数据或实现代码；其他阶段引用共享能力，不重复维护。逐项核对真实执行状态和输入契约。说明维护只使用文档、接口与合成输入，不读取原始数据。
 
 ## 快速启动
 
@@ -75,7 +77,6 @@ $amPython = (Resolve-Path ".venv/Scripts/python.exe").Path
 ```powershell
 & $amPython -m airmosaic_core.cli run-tool airmosaic_list_datasets --dry-run
 & $amPython -m airmosaic_core.cli run-tool airmosaic_list_datasets
-& $amPython -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --dry-run
 ```
 
 ## 当前接口
@@ -84,17 +85,19 @@ CLI 提供数据目录、缓存和模板命令，并新增 `list-tools`、`descr
 
 数据列表读取 acquisition skill 的声明。缓存检查只查找文件，不验证内容或校验和。因果设计命令返回本地模板，不调用 LLM，也不生成因果估计结果。
 
-注册加载器已按 schema 校验 `catalog/tools/*.yaml`，并区分可执行入口与模板/参考资料。查询不运行脚本、不登录、不读取凭据；登录与 R 包状态仍需独立核验。已实现的 `run-tool` 适配器支持 8 个核心 CLI、6 个 Python 脚本和 2 个 GCAM R 脚本，提供参数校验、dry-run、路径前置检查及脱敏记录，见[执行指南](harness/usage/run-tool.md)。模板和参考资料不能通过它运行；R 包在隔离执行时加载校验，dry-run 不启动 R；它不是 OS 沙箱。MCP、REST 和工作流编排器仍待实现。使用真实工具 ID 和扁平参数 JSON；浏览器参考与 R 模板按分类说明人工准备。
+注册加载器校验 `catalog/tools/*.yaml`，区分可执行入口与模板、参考。查询不执行工具、不登录、不读取凭据。已启用适配器按[执行指南](harness/usage/run-tool.md)提供参数检查、预检、路径前置检查与脱敏记录。依赖和授权按任务核对，预检不证明真实执行。执行器不是操作系统沙箱，跨工具编排及额外服务接口仍未实现。使用真实工具编号与普通任务参数文件；不支持的流程需要人工准备或另行适配。
 
 ## Skills 与 agents
 
 打开仓库根目录，让 agent 读取 `AGENTS.md`，查找相关 skill，并确认实际入口后再执行。技能可以包含说明、脚本、参考资料、模板和示例。
 
-`datasets.yaml` 将数据获取声明登记到现有目录服务。`agents/openai.yaml` 是可选宿主元数据，不负责注册可执行工具。Codex 技能发现需要正确位置或安装步骤，详见[注册说明](harness/tool-registration.md)。
+`datasets.yaml` 将数据获取声明登记到现有目录服务。`agents/openai.yaml` 是可选宿主元数据，不负责注册可执行工具。Codex 技能发现需要正确位置或安装步骤，详见[注册说明](harness/tool-registration_ZH.md)。
 
 ## 贡献与隐私
 
-每次贡献围绕范围明确的一项能力，配套输入输出说明和验证案例。遵循[协作步骤](harness/README.md)及 [Agent 行为边界](harness/agent-boundaries.md)。共享内容不包含私人路径、账号名、凭据、已认证浏览器状态或真实数据；未执行的验证明确说明。
+新增或修订技能按[编写规范](harness/skill-authoring_ZH.md)维护双语入口、最小内容要求及登记边界。
+
+每次贡献围绕范围明确的一项能力，配套输入输出说明和验证案例。遵循[协作步骤](harness/README_ZH.md)及 [Agent 行为边界](harness/agent-boundaries_ZH.md)。共享内容不包含私人路径、账号名、凭据、已认证浏览器状态或真实数据；未执行的验证明确说明。
 
 ## 许可证
 

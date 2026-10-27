@@ -1,11 +1,41 @@
 ---
 name: ihme-gbd-results
-description: Fetch IHME GBD Results with ihme_gbd_fetch_results through an existing user-authenticated browser. Use for scoped mortality or population exports after checking current page version and dimension IDs.
+description: Fetch scoped IHME GBD cause and mortality results with ihme_gbd_fetch_results through an existing user-authenticated browser after checking the round and dimension IDs. Population products require their own verified source and workflow.
 ---
 
 # IHME GBD Results
 
+<!-- README-I18N:START -->
+
+**English** | [中文](SKILL_ZH.md)
+
+<!-- README-I18N:END -->
+
 > Invocation status: `ihme_gbd_fetch_results` is enabled in `run-tool` for an existing authorized loopback browser session. It does not launch a browser or authenticate the user.
+
+Read the [GBD method](../../../../methods/04_integrated_impacts/ihme_gbd.md) for provenance, uncertainty, counts/rates, age alignment and uncertainty intervals. Follow the [first-download guide](references/first-download-guide.md), keeping website access, fresh results, file acquisition and run-tool validation distinct.
+
+Consult the [data-range guide](../../../../methods/04_integrated_impacts/ihme_gbd_availability.md) before selecting a product. Risk, exposure, population and life-table products require dedicated entry points. The adapter has no independent risk or other topic ID parameter; changing `context` alone does not establish support.
+
+## Available GBD data
+
+Use this table to select a product; verify valid rounds, locations, ages and measures on the current page or product record. GBD 2023 disease and risk estimates primarily cover 1990–2023. Check demographic and special-topic coverage separately. Sources are listed in the [data-range guide](../../../../methods/04_integrated_impacts/ihme_gbd_availability.md).
+
+| Product | Common outputs | Route and project status |
+|---|---|---|
+| Deaths | Counts, rates and applicable proportions | Results → Cause; one global all-cause count export verified |
+| YLLs | Years of life lost, counts and rates | Results → Cause; measure parameter supported, not individually verified |
+| YLDs | Years lived with disability, counts and rates | Results → Cause; not individually verified |
+| DALYs | Disability-adjusted life years, counts and rates | Results → Cause; not individually verified |
+| Incidence / Prevalence | Counts and applicable rates/proportions | Results → Cause; check cause and age combinations |
+| Risk-attributable burden | Attributable deaths, YLLs, YLDs, DALYs and applicable PAFs | Results → Risk; use the website or adapt risk-specific parameters |
+| SEV | Summary exposure values | Dedicated selection; verify separately, not a PM2.5 concentration |
+| HALE | Healthy life expectancy in years | Dedicated selection; verify product dimensions |
+| All-cause mortality and life expectancy | Demographic mortality rates and life expectancy | Corresponding GHDx product; verify separately |
+| Population, life tables and fertility | Age/sex population, life-table and fertility indicators | Results navigation or GHDx product; adapter export not verified |
+| Other topics | Etiology, injury nature and impairment results where provided | Topic-specific selection; additional adapter parameters required |
+
+Fix round, years, locations, cause/risk, ages, sexes, measure and metric before downloading. Start with a small query and expand only for a scoped task. Do not default to all combinations. Keep counts, rates and proportions distinct and preserve available `val`, `lower` and `upper` fields.
 
 ## Local paths and authentication
 
@@ -21,15 +51,29 @@ Use this skill for IHME GBD Results acquisition and local processing. The skill 
 
 ## Workflow
 
-1. Open `https://vizhub.healthdata.org/gbd-results/` in a Chromium browser with remote debugging enabled.
-2. Let the user log in and complete any verification manually.
-3. Prefer the page's own search flow over direct `fetch` or `requests` calls. Direct calls to internal PHP endpoints can be blocked or return stale/error state.
-4. Invoke `ihme_gbd_fetch_results` through `run-tool` to drive the loaded page and collect `tableData`; do not call the raw script to bypass runner checks.
-5. Save raw IHME output separately from project-specific processed outputs.
-6. Map IHME display names to local schemas explicitly; do not infer endpoint or age mappings from sort order alone.
-7. Validate every processed output against raw IHME rows by key columns and numeric values.
+1. Open `https://vizhub.healthdata.org/gbd-results/`. Let the user decide on terms, log in and complete any verification personally.
+2. Check the visible round and all selected dimensions; start with the one-record example in the [first-download guide](references/first-download-guide.md).
+3. Choose the website download procedure below, or the registered adapter route after verifying a task-owned loopback CDP session. Ordinary website downloads do not require remote debugging.
+4. For the registered route, invoke `ihme_gbd_fetch_results` through `run-tool` as described under Registered execution; do not call the raw script to bypass runner checks. Internal PHP calls are not a fallback for blocked or stale results.
+5. Save raw output separately from project-specific processed outputs. Neither route automatically publishes a cache.
+6. Map IHME IDs and display names to local schemas explicitly; do not infer endpoint or age mappings from sort order alone.
+7. Validate every processed output against raw IHME rows by key columns and numeric values, following the [processing checklist](references/processing-validation.md).
 
-## Browser Setup
+## Website download procedure
+
+1. **Prepare the session:** open [GBD Results](https://vizhub.healthdata.org/gbd-results/). The user handles terms, login and access verification, then returns to the query page. Do not request credentials or account screenshots.
+2. **Set the scope:** inspect every selected dimension. For the first test select GBD 2023, 2023, Global, All causes, All ages, Both sexes, Deaths and Number. Expect one record.
+3. **Search and check:** submit once, wait for fresh results and verify labels and row counts. Hand verification prompts to the user. Do not accept old rows retained during loading or after an error.
+4. **Submit the export:** click Download and select Both to retain IDs and names. This field option is separate from the Both-sexes selection. Review the scope and submit once.
+5. **Obtain the file:** follow the progress link in the success message. When ready, download the ZIP from the data-file link. The user may instead use the platform email link; the agent does not need mailbox access. Follow the expiry shown on the page.
+6. **Validate locally:** preserve the ZIP under workspace `output/<run_id>/ihme-gbd/raw/`. Check archive integrity, CSV fields, IDs/names, years, unique keys, row counts and numeric validity, including `lower ≤ val ≤ upper`. Store derived tables in `processed` and summaries in `quality`; do not publish raw files or task links.
+7. **Record times:** save actual query-check, export-submission, acquisition and validation times in `runs/<run_id>/`. Keep non-secret parameters in CONFIG_DIR and authentication in AUTH_DIR. Do not put private records in shared documentation.
+
+**Verified example:** the one-record website download passed content checks on 2026-10-26 at 21:05:42 Beijing time (UTC+8): a 717-byte ZIP containing one CSV, one record and 18 columns. See the [verified guide](references/first-download-guide.md) for times and IDs. The real run-tool call remains unverified pending task CDP ownership checks.
+
+One possible next query is China, 2019/2023, ischemic heart disease, all ages, both sexes, deaths and counts/rates: up to four records. See the [download plans](../../../../methods/04_integrated_impacts/ihme_gbd_availability.md#suggested-download-scopes) for candidate health-model baselines and adaptation requirements. Neither plan has been executed.
+
+## Browser Setup for run-tool
 
 Use a locally configured Chromium executable or browser tool and a member-specific profile under `${AIRMOSAIC_AUTH_DIR}/browser_profiles/ihme-gbd/`, separate from data and personal configuration. Let the user authenticate in that profile. Enable a loopback-only CDP endpoint on a task-owned port, and check that the port belongs to this browser before connecting.
 
@@ -43,7 +87,6 @@ From the repository root, inspect `ihme_gbd_fetch_results`. [The public example]
 python -m airmosaic_core.cli describe-tool ihme_gbd_fetch_results
 $gbdParams = Join-Path $env:AIRMOSAIC_CONFIG_DIR "gbd-task.json"
 python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdParams --dry-run --allow-network --confirm-browser-session
-# Execute only after the parameter file and the existing authorized session have been checked.
 python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdParams --allow-network --confirm-browser-session --timeout 300
 ```
 
@@ -63,8 +106,8 @@ Distinguish counts, rates per 100000 and proportions by the selected metric. The
 
 Keep project-specific processing in local project code, not in this skill. Recommended pattern:
 
-1. Keep historical rows only through the last trustworthy year.
-2. Use real GBD rows for newly available years.
+1. Prefer one GBD round for the full study period; do not splice different rounds at a historical project-specific year cutoff.
+2. For required cross-round harmonization, document revised estimates, methods and explicit mappings rather than treating round differences as observed change.
 3. Preserve existing output schemas exactly unless the caller requests a schema change.
 4. If GBD omits low-age cause combinations, leave them absent or fill only with a documented method.
 5. Write a missing-combination report and provenance summary separately from the main table.

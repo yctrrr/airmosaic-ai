@@ -3,18 +3,25 @@ name: energy-balance-methods
 description: Guide source-version tracking, unit conversion and sector-boundary review for energy-balance processing. No executable adapter.
 ---
 
-# 能源平衡与单位换算方法
+# Energy balance and unit-conversion methods
 
-**状态**：文档指导，未注册执行适配器；没有可供 run-tool 调用的工具 ID。
+<!-- README-I18N:START -->
 
-## 使用顺序
+**English** | [中文](SKILL_ZH.md)
 
-明确来源版本和统计分母 → 区分实物量与转换系数 → 检查部门/能源映射 → 设计份额、闭合及缺失审计。
+<!-- README-I18N:END -->
 
-具体方法与交接见[对应说明](../../../../methods/01_socioeconomic_natural_change/energy_balance.md)。
 
-## 行为边界
+**Status:** documentation only; no execution adapter or tool ID for run-tool.
 
-本地原入口不在本仓库执行；不能照搬固定输出目录或历史换算规则。
+## Workflow
 
-方法维护和常规验证只使用文档、接口与合成输入。真实数据任务须另有明确范围。个人路径与非秘密参数在 CONFIG_DIR，凭据在凭据管理器，会话在 AUTH_DIR；三类根独立且位于 Git 外。参考型 skill 不提供自动路径检查或脱敏记录。
+Specify source version and statistical denominator → distinguish physical quantities from conversion factors → check sector/energy mappings → design share, closure and missingness audits.
+
+See the [method and handoff guidance](../../../../methods/01_socioeconomic_natural_change/energy_balance.md).
+
+## Boundaries
+
+Do not execute the original local entry point from this repository or copy fixed output directories and historical conversion rules.
+
+Documentation maintenance and routine validation use only documents, interfaces and synthetic inputs. Real-data work requires an explicit scope. Keep personal paths and non-secret settings in CONFIG_DIR, credentials in a credential manager, and sessions in AUTH_DIR; data, configuration and authentication roots must be separate and outside Git. Reference skills do not automatically enforce paths or create sanitized run receipts.

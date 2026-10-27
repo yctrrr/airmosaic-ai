@@ -3,18 +3,27 @@ name: socioeconomic-driver-methods
 description: Plan socioeconomic activity, energy and technology driver workflows and route to existing shared modeling references. No driver simulation adapter.
 ---
 
-# 社会经济驱动方法
+# Socioeconomic and natural change methods
 
-**状态**：文档指导，未注册执行适配器；没有可供 run-tool 调用的工具 ID。
+<!-- README-I18N:START -->
 
-## 使用顺序
+**English** | [中文](SKILL_ZH.md)
 
-定义变量和研究范围 → 关联获取方法 → 明确去重、映射与单位 → 需要预测时选择共享模型和验证设计 → 交接活动、能源及技术的接口。
+<!-- README-I18N:END -->
 
-具体方法与交接见[对应说明](../../../../harness/four-step-workflow.md)。
 
-## 行为边界
+**Status:** documentation only; no execution adapter or tool ID for run-tool.
 
-mlr3/TimeXer 是共享参考，GCAM 只分析已有输出；此 skill 不会自动训练或运行情景。
+Natural-condition acquisition references [ERA5](../../../data_acquisition/01_socioeconomic_natural_change/era5/SKILL.md) and [CAMS EAC4/forecasts](../../../data_acquisition/01_socioeconomic_natural_change/cams/SKILL.md). Select methods for land use and other natural processes separately; this skill does not simulate them.
 
-方法维护和常规验证只使用文档、接口与合成输入。真实数据任务须另有明确范围。个人路径与非秘密参数在 CONFIG_DIR，凭据在凭据管理器，会话在 AUTH_DIR；三类根独立且位于 Git 外。参考型 skill 不提供自动路径检查或脱敏记录。
+## Workflow
+
+Define variables and scope → link acquisition methods → agree deduplication, mappings and units → select shared forecasting models and validation designs if needed → hand off activity, energy and technology interfaces.
+
+See the [workflow and handoff guidance](../../../../harness/four-step-workflow.md).
+
+## Boundaries
+
+mlr3 and TimeXer are shared references; GCAM analyzes existing outputs only. This skill does not automatically train models or run scenarios.
+
+Documentation maintenance and routine validation use only documents, interfaces and synthetic inputs. Real-data work requires an explicit scope. Keep personal paths and non-secret settings in CONFIG_DIR, credentials in a credential manager, and sessions in AUTH_DIR; data, configuration and authentication roots must be separate and outside Git. Reference skills do not automatically enforce paths or create sanitized run receipts.

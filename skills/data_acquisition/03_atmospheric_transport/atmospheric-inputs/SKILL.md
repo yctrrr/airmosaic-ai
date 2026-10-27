@@ -3,20 +3,27 @@ name: atmospheric-input-methods
 description: Plan meteorology, initial and boundary conditions and diagnostic input contracts for version-specific GEOS-Chem workflows. No downloader.
 ---
 
-# 大气模型输入准备
+# Atmospheric-model input preparation
 
-**状态**：文档指导，未注册执行适配器；没有可供 run-tool 调用的工具 ID。
+<!-- README-I18N:START -->
 
-## 使用顺序
+**English** | [中文](SKILL_ZH.md)
 
-先定 Classic/GCHP 与版本 → 列出气象、排放、初始/边界条件和诊断类别 → 检查时间、网格、物种、单位契约 → 单独规划下载范围和授权。
+<!-- README-I18N:END -->
 
-具体方法与交接见[对应说明](../../../../methods/03_atmospheric_transport/README.md)。
 
-需要气象协变量或大气成分资料时，分别阅读 [ERA5](../../01_socioeconomic_natural_change/era5/SKILL.md) 和 [CAMS](../../01_socioeconomic_natural_change/cams/SKILL.md)。它们提供人工获取说明，不能直接替代 GEOS-Chem 的版本专用气象、物种或边界输入；尚无自动转换或下载工具。
+**Status:** documentation only; no execution adapter or tool ID for run-tool.
 
-## 行为边界
+## Workflow
 
-不读取原始数据或认证目录，不自动下载；GEOS-Chem 自身 dry-run 会执行程序并写日志。模型资料中排放输入只作为接口需求，不附清单具体数据或实现。
+Choose Classic/GCHP and a version → list meteorology, emissions, initial/boundary conditions and diagnostics → check time, grid, species and unit contracts → scope and authorize acquisition separately.
 
-方法维护和常规验证只使用文档、接口与合成输入。真实数据任务须另有明确范围。个人路径与非秘密参数在 CONFIG_DIR，凭据在凭据管理器，会话在 AUTH_DIR；三类根独立且位于 Git 外。参考型 skill 不提供自动路径检查或脱敏记录。
+See the [method and handoff guidance](../../../../methods/03_atmospheric_transport/README.md).
+
+For meteorological covariates or atmospheric-composition data, read [ERA5](../../01_socioeconomic_natural_change/era5/SKILL.md) and [CAMS](../../01_socioeconomic_natural_change/cams/SKILL.md). Their manual acquisition guidance does not replace version-specific GEOS-Chem meteorology, species or boundary inputs; no automatic conversion or download tool is provided.
+
+## Boundaries
+
+Do not read original data or authentication directories or automatically download inputs. GEOS-Chem's own dry-run executes a program and writes logs. Emission inputs are interface requirements only, without concrete inventory data or implementation.
+
+Documentation maintenance and routine validation use only documents, interfaces and synthetic inputs. Real-data work requires an explicit scope. Keep personal paths and non-secret settings in CONFIG_DIR, credentials in a credential manager, and sessions in AUTH_DIR; data, configuration and authentication roots must be separate and outside Git. Reference skills do not automatically enforce paths or create sanitized run receipts.

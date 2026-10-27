@@ -3,18 +3,25 @@ name: inventory-input-methods
 description: List conceptual source and input-contract methods for emission inventories. Do not expose concrete data, implementation code or local script references.
 ---
 
-# 排放清单输入方法
+# Emission-inventory input methods
 
-**状态**：文档指导，未注册执行适配器；没有可供 run-tool 调用的工具 ID。
+<!-- README-I18N:START -->
 
-## 使用顺序
+**English** | [中文](SKILL_ZH.md)
 
-确定源类别与核算边界 → 选择活动、技术和因子来源的核对方法 → 约定单位、物种和映射语义 → 列出缺口及交接契约。
+<!-- README-I18N:END -->
 
-具体方法与交接见[对应说明](../../../../methods/02_emission_inventory/README.md)。
 
-## 行为边界
+**Status:** documentation only; no execution adapter or tool ID for run-tool.
 
-仅列方法；不添加具体数据、参数值、项目字段、脚本名、源码指纹、命令或实现代码。
+## Workflow
 
-方法维护和常规验证只使用文档、接口与合成输入。真实数据任务须另有明确范围。个人路径与非秘密参数在 CONFIG_DIR，凭据在凭据管理器，会话在 AUTH_DIR；三类根独立且位于 Git 外。参考型 skill 不提供自动路径检查或脱敏记录。
+Define source categories and accounting scope → choose methods for reviewing activity, technology and factor sources → agree unit, species and mapping semantics → list gaps and handoff contracts.
+
+See the [method and handoff guidance](../../../../methods/02_emission_inventory/README.md).
+
+## Boundaries
+
+List conceptual methods only. Do not add concrete data, parameter values, project fields, script names, source fingerprints, commands or implementation code.
+
+Documentation maintenance and routine validation use only documents, interfaces and synthetic inputs. Real-data work requires an explicit scope. Keep personal paths and non-secret settings in CONFIG_DIR, credentials in a credential manager, and sessions in AUTH_DIR; data, configuration and authentication roots must be separate and outside Git. Reference skills do not automatically enforce paths or create sanitized run receipts.
