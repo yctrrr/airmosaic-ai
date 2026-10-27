@@ -6,6 +6,10 @@
 
 <!-- README-I18N:END -->
 
+目录职责及迁移见[布局说明](harness/project-layout_ZH.md)。方法库解释科学方法，技能负责电脑操作，核心程序负责公共执行。路径叙述和不可执行阶段提案放在 `methods/pathways/`，未来执行定义放在 `core/workflows/`。MCP 和工作流引擎尚未实现。
+
+
+
 
 从仓库根目录开始，使用或修改流程前先阅读相关技能。本页只规定通用行为；具体产品名称、依赖与调用细节放在技能和分类说明中。
 
@@ -22,7 +26,7 @@
 
 ## 文档导航
 
-按[四步流程](harness/four-step-workflow.md)、[技能导航](skills/README_ZH.md)和[方法映射](methods/README.md)选择入口。通用规则不列举具体能力，实际清单放分类导航与目录。
+按[四步流程](harness/four-step-workflow.md)、[技能导航](skills/README_ZH.md)和[方法映射](methods/README_ZH.md)选择入口。通用规则不列举具体能力，实际清单放分类导航与目录。
 
 | 任务 | 说明 |
 |---|---|
@@ -40,7 +44,7 @@
 
 ## 环境与发现
 
-使用 Python 3.10+ 的项目环境，通过 `python -m pip install -e '.[dev]'` 安装。会话根显式配置，`.env` 不自动加载。缓存检查需要工作区变量或明确的调用参数；个人配置根与认证根是调用约定，不是自动加载器。
+使用 Python 3.10+ 的项目环境，通过 `python -m pip install -e './core[dev]'` 安装。会话根显式配置，`.env` 不自动加载。缓存检查需要工作区变量或明确的调用参数；个人配置根与认证根是调用约定，不是自动加载器。
 
 ```sh
 python -m airmosaic_core.cli --help

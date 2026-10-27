@@ -96,4 +96,4 @@ Documentation maintenance uses interfaces and synthetic inputs, not existing ori
 - Scan shared changes for private information, review findings without echoing secret values, and distinguish real secrets from synthetic fixtures.
 - When distributing a skill independently, include its needed resources or versioned public links; repository-relative harness/method links do not automatically travel with a copied folder.
 
-The workflow design in `workflow/SKILL.md` intentionally lacks skill frontmatter and remains a design reference; do not turn it into a discovered executable skill merely to satisfy an entry-point count.
+Human-facing complete pathways live in `methods/pathways/`; future executable definitions belong in `core/workflows/`. Neither a narrative nor a definition is a discovered skill or an implemented engine. See the [layout](project-layout.md).

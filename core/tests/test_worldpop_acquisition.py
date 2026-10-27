@@ -8,7 +8,7 @@ import sys
 import pytest
 
 
-SCRIPT = Path(__file__).resolve().parents[1] / (
+SCRIPT = Path(__file__).resolve().parents[2] / (
     "skills/data_acquisition/01_socioeconomic_natural_change/"
     "worldpop/scripts/download_worldpop.py"
 )

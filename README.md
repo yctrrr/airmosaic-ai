@@ -31,22 +31,24 @@ Read the [Harness guide](harness/README.md) for team roles, execution steps, bou
 ## Repository layout
 
 ```text
-AGENTS.md                 Agent operating instructions
-harness/                  Shared collaboration and tool-use documentation
-methods/                  Four-step methods and shared references; documentation only
-catalog/                  Dataset metadata and schemas
-config/examples/          Public templates for private environment configuration
-workflow/                 Four-layer workflow design templates
-skills/
-  data_acquisition/       01 socioeconomic & natural change / 02 emissions / 03 atmosphere / 04 integrated impacts / shared
-  model/                  Same four steps, with shared capabilities
-src/airmosaic_core/        Python CLI and service classes
-tests/                    Core service tests
+methods/                  Human-readable scientific methods and pathway explanations
+skills/                   Software, code and computer-operation guidance
+catalog/                  Tool declarations, dataset metadata and schemas
+core/
+  pyproject.toml          Installation, dependencies and command entry point
+  airmosaic_core/         Shared CLI, discovery and execution services
+  workflows/             Path-definition area; engine and executable paths unimplemented
+  tests/                 Synthetic and interface checks
+harness/                  Usage, collaboration and agent boundaries
+config/examples/          Public non-secret configuration templates
+examples/                 Generalized and synthetic task parameters
 ```
 
 Data and runtime outputs use `AIRMOSAIC_LOCAL_WORKSPACE`; personal non-secret settings use `AIRMOSAIC_CONFIG_DIR`; browser sessions use `AIRMOSAIC_AUTH_DIR`. Keep all three roots outside Git checkouts and separate from each other. Passwords and tokens belong in a credential manager. Model releases and private notes also remain outside the repository. See the [environment example](config/examples/README.md) for explicit session setup.
 
 ## Workflow scope
+
+See the bilingual [layout and migration guide](harness/project-layout.md) for directory responsibilities. [Pathway explanations](methods/pathways/README.md) describe research choices and handoffs; [core workflow status](core/workflows/README.md) identifies the unimplemented execution layer. MCP, artifact registration and scientific validation services remain planned.
 
 ```text
 Socioeconomic & natural change → emissions → atmospheric transport/chemistry → integrated impacts
@@ -63,7 +65,7 @@ From the repository root, with Python 3.10+:
 ```powershell
 python -m venv .venv
 $amPython = (Resolve-Path ".venv/Scripts/python.exe").Path
-& $amPython -m pip install -e ".[dev]"
+& $amPython -m pip install -e "./core[dev]"
 & $amPython -m airmosaic_core.cli --help
 & $amPython -m airmosaic_core.cli list-datasets
 & $amPython -m airmosaic_core.cli list-tools

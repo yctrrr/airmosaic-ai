@@ -72,4 +72,4 @@ SDK 导出 DataCatalogService、DataAccessService、CausalDesignService、ToolRe
 
 新增工具需同步 manifest、允许清单、参数解析、分类说明和 skill，遵循[注册规范](tool-registration.md)。状态查询的 ready 不表示任务 can_execute；进程 succeeded 不表示科学验收通过。
 
-`workflow/SKILL.md` 保留四层设计，没有标准 skill frontmatter，也没有自动执行器。数据获取、处理、模型使用和结果验收需要显式传递产物及方法，不会自动串联。
+`methods/pathways/` 保存人类可读的路径设计和历史参考，`core/workflows/` 说明未来执行定义及未实现状态。当前没有工作流引擎，数据获取、处理、计算和验收仍需显式交接，不会自动串联。

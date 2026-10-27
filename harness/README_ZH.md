@@ -6,6 +6,10 @@
 
 <!-- README-I18N:END -->
 
+目录职责见[项目布局](project-layout_ZH.md)：人类方法、电脑操作技能、声明和公共执行分开维护。[路径叙述](../methods/pathways/README_ZH.md)属于参考，[核心工作流](../core/workflows/README_ZH.md)说明引擎未实现。
+
+
+
 
 先选择真实能力，核对输入、权限与数据契约，再用验证结果和脱敏记录交付。通用规则不指定具体模型、框架或技术类别，实际能力见[技能导航](../skills/README_ZH.md)和[分类用法](tool-catalog.md)。
 

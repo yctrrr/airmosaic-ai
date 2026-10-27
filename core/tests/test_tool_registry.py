@@ -18,7 +18,7 @@ from airmosaic_core.services import tool_paths
 from airmosaic_core.services.tool_registry import format_tool_table
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 
 @pytest.fixture

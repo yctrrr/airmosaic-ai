@@ -21,7 +21,7 @@
 | 规划观测资料获取、整理与质控 | [观测资料参考](skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL_ZH.md) |
 | 分析已有结果或适配计算模板 | [模型分析](harness/usage/model-analysis.md) |
 | 使用专项方法并跟踪参考项目 | [专项流程](skills/model/README_ZH.md) |
-| 查找近期本地实践中的可复用方法 | [方法库](methods/README.md) |
+| 查找近期本地实践中的可复用方法 | [方法库](methods/README_ZH.md) |
 | 让 agent 修改项目 | [AGENTS.md](AGENTS_ZH.md)、[Agent 行为边界](harness/agent-boundaries_ZH.md) |
 | 查找可用能力 | [注册查询](harness/usage/tool-registry.md)、[工具清单](harness/tool-catalog.md) |
 | 统一执行 CLI/Python/R 工具 | [run-tool](harness/usage/run-tool.md) |
@@ -31,22 +31,24 @@
 ## 仓库结构
 
 ```text
-AGENTS.md                 代理操作规则
-harness/                  通用协作与使用说明
-methods/                  四步方法与共享参考，不提供执行入口
-catalog/                  数据和工具元数据及结构定义
-config/examples/          通用配置示例
-workflow/                 分阶段流程设计
-skills/
-  data_acquisition/       分步骤及共享的获取入口
-  model/                  分步骤及共享的使用入口
-src/airmosaic_core/        命令与服务实现
-tests/                    合成及接口检查
+methods/                  面向人类的科学方法与完整路径说明
+skills/                   软件、代码与电脑操作指导
+catalog/                  工具声明、数据集信息和结构规范
+core/
+  pyproject.toml          安装、依赖与命令入口
+  airmosaic_core/         公共命令、查询与执行服务
+  workflows/             路径定义区，编排引擎及可执行路径未实现
+  tests/                 合成与接口检查
+harness/                  使用、协作与代理行为边界
+config/examples/          公开的非秘密配置模板
+examples/                 通用与合成任务参数
 ```
 
 数据和运行输出使用 `AIRMOSAIC_LOCAL_WORKSPACE`，个人非秘密配置使用 `AIRMOSAIC_CONFIG_DIR`，浏览器认证状态使用 `AIRMOSAIC_AUTH_DIR`。三类根分别设置，均位于 Git 仓库外。密码和 token 交由凭据管理器保管。模型发行包和私人记录也保留在仓库外。按[环境配置示例](config/examples/README.md)显式配置当前会话。
 
 ## 工作流范围
+
+各目录职责及迁移方式见[布局说明](harness/project-layout_ZH.md)。[计算路径说明](methods/pathways/README_ZH.md)解释研究选择和交接，[核心工作流状态](core/workflows/README_ZH.md)说明尚未实现的执行层。MCP、产物登记和科学结果校验服务仍为规划能力。
 
 ```text
 社会经济与自然变化 → 排放 → 大气输送与化学 → 综合影响评估
@@ -54,7 +56,7 @@ tests/                    合成及接口检查
 
 这四层组织研究流程，不表示每一步都有可执行服务。方法选择需要合适的输入、基线和领域审核；样本量不能单独证明方法适用性或科学有效性。
 
-具体对应见[四步流程](harness/four-step-workflow.md)、[技能导航](skills/README_ZH.md)和[方法库](methods/README.md)。仅方法的阶段不提供具体数据或实现代码；其他阶段引用共享能力，不重复维护。逐项核对真实执行状态和输入契约。说明维护只使用文档、接口与合成输入，不读取原始数据。
+具体对应见[四步流程](harness/four-step-workflow.md)、[技能导航](skills/README_ZH.md)和[方法库](methods/README_ZH.md)。仅方法的阶段不提供具体数据或实现代码；其他阶段引用共享能力，不重复维护。逐项核对真实执行状态和输入契约。说明维护只使用文档、接口与合成输入，不读取原始数据。
 
 ## 快速启动
 
@@ -63,7 +65,7 @@ tests/                    合成及接口检查
 ```powershell
 python -m venv .venv
 $amPython = (Resolve-Path ".venv/Scripts/python.exe").Path
-& $amPython -m pip install -e ".[dev]"
+& $amPython -m pip install -e "./core[dev]"
 & $amPython -m airmosaic_core.cli --help
 & $amPython -m airmosaic_core.cli list-datasets
 & $amPython -m airmosaic_core.cli list-tools

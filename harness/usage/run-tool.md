@@ -1,6 +1,6 @@
 # 统一执行：run-tool
 
-本入口支持 8 个核心 CLI、6 个既有 Python 脚本和 2 个 GCAM R 脚本。Python 使用当前虚拟环境；R 使用本地 PATH 中的原生 Rscript。模板、参考资料及嵌套 `run-tool` 不支持执行。先安装源码 checkout：`python -m pip install -e '.[dev]'`，按[配置示例](../../config/examples/README.md)显式设置三类根目录，并在本地创建它们。不会自动加载个人配置或凭据。
+本入口支持 8 个核心 CLI、6 个既有 Python 脚本和 2 个 GCAM R 脚本。Python 使用当前虚拟环境；R 使用本地 PATH 中的原生 Rscript。模板、参考资料及嵌套 `run-tool` 不支持执行。先安装源码 checkout：`python -m pip install -e './core[dev]'`，按[配置示例](../../config/examples/README.md)显式设置三类根目录，并在本地创建它们。不会自动加载个人配置或凭据。
 
 ## 操作步骤
 

@@ -6,6 +6,10 @@
 
 <!-- README-I18N:END -->
 
+Skills describe concrete computer operations: software setup, input preparation, invocation and operational checks. Keep scientific explanations in [methods](../methods/README.md), human pathway narratives in [methods/pathways](../methods/pathways/README.md), and shared runtime code in [core](../core/README.md).
+
+
+
 
 Data acquisition and modeling follow four stages: 01 Socioeconomic and Natural Change, 02 Emission Inventory, 03 Atmospheric Transport and Chemistry, and 04 Integrated Impacts. See the [four-step guide](../harness/four-step-workflow.md) for sequence and status.
 

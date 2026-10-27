@@ -115,7 +115,7 @@
             ],
             "properties": {
               "path": {
-                "const": "src/airmosaic_core/cli.py"
+                "const": "core/airmosaic_core/cli.py"
               }
             }
           },

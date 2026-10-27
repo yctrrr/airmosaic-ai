@@ -1,3 +1,5 @@
+status: design_reference
+execution_supported: false
 # Design proposal only; no automatic execution. Operational guide: harness/four-step-workflow.md
 # Layer 4: Integrated Impact Assessment
 # 浓度/排放 → 健康损失 → 碳社会成本 → 不平等效应
@@ -159,7 +161,7 @@ outputs:
 
 traceability:
   - source: "layer_03"
-    link: "workflow/layers/03_atmospheric_transport.yaml"
+    link: "methods/pathways/references/stage-designs/03_atmospheric_transport.yaml"
     description: "Concentration fields feed exposure assessment"
   - source: "gbd_health"
     link: "技能: skills/data_acquisition/04_integrated_impacts/ihme-gbd-results"

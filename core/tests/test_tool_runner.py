@@ -19,7 +19,7 @@ from airmosaic_core.services import tool_process, tool_runner
 from airmosaic_core.services.tool_execution_paths import parse_parameters
 
 
-ROOT = Path(__file__).absolute().parents[1]
+ROOT = Path(__file__).absolute().parents[2]
 
 
 @pytest.fixture

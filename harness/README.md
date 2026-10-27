@@ -6,6 +6,10 @@
 
 <!-- README-I18N:END -->
 
+See the [project layout](project-layout.md): human methods, computer-operation skills, declarations and shared execution have separate responsibilities. [Path narratives](../methods/pathways/README.md) are references; [core workflows](../core/workflows/README.md) disclose the unimplemented engine.
+
+
+
 
 Choose an actual capability, check inputs, permissions and data contracts, then deliver verified results with sanitized records. General rules do not prescribe a named model, framework or technology category. Concrete capabilities belong in [skill navigation](../skills/README.md) and [classified usage](tool-catalog.md).
 

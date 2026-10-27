@@ -9,7 +9,7 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: cli
-  path: src/airmosaic_core/cli.py
+  path: core/airmosaic_core/cli.py
   argument_bindings:
     tool_id: positional:0
     params: --params

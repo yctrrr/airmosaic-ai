@@ -183,7 +183,7 @@ def test_actual_structure_queries_against_synthetic_basex(roots, model):
     java = shutil.which("java")
     if not java:
         pytest.skip("Java unavailable; synthetic BaseX integration not run")
-    prep = ExecutionPaths(Path(__file__).absolute().parents[1], "b" * 32, INSPECT)
+    prep = ExecutionPaths(Path(__file__).absolute().parents[2], "b" * 32, INSPECT)
     prep.create()
     env = tool_r.environment(child_environment(prep, model), Path("unused.R"), [], prep.temp, None)
     expression = ('if (!all(vapply(c("data.table","rgcam"), requireNamespace, logical(1), quietly=TRUE))) '

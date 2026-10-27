@@ -57,7 +57,7 @@
 
 ## 阶段命名与迁移
 
-01 目录和阶段筛选值统一为 `01_socioeconomic_natural_change`，04 为 `04_integrated_impacts`。skills、methods、workflow/layers、数据声明与工具入口路径同步更新；已有 tool_id、dataset_id、skill frontmatter 名称和缓存目录保持稳定。个人脚本若保存过旧目录或 `list-datasets --layer` 值，需改用当前值。
+01 目录和阶段筛选值统一为 `01_socioeconomic_natural_change`，04 为 `04_integrated_impacts`。skills、methods、阶段参考、数据声明与工具入口路径同步更新；已有 tool_id、dataset_id、skill frontmatter 名称和缓存目录保持稳定。个人脚本若保存过旧目录或 `list-datasets --layer` 值，需改用当前值。
 
 ## 共享目录与执行边界
 
@@ -66,3 +66,5 @@
 调用顺序：阶段入口 → SKILL.md → describe-tool/check-tool → 非秘密参数 JSON → run-tool dry-run → 授权执行 → 验收交接。模板、参考和未登记说明不能执行；不因不可执行而绕过运行器。
 
 本轮及常规方法维护只使用说明、接口定义和合成输入，不读取、复制或运行原始数据。真实数据任务须另有明确范围。数据、非秘密个人配置、认证分别位于 Git 外的 LOCAL_WORKSPACE、CONFIG_DIR、AUTH_DIR；模型源码/发行包也在 Git 外。详见[存储约定](storage-and-credentials.md)和 [agent 边界](agent-boundaries.md)。
+
+布局迁移后，完整路径说明见[方法路径](../methods/pathways/README_ZH.md)，历史阶段 YAML 归入其中参考目录，人工交接见[交接指南](usage/workflow-handoff_ZH.md)。`core/workflows/` 尚无执行引擎或已实现路径；目录迁移不改变本页的能力边界。

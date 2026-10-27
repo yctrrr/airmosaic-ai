@@ -23,5 +23,7 @@ dev = [
 airmosaic = "airmosaic_core.cli:main"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["airmosaic_core*"]
+namespaces = false
 

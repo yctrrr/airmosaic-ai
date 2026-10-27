@@ -8,7 +8,7 @@ import pytest
 
 
 POWERSHELL = shutil.which("pwsh") or shutil.which("powershell")
-EXAMPLE = Path(__file__).resolve().parents[1] / "config/examples/environment.ps1"
+EXAMPLE = Path(__file__).resolve().parents[2] / "config/examples/environment.ps1"
 pytestmark = pytest.mark.skipif(POWERSHELL is None, reason="PowerShell is unavailable")
 
 

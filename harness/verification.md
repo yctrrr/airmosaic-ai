@@ -72,7 +72,7 @@ ZIP 为 717 字节，含 1 个 CSV、1 条记录、18 列；归档完整性、�
 | Skill 与映射 | 两个新 skill 和已修改的 atmospheric-inputs 元数据校验通过；16 个唯一 method_id 的文档、skill 和已有工具链接有效。ERA5/CAMS/PM2.5 主目录均在 03，04 引用，不复制流程 |
 | 文档与示例 | 修改文件的相对链接、围栏、JSON/YAML、Python 语法及双语 README 代码块一致性检查通过 |
 | 示例流程 | 14 个离线合成场景通过，覆盖 ERA5/EAC4/预报分支、相同/嵌套根、缺失根、Git 内根/请求/输出、错误请求/格式、空令牌和客户端失败。使用替身客户端及临时占位文件，网络禁用；未访问 API、个人配置或凭据，不能视为真实下载测试 |
-| 既有功能回归 | `tests/test_tool_registry.py`、`tests/test_core_services.py` 与 `tests/test_configuration_examples.py` 共 47 项通过；保留 2 条既有 GCAM Python 转义警告 |
+| 既有功能回归 | `core/tests/test_tool_registry.py`、`core/tests/test_core_services.py` 与 `core/tests/test_configuration_examples.py` 共 47 项通过；保留 2 条既有 GCAM Python 转义警告 |
 | 隐私与范围 | 变更仅为 Markdown、方法索引 YAML 和请求 JSON；私人路径、邮箱、常见令牌/私钥及签名链接模式未命中，diff 空白检查通过。模式检查不保证穷尽所有秘密形式 |
 
 沿用此前旧脚本接口与按日生成方式的审查结论，本次没有重新访问原始资料或复制源脚本/私人配置。未读取/下载原始数据、安装下载依赖、登录、使用真实令牌或运行模型。人工代码示例补齐三根分离、解析后路径包含与 Git 标记预检，但不是 OS 隔离或完整运行器；未新增自动凭据代理、run-tool 适配器或脱敏回执。
@@ -236,7 +236,7 @@ ZIP 为 717 字节，含 1 个 CSV、1 条记录、18 列；归档完整性、�
 运行核心测试的可复用命令（在已安装开发依赖的仓库环境中）：
 
 ```bash
-python -B -m pytest -q -p no:cacheprovider
+python -B -m pytest core/tests -q -p no:cacheprovider
 ```
 
 核心 Python 环境首次执行部分 skill 的 `--help` 时，因缺少可选依赖失败；在已有这些依赖的另一环境中全部通过。分类说明因此单独列出依赖，不能把“核心包安装成功”当成全部工具已就绪。

@@ -6,6 +6,10 @@
 
 <!-- README-I18N:END -->
 
+Directory responsibilities and migration instructions are in the [layout guide](harness/project-layout.md). Methods address scientific reasoning; skills address computer operations; core owns shared execution. Path narratives and non-executable stage proposals live in `methods/pathways/`; future executable definitions belong in `core/workflows/`. No MCP or workflow engine is implemented.
+
+
+
 
 Work from the repository root and read the relevant skill before changing or using its workflow. This file defines general operating rules. Concrete product names, dependencies and invocation details belong in skills and classified guides.
 
@@ -40,7 +44,7 @@ General rules, skill entries and category navigation have English and Chinese ve
 
 ## Environment and discovery
 
-Use Python 3.10+ in a project environment, installed with `python -m pip install -e '.[dev]'`. Session roots are explicit; `.env` is not automatically loaded. Cache checks require a workspace variable or explicit SDK argument. CONFIG_DIR and AUTH_DIR are caller conventions, not automatic loaders.
+Use Python 3.10+ in a project environment, installed with `python -m pip install -e './core[dev]'`. Session roots are explicit; `.env` is not automatically loaded. Cache checks require a workspace variable or explicit SDK argument. CONFIG_DIR and AUTH_DIR are caller conventions, not automatic loaders.
 
 ```sh
 python -m airmosaic_core.cli --help

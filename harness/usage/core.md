@@ -16,7 +16,7 @@ Windows PowerShell，先确认 `python` 为 Python 3.10 或以上：
 ```powershell
 python -m venv .venv
 $amPython = (Resolve-Path ".venv/Scripts/python.exe").Path
-& $amPython -m pip install -e ".[dev]"
+& $amPython -m pip install -e "./core[dev]"
 $amLocalRoot = Split-Path -Parent (Get-Location).Path
 . ./config/examples/environment.ps1 -LocalRoot $amLocalRoot
 foreach ($amDir in @($env:AIRMOSAIC_LOCAL_WORKSPACE, $env:AIRMOSAIC_CONFIG_DIR, $env:AIRMOSAIC_AUTH_DIR)) {
@@ -29,7 +29,7 @@ Linux/macOS，核心 Python 服务可按以下形式配置；领域脚本的跨�
 
 ```sh
 python3 -m venv .venv
-.venv/bin/python -m pip install -e '.[dev]'
+.venv/bin/python -m pip install -e './core[dev]'
 export AIRMOSAIC_LOCAL_WORKSPACE="${XDG_DATA_HOME:-$HOME/.local/share}/airmosaic-ai/workspace"
 export AIRMOSAIC_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/airmosaic-ai"
 export AIRMOSAIC_AUTH_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/airmosaic-ai/auth"
@@ -130,7 +130,7 @@ plan = CausalDesignService().draft_plan(
 ## 7. 开发验证
 
 ```powershell
-& $amPython -m pytest -q -p no:cacheprovider
+& $amPython -m pytest core/tests -q -p no:cacheprovider
 ```
 
 核心测试主要覆盖目录和本地服务，不能替代数据连接器、模型计算或科学验收。验证报告说明实际运行了哪些命令、输入类型和限制，不把安装成功写成全平台已经验证。
