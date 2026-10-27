@@ -29,7 +29,7 @@ python -m airmosaic_core.cli check-tool ihme_gbd_fetch_results
 
 ## 2. WorldPop：发现与下载
 
-阅读 [WorldPop skill](../../skills/data_acquisition/01_socioeconomic/worldpop/SKILL.md)。[公开参数](../../examples/run-tool/worldpop.json)：
+阅读 [WorldPop skill](../../skills/data_acquisition/01_socioeconomic_natural_change/worldpop/SKILL.md)。[公开参数](../../examples/run-tool/worldpop.json)：
 
 ```json
 {"project":"wpgp","iso3":"CHN","year":2020,"download":false,"limit":1}
@@ -56,7 +56,7 @@ python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/r
 
 ## 3. CSMAR：浏览器获取和本地处理分开
 
-阅读 [CSMAR skill](../../skills/data_acquisition/01_socioeconomic/csmar/SKILL.md)。`csmar_browser_download` 仅供查询说明。成员在自己的机构会话中登录；浏览器调用方显式使用 `${AIRMOSAIC_AUTH_DIR}/browser_profiles/csmar/`，变量不自动启动或选定会话。按任务选择表、年份和字段，提交查询后用下载记录中的最终保存动作取得文件。核对实际落盘文件及字段说明，不导出 cookie 或分享认证链接。
+阅读 [CSMAR skill](../../skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md)。`csmar_browser_download` 仅供查询说明。成员在自己的机构会话中登录；浏览器调用方显式使用 `${AIRMOSAIC_AUTH_DIR}/browser_profiles/csmar/`，变量不自动启动或选定会话。按任务选择表、年份和字段，提交查询后用下载记录中的最终保存动作取得文件。核对实际落盘文件及字段说明，不导出 cookie 或分享认证链接。
 
 本地 `csmar_process_company_info` 需要 pandas/openpyxl 和 ZIP，不需要登录。[参数示例](../../examples/run-tool/csmar.json)：
 
@@ -73,7 +73,7 @@ python -m airmosaic_core.cli run-tool csmar_process_company_info --params-file e
 
 ## 4. IHME GBD：已有会话与明确维度
 
-阅读 [GBD skill](../../skills/data_acquisition/04_impact/ihme-gbd-results/SKILL.md)。需要 pandas、requests、websocket-client，及已打开页面、已登录、仅监听 loopback 的任务浏览器。核对 CDP 端口归属，本人 profile 由浏览器调用方放在 `${AIRMOSAIC_AUTH_DIR}/browser_profiles/ihme-gbd/`；不复制登录状态。
+阅读 [GBD skill](../../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/SKILL.md)。需要 pandas、requests、websocket-client，及已打开页面、已登录、仅监听 loopback 的任务浏览器。核对 CDP 端口归属，本人 profile 由浏览器调用方放在 `${AIRMOSAIC_AUTH_DIR}/browser_profiles/ihme-gbd/`；不复制登录状态。
 
 [公开参数](../../examples/run-tool/gbd.json)只展示历史语法例子，须按当前页面核对并修改版本及所有维度：
 
@@ -98,7 +98,7 @@ python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdP
 
 ## 5. 工业年鉴：人工适配
 
-阅读 [工业年鉴 skill](../../skills/data_acquisition/01_socioeconomic/ind_yearbook/SKILL.md)，用真实模板 ID 查询位置。两项模板不支持 run-tool；没有独立全国行业实现。
+阅读 [工业年鉴 skill](../../skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook/SKILL.md)，用真实模板 ID 查询位置。两项模板不支持 run-tool；没有独立全国行业实现。
 
 1. 复制需要的 R 模板到新任务目录，检查全部赋值和写入位置；source 会执行，不是帮助命令。
 2. 适配表头、版次/数据年份、行业编码、单位、输入、R 依赖和输出。YAML 只是映射示例，不会自动加载。
@@ -107,7 +107,7 @@ python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdP
 
 ## 6. ERA5 / CAMS：人工下载参考
 
-第三步新增 [ERA5 skill](../../skills/data_acquisition/03_atmospheric_transport/era5/SKILL.md) 与 [CAMS skill](../../skills/data_acquisition/03_atmospheric_transport/cams/SKILL.md)。按 [Copernicus 下载指南](copernicus-downloads.md)区分 CDS/ADS、ERA5 单层/气压层、CAMS EAC4/预报，再选择网页或 Python API。
+第三步新增 [ERA5 skill](../../skills/data_acquisition/01_socioeconomic_natural_change/era5/SKILL.md) 与 [CAMS skill](../../skills/data_acquisition/01_socioeconomic_natural_change/cams/SKILL.md)。按 [Copernicus 下载指南](copernicus-downloads.md)区分 CDS/ADS、ERA5 单层/气压层、CAMS EAC4/预报，再选择网页或 Python API。
 
 指南包含本人登录与许可、运行时令牌、3 份非秘密请求 JSON、分批下载、格式/单位/有效时间检查和旧脚本迁移边界。当前没有对应 tool_id 或数据声明，不出现在工具/数据查询列表，也不能通过 run-tool 执行；请求 JSON 不属于 runner 参数格式。没有真实下载、登录或接口集成验证。
 

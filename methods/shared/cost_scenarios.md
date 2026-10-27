@@ -28,4 +28,4 @@
 
 ## 阶段与 Skill 映射
 
-主目录：shared；适用阶段：01_socioeconomic, 02_emission_inventory, 04_impact。对应 [cost-scenarios](../../skills/model/shared/cost-scenarios/SKILL.md)。执行状态以本文及真实工具 manifest 为准；没有 tool_id 的方法只供指导。
+主目录：shared；适用阶段：01_socioeconomic_natural_change, 02_emission_inventory, 04_integrated_impacts。对应 [cost-scenarios](../../skills/model/shared/cost-scenarios/SKILL.md)。执行状态以本文及真实工具 manifest 为准；没有 tool_id 的方法只供指导。

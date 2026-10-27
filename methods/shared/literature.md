@@ -29,4 +29,4 @@
 
 ## 阶段与 Skill 映射
 
-主目录：shared；适用阶段：01_socioeconomic, 02_emission_inventory, 03_atmospheric_transport, 04_impact。对应 [literature-workflow](../../skills/data_acquisition/shared/literature-workflow/SKILL.md)。执行状态以本文及真实工具 manifest 为准；没有 tool_id 的方法只供指导。
+主目录：shared；适用阶段：01_socioeconomic_natural_change, 02_emission_inventory, 03_atmospheric_transport, 04_integrated_impacts。对应 [literature-workflow](../../skills/data_acquisition/shared/literature-workflow/SKILL.md)。执行状态以本文及真实工具 manifest 为准；没有 tool_id 的方法只供指导。

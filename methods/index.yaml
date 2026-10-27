@@ -24,16 +24,16 @@ methods:
   tool_ids: []
   primary_stage: shared
   applies_to:
-  - 01_socioeconomic
+  - 01_socioeconomic_natural_change
   - 02_emission_inventory
   - 03_atmospheric_transport
-  - 04_impact
+  - 04_integrated_impacts
   skills:
   - skills/data_acquisition/shared/literature-workflow/SKILL.md
 - method_id: statistical_yearbooks
   category: data_acquisition
   title: 统计年鉴与表格来源
-  document: 01_socioeconomic/statistical_yearbooks.md
+  document: 01_socioeconomic_natural_change/statistical_yearbooks.md
   status: mixed
   evidence: recent_task_record_and_current_template_guides
   source_projects:
@@ -42,15 +42,15 @@ methods:
   tool_ids:
   - yearbook_regional_sector_template
   - yearbook_product_output_template
-  primary_stage: 01_socioeconomic
+  primary_stage: 01_socioeconomic_natural_change
   applies_to:
-  - 01_socioeconomic
+  - 01_socioeconomic_natural_change
   skills:
-  - skills/data_acquisition/01_socioeconomic/ind_yearbook/SKILL.md
+  - skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook/SKILL.md
 - method_id: enterprise_sources
   category: data_acquisition
   title: 企业财务、年报与环境披露
-  document: 01_socioeconomic/enterprise_sources.md
+  document: 01_socioeconomic_natural_change/enterprise_sources.md
   status: mixed
   evidence: current_source_and_recent_task_record
   source_projects:
@@ -60,12 +60,12 @@ methods:
   tool_ids:
   - csmar_browser_download
   - csmar_process_company_info
-  primary_stage: 01_socioeconomic
+  primary_stage: 01_socioeconomic_natural_change
   applies_to:
-  - 01_socioeconomic
+  - 01_socioeconomic_natural_change
   skills:
-  - skills/data_acquisition/01_socioeconomic/csmar/SKILL.md
-  - skills/data_acquisition/01_socioeconomic/enterprise-disclosure/SKILL.md
+  - skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md
+  - skills/data_acquisition/01_socioeconomic_natural_change/enterprise-disclosure/SKILL.md
 - method_id: population_health_data
   category: data_acquisition
   title: 人口与健康基础数据
@@ -79,40 +79,40 @@ methods:
   - ihme_gbd_fetch_results
   primary_stage: shared
   applies_to:
-  - 01_socioeconomic
-  - 04_impact
+  - 01_socioeconomic_natural_change
+  - 04_integrated_impacts
   skills:
-  - skills/data_acquisition/01_socioeconomic/worldpop/SKILL.md
-  - skills/data_acquisition/04_impact/ihme-gbd-results/SKILL.md
+  - skills/data_acquisition/01_socioeconomic_natural_change/worldpop/SKILL.md
+  - skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/SKILL.md
 - method_id: energy_balance_processing
   category: data_processing
   title: CEADs 能源与折标煤
-  document: 01_socioeconomic/energy_balance.md
+  document: 01_socioeconomic_natural_change/energy_balance.md
   status: local_source
   evidence: current_source_and_recent_task_record
   source_projects:
   - energy_consumption
   tool_ids: []
-  primary_stage: 01_socioeconomic
+  primary_stage: 01_socioeconomic_natural_change
   applies_to:
-  - 01_socioeconomic
+  - 01_socioeconomic_natural_change
   skills:
-  - skills/data_acquisition/01_socioeconomic/energy-balance/SKILL.md
+  - skills/data_acquisition/01_socioeconomic_natural_change/energy-balance/SKILL.md
 - method_id: enterprise_panel_processing
   category: data_processing
   title: 企业主体、面板与统计约束
-  document: 01_socioeconomic/enterprise_panels.md
+  document: 01_socioeconomic_natural_change/enterprise_panels.md
   status: local_source
   evidence: current_source_and_recent_task_record
   source_projects:
   - enterprise_database
   tool_ids: []
-  primary_stage: 01_socioeconomic
+  primary_stage: 01_socioeconomic_natural_change
   applies_to:
-  - 01_socioeconomic
+  - 01_socioeconomic_natural_change
   skills:
-  - skills/model/01_socioeconomic/socioeconomic-drivers/SKILL.md
-  - skills/data_acquisition/01_socioeconomic/csmar/SKILL.md
+  - skills/model/01_socioeconomic_natural_change/socioeconomic-drivers/SKILL.md
+  - skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md
 - method_id: spatial_inventory_processing
   category: data_processing
   title: 空间清单重建与对齐
@@ -151,15 +151,15 @@ methods:
   tool_ids: []
   primary_stage: shared
   applies_to:
-  - 01_socioeconomic
+  - 01_socioeconomic_natural_change
   - 02_emission_inventory
-  - 04_impact
+  - 04_integrated_impacts
   skills:
   - skills/model/shared/cost-scenarios/SKILL.md
 - method_id: concentration_health_model
   category: model_use
   title: 健康影响与情景配对
-  document: 04_impact/health_impacts.md
+  document: 04_integrated_impacts/health_impacts.md
   status: mixed
   evidence: health_method_guidance_and_existing_repository_templates
   source_projects:
@@ -168,11 +168,11 @@ methods:
   tool_ids:
   - pm25_hia_calculate_template
   - pm25_hia_visualize_template
-  primary_stage: 04_impact
+  primary_stage: 04_integrated_impacts
   applies_to:
-  - 04_impact
+  - 04_integrated_impacts
   skills:
-  - skills/model/04_impact/health_impact_analysis/SKILL.md
+  - skills/model/04_integrated_impacts/health_impact_analysis/SKILL.md
 - method_id: gcam_output_analysis
   category: model_use
   title: GCAM 输出分析
@@ -190,9 +190,9 @@ methods:
   - gcam_configuration_reference
   primary_stage: shared
   applies_to:
-  - 01_socioeconomic
+  - 01_socioeconomic_natural_change
   - 02_emission_inventory
-  - 04_impact
+  - 04_integrated_impacts
   skills:
   - skills/model/IAM/gcam/SKILL.md
 - method_id: machine_learning
@@ -208,10 +208,10 @@ methods:
   - timexer_workflow_reference
   primary_stage: shared
   applies_to:
-  - 01_socioeconomic
+  - 01_socioeconomic_natural_change
   - 02_emission_inventory
   - 03_atmospheric_transport
-  - 04_impact
+  - 04_integrated_impacts
   skills:
   - skills/model/machine_learning/mlr3/SKILL.md
   - skills/model/machine_learning/timexer/SKILL.md
@@ -241,9 +241,9 @@ methods:
   primary_stage: 03_atmospheric_transport
   applies_to:
   - 03_atmospheric_transport
-  - 04_impact
+  - 04_integrated_impacts
   skills:
-  - skills/data_acquisition/03_atmospheric_transport/era5/SKILL.md
+  - skills/data_acquisition/01_socioeconomic_natural_change/era5/SKILL.md
 - method_id: cams_acquisition
   category: data_acquisition
   title: CAMS 大气成分再分析与预报获取
@@ -255,9 +255,9 @@ methods:
   primary_stage: 03_atmospheric_transport
   applies_to:
   - 03_atmospheric_transport
-  - 04_impact
+  - 04_integrated_impacts
   skills:
-  - skills/data_acquisition/03_atmospheric_transport/cams/SKILL.md
+  - skills/data_acquisition/01_socioeconomic_natural_change/cams/SKILL.md
 - method_id: pm25_station_acquisition
   category: data_acquisition
   title: PM2.5 站点监测获取与整理
@@ -269,11 +269,11 @@ methods:
   primary_stage: 03_atmospheric_transport
   applies_to:
   - 03_atmospheric_transport
-  - 04_impact
+  - 04_integrated_impacts
   skills:
   - skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md
 stages:
-  01_socioeconomic: 01_socioeconomic
+  01_socioeconomic_natural_change: 01_socioeconomic_natural_change
   02_emission_inventory: 02_emission_inventory
   03_atmospheric_transport: 03_atmospheric_transport
-  04_impact: 04_impact
+  04_integrated_impacts: 04_integrated_impacts

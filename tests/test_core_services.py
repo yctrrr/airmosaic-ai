@@ -20,11 +20,11 @@ def test_catalog_loads_initial_datasets():
 def test_catalog_filters_data_acquisition_datasets():
     catalog = DataCatalogService()
 
-    socioeconomic = catalog.list_datasets(layer="01_socioeconomic")
+    socioeconomic = catalog.list_datasets(layer="01_socioeconomic_natural_change")
     worldpop = catalog.list_datasets(skill="worldpop")
     health = catalog.list_datasets(domain="health")
 
-    assert {record.layer for record in socioeconomic} == {"01_socioeconomic"}
+    assert {record.layer for record in socioeconomic} == {"01_socioeconomic_natural_change"}
     assert {record.skill_id for record in worldpop} == {"worldpop"}
     assert {record.domain for record in health} == {"health"}
 

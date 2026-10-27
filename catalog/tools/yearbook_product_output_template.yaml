@@ -9,7 +9,7 @@ implementation_status: template
 registration_status: catalogued
 entrypoint:
   kind: template
-  path: skills/data_acquisition/01_socioeconomic/ind_yearbook/templates/process_product_output.R
+  path: skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook/templates/process_product_output.R
   argument_bindings: {}
 input_schema:
   type: object

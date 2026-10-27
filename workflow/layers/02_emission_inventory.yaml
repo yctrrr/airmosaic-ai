@@ -16,6 +16,6 @@ methods:
   - 空间分配与守恒检查方法
   - 时间与化学物种映射的交接方法
 handoff:
-  from: 01_socioeconomic
+  from: 01_socioeconomic_natural_change
   to: 03_atmospheric_transport
   scope: 方法选择、变量语义与接口要求；不附具体数据或实现

@@ -310,7 +310,7 @@ def load_script(path):
                                     "https://example.invalid/CON.tif", "https://example.invalid/a%5Cb.tif"])
 def test_remote_filename_cannot_escape_task(url):
     pytest.importorskip("requests")
-    script = load_script(ROOT / "skills/data_acquisition/01_socioeconomic/worldpop/scripts/download_worldpop.py")
+    script = load_script(ROOT / "skills/data_acquisition/01_socioeconomic_natural_change/worldpop/scripts/download_worldpop.py")
     with pytest.raises(ValueError):
         script.safe_name(url)
     assert script.safe_name("https://example.invalid/valid.tif?signature=synthetic-private") == "valid.tif"

@@ -2,7 +2,7 @@
 
 复核日期：2026-10-26。本文是人工操作参考，提供 3 份非秘密请求示例；没有新增工具注册、数据声明或 run-tool 下载适配器。`list-tools`/`list-datasets` 不会因新增文档而出现 ERA5/CAMS；官方 dataset ID 也不是工具 ID。
 
-从 [ERA5 skill](../../skills/data_acquisition/03_atmospheric_transport/era5/SKILL.md)或 [CAMS skill](../../skills/data_acquisition/03_atmospheric_transport/cams/SKILL.md)进入。方法维护只查看接口、说明及合成输入，不读取原始数据；实际下载另需明确变量、地区、时段、目标目录与允许的网络操作。
+从 [ERA5 skill](../../skills/data_acquisition/01_socioeconomic_natural_change/era5/SKILL.md)或 [CAMS skill](../../skills/data_acquisition/01_socioeconomic_natural_change/cams/SKILL.md)进入。方法维护只查看接口、说明及合成输入，不读取原始数据；实际下载另需明确变量、地区、时段、目标目录与允许的网络操作。
 
 ## 1. 先选对产品和门户
 

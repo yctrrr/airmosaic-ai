@@ -9,7 +9,7 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: python_script
-  path: skills/data_acquisition/01_socioeconomic/worldpop/scripts/download_worldpop.py
+  path: skills/data_acquisition/01_socioeconomic_natural_change/worldpop/scripts/download_worldpop.py
   argument_bindings:
     project: --project
     iso3: --iso3
@@ -32,6 +32,7 @@ input_schema:
       pattern: ^[A-Za-z]{3}$
     year:
       type: integer
+      description: Exact data-year match on popyear; missing or invalid metadata years are excluded.
       minimum: 1
       maximum: 9999
     contains:

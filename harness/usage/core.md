@@ -50,7 +50,7 @@ chmod 700 "$AIRMOSAIC_AUTH_DIR"
 
 ```powershell
 & $amPython -m airmosaic_core.cli list-datasets
-& $amPython -m airmosaic_core.cli list-datasets --layer 01_socioeconomic
+& $amPython -m airmosaic_core.cli list-datasets --layer 01_socioeconomic_natural_change
 & $amPython -m airmosaic_core.cli list-datasets --skill csmar
 & $amPython -m airmosaic_core.cli list-datasets --domain health
 & $amPython -m airmosaic_core.cli describe-dataset worldpop_population_grid

@@ -13,7 +13,7 @@ description: Plan meteorology, initial and boundary conditions and diagnostic in
 
 具体方法与交接见[对应说明](../../../../methods/03_atmospheric_transport/README.md)。
 
-需要气象协变量或大气成分资料时，分别阅读 [ERA5](../era5/SKILL.md) 和 [CAMS](../cams/SKILL.md)。它们提供人工获取说明，不能直接替代 GEOS-Chem 的版本专用气象、物种或边界输入；尚无自动转换或下载工具。
+需要气象协变量或大气成分资料时，分别阅读 [ERA5](../../01_socioeconomic_natural_change/era5/SKILL.md) 和 [CAMS](../../01_socioeconomic_natural_change/cams/SKILL.md)。它们提供人工获取说明，不能直接替代 GEOS-Chem 的版本专用气象、物种或边界输入；尚无自动转换或下载工具。
 
 ## 行为边界
 

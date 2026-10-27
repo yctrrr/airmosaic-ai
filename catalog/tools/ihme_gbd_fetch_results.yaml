@@ -9,7 +9,7 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: python_script
-  path: skills/data_acquisition/04_impact/ihme-gbd-results/scripts/fetch_gbd_results_redux.py
+  path: skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/scripts/fetch_gbd_results_redux.py
   argument_bindings:
     out: --out
     context: --context

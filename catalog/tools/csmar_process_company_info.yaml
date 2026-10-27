@@ -9,7 +9,7 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: python_script
-  path: skills/data_acquisition/01_socioeconomic/csmar/scripts/process_listed_company_basic_info.py
+  path: skills/data_acquisition/01_socioeconomic_natural_change/csmar/scripts/process_listed_company_basic_info.py
   argument_bindings:
     zip: --zip
     out_dir: --out-dir

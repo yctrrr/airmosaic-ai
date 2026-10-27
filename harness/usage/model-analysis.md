@@ -140,7 +140,7 @@ input_csv 必须是 workspace data_cache 或既有 output 内的文件；旧 R �
 
 `gcam_configuration_reference` 只提供[配置参考](../../skills/model/IAM/gcam/02_configuration/SKILL.md)。解释时只读核对所需组件、顺序和引用。获授权的修改先复制配置及必要依赖到新任务目录，检查 XML、顺序、引用及差异。示例 JSON 是人工计划，不是 --params-file 或 API；修改配置不自动授权运行模型。
 
-[健康计算和绘图](../../skills/model/04_impact/health_impact_analysis/SKILL.md)是待适配模板。计算读取 PM25_HIA_CONC_DIR、PM25_HIA_POP_DIR、PM25_HIA_MORT_FILE、PM25_HIA_RR_FILE、PM25_HIA_OUTPUT_DIR、PM25_HIA_YEARS、PM25_HIA_CURVE；绘图另用 PM25_HIA_POP_FILE、PM25_HIA_SHP_DIR，没有自动配置加载器。
+[健康计算和绘图](../../skills/model/04_integrated_impacts/health_impact_analysis/SKILL.md)是待适配模板。计算读取 PM25_HIA_CONC_DIR、PM25_HIA_POP_DIR、PM25_HIA_MORT_FILE、PM25_HIA_RR_FILE、PM25_HIA_OUTPUT_DIR、PM25_HIA_YEARS、PM25_HIA_CURVE；绘图另用 PM25_HIA_POP_FILE、PM25_HIA_SHP_DIR，没有自动配置加载器。
 
 适配输入命名、网格、人口分母、年龄/性别、死亡率年份、RR 曲线、浓度截断和缺失；source 会执行计算。PAF 为无量纲比例，每十万人率另换算。用 RR=1、零人口、相同基线/政策、缺失输入等案例检查，再核对分组闭合；模板或退出码不代表方法已验收。
 

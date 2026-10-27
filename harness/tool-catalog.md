@@ -26,11 +26,11 @@ SDK 导出 DataCatalogService、DataAccessService、CausalDesignService、ToolRe
 
 | 工具 ID | skill | runner | 边界 |
 |---|---|---|---|
-| `worldpop_download` | [WorldPop](../skills/data_acquisition/01_socioeconomic/worldpop/SKILL.md) | 是 | requests；发现也联网写元数据，下载由参数显式启用 |
-| `csmar_process_company_info` | [CSMAR](../skills/data_acquisition/01_socioeconomic/csmar/SKILL.md) | 是 | pandas/openpyxl；只处理已有企业基础信息 ZIP |
-| `ihme_gbd_fetch_results` | [GBD](../skills/data_acquisition/04_impact/ihme-gbd-results/SKILL.md) | 是 | 本机已登录浏览器，网络许可与会话声明；版本/维度需核对 |
+| `worldpop_download` | [WorldPop](../skills/data_acquisition/01_socioeconomic_natural_change/worldpop/SKILL.md) | 是 | requests；发现也联网写元数据，下载由参数显式启用 |
+| `csmar_process_company_info` | [CSMAR](../skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md) | 是 | pandas/openpyxl；只处理已有企业基础信息 ZIP |
+| `ihme_gbd_fetch_results` | [GBD](../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/SKILL.md) | 是 | 本机已登录浏览器，网络许可与会话声明；版本/维度需核对 |
 | `csmar_browser_download` | CSMAR | 否，参考 | 浏览器获取需要本人机构权限及实际可用工具 |
-| `yearbook_regional_sector_template` | [工业年鉴](../skills/data_acquisition/01_socioeconomic/ind_yearbook/SKILL.md) | 否，模板 | 人工适配地区行业表头、编码、年份和输出 |
+| `yearbook_regional_sector_template` | [工业年鉴](../skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook/SKILL.md) | 否，模板 | 人工适配地区行业表头、编码、年份和输出 |
 | `yearbook_product_output_template` | 工业年鉴 | 否，模板 | 人工适配产品、单位与缺失规则；无独立全国行业实现 |
 
 `list-datasets` 当前可读取 9 条声明，数量是此版本快照，不是未来固定验收标准：
@@ -61,7 +61,7 @@ SDK 导出 DataCatalogService、DataAccessService、CausalDesignService、ToolRe
 | `gcam_inspect_output_structure` | 是，R | 固定查询、output/database_basexdb 布局；自定义查询需适配副本 |
 | `gcam_plot_sector_change` | 是，R | 必填 input_csv；固定 2021/2035，runner 注入任务输出 |
 | `gcam_configuration_reference` | 否，参考 | 只读说明或授权任务副本修改；没有配置 API 或模拟启动器 |
-| `pm25_hia_calculate_template` | 否，模板 | [健康影响](../skills/model/04_impact/health_impact_analysis/SKILL.md)输入和方法需适配验收 |
+| `pm25_hia_calculate_template` | 否，模板 | [健康影响](../skills/model/04_integrated_impacts/health_impact_analysis/SKILL.md)输入和方法需适配验收 |
 | `pm25_hia_visualize_template` | 否，模板 | 绘图输入、网格、依赖与输出需人工检查 |
 | `mlr3_workflow_reference` | 否，参考 | [机器学习](usage/machine-learning.md)：mlr3 训练/预测方法与上游跟踪；尚无执行适配器 |
 | `timexer_workflow_reference` | 否，参考 | [TimeXer](../skills/model/machine_learning/timexer/SKILL.md)：外生变量时序预测、参数与推理适配方法；尚无执行适配器 |

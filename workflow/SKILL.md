@@ -37,10 +37,10 @@ Layer 4: Socioeconomic Impact
 
 | Layer | File | Description |
 |-------|------|-------------|
-| 1 | `layers/01_socioeconomic.yaml` | Socioeconomic driver template |
+| 1 | `layers/01_socioeconomic_natural_change.yaml` | Socioeconomic driver template |
 | 2 | `layers/02_emission_inventory.yaml` | Emission inventory template |
 | 3 | `layers/03_atmospheric_transport.yaml` | Atmospheric chemistry transport template |
-| 4 | `layers/04_impact.yaml` | Impact assessment template |
+| 4 | `layers/04_integrated_impacts.yaml` | Impact assessment template |
 
 ## Current invocation boundary
 

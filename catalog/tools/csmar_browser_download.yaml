@@ -9,7 +9,7 @@ implementation_status: reference
 registration_status: catalogued
 entrypoint:
   kind: reference
-  path: skills/data_acquisition/01_socioeconomic/csmar/SKILL.md
+  path: skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md
   argument_bindings: {}
 input_schema:
   type: object

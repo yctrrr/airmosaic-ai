@@ -6,8 +6,8 @@
 
 - [输入准备](atmospheric-inputs/SKILL.md)
 - [PM2.5 站点监测：获取与整理参考](pm25-stations/SKILL.md)（无下载或整理执行适配器）
-- [ERA5：CDS 气象数据获取](era5/SKILL.md)
-- [CAMS：ADS 再分析与预报获取](cams/SKILL.md)
+- [ERA5：CDS 气象数据获取](../01_socioeconomic_natural_change/era5/SKILL.md)
+- [CAMS：ADS 再分析与预报获取](../01_socioeconomic_natural_change/cams/SKILL.md)
 
 ERA5/CAMS 先选择产品，再按 [Copernicus 下载指南](../../../harness/usage/copernicus-downloads.md)核对账号、非秘密请求、目录和验收；站点观测按 PM2.5 skill 的独立来源流程处理。下载与整理分别限定范围，不自动触发。
 

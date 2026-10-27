@@ -6,10 +6,10 @@
 
 | 步骤 | 数据获取 | 模型使用 | 当前可执行范围 |
 |---|---|---|---|
-| 01 社会经济驱动 | [01_socioeconomic](../skills/data_acquisition/01_socioeconomic/README.md) | [01_socioeconomic](../skills/model/01_socioeconomic/README.md) | WorldPop、企业基础 ZIP 处理支持 run-tool；年鉴为模板，其他方法需适配 |
+| 01 社会经济驱动 | [01_socioeconomic_natural_change](../skills/data_acquisition/01_socioeconomic_natural_change/README.md) | [01_socioeconomic_natural_change](../skills/model/01_socioeconomic_natural_change/README.md) | WorldPop、企业基础 ZIP 处理支持 run-tool；年鉴为模板，其他方法需适配 |
 | 02 排放清单 | [02_emission_inventory](../skills/data_acquisition/02_emission_inventory/README.md) | [02_emission_inventory](../skills/model/02_emission_inventory/README.md) | 只列方法，无具体数据、实现代码或执行适配器 |
 | 03 大气输送与化学 | [03_atmospheric_transport](../skills/data_acquisition/03_atmospheric_transport/README.md) | [03_atmospheric_transport](../skills/model/03_atmospheric_transport/README.md) | ERA5/CAMS 人工下载及 GEOS-Chem 输入、编译、配置与排错参考；没有下载、编译、调度或模拟适配器 |
-| 04 社会经济影响 | [04_impact](../skills/data_acquisition/04_impact/README.md) | [04_impact](../skills/model/04_impact/README.md) | GBD 获取支持 run-tool；健康模板和完整成本/分配方法需人工适配 |
+| 04 社会经济影响 | [04_integrated_impacts](../skills/data_acquisition/04_integrated_impacts/README.md) | [04_integrated_impacts](../skills/model/04_integrated_impacts/README.md) | GBD 获取支持 run-tool；健康模板和完整成本/分配方法需人工适配 |
 
 03 还提供 [PM2.5 站点获取与整理参考](../skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md)，用于浓度比较与观测交接；04 引用同一方法。该能力没有下载/整理适配器，不改变本表的执行范围。
 
