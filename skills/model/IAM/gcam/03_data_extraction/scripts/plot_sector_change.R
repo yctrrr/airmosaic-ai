@@ -13,7 +13,7 @@ script_file <- sub("^--file=", "", commandArgs(FALSE)[grep("^--file=", commandAr
 script_dir <- if (nchar(script_file) > 0) dirname(script_file) else "."
 
 out_dir <- Sys.getenv("UNIT_PRICE_OUT_DIR",
-  unset = Sys.getenv("AIRMOSAIC_LOCAL_WORKSPACE",
+  unset = Sys.getenv("AIRMOSAIC_ASSETS_DIR",
     unset = file.path(script_dir, "output")))
 
 if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)

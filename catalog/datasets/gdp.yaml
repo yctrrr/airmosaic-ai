@@ -20,7 +20,8 @@ variables:
 access_method: local archive, statistical yearbook extraction, or public table
 license_or_terms: Source-specific terms apply.
 local_cache_policy: Store cleaned indicators and provenance, not raw restricted documents.
-default_cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gdp
+default_cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/SocioeconomicIndicators
+
 acquisition_skill: skills/data_acquisition/gdp
 quality_notes: Administrative code harmonization is required across years.
 example_queries:

@@ -1,0 +1,3 @@
+{
+  "input_csv": "${AIRMOSAIC_ASSETS_DIR}/results/<source_project_id>/<source_run_id>/01_socioeconomic_natural_change/gcam_extract_market_sector/market_sector_rows.csv"
+}

@@ -10,7 +10,8 @@ datasets:
     geography: China listed companies
     temporal_coverage: source-dependent
     formats: [xlsx, csv]
-    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/csmar/listed_company_basic
+    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/CSMAR_ListedCompanyBasic
+
     acquisition_skill: skills/data_acquisition/01_socioeconomic_natural_change/csmar
     example_queries:
       - listed industrial firms by province and sector
@@ -23,7 +24,8 @@ datasets:
     geography: China listed companies
     temporal_coverage: source-dependent
     formats: [xlsx, csv]
-    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/csmar/financial_statements
+    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/CSMAR_FinancialStatements
+
     acquisition_skill: skills/data_acquisition/01_socioeconomic_natural_change/csmar
     example_queries:
       - firm revenue and cost indicators by sector

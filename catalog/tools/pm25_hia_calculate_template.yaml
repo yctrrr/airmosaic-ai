@@ -26,7 +26,7 @@ requirements:
   r_packages:
   - data.table
   configuration:
-  - name: AIRMOSAIC_LOCAL_WORKSPACE
+  - name: AIRMOSAIC_ASSETS_DIR
     role: workspace
     kind: directory
   - name: PM25_HIA_OUTPUT_DIR
@@ -51,7 +51,7 @@ authentication:
   method: none
 effects:
   reads:
-  - data_cache
+  - asset_data
   writes:
   - task_output
   network: false

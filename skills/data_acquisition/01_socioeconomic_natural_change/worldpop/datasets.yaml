@@ -10,7 +10,8 @@ datasets:
     geography: global
     temporal_coverage: 'Product-dependent: Global1 2000-2020; Global2 2015-2030, with release-specific coverage and reference dates.'
     formats: [tif, csv, json]
-    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/worldpop
+    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/WorldPop
+
     acquisition_skill: skills/data_acquisition/01_socioeconomic_natural_change/worldpop
     example_queries:
       - China population grid for PM2.5 exposure weighting
@@ -23,7 +24,8 @@ datasets:
     geography: global
     temporal_coverage: product-dependent
     formats: [csv, json]
-    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/worldpop/derived
+    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/WorldPop_ZonalStatistics
+
     acquisition_skill: skills/data_acquisition/01_socioeconomic_natural_change/worldpop
     example_queries:
       - county-level population summary from WorldPop rasters

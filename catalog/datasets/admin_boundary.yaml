@@ -21,7 +21,8 @@ variables:
 access_method: local archive or public boundary dataset
 license_or_terms: Source-specific terms apply.
 local_cache_policy: Keep lightweight boundaries in local cache; document boundary vintage.
-default_cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/admin_boundary
+default_cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/AdministrativeBoundaries
+
 acquisition_skill: skills/data_acquisition/local_indexer
 quality_notes: Boundary changes across years must be harmonized before panel analysis.
 example_queries:

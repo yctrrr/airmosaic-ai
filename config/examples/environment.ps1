@@ -18,7 +18,7 @@ while ($null -ne $amAncestor) {
     $amAncestor = $amAncestor.Parent
 }
 
-$env:AIRMOSAIC_LOCAL_WORKSPACE = Join-Path $amRoot "local_workspace"
+$env:AIRMOSAIC_ASSETS_DIR = Join-Path $amRoot "assets"
 $env:AIRMOSAIC_CONFIG_DIR = Join-Path $amRoot "config"
 $env:AIRMOSAIC_AUTH_DIR = Join-Path $amRoot "auth"
 

@@ -97,7 +97,7 @@ requirements:
   executables: []
   r_packages: []
   configuration:
-  - name: AIRMOSAIC_LOCAL_WORKSPACE
+  - name: AIRMOSAIC_ASSETS_DIR
     role: workspace
     kind: directory
   - name: AIRMOSAIC_AUTH_DIR
@@ -112,7 +112,7 @@ authentication:
 effects:
   reads: []
   writes:
-  - data_cache
+  - asset_data
   network: true
 documentation: harness/usage/data-acquisition.md
 execution:

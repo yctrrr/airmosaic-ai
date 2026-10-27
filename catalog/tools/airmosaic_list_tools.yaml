@@ -9,14 +9,14 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: cli
-  path: core/airmosaic_core/cli.py
+  path: airmosaic/cli.py
   argument_bindings:
     category: --category
     skill: --skill
     status: --status
     format: --format
     query: --query
-  module: airmosaic_core.cli
+  module: airmosaic.cli
   subcommand: list-tools
   default_arguments:
     format: json

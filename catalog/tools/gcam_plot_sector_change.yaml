@@ -50,7 +50,7 @@ requirements:
   - readr
   - tidyr
   configuration:
-  - name: AIRMOSAIC_LOCAL_WORKSPACE
+  - name: AIRMOSAIC_ASSETS_DIR
     role: workspace
     kind: directory
   resources: []

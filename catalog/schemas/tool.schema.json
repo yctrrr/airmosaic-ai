@@ -64,7 +64,7 @@
           "minLength": 1
         },
         "module": {
-          "const": "airmosaic_core.cli"
+          "const": "airmosaic.cli"
         },
         "subcommand": {
           "enum": [
@@ -115,7 +115,7 @@
             ],
             "properties": {
               "path": {
-                "const": "core/airmosaic_core/cli.py"
+                "const": "airmosaic/cli.py"
               }
             }
           },
@@ -212,7 +212,7 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "const": "AIRMOSAIC_LOCAL_WORKSPACE"
+                    "const": "AIRMOSAIC_ASSETS_DIR"
                   },
                   "role": {
                     "const": "workspace"

@@ -9,10 +9,10 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: cli
-  path: core/airmosaic_core/cli.py
+  path: airmosaic/cli.py
   argument_bindings:
     tool_id: positional:0
-  module: airmosaic_core.cli
+  module: airmosaic.cli
   subcommand: check-tool
 input_schema:
   type: object

@@ -23,7 +23,8 @@ variables:
 access_method: local codebook, GBD exports, or authorized health parameter tables
 license_or_terms: Source-specific health data terms apply.
 local_cache_policy: Cache only derived or authorized parameter tables.
-default_cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gbd_health
+default_cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/04_integrated_impacts/GBD_HealthBurden
+
 acquisition_skill: skills/data_acquisition/04_integrated_impacts/ihme-gbd-results
 quality_notes: Endpoint definitions and CR function versions must be recorded.
 example_queries:

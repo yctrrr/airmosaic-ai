@@ -1,5 +1,0 @@
-{
-  "input_csv": "${AIRMOSAIC_LOCAL_WORKSPACE}/output/<source_run_id>/gcam_extract_market_sector/market_sector_rows.csv",
-  "sectors": "cement",
-  "scenarios": "example_scenario"
-}

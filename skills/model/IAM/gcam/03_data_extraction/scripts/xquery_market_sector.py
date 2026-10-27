@@ -32,7 +32,7 @@ def resolve_root() -> Path:
 
 
 def resolve_out() -> Path:
-    out = os.environ.get("UNIT_PRICE_OUT_DIR", os.environ.get("AIRMOSAIC_LOCAL_WORKSPACE", ""))
+    out = os.environ.get("UNIT_PRICE_OUT_DIR", os.environ.get("AIRMOSAIC_ASSETS_DIR", ""))
     if out:
         p = Path(out)
     else:

@@ -10,7 +10,8 @@ datasets:
     geography: China national sectors
     temporal_coverage: yearbook-dependent
     formats: [xlsx, csv]
-    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/industrial_yearbook/national_sector
+    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/IndustrialYearbook_NationalSector
+
     acquisition_skill: skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook
     example_queries:
       - national industrial revenue by sector
@@ -23,7 +24,8 @@ datasets:
     geography: China provinces by sector
     temporal_coverage: yearbook-dependent
     formats: [xlsx, csv]
-    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/industrial_yearbook/regional_sector
+    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/IndustrialYearbook_RegionalSector
+
     acquisition_skill: skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook
     example_queries:
       - provincial industry revenue by sector and year
@@ -36,7 +38,8 @@ datasets:
     geography: China provinces by product
     temporal_coverage: yearbook-dependent
     formats: [xlsx, csv]
-    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/industrial_yearbook/product_output
+    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/IndustrialYearbook_ProductOutput
+
     acquisition_skill: skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook
     example_queries:
       - provincial cement output by year

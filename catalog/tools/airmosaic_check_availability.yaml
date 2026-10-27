@@ -9,11 +9,11 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: cli
-  path: core/airmosaic_core/cli.py
+  path: airmosaic/cli.py
   argument_bindings:
     dataset_id: positional:0
     pattern: --pattern
-  module: airmosaic_core.cli
+  module: airmosaic.cli
   subcommand: check-availability
 input_schema:
   type: object
@@ -37,7 +37,7 @@ requirements:
   executables: []
   r_packages: []
   configuration:
-  - name: AIRMOSAIC_LOCAL_WORKSPACE
+  - name: AIRMOSAIC_ASSETS_DIR
     role: workspace
     kind: directory
   resources: []
@@ -47,7 +47,7 @@ authentication:
 effects:
   reads:
   - repository_metadata
-  - data_cache
+  - asset_data
   writes: []
   network: false
 documentation: harness/usage/core.md

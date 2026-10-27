@@ -21,7 +21,7 @@ input_schema:
       description: Value supplied for this task.
     out_dir:
       type: string
-      description: Explicit task output directory under ${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/.
+      description: Explicit task output directory under ${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/<stage>/.
   required:
   - input_csv
   - out_dir
@@ -35,7 +35,7 @@ requirements:
   executables: []
   r_packages: []
   configuration:
-  - name: AIRMOSAIC_LOCAL_WORKSPACE
+  - name: AIRMOSAIC_ASSETS_DIR
     role: workspace
     kind: directory
   resources: []

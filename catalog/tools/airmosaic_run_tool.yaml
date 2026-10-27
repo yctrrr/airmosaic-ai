@@ -9,7 +9,7 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: cli
-  path: core/airmosaic_core/cli.py
+  path: airmosaic/cli.py
   argument_bindings:
     tool_id: positional:0
     params: --params
@@ -19,7 +19,9 @@ entrypoint:
     confirm_browser_session: --confirm-browser-session
     timeout: --timeout
     run_id: --run-id
-  module: airmosaic_core.cli
+    project_id: --project-id
+    stage: --stage
+  module: airmosaic.cli
   subcommand: run-tool
 input_schema:
   type: object
@@ -43,8 +45,20 @@ input_schema:
     run_id:
       type: string
       pattern: ^[a-f0-9]{32}$
+    project_id:
+      type: string
+      pattern: ^[a-z][a-z0-9_-]{0,63}$
+    stage:
+      type: string
+      enum:
+      - 01_socioeconomic_natural_change
+      - 02_emission_inventory
+      - 03_atmospheric_transport
+      - 04_integrated_impacts
   required:
   - tool_id
+  - project_id
+  - stage
   additionalProperties: false
 output_schema:
   type: object
@@ -56,7 +70,7 @@ requirements:
   executables: []
   r_packages: []
   configuration:
-  - name: AIRMOSAIC_LOCAL_WORKSPACE
+  - name: AIRMOSAIC_ASSETS_DIR
     role: workspace
     kind: directory
   - name: AIRMOSAIC_CONFIG_DIR
@@ -72,7 +86,7 @@ authentication:
 effects:
   reads:
   - repository_metadata
-  - data_cache
+  - asset_data
   writes:
   - task_output
   network: false

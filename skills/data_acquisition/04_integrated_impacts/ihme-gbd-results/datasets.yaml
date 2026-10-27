@@ -10,7 +10,8 @@ datasets:
     geography: global, country, and subnational where available
     temporal_coverage: GBD-release-dependent
     formats: [csv]
-    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gbd_health/mortality_rates
+    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/04_integrated_impacts/GBD_MortalityRates
+
     acquisition_skill: skills/data_acquisition/04_integrated_impacts/ihme-gbd-results
     example_queries:
       - China baseline mortality rate by cause age sex and year
@@ -23,7 +24,8 @@ datasets:
     geography: global, country, and subnational where available
     temporal_coverage: GBD-release-dependent
     formats: [csv]
-    cache_root: ${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gbd_health/population
+    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/04_integrated_impacts/GBD_Population
+
     acquisition_skill: skills/data_acquisition/04_integrated_impacts/ihme-gbd-results
     example_queries:
       - population denominator for GBD rate validation

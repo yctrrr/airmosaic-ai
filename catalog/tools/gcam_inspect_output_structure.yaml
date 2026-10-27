@@ -20,7 +20,7 @@ input_schema:
   properties:
     output_dir:
       type: string
-      description: Explicit task output directory under ${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/.
+      description: Explicit task output directory under ${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/<stage>/.
     max_memory:
       type: string
       description: Java heap limit, for example 1g or 512m; defaults to 1g.
@@ -40,7 +40,7 @@ requirements:
   - data.table
   - rgcam
   configuration:
-  - name: AIRMOSAIC_LOCAL_WORKSPACE
+  - name: AIRMOSAIC_ASSETS_DIR
     role: workspace
     kind: directory
   - name: GCAM_RELEASE_DIR
