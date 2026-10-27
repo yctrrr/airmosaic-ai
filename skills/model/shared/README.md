@@ -12,3 +12,5 @@
 - [Machine learning](../machine_learning/README.md): shared mlr3/TimeXer references, not copied per stage.
 
 GEOS-Chem belongs in [03](../03_atmospheric_transport/geos-chem/SKILL.md), not as a substitute GCAM or ML entry. Shared navigation in 02 supplies methods only, without concrete inventory data or implementation.
+
+Follow the [asset contract](../../../harness/assets.md): share data by stage, actual name and version; group results by project and run, referencing the same data across stages. Registration uses compute/check, human review and a fresh data version.

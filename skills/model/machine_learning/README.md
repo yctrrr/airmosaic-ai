@@ -18,6 +18,10 @@ This directory holds framework usage, training/prediction workflows, validation 
 
 General workflow: define prediction and data permissions → choose deployment-consistent splits → build preprocessing/models on development data only → compare/tune within budget → freeze and evaluate → retain verified model/input contracts → predict new data and check applicability.
 
-Inputs remain in `${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/` or authorized existing `output/`; new models, predictions and local records use fresh `output/<run_id>/<workflow_id>/`. Mappings/parameters stay in `${AIRMOSAIC_CONFIG_DIR}`, sessions in `${AIRMOSAIC_AUTH_DIR}`, credentials in a secret manager. Reference workflows do not create directories or provide runtime isolation.
+For how an agent turns user data and modeling requirements into a task, see [requirements-driven model building](../../../methods/pathways/requirements_driven_model_building.md). Existing source code supplies versioned reproduction cases; it does not restrict every new request to the original model. The first [air-quality ozone reference](../../../methods/pathways/references/air_quality_o3_reference.md) has source-audit evidence and explicit adaptation gaps, without a numerical reproduction result.
+
+Inputs remain in `${AIRMOSAIC_ASSETS_DIR}/data/` or explicitly referenced `results/`; new models, predictions and local records use fresh `results/<project_id>/<run_id>/<stage>/<workflow_id>/`. Mappings/parameters stay in `${AIRMOSAIC_CONFIG_DIR}`, sessions in `${AIRMOSAIC_AUTH_DIR}`, credentials in a secret manager. Reference workflows do not create directories or provide runtime isolation.
 
 See the [machine-learning guide](../../../harness/usage/machine-learning.md) for queries and boundaries. New frameworks begin with truthful reference/template status; only implemented, tested and reviewed adapters may enable run-tool.
+
+Follow the [asset contract](../../../harness/assets.md): share data by stage, actual name and version; group results by project and run, referencing the same data across stages. Registration uses compute/check, human review and a fresh data version.

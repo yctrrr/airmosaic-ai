@@ -20,7 +20,7 @@ source_projects:
   cost_burden:
     root: null
     purpose: Cost scenarios, concentration post-processing and health source project.
-  airmosaic_core:
+  airmosaic:
     root: null
     purpose: This source checkout; never use it as the data, config or auth root.
   atmospheric_model_notes:
@@ -31,3 +31,7 @@ source_projects:
     root: null
     purpose: Authorized GCAM technical documentation; not model output or personal
       configuration.
+  interpretable_air_quality:
+    root: null
+    purpose: Authorized external model-reference code and data metadata; not an
+      automatic data reader, training entry or authentication source.

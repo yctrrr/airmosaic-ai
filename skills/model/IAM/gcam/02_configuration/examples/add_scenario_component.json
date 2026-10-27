@@ -6,5 +6,5 @@
   "source_config": "${GCAM_RELEASE_DIR}/exe/configuration_example.xml",
   "component_name": "example_component",
   "component_file": "input/example_component.xml",
-  "output_config": "${AIRMOSAIC_LOCAL_WORKSPACE}/output/<task_id>/gcam_configuration/modified_config.xml"
+  "output_config": "${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/01_socioeconomic_natural_change/gcam_configuration/modified_config.xml"
 }

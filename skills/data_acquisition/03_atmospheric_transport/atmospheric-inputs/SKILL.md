@@ -27,3 +27,5 @@ For meteorological covariates or atmospheric-composition data, read [ERA5](../..
 Do not read original data or authentication directories or automatically download inputs. GEOS-Chem's own dry-run executes a program and writes logs. Emission inputs are interface requirements only, without concrete inventory data or implementation.
 
 Documentation maintenance and routine validation use only documents, interfaces and synthetic inputs. Real-data work requires an explicit scope. Keep personal paths and non-secret settings in CONFIG_DIR, credentials in a credential manager, and sessions in AUTH_DIR; data, configuration and authentication roots must be separate and outside Git. Reference skills do not automatically enforce paths or create sanitized run receipts.
+
+Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.

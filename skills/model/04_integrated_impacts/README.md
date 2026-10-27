@@ -20,3 +20,5 @@ Follow the [four-step workflow](../../../harness/four-step-workflow.md): confirm
 Documentation maintenance reads descriptions and interfaces only, not original data. Actual execution depends on tool manifests; directories and SKILL.md do not register tools.
 
 Ecology, agriculture and climate impacts are scope navigation, requiring manual receptor, indicator, method and evidence selection. No dedicated executor exists. Natural conditions are upstream drivers in 01 and evaluated responses here.
+
+Follow the [asset contract](../../../harness/assets.md): share data by stage, actual name and version; group results by project and run, referencing the same data across stages. Registration uses compute/check, human review and a fresh data version.

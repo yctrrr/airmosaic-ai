@@ -16,7 +16,7 @@ description: 将 PM2.5 健康影响计算和绘图模板适配至对齐的浓度
 
 ## 工作目录与认证
 
-遵守[存储约定](../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../harness/usage/run-tool.md)。`AIRMOSAIC_LOCAL_WORKSPACE` 存数据与结果，`AIRMOSAIC_CONFIG_DIR` 存非秘密参数，`AIRMOSAIC_AUTH_DIR` 存浏览器状态；三根已存在、相互独立且在仓库外。凭据留在秘密管理器，不读取或分享凭据及浏览器配置内容。仓库命令从根目录使用安装项目的解释器运行，可执行适配器自动分配输出；个人配置不自动加载。直接运行脚本绕过检查，执行器不是操作系统沙箱。
+遵守[存储约定](../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../harness/usage/run-tool.md)。`AIRMOSAIC_ASSETS_DIR` 存数据与结果，`AIRMOSAIC_CONFIG_DIR` 存非秘密参数，`AIRMOSAIC_AUTH_DIR` 存浏览器状态；三根已存在、相互独立且在仓库外。凭据留在秘密管理器，不读取或分享凭据及浏览器配置内容。仓库命令从根目录使用安装项目的解释器运行，可执行适配器自动分配输出；个人配置不自动加载。直接运行脚本绕过检查，执行器不是操作系统沙箱。
 
 ## 用途
 
@@ -141,3 +141,5 @@ PAF(conc, endpoint, age) = (RR(conc, endpoint, age) - 1) / RR(conc, endpoint, ag
 ## 示例
 
 - `examples/workflow_pm25_hia.R`：从输入到绘图的适配示例。
+
+数据与结果按[资产目录与复核入库规范](../../../../harness/assets_ZH.md)管理：数据按阶段、实际名称和版本共享；结果按项目及运行归集。跨阶段引用同一数据，复用入库需人工批准。

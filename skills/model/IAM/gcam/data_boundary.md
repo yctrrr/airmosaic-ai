@@ -12,7 +12,7 @@
 
 - GCAM model releases, executables, or Java binaries
 - BaseX database directories or their contents
-- Scenario output files (CSV, XML, PNG): keep in `${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/<tool_id>/`
+- Scenario output files (CSV, XML, PNG): keep in `${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/<stage>/<tool_id>/`
 - Raw input CSV data used to build model scenarios
 - Generated intermediate files (sector registries, method registries)
 - Project-specific analysis outputs
@@ -26,8 +26,8 @@
 Enabled adapters allocate new files under:
 
 ```text
-${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/<tool_id>/
-${AIRMOSAIC_LOCAL_WORKSPACE}/runs/<run_id>/record.json
+${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/<stage>/<tool_id>/
+${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/records/<tool_id>/record.json
 ```
 
 The two registered GCAM R tools use run-tool task outputs and sanitized receipts; plotting receives a runner-owned `UNIT_PRICE_OUT_DIR`. Direct standalone calls bypass these protections. Keep all artifacts local; only reviewed summaries may be shared. No automatic cache promotion or file cleanup occurs.

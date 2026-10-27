@@ -47,8 +47,10 @@ Follow the [forecast example](references/forecast-api-download-example.md) with 
 
 ## Boundaries
 
-- Requests: `AIRMOSAIC_CONFIG_DIR/copernicus/`; downloads: `AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/cams/`; validated cache: `data_cache/cams/`. Dedicated browser sessions may use `AIRMOSAIC_AUTH_DIR/browser_profiles/copernicus-ads/`; variables do not create sessions or authenticate users.
+- Requests: `AIRMOSAIC_CONFIG_DIR/copernicus/`; downloads: `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/01_socioeconomic_natural_change/cams/`; validated cache: `data/01_socioeconomic_natural_change/<product-name>/<version>/`. Dedicated browser sessions may use `AIRMOSAIC_AUTH_DIR/browser_profiles/copernicus-ads/`; variables do not create sessions or authenticate users.
 - Tokens belong in a secret manager. Do not create plaintext secret templates, copy cookies or record signed links. Explicitly select ADS and authorized credentials rather than relying on unreviewed defaults.
 - Do not interchange column totals, mixing ratios, surface mass concentrations and AOD, or automatically splice EAC4 and forecasts.
 - The [PM2.5 station skill](../../03_atmospheric_transport/pm25-stations/SKILL.md) handles observational provenance and preparation. CAMS remains gridded even for PM2.5. Check station-history validity, periods, units and representativeness before comparison; no automatic matching/correction. Primary stage is 01, referenced by 03/04.
 - Conversion to GEOS-Chem species/grids/boundaries and health-model inputs is not implemented. This guide supplies no OS isolation, automatic sanitization or formal scientific acceptance.
+
+Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.

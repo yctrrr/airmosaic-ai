@@ -53,7 +53,7 @@
 | 变量 | 此流程使用方式 |
 |---|---|
 | `AIRMOSAIC_CONFIG_DIR` | `copernicus/` 内的非秘密请求、批次计划和成员任务脚本；只读取明确选中的文件 |
-| `AIRMOSAIC_LOCAL_WORKSPACE` | `output/<run_id>/era5/` 放本次新文件；`runs/<run_id>/` 放脱敏进度与验收摘要 |
+| `AIRMOSAIC_ASSETS_DIR` | `results/<project_id>/<run_id>/<stage>/era5/` 放本次新文件；`results/<project_id>/<run_id>/records/<tool_id>/` 放脱敏进度与验收摘要 |
 | `AIRMOSAIC_AUTH_DIR` | 仅用于另行明确配置的专用认证会话；不存明文 API token，不自动接管内置浏览器 |
 
 1. 只核对上述路径及文件元数据，不遍历个人 config/auth 或既有数据目录。
@@ -83,7 +83,7 @@
 1. 沿用本人 CDS 会话，在 Download 表单核对上述少量参数、平均时段和格式；确认条款已接受。
 2. 在已有任务授权范围内点击 **Submit form**，记录提交时间；等待页面任务状态变化。不必为网页下载配置或查看 API token。
 3. 从页面的任务/请求入口查看排队、完成或失败状态，入口名称以当前页面为准。失败先看已有任务，不重复点击提交。
-4. 完成后保存到 `AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/era5/`。若先落到系统下载目录，只处理本次文件，按授权移动并核对实际落盘；不扫描其他下载。
+4. 完成后保存到 `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/<stage>/era5/`。若先落到系统下载目录，只处理本次文件，按授权移动并核对实际落盘；不扫描其他下载。
 5. 记录保存时间和文件层/内容层检查结果。不导出 cookie、不复制签名下载链接或账户页截图到共享说明。
 
 ### B. Python API 下载
@@ -105,6 +105,6 @@
 3. 原文件保留在本次输出目录，校验和、非秘密请求副本与验收摘要单独保存；不发布缓存、不启动汇总或建模。
 4. 记录网页登录、许可、凭据准备、API 请求、文件保存和内容检查的状态及完成时间。
 
-时间线保存在 `AIRMOSAIC_LOCAL_WORKSPACE/runs/<run_id>/progress.json`，记录阶段、开始/完成时间、证据类型、脱敏结果、下一步及未验证项即可。成员目录、账户、凭据、OAuth 参数、原始异常和下载签名链接均不写入记录。共享时另生成审查过的通用结论，不直接复制私人进度文件。
+时间线保存在 `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/records/<tool_id>/progress.json`，记录阶段、开始/完成时间、证据类型、脱敏结果、下一步及未验证项即可。成员目录、账户、凭据、OAuth 参数、原始异常和下载签名链接均不写入记录。共享时另生成审查过的通用结论，不直接复制私人进度文件。
 
 ERA5 单层 API 下载示例已于 2026-10-26 完成实测，参数、调用步骤和结果见[使用示例](../../skills/data_acquisition/01_socioeconomic_natural_change/era5/references/api-download-example.md)。

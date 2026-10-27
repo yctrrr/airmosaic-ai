@@ -18,6 +18,10 @@
 
 通用步骤：明确预测任务及数据许可 → 选择与部署场景一致的划分 → 仅在开发数据上构建预处理和模型 → 在预算内比较/调参 → 固定方案后评估 → 保存经核对的模型与输入契约 → 对新数据预测并检查适用范围。
 
-输入位于 `${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/` 或既有 `output/`；新模型、预测与本地记录放在新的 `output/<run_id>/<workflow_id>/`。个人路径映射和参数在 `${AIRMOSAIC_CONFIG_DIR}`，登录状态在 `${AIRMOSAIC_AUTH_DIR}`，密码/令牌 仍由凭据管理器保管。参考流程不会自动创建这些目录或提供运行时隔离。
+Agent 如何把用户数据与建模要求整理成任务，见[需求驱动的模型构建](../../../methods/pathways/requirements_driven_model_building_ZH.md)。既有代码提供版本化复现案例，不限制每个新任务沿用原模型。首个[空气质量臭氧参考案例](../../../methods/pathways/references/air_quality_o3_reference_ZH.md)已有源码核对和明确适配项，尚无数值复现结果。
+
+输入位于 `${AIRMOSAIC_ASSETS_DIR}/data/` 或显式引用的 `results/`；新模型、预测与本地记录放在新的 `results/<project_id>/<run_id>/<stage>/<workflow_id>/`。个人路径映射和参数在 `${AIRMOSAIC_CONFIG_DIR}`，登录状态在 `${AIRMOSAIC_AUTH_DIR}`，密码/令牌 仍由凭据管理器保管。参考流程不会自动创建这些目录或提供运行时隔离。
 
 分类查询与详细边界见[机器学习分类文档](../../../harness/usage/machine-learning.md)。新增框架时，先如实登记参考或模板状态；只有实现、测试并审查过的适配器才能启用 run-tool。
+
+数据与项目结果遵循[资产规范](../../../harness/assets_ZH.md)：共享数据按阶段、实际名称和版本保存；结果按项目及运行归集，跨阶段引用同一数据。复用入库采用计算检查、人工复核、登记新版本三步。

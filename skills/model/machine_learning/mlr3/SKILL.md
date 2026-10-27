@@ -39,8 +39,12 @@ Use this skill for mlr3 modeling and tracking [zhjx19/ml-mlr3](https://github.co
 | Task | Document |
 |---|---|
 | Splits, PipeOps, tuning, final fitting and inference | [Workflow and validation](references/workflow.md) |
+| Translate user requirements into a modeling task and use reference-code validation | [Requirements-driven model building](../../../../methods/pathways/requirements_driven_model_building.md) |
+| Review the first air-quality source case and required adaptations | [Ozone regression reference case](../../../../methods/pathways/references/air_quality_o3_reference.md) |
 | Basic regression/classification R APIs | [Synthetic example](examples/basic-model-use.md) |
 | Reference version and upstream updates | [Upstream tracking](UPSTREAM.md) |
 | Catalog entry and paths | [Machine-learning guide](../../../../harness/usage/machine-learning.md) |
 
-Follow the [storage contract](../../../../harness/storage-and-credentials.md) and [agent boundaries](../../../../harness/agent-boundaries.md). New outputs may use `${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/mlr3_workflow/`; this directory label is not an executable tool ID. Selecting the skill does not authorize data access, installation, external sharing or deployment.
+Follow the [storage contract](../../../../harness/storage-and-credentials.md) and [agent boundaries](../../../../harness/agent-boundaries.md). New outputs may use `${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/<stage>/mlr3_workflow/`; this directory label is not an executable tool ID. Selecting the skill does not authorize data access, installation, external sharing or deployment.
+
+Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.

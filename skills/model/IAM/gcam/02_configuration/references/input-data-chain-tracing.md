@@ -1,4 +1,4 @@
-﻿# GCAM Input Data Processing Chain
+# GCAM Input Data Processing Chain
 
 ## Overview
 

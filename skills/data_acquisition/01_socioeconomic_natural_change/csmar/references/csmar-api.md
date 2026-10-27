@@ -1,51 +1,31 @@
-# CSMAR API Reference
+# CSMAR browser-flow implementation notes
 
-Key API endpoints observed during CSMAR table download flow.
+<!-- README-I18N:START -->
 
-## Endpoints
+**English** | [中文](csmar-api_ZH.md)
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/api/csmar-main/single/saveOutline` | POST | Submit query, returns `outlineId` |
-| `/api/csmar-main/singleData/pack` | POST | Package download task |
-| `/api/csmar-single/single/preview/<condition_id>` | GET | Preview query results |
+<!-- README-I18N:END -->
 
-## Download URL Pattern
+For current access, scoped selection, download and validation, use the [first-download guide](first-download-guide.md). This reference preserves historical interface names for source review. They are not a supported public API, current endpoint verification or an executable AirMosaic download adapter.
 
-```
-https://data.csmar.com/sdownload.html
-  ?intro=<outlineId>
-  &dbName=<encoded_database>
-  &tbName=<encoded_table>
-  &tbId=<table_id>
-  &namePhy=<physical_table_name>
-  #/
-```
+## Historical interface names
 
-The `outlineId` comes from the `saveOutline` response.
+| Endpoint | Historical purpose |
+|---|---|
+| `POST /api/csmar-main/single/saveOutline` | Create a query record |
+| `POST /api/csmar-main/singleData/pack` | Prepare an export task |
+| `GET /api/csmar-single/single/preview/<condition_id>` | Preview a recorded query |
 
-## Field Selection
+Do not reconstruct requests, copy authentication material or capture raw session traffic as part of first-use verification. An access change or a production adapter requires a separately scoped implementation. Download-record identifiers, authenticated URLs and account-specific parameters stay local.
 
-CSMAR web UI uses a dual-list field selector:
-- Left panel: available fields
-- Right panel: selected fields
-- `全选` button moves all fields from left to right
-- Verify `已选：N/N` before submitting
+## Field and format checks
 
-## Data Formats
+Select only the task's required fields. Use the complete field selection only when the agreed task requires it; compare selected names/count, descriptions and actual exported columns. Moving items to the selected list can empty the available list without losing the selection.
 
-| Format | Reliability | Notes |
-|--------|------------|-------|
-| CSV | High | Preferred for large tables |
-| TXT | High | Tab-separated, handles encoding well |
-| Excel2007 | Medium | May silently drop fields; verify column count |
+CSV, TXT and XLSX are format choices to verify in the current portal, without a universal reliability ranking. Encoding, header rows, leading zeros, row counts and missing columns need checking for each actual export. The registered local processor supports ZIP/XLSX with a fixed field contract; changing web export format does not adapt that processor.
 
-## Browser Profile
+## Session and execution boundary
 
-Use a persistent browser profile to maintain login session across downloads:
+A project-launched browser must explicitly use `${AIRMOSAIC_AUTH_DIR}/browser_profiles/csmar/`; setting a placeholder variable does not configure a browser. Host-managed sessions keep their own storage and are not relocated or exported. Keep non-secret query plans in CONFIG_DIR, exports in the data workspace, and credentials in the member's protected mechanism.
 
-```
-${AIRMOSAIC_AUTH_DIR}/browser_profiles/csmar/
-```
-
-The profile stores cookies and login state. Keep it separate from data/configuration, restrict local access, and exclude it from version control and ordinary data backups. The caller resolves AIRMOSAIC_AUTH_DIR; a placeholder string is not automatic JavaScript environment expansion.
+`csmar_browser_download` remains a reference. `csmar_process_company_info` is the separately authorized local processing tool, available through run-tool and MCP. Neither interface supplies an automated CSMAR login or public API credential mechanism.

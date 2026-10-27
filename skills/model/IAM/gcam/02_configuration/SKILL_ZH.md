@@ -16,7 +16,7 @@ description: 说明 GCAM 情景组件、社会经济与气候情景及碳捕集�
 
 ## 工作目录与认证
 
-遵守[共享存储约定](../../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../../harness/usage/run-tool.md)。仓库外三个已存在根目录相互独立：`AIRMOSAIC_LOCAL_WORKSPACE` 存数据与结果，`AIRMOSAIC_CONFIG_DIR` 存非秘密设置和显式任务参数，`AIRMOSAIC_AUTH_DIR` 存浏览器状态。密码和令牌留在秘密管理器，不读取或分享凭据及浏览器配置内容。命令从仓库根目录使用安装项目的解释器运行；执行器自动分配 `output/<run_id>/<tool_id>/`，没有需要时省略输出参数。个人配置不自动加载。直接运行脚本会绕过检查；执行器不是操作系统沙箱。
+遵守[共享存储约定](../../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../../harness/usage/run-tool.md)。仓库外三个已存在根目录相互独立：`AIRMOSAIC_ASSETS_DIR` 存数据与结果，`AIRMOSAIC_CONFIG_DIR` 存非秘密设置和显式任务参数，`AIRMOSAIC_AUTH_DIR` 存浏览器状态。密码和令牌留在秘密管理器，不读取或分享凭据及浏览器配置内容。命令从仓库根目录使用安装项目的解释器运行；执行器自动分配 `results/<project_id>/<run_id>/<stage>/<tool_id>/`，没有需要时省略输出参数。个人配置不自动加载。直接运行脚本会绕过检查；执行器不是操作系统沙箱。
 
 ## 用途
 
@@ -47,3 +47,5 @@ description: 说明 GCAM 情景组件、社会经济与气候情景及碳捕集�
 真实目录编号为 `gcam_configuration_reference`，用 `describe-tool` 查询；执行器拒绝运行。`examples/` 中的 JSON 是人工计划，不是执行器参数或注册动作。
 
 解释任务只检查请求的配置、组件顺序和引用文件。授权修改时，将必要配置及依赖复制到新任务目录，修改副本并核对解析、顺序、引用，再审查限定范围的差异。不修改共享原件，也不因配置修改授权而启动模拟。只读审查、配置修改和模型执行是不同操作。
+
+数据与结果按[资产目录与复核入库规范](../../../../../harness/assets_ZH.md)管理：数据按阶段、实际名称和版本共享；结果按项目及运行归集。跨阶段引用同一数据，复用入库需人工批准。

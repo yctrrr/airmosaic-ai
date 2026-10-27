@@ -8,14 +8,14 @@
 
 PM2.5 站点观测见正式 [获取与整理 skill](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md) 和[方法卡](../../methods/03_atmospheric_transport/pm25_stations.md)：来源选择、人工获取、宽表整理和质控交接均为 reference，尚无工具 ID 或 run-tool 入口；旧脚本不直接注册。
 
-从仓库根目录使用已安装项目的 Python 环境。按[环境示例](../../config/examples/README.md)配置并创建独立、Git 外的数据/config/auth 根；不会自动加载个人配置或登录。可选依赖组：`python -m pip install -e "./core[dev,tools]"`。浏览器与数据权限单独准备。
+从仓库根目录使用已安装项目的 Python 环境。按[环境示例](../../config/examples/README.md)配置并创建独立、Git 外的数据/config/auth 根；不会自动加载个人配置或登录。可选依赖组：`python -m pip install -e ".[dev,tools]"`。浏览器与数据权限单独准备。
 
 ## 1. 真实入口与调用顺序
 
 ```powershell
-python -m airmosaic_core.cli list-tools --category data_acquisition
-python -m airmosaic_core.cli describe-tool worldpop_download
-python -m airmosaic_core.cli check-tool ihme_gbd_fetch_results
+python -m airmosaic.cli list-tools --category data_acquisition
+python -m airmosaic.cli describe-tool worldpop_download
+python -m airmosaic.cli check-tool ihme_gbd_fetch_results
 ```
 
 | 工具 ID | run-tool 支持 | 边界 |
@@ -35,7 +35,7 @@ python -m airmosaic_core.cli check-tool ihme_gbd_fetch_results
 
 当前执行状态：直接官方获取已通过；下列 run-tool 接口预检可通过，但本机实际目录调用未通过。`year` 已严格匹配 `popyear`，缺失或无效年份排除，且先筛选再限量。参数说明保留为接口参考，网络和产品条件另行核对，不关闭 TLS 验证。
 
-阅读 [WorldPop skill](../../skills/data_acquisition/01_socioeconomic_natural_change/worldpop/SKILL.md)。[公开参数](../../examples/run-tool/worldpop.json)：
+阅读 [WorldPop skill](../../skills/data_acquisition/01_socioeconomic_natural_change/worldpop/SKILL.md)。[公开参数](../../config/examples/run-tool/worldpop.json)：
 
 ```json
 {"project":"wpgp","iso3":"CHN","year":2020,"download":false,"limit":1}
@@ -51,28 +51,32 @@ python -m airmosaic_core.cli check-tool ihme_gbd_fetch_results
 
 ```powershell
 # 未给网络标志时返回 permission blocker；不联网、不创建目录
-python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --dry-run
+python -m airmosaic.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --dry-run
 # 显式许可后的预检仍不执行请求
-python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --dry-run --allow-network
+python -m airmosaic.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --dry-run --allow-network
 # 按授权执行元数据发现
-python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --allow-network
+python -m airmosaic.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --allow-network
 ```
 
-接口支持在已审查的个人 JSON 中设 `download: true`，但当前须先完成目录连通和产品元数据核对；连通未通过时不执行文件下载。后续仍用同一 ID 调用，不把 `--download` 追加给 run-tool。结果位于 `output/<run_id>/worldpop_download/metadata/` 和 `raw/`，不自动发布缓存。核对产品、年份、文件、CRS、分辨率、单位和人口总量后，才按授权发布到 `data_cache/worldpop/`。重采样和分区统计没有独立执行入口。
+接口支持在已审查的个人 JSON 中设 `download: true`，但当前须先完成目录连通和产品元数据核对；连通未通过时不执行文件下载。后续仍用同一 ID 调用，不把 `--download` 追加给 run-tool。结果位于 `results/<project_id>/<run_id>/<stage>/worldpop_download/metadata/` 和 `raw/`，不自动发布缓存。核对产品、年份、文件、CRS、分辨率、单位和人口总量后，才按授权发布到 `data/01_socioeconomic_natural_change/WorldPop/<version>/`。重采样和分区统计没有独立执行入口。
 
 ## 3. CSMAR：浏览器获取和本地处理分开
 
-阅读 [CSMAR skill](../../skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md)。`csmar_browser_download` 仅供查询说明。成员在自己的机构会话中登录；浏览器调用方显式使用 `${AIRMOSAIC_AUTH_DIR}/browser_profiles/csmar/`，变量不自动启动或选定会话。按任务选择表、年份和字段，提交查询后用下载记录中的最终保存动作取得文件。核对实际落盘文件及字段说明，不导出 cookie 或分享认证链接。
+阅读 [CSMAR skill](../../skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md)。`csmar_browser_download` 仅供查询说明。成员在自己的机构会话中登录；自行启动任务浏览器时显式使用 `${AIRMOSAIC_AUTH_DIR}/browser_profiles/csmar/`，变量不自动启动或选定会话。按任务选择表、年份和字段，提交查询后用下载记录中的最终保存动作取得文件。核对实际落盘文件及字段说明，不导出 cookie 或分享认证链接。
 
-本地 `csmar_process_company_info` 需要 pandas/openpyxl 和 ZIP，不需要登录。[参数示例](../../examples/run-tool/csmar.json)：
+首次按[下载与交接向导](../../skills/data_acquisition/01_socioeconomic_natural_change/csmar/references/first-download-guide_ZH.md)确认权限、企业与日期、字段、最终保存和实际列；记录各步完成时间。宿主管理的浏览器会话另有存储，不因设置变量而迁入 AUTH_DIR。少字段获取测试与固定 15 列的本地处理契约分开核验；当前英文关键词筛选的语言与时期仍需人工检查。MCP 已暴露本地处理编号，网页获取仍是不可执行参考。
+
+2026-10-27 已通过外部 Chrome 的单企业、单截止日、八字段下载及 ZIP 内容验收，步骤与时间见[已验证示例](../../skills/data_acquisition/01_socioeconomic_natural_change/csmar/references/first-download-example_ZH.md)。本例一条有效记录，不执行现有十五列行业筛选，也不把网页操作记为 MCP 下载通过。
+
+本地 `csmar_process_company_info` 需要 pandas/openpyxl 和 ZIP，不需要登录。[参数示例](../../config/examples/run-tool/csmar.json)：
 
 ```json
-{"zip":"${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/csmar/company_basic.zip"}
+{"zip":"${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/CSMAR_ListedCompanyBasic/v1/company_basic.zip"}
 ```
 
 ```powershell
-python -m airmosaic_core.cli run-tool csmar_process_company_info --params-file examples/run-tool/csmar.json --dry-run
-python -m airmosaic_core.cli run-tool csmar_process_company_info --params-file examples/run-tool/csmar.json
+python -m airmosaic.cli run-tool csmar_process_company_info --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/csmar.json --dry-run
+python -m airmosaic.cli run-tool csmar_process_company_info --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/csmar.json
 ```
 
 先将示例名映射到实际授权 ZIP；不存在的输入会被拒绝。执行器自动分配 out_dir，脚本直接读 ZIP 中工作簿，不在输入旁解压。输出行业候选表、最新企业列表 CSV/XLSX。核对固定列及关键词匹配；其他表、CSV/TXT 需要人工适配。企业身份不能直接推断成本承担者或物理生产边界。
@@ -83,7 +87,7 @@ python -m airmosaic_core.cli run-tool csmar_process_company_info --params-file e
 
 首次网页操作从[登录与单条查询向导](../../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/references/first-download-guide.md)开始；数据来源、估计误差和规范化统一见 [GBD 方法](../../methods/04_integrated_impacts/ihme_gbd.md)。2026-10-26 已完成 GBD 2023 全球、全因、全年龄、两性合计、2023 年死亡数量的单条网页查询及 ZIP 导出，CSV 内容检查通过。内置浏览器会话不自动提供本工具所需 CDP 端口，run-tool 真实调用仍待验证。
 
-[公开参数](../../examples/run-tool/gbd.json)只展示历史语法例子，须按当前页面核对并修改版本及所有维度：
+[公开参数](../../config/examples/run-tool/gbd.json)只展示历史语法例子，须按当前页面核对并修改版本及所有维度：
 
 ```json
 {
@@ -98,11 +102,11 @@ python -m airmosaic_core.cli run-tool csmar_process_company_info --params-file e
 
 ```powershell
 $gbdParams = Join-Path $env:AIRMOSAIC_CONFIG_DIR "gbd-task.json"
-python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdParams --dry-run --allow-network --confirm-browser-session
-python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdParams --allow-network --confirm-browser-session --timeout 300
+python -m airmosaic.cli run-tool ihme_gbd_fetch_results --project-id example_project --stage 04_integrated_impacts --params-file $gbdParams --dry-run --allow-network --confirm-browser-session
+python -m airmosaic.cli run-tool ihme_gbd_fetch_results --project-id example_project --stage 04_integrated_impacts --params-file $gbdParams --allow-network --confirm-browser-session --timeout 300
 ```
 
-两项标志必须符合任务授权；会话声明不是登录验证，认证仍显示 unverified。输出 `output/<run_id>/ihme_gbd_fetch_results/results.csv` 与 JSON sidecar。同时核对请求维度、错误、行数和缺失；人数、每十万人率及比例分开，错误时不沿用旧表格，不自动补零。页面内部结构变化需适配，raw-to-processed 对应关系保留在本地。
+两项标志必须符合任务授权；会话声明不是登录验证，认证仍显示 unverified。输出 `results/<project_id>/<run_id>/<stage>/ihme_gbd_fetch_results/results.csv` 与 JSON sidecar。同时核对请求维度、错误、行数和缺失；人数、每十万人率及比例分开，错误时不沿用旧表格，不自动补零。页面内部结构变化需适配，raw-to-processed 对应关系保留在本地。
 
 ## 5. 工业年鉴：人工适配
 
@@ -135,4 +139,4 @@ python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdP
 
 ## 8. 共同执行边界
 
-run-tool 检查只覆盖启用的适配器，不因失败而绕过它直接运行脚本。dry-run 检查 can_execute/blockers，不能只看退出码 0。记录位于 `runs/<run_id>/record.json`，仅含允许的脱敏字段；科学文件本身仍须审核。获取、处理与模型使用是独立任务，不自动串联、发布缓存或完成科学验收。规则见[执行指南](run-tool.md)。
+run-tool 检查只覆盖启用的适配器，不因失败而绕过它直接运行脚本。dry-run 检查 can_execute/blockers，不能只看退出码 0。记录位于 `results/<project_id>/<run_id>/records/<tool_id>/record.json`，仅含允许的脱敏字段；科学文件本身仍须审核。获取、处理与模型使用是独立任务，不自动串联、发布缓存或完成科学验收。规则见[执行指南](run-tool.md)。

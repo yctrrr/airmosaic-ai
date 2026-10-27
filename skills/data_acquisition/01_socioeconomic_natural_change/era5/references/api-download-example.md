@@ -72,7 +72,7 @@ $era5Script = Join-Path $env:AIRMOSAIC_CONFIG_DIR "copernicus/era5-download.py"
 & $era5Python $era5Script
 ```
 
-运行后，文件保存到工作区 `output/<run_id>/era5/download.grib`。已有凭据文件模式无需再次输入 token。
+运行后，文件保存到工作区 `results/<project_id>/<run_id>/01_socioeconomic_natural_change/era5/download.grib`。已有凭据文件模式无需再次输入 token。
 
 运行时关闭 debug，日志只记录状态和时间，不打印客户端对象、认证头、令牌或签名下载地址。失败或中断后先查询原任务状态，再决定后续操作。
 

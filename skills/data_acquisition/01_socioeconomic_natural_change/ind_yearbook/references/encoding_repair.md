@@ -1,4 +1,4 @@
-﻿# Encoding Repair Methods
+# Encoding Repair Methods
 
 ## Problem
 

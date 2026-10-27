@@ -34,6 +34,6 @@ GET https://hub.worldpop.org/rest/data/pop/<project>?iso3=<ISO3>
 
 ## 元数据与路径
 
-runner 任务元数据位于 `${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/worldpop_download/metadata/`；直接官方接口的本次验证使用 `output/<run_id>/worldpop-global2/metadata/`。原文件分别存同任务的 raw，验收摘要在 `runs/<run_id>/`；不向 Git 写入原栅格、完整元数据或成员路径。
+runner 任务元数据位于 `${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/01_socioeconomic_natural_change/worldpop_download/metadata/`；直接官方接口的本次验证使用 `results/<project_id>/<run_id>/01_socioeconomic_natural_change/worldpop-global2/metadata/`。原文件分别存同任务的 raw，验收摘要在 `results/<project_id>/<run_id>/records/<tool_id>/`；不向 Git 写入原栅格、完整元数据或成员路径。
 
-`data_cache/worldpop/` 仅作另行授权发布的复用缓存，不是当前任务的默认输出。参数放 CONFIG_DIR 的非秘密 JSON；公开获取不需要登录、API key 或认证会话。网络错误按当前安全配置排查，不取消证书验证或自动复制个人网络/登录配置。
+`data/01_socioeconomic_natural_change/WorldPop/<version>/` 仅作另行授权发布的复用缓存，不是当前任务的默认输出。参数放 CONFIG_DIR 的非秘密 JSON；公开获取不需要登录、API key 或认证会话。网络错误按当前安全配置排查，不取消证书验证或自动复制个人网络/登录配置。

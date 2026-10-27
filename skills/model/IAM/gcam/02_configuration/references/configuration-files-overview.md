@@ -1,4 +1,4 @@
-﻿# GCAM Configuration Files Overview
+# GCAM Configuration Files Overview
 
 ## Structure
 

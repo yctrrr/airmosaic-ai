@@ -17,9 +17,9 @@
 
 1. 从 [WorldPop Hub 人口目录](https://hub.worldpop.org/project/categories?id=3)选择国家 1km、R2025A v1 产品。
 2. 按国家和年份选择本例，核对[产品详情](https://hub.worldpop.org/geodata/summary?id=78042)及其版本、单位、许可与引用。无需登录或配置令牌。
-3. 建立工作区 `output/<run_id>/worldpop-global2/raw/` 和 `metadata/`，使用新任务目录，不覆盖旧结果。
+3. 建立工作区 `results/<project_id>/<run_id>/01_socioeconomic_natural_change/worldpop-global2/raw/` 和 `metadata/`，使用新任务目录，不覆盖旧结果。
 4. 使用页面的下载入口，将 TIFF 保存到 raw，产品元数据放 metadata。无需下载全球或整个国家的其他年份。
-5. 验证文件头和 GeoTIFF 内容，记录取得时间、大小、SHA-256、CRS、像元大小、NoData、有效值及像元数。工作区 `runs/<run_id>/record.json` 保存脱敏摘要；非秘密请求放 CONFIG_DIR/worldpop。
+5. 验证文件头和 GeoTIFF 内容，记录取得时间、大小、SHA-256、CRS、像元大小、NoData、有效值及像元数。工作区 `results/<project_id>/<run_id>/records/<tool_id>/record.json` 保存脱敏摘要；非秘密请求放 CONFIG_DIR/worldpop。
 
 本例文件由官方元数据返回：[公开 TIFF](https://data.worldpop.org/GIS/Population/Global_2015_2030/R2025A/2020/LIE/v1/1km_ua/constrained/lie_pop_2020_CN_1km_R2025A_UA_v1.tif)。其他任务应重新核对对应产品元数据，不靠替换文件名推断产品存在。
 

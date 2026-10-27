@@ -1,4 +1,4 @@
-﻿# GCAM-China vs Official GCAM-Core
+# GCAM-China vs Official GCAM-Core
 
 Understanding the differences between GCAM-China (`umd-cgs/gcam-china`) and official GCAM-Core (`JGCRI/gcam-core`) before writing queries or interpreting output.
 

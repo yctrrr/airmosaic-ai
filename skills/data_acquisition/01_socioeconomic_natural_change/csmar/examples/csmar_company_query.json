@@ -10,16 +10,15 @@
     "fields": [
       "task-required columns"
     ],
-    "stock_type": "A-share",
-    "status": "active"
+    "record_scope": "Define company identifiers and cutoff dates for the task; do not default to currently listed companies."
   },
   "output": {
     "format": "zip (contains xlsx + field description txt)",
-    "save_to": "${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/csmar/"
+    "save_to": "${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/01_socioeconomic_natural_change/csmar_browser_download/"
   },
   "postprocess": {
     "tool_id": "csmar_process_company_info",
-    "parameter_file": "examples/run-tool/csmar.json",
+    "parameter_file": "config/examples/run-tool/csmar.json",
     "notes": "Separate local task after the authorized ZIP is downloaded; not an automatic chain."
   }
 }

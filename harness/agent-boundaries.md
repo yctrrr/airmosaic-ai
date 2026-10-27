@@ -82,3 +82,7 @@ Process success does not prove completeness. Report skipped, failed/missing and 
 5. Review final diffs/attachments before the authorized sharing action.
 
 Pattern scans supplement review; they do not prove all secrets absent. Do not propagate a discovered secret into tests, error examples or repair notes.
+
+## Data and project results
+
+Follow the [asset contract](assets.md). Shared data outside Git uses `assets/data/<stage>/<dataset-name>/<version>/` with actual dataset names. Projects reference fixed versions in configuration without cross-stage duplication. New results use `assets/results/<project_id>/<run_id>/<stage>/<tool_id>/`, with records and temporary files inside that run. New calls provide project and stage together. Compute/check, obtain human review, then register selected data in a fresh version; never overwrite originals or existing versions. Personal settings, authentication and credentials remain separate. Existing files are not migrated; automatic approval and registration services are not implemented.

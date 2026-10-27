@@ -48,12 +48,12 @@ date,covariate_a,covariate_b,target
 以下仅对**自己生成的足量合成 series.csv**运行。先确认三类根独立且位于 Git 外，输入在工作区内，源码路径已核对。激活 TimeXer 专用环境，在新的任务输出目录启动，让上游相对路径产物留在本地；`--checkpoints` 单独指定并不能覆盖其他输出位置。
 
 ```powershell
-if (-not $env:AIRMOSAIC_LOCAL_WORKSPACE -or -not $env:TIMEXER_SOURCE_DIR) {
+if (-not $env:AIRMOSAIC_ASSETS_DIR -or -not $env:TIMEXER_SOURCE_DIR) {
     throw 'Configure the local workspace and reviewed source directory first.'
 }
 $runId = [guid]::NewGuid().ToString('N')
-$taskDir = Join-Path $env:AIRMOSAIC_LOCAL_WORKSPACE "output/$runId/timexer_workflow"
-$inputDir = Join-Path $env:AIRMOSAIC_LOCAL_WORKSPACE 'data_cache/timexer_example'
+$taskDir = Join-Path $env:AIRMOSAIC_ASSETS_DIR "output/$runId/timexer_workflow"
+$inputDir = Join-Path $env:AIRMOSAIC_ASSETS_DIR 'data/01_socioeconomic_natural_change/ExampleTimeSeries/v1'
 $entry = Join-Path $env:TIMEXER_SOURCE_DIR 'run.py'
 if (-not (Test-Path -LiteralPath $entry -PathType Leaf) -or
     -not (Test-Path -LiteralPath (Join-Path $inputDir 'series.csv') -PathType Leaf)) {

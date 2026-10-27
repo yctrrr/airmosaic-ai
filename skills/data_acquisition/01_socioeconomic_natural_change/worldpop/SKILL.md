@@ -20,7 +20,7 @@ Read the [WorldPop method](../../../../methods/01_socioeconomic_natural_change/w
 
 ## Local paths and authentication
 
-Follow the [shared storage contract](../../../../harness/storage-and-credentials.md) and [execution guide](../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_LOCAL_WORKSPACE` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `output/<run_id>/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
+Follow the [shared storage contract](../../../../harness/storage-and-credentials.md) and [execution guide](../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_ASSETS_DIR` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `results/<project_id>/<run_id>/01_socioeconomic_natural_change/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
 
 ## Purpose
 
@@ -36,19 +36,19 @@ WorldPop documents an API rate limit. Cache metadata and downloaded files locall
 
 ## Results and cache
 
-`run-tool` writes this task to `${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/worldpop_download/`: metadata JSON/CSV under `metadata/`, downloaded files under `raw/<iso3>/<project>/<year>/`. The receipt is under `runs/<run_id>/record.json` and omits parameter values and filenames.
+`run-tool` writes this task to `${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/01_socioeconomic_natural_change/worldpop_download/`: metadata JSON/CSV under `metadata/`, downloaded files under `raw/<iso3>/<project>/<year>/`. The receipt is under `results/<project_id>/<run_id>/records/<tool_id>/record.json` and omits parameter values and filenames.
 
-`${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/worldpop/` is the reusable cache location, not the runner's output destination. Publishing validated task files into that cache is a separate authorized operation; no automatic cache promotion, raster resampling or zonal statistics is implemented.
+`${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/WorldPop/<version>/` is the reusable cache location, not the runner's output destination. Publishing validated task files into that cache is a separate authorized operation; no automatic cache promotion, raster resampling or zonal statistics is implemented.
 
 ## Registered execution
 
 Use `worldpop_download` from the repository root. Inspect its manifest with `describe-tool`; the tool ID is the CLI argument, not a key in the parameter JSON.
 
 ```powershell
-python -m airmosaic_core.cli describe-tool worldpop_download
-python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --dry-run
+python -m airmosaic.cli describe-tool worldpop_download
+python -m airmosaic.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --dry-run
 # Discovery also uses the network and writes metadata; execute only within task authorization.
-python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --allow-network
+python -m airmosaic.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --allow-network
 ```
 
 The public example contains:
@@ -94,3 +94,5 @@ Typical filtering dimensions:
 
 - `references/worldpop-api.md`: API endpoint notes and metadata fields.
 - `references/privacy-redaction-rules.md`: sanitization checklist.
+
+Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.

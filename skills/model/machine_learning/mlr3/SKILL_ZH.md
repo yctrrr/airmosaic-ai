@@ -39,8 +39,12 @@ description: 指导使用 mlr3 进行表格回归、分类、模型比较、调�
 | 任务 | 文档 |
 |---|---|
 | 数据划分、PipeOp、调参、最终拟合与推理 | [工作流与验收](references/workflow.md) |
+| 将用户要求整理成建模任务并使用参考代码验证 | [需求驱动的模型构建](../../../../methods/pathways/requirements_driven_model_building_ZH.md) |
+| 核对首个空气质量源码案例及所需适配 | [臭氧回归参考案例](../../../../methods/pathways/references/air_quality_o3_reference_ZH.md) |
 | 回归/分类的基本 R API 使用 | [合成模型使用示例](examples/basic-model-use.md) |
 | 查看参考版本或同步上游变化 | [上游项目跟踪](UPSTREAM.md) |
 | 查找目录条目和管理路径 | [机器学习分类说明](../../../../harness/usage/machine-learning.md) |
 
-遵守[共享存储约定](../../../../harness/storage-and-credentials_ZH.md)和[代理 行为边界](../../../../harness/agent-boundaries_ZH.md)。新任务产物可约定为 `${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/mlr3_workflow/`；`mlr3_workflow` 只是本地工作流目录标签，不是可执行工具 ID。不会因阅读或选择本技能 而自动获得数据访问、软件安装、外发或模型部署授权。
+遵守[共享存储约定](../../../../harness/storage-and-credentials_ZH.md)和[代理 行为边界](../../../../harness/agent-boundaries_ZH.md)。新任务产物可约定为 `${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/<stage>/mlr3_workflow/`；`mlr3_workflow` 只是本地工作流目录标签，不是可执行工具 ID。不会因阅读或选择本技能 而自动获得数据访问、软件安装、外发或模型部署授权。
+
+数据与结果按[资产目录与复核入库规范](../../../../harness/assets_ZH.md)管理：数据按阶段、实际名称和版本共享；结果按项目及运行归集。跨阶段引用同一数据，复用入库需人工批准。

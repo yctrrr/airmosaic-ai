@@ -47,8 +47,10 @@ ADS 的公开 API 地址为 `https://ads.atmosphere.copernicus.eu/api`。本人�
 
 ## 边界
 
-- 请求在 `AIRMOSAIC_CONFIG_DIR/copernicus/`，任务下载在 `AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/cams/`，验收后的缓存在 `data_cache/cams/`。专用浏览器会话可放 `AIRMOSAIC_AUTH_DIR/browser_profiles/copernicus-ads/`；路径变量不会自动创建会话或完成认证。
+- 请求在 `AIRMOSAIC_CONFIG_DIR/copernicus/`，任务下载在 `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/01_socioeconomic_natural_change/cams/`，验收后的缓存在 `data/01_socioeconomic_natural_change/<product-name>/<version>/`。专用浏览器会话可放 `AIRMOSAIC_AUTH_DIR/browser_profiles/copernicus-ads/`；路径变量不会自动创建会话或完成认证。
 - 令牌由个人秘密管理器保管；不要创建明文秘密模板、复制 会话信息 或记录签名下载链接。官方客户端调用需显式选择 ADS 与授权凭据，不能依赖未经审查的默认配置。
 - 不把 CAMS 柱总量、混合比、地表质量浓度或 AOD 混用；不自动拼接 EAC4 和预报序列。
 - [PM2.5 站点技能](../../03_atmospheric_transport/pm25-stations/SKILL_ZH.md)负责观测来源和整理；CAMS 即使包含 PM2.5 变量也仍是网格产品。比较时另行核对站点元数据有效期、时间区间、单位和空间代表性，不默认启动匹配或校正。主阶段为 01，03/04 引用。
 - CAMS 数据到 GEOS-Chem 的物种/网格/边界条件适配及健康模型输入转换均未实现。本说明不提供操作系统隔离、自动脱敏或正式科学验收。
+
+数据与结果按[资产目录与复核入库规范](../../../../harness/assets_ZH.md)管理：数据按阶段、实际名称和版本共享；结果按项目及运行归集。跨阶段引用同一数据，复用入库需人工批准。

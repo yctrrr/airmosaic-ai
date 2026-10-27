@@ -18,7 +18,7 @@
 | `airmosaic_check_tool` | check-tool | 是 | 静态前置条件，不验证登录 |
 | `airmosaic_run_tool` | run-tool | 否，禁止递归 | 此条目用于展示执行器自身 |
 
-SDK 导出 DataCatalogService、DataAccessService、CausalDesignService、ToolRegistryService 和 ToolRunnerService；详见[基础工具](usage/core.md)。MCP、REST、自动技能安装器和跨层编排未实现。
+SDK 导出 DataCatalogService、DataAccessService、CausalDesignService、ToolRegistryService 和 ToolRunnerService；详见[基础工具](usage/core.md)。本地标准输入输出 MCP 已实现，见[连接指南](usage/mcp_ZH.md)；REST、自动技能安装器和跨层编排未实现。
 
 ## 数据获取与处理
 
@@ -72,4 +72,4 @@ SDK 导出 DataCatalogService、DataAccessService、CausalDesignService、ToolRe
 
 新增工具需同步 manifest、允许清单、参数解析、分类说明和 skill，遵循[注册规范](tool-registration.md)。状态查询的 ready 不表示任务 can_execute；进程 succeeded 不表示科学验收通过。
 
-`methods/pathways/` 保存人类可读的路径设计和历史参考，`core/workflows/` 说明未来执行定义及未实现状态。当前没有工作流引擎，数据获取、处理、计算和验收仍需显式交接，不会自动串联。
+`methods/pathways/` 保存人类可读的路径设计和历史参考，`workflows/` 说明未来执行定义及未实现状态。当前没有工作流引擎，数据获取、处理、计算和验收仍需显式交接，不会自动串联。

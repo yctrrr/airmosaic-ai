@@ -12,16 +12,16 @@ yearbook_years:
 # --- Directory structure ---
 paths:
   # Root directory containing yearbook folders named like: 中国工业统计年鉴{year}（Excel）
-  yearbook_root: "${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/industrial_yearbook"
+  yearbook_root: "${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/IndustrialYearbook/<version>"
 
-  output_root: "${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/industrial_yearbook"
+  output_root: "${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/01_socioeconomic_natural_change/industrial_yearbook"
   # Output subdirectories relative to output_root, never to original inputs.
   output:
     economic_indicators: "economic_indicators"
     physical_output: "physical_output"
 
   # Sector code lookup table (GB/T 4754-2012)
-  sector_code_lookup: "${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/industrial_yearbook/industry_code_lookup.csv"
+  sector_code_lookup: "${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/IndustrialYearbook/<version>/industry_code_lookup.csv"
 
 # --- Region whitelist ---
 regions:

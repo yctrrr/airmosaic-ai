@@ -1,4 +1,4 @@
-﻿# GCAM BaseX XML/XPath Structure
+# GCAM BaseX XML/XPath Structure
 
 Based on a typical GCAM-China output database (`database_basexdb`).
 

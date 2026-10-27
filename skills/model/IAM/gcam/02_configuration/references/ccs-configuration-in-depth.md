@@ -1,4 +1,4 @@
-﻿# CCS Configuration In Depth
+# CCS Configuration In Depth
 
 How CCS (Carbon Capture and Storage) is represented in GCAM-China, the relevant configuration files, and common pitfalls when enabling CCS in scenarios.
 

@@ -6,7 +6,7 @@
 
 <!-- README-I18N:END -->
 
-Directory responsibilities and migration instructions are in the [layout guide](harness/project-layout.md). Methods address scientific reasoning; skills address computer operations; core owns shared execution. Path narratives and non-executable stage proposals live in `methods/pathways/`; future executable definitions belong in `core/workflows/`. No MCP or workflow engine is implemented.
+Directory responsibilities and migration instructions are in the [layout guide](harness/project-layout.md). Methods address scientific reasoning; skills address computer operations; core owns shared execution. Path narratives and non-executable stage proposals live in `methods/pathways/`; future executable definitions belong in `workflows/`. Local stdio MCP uses the existing catalog and runner; workflow orchestration remains unimplemented. See the [MCP guide](harness/usage/mcp.md).
 
 
 
@@ -19,8 +19,8 @@ Work from the repository root and read the relevant skill before changing or usi
 - Respect requested objects, years, regions and operations. Continue necessary authorized reversible work without repeated permission requests; ask only for essential missing information or authorization.
 - Inspect branch and working-tree changes first. Preserve originals, results and other contributors' work. A workflow description does not authorize bulk downloads, extra runs, installation, publication or messages.
 - Never put private identities, passwords, keys, cookies, profiles, private hosts, signed URLs or machine-specific paths in shared artifacts. Report suspected secrets by location/category without repeating values.
-- Keep data/results in `AIRMOSAIC_LOCAL_WORKSPACE`, non-secret settings in `AIRMOSAIC_CONFIG_DIR` and browser state in `AIRMOSAIC_AUTH_DIR`. Roots must exist separately outside Git. Credentials belong in a secret manager or an explicitly authorized official client's protected existing mechanism; do not inspect or export them.
-- Keep external releases outside Git. New artifacts use `output/<run_id>/<tool>/`. Do not migrate old outputs or copy sessions without specific authorization.
+- Keep data/results in `AIRMOSAIC_ASSETS_DIR`, non-secret settings in `AIRMOSAIC_CONFIG_DIR` and browser state in `AIRMOSAIC_AUTH_DIR`. Roots must exist separately outside Git. Credentials belong in a secret manager or an explicitly authorized official client's protected existing mechanism; do not inspect or export them.
+- Keep external releases outside Git. New artifacts use `results/<project_id>/<run_id>/<stage>/<tool>/`. Do not migrate old outputs or copy sessions without specific authorization.
 - Distinguish source review, synthetic/smoke checks, real-data integration and scientific validation. Do not report planned or skipped work as completed.
 - Follow [agent boundaries](harness/agent-boundaries.md) and the [storage contract](harness/storage-and-credentials.md). These instructions do not establish OS isolation.
 
@@ -44,14 +44,14 @@ General rules, skill entries and category navigation have English and Chinese ve
 
 ## Environment and discovery
 
-Use Python 3.10+ in a project environment, installed with `python -m pip install -e './core[dev]'`. Session roots are explicit; `.env` is not automatically loaded. Cache checks require a workspace variable or explicit SDK argument. CONFIG_DIR and AUTH_DIR are caller conventions, not automatic loaders.
+Use Python 3.10+ in a project environment, installed with `python -m pip install -e '.[dev]'`. Session roots are explicit; `.env` is not automatically loaded. Cache checks require a workspace variable or explicit SDK argument. CONFIG_DIR and AUTH_DIR are caller conventions, not automatic loaders.
 
 ```sh
-python -m airmosaic_core.cli --help
-python -m airmosaic_core.cli list-tools --format json
-python -m airmosaic_core.cli describe-tool airmosaic_list_datasets
-python -m airmosaic_core.cli check-tool airmosaic_list_datasets
-python -m airmosaic_core.cli list-datasets
+python -m airmosaic.cli --help
+python -m airmosaic.cli list-tools --format json
+python -m airmosaic.cli describe-tool airmosaic_list_datasets
+python -m airmosaic.cli check-tool airmosaic_list_datasets
+python -m airmosaic.cli list-datasets
 ```
 
 `list-datasets` reads acquisition declarations, not downloaded files. `check-availability` checks file presence, not contents or scientific validity; local paths in its output must be sanitized. Planning commands produce templates, not completed analysis. SDK services include `DataCatalogService`, `DataAccessService`, `CausalDesignService`, `ToolRegistryService` and `ToolRunnerService`.
@@ -81,3 +81,9 @@ Enabled adapters provide parameter/path preflight, fresh outputs, a minimal chil
 - Use synthetic inputs for routine tests. Run relevant implementation checks when behavior changes; documentation-only edits do not require original-data or model execution. Live receipts stay local.
 - Inspect diff, new files, logs and attachments for private information. Never bundle configuration/authentication directories with data.
 - Commit and push only when the current task authorizes them, after relevant checks. Separate unrelated work and approved prerequisites; do not force-push or rewrite history. Roles and roadmaps do not grant authority.
+
+## Data and project results
+
+Follow the [asset contract](harness/assets.md). Shared data outside Git uses `assets/data/<stage>/<dataset-name>/<version>/` with actual dataset names. Projects reference fixed versions in configuration without cross-stage duplication. New results use `assets/results/<project_id>/<run_id>/<stage>/<tool_id>/`, with records and temporary files inside that run. New calls provide project and stage together. Compute/check, obtain human review, then register selected data in a fresh version; never overwrite originals or existing versions. Personal settings, authentication and credentials remain separate. Existing files are not migrated; automatic approval and registration services are not implemented.
+
+Repository `assets/` permits only manifest-listed, hash-verified toy inputs. All generated outputs must use Git-external AIRMOSAIC_ASSETS_DIR. Reference private locations in personal configuration, never filesystem links. Every recorded execution requires project/stage context; the old workspace mode is removed.

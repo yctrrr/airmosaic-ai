@@ -42,8 +42,8 @@ Hand access-verification prompts to the user and pause further query actions. Do
 1. Once fresh results match, click Download and select Both to include IDs and names. Review the scope; the user handles additional terms or verification.
 2. Submit the export once. Follow the progress link in the success message without reading the user's mailbox. The user may instead use the platform email link.
 3. Wait until the download is ready and obtain the ZIP from the data-file link. The observed page offered files for seven days after creation; follow the current page's expiry.
-4. Preserve the ZIP under `AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/ihme-gbd/raw/`. Check that it belongs to this request. Keep email addresses, task references and temporary URLs out of shared documentation.
-5. Save non-secret plans under `AIRMOSAIC_CONFIG_DIR/gbd/` and receipts under workspace `runs/<run_id>/`. Check archive integrity, CSV schema, IDs/names, units, row counts, duplicate keys, missingness and uncertainty ordering. Store summaries separately in `quality`.
+4. Preserve the ZIP under `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/04_integrated_impacts/ihme-gbd/raw/`. Check that it belongs to this request. Keep email addresses, task references and temporary URLs out of shared documentation.
+5. Save non-secret plans under `AIRMOSAIC_CONFIG_DIR/gbd/` and receipts under workspace `results/<project_id>/<run_id>/records/<tool_id>/`. Check archive integrity, CSV schema, IDs/names, units, row counts, duplicate keys, missingness and uncertainty ordering. Store summaries separately in `quality`.
 6. Keep the original and write transformations separately in `processed`. File acquisition is verified only after the new file is saved and checked.
 
 Record actual start, submission, completion/failure and validation times with a time zone. Leave steps that have not occurred unset.

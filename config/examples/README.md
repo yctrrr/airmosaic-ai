@@ -1,8 +1,14 @@
-# 个人配置示例
+# Personal configuration examples
 
-这里只提交可公开复用的模板。实际配置复制到仓库外的 `${AIRMOSAIC_CONFIG_DIR}`，不得提交个人路径、账号、密码、token 或浏览器状态。
+<!-- README-I18N:START -->
 
-从仓库根目录开始，选定一个位于所有 Git 仓库之外的现有本地根目录。代码仓库可作为该目录的子目录。以下示例采用“仓库与 config/local_workspace/auth 并列”的布局：
+**English** | [中文](README_ZH.md)
+
+<!-- README-I18N:END -->
+
+Only reusable public templates belong here. Copy reviewed settings to CONFIG_DIR outside Git; never commit personal paths, accounts, passwords, tokens or authenticated browser state.
+
+From the repository root, select an existing local root outside every Git checkout. The source checkout may be its child. This example places the checkout beside assets/config/auth:
 
 ```powershell
 $amLocalRoot = Split-Path -Parent (Get-Location).Path
@@ -14,19 +20,25 @@ if (-not (Test-Path -LiteralPath $amPersonalConfig)) {
 }
 # Review the personal file before dot-sourcing it; PowerShell config is executable code.
 . $amPersonalConfig -LocalRoot $amLocalRoot
-foreach ($amDir in @($env:AIRMOSAIC_LOCAL_WORKSPACE, $env:AIRMOSAIC_CONFIG_DIR, $env:AIRMOSAIC_AUTH_DIR)) {
+foreach ($amDir in @($env:AIRMOSAIC_ASSETS_DIR, $env:AIRMOSAIC_CONFIG_DIR, $env:AIRMOSAIC_AUTH_DIR)) {
     New-Item -ItemType Directory -Force -Path $amDir | Out-Null
 }
 ```
 
-`environment.ps1` 仅设置当前 PowerShell 会话的三个路径变量，不创建目录、不连接网络、不读取凭据，也不修改系统级环境变量。它拒绝把 `LocalRoot` 设在 Git 仓库内部；不提供通用路径隔离或秘密存储。
+`environment.ps1` sets three variables in the current session. It selects the sibling `assets/` workspace and separate `config/` and `auth/` roots. It does not create directories, use the network, read credentials or change system settings. It rejects LocalRoot inside Git; it is not an OS sandbox or secret store.
 
-新会话需再次加载已审查的个人配置。可以按已有授权在个人副本中设置 `GCAM_RELEASE_DIR` 等非秘密路径。不要让 agent 自动遍历、加载未知的个人脚本或扫描整个配置目录。
+Review and explicitly load the personal copy in each new session. Add only authorized non-secret resource mappings to that copy. Do not scan/load unknown personal scripts or rewrite existing configuration. The example leaves old workspaces and outputs in place.
 
-`AIRMOSAIC_LOCAL_WORKSPACE` 已由核心缓存服务读取。`AIRMOSAIC_CONFIG_DIR` 与 `AIRMOSAIC_AUTH_DIR` 是文档、配置示例和调用方共用的约定；核心服务不会自动加载其中的文件。当前 `.env`、YAML、JSON 中的变量也不会自动展开，需调用方显式处理。
+The core reads AIRMOSAIC_ASSETS_DIR. CONFIG_DIR and AUTH_DIR are explicit caller conventions, not automatic configuration loaders. `.env` is not automatically loaded. Supported runner path parameters expand only `${AIRMOSAIC_ASSETS_DIR}`; shell expressions and other variables are not expanded.
 
-Linux/macOS 可在自己的 shell 配置中显式设置这三个变量，详见[工作区与凭据管理](../../harness/storage-and-credentials.md)。
+For Linux/macOS, explicitly set the same three separate roots using the [storage contract](../../harness/storage-and-credentials.md).
 
-`copernicus/` 提供 ERA5 单层、CAMS EAC4 和 CAMS 预报的非秘密请求 JSON。只将选中的文件复制到个人 `CONFIG_DIR/copernicus/`，保留现有配置并按当前门户表单核对。这些是官方 API 的 request 示例，不是 run-tool 参数；不包含令牌或自动配置凭据的逻辑。使用步骤见 [Copernicus 下载指南](../../harness/usage/copernicus-downloads.md)。
+The `copernicus/` directory contains non-secret request examples. Copy only the selected request to private settings, preserve existing files and verify the source form. They are manual API request examples, not run-tool parameters or credential configuration; see the [classified guide](../../harness/usage/copernicus-downloads.md).
 
-`run-tool` 要求三类根目录均已存在且互不包含。它不会自动加载个人环境脚本，仅显式读取 `--params-file` 指定的非秘密 JSON；该路径可以在 CONFIG_DIR。路径参数只展开 `${AIRMOSAIC_LOCAL_WORKSPACE}`，不展开 shell 表达式或其他环境变量。公共参数示例位于 `examples/run-tool/`，完整步骤见[执行说明](../../harness/usage/run-tool.md)。
+The runner requires three existing, separate roots. It reads only the explicitly supplied non-secret JSON via `--params-file`, not an entire personal directory. Public tool parameters are in [config/examples/run-tool](run-tool); see [execution](../../harness/usage/run-tool.md).
+
+`mcp-client.example.json` is a generic client template. Adapt its interpreter and existing roots in a personal copy. It does not grant execution, network or browser access, contain credentials, or load itself. See [MCP setup](../../harness/usage/mcp.md).
+
+New tasks supply both `--project-id` and `--stage` under the [asset contract](../../harness/assets.md). The environment example selects roots, not a project. [Asset/project/review templates](assets/README.md) describe the manual process. Actual project settings stay in CONFIG_DIR; results and review records stay in assets/results.
+
+The public repository assets directory is distinct from the private root selected outside Git by this helper. Public fixtures are read-only. Actual data and every generated result use AIRMOSAIC_ASSETS_DIR; customize its location only in the personal configuration copy. The [path mapping template](asset-paths.example.json) documents the fields; JSON is not automatically loaded.

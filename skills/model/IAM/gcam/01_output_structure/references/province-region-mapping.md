@@ -1,4 +1,4 @@
-﻿# Province and Region Mapping
+# Province and Region Mapping
 
 GCAM-China province codes, the China aggregate node, and how to map between GCAM regions and real-world geography.
 

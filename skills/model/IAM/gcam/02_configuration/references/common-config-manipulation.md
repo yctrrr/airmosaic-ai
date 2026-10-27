@@ -1,4 +1,4 @@
-﻿# Common Configuration Operations
+# Common Configuration Operations
 
 ## Adding a Scenario Component
 

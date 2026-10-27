@@ -39,9 +39,9 @@ GBD 2023 疾病与风险估计主要覆盖 1990–2023 年。轮次、地区、�
 
 ## 工作目录与认证
 
-遵守[存储约定](../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../harness/usage/run-tool.md)。仓库外的三个根目录须相互独立且已存在：`AIRMOSAIC_LOCAL_WORKSPACE` 存数据与结果，`AIRMOSAIC_CONFIG_DIR` 存非秘密设置及任务参数，`AIRMOSAIC_AUTH_DIR` 存本人浏览器状态。密码和令牌保存在秘密管理器中。
+遵守[存储约定](../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../harness/usage/run-tool.md)。仓库外的三个根目录须相互独立且已存在：`AIRMOSAIC_ASSETS_DIR` 存数据与结果，`AIRMOSAIC_CONFIG_DIR` 存非秘密设置及任务参数，`AIRMOSAIC_AUTH_DIR` 存本人浏览器状态。密码和令牌保存在秘密管理器中。
 
-不读取或分享凭据、浏览器配置内容、会话信息及私人路径。仓库命令从仓库根目录运行，使用安装项目的解释器。工具默认分配 `output/<run_id>/<tool_id>/`，没有任务需要时省略输出参数。个人配置不自动加载。直接执行脚本会绕过检查；执行器不是操作系统沙箱。
+不读取或分享凭据、浏览器配置内容、会话信息及私人路径。仓库命令从仓库根目录运行，使用安装项目的解释器。工具默认分配 `results/<project_id>/<run_id>/04_integrated_impacts/<tool_id>/`，没有任务需要时省略输出参数。个人配置不自动加载。直接执行脚本会绕过检查；执行器不是操作系统沙箱。
 
 ## 用途
 
@@ -49,7 +49,7 @@ GBD 2023 疾病与风险估计主要覆盖 1990–2023 年。轮次、地区、�
 
 ## 结果与缓存边界
 
-工具输出 `output/<run_id>/ihme_gbd_fetch_results/results.csv` 及关联 JSON 文件。将验证后的导出发布到 `${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gbd_health/` 是另行授权的操作，不是执行器的自动行为。不提交导出、账户身份或浏览器产物。
+工具输出 `results/<project_id>/<run_id>/04_integrated_impacts/ihme_gbd_fetch_results/results.csv` 及关联 JSON 文件。将验证后的导出发布到 `${AIRMOSAIC_ASSETS_DIR}/data/04_integrated_impacts/GBD_MortalityRates/<version>/` 是另行授权的操作，不是执行器的自动行为。不提交导出、账户身份或浏览器产物。
 
 ## 工作流程
 
@@ -68,8 +68,8 @@ GBD 2023 疾病与风险估计主要覆盖 1990–2023 年。轮次、地区、�
 3. 提交一次搜索并等待本次新结果。验证提示交给本人完成；不使用加载中或报错后的旧表。
 4. 点击“下载”，选择“双”，同时保留编号和名称。此处是导出字段设置，与性别的“两性合计”不同。核对范围后提交一次。
 5. 点击成功提示中的“在此处监控进度”。出现“您的下载已准备就绪”后，从数据文件链接取得压缩包。也可由本人使用邮件链接，代理无需读取邮箱。有效期以当前页面为准。
-6. 原压缩包放在工作区 `output/<run_id>/ihme-gbd/raw/`。检查归档完整性、表格字段、编号与名称、年份、唯一键、行数及数值，确认 `lower ≤ val ≤ upper`。派生表放 `processed`，摘要放 `quality`，不发布原文件或任务链接。
-7. 在 `runs/<run_id>/` 记录查询核对、导出提交、文件取得及检查完成的实际时间。非秘密参数放个人配置目录，认证放认证目录；私人记录不写入共享说明。
+6. 原压缩包放在工作区 `results/<project_id>/<run_id>/04_integrated_impacts/ihme-gbd/raw/`。检查归档完整性、表格字段、编号与名称、年份、唯一键、行数及数值，确认 `lower ≤ val ≤ upper`。派生表放 `processed`，摘要放 `quality`，不发布原文件或任务链接。
+7. 在 `results/<project_id>/<run_id>/records/<tool_id>/` 记录查询核对、导出提交、文件取得及检查完成的实际时间。非秘密参数放个人配置目录，认证放认证目录；私人记录不写入共享说明。
 
 **已验证样例**：2026-10-26 北京时间 21:05:42 完成单条网页获取与内容检查，压缩包 717 字节，其中一份表格、一条记录、18 列。详细时间和返回编号见[实测向导](references/first-download-guide_ZH.md)。真实工具调用仍待任务调试会话核验。
 
@@ -83,13 +83,13 @@ GBD 2023 疾病与风险估计主要覆盖 1990–2023 年。轮次、地区、�
 
 ## 注册工具的调用
 
-先查询 `ihme_gbd_fetch_results`。[公开参数示例](../../../../examples/run-tool/gbd.json)和 `examples/gbd_mortality_rate_request.json` 仅展示历史语法。核对当前版本和维度编号，将非秘密参数保存到个人配置目录，然后预检；确认参数和授权会话后再执行。
+先查询 `ihme_gbd_fetch_results`。[公开参数示例](../../../../config/examples/run-tool/gbd.json)和 `examples/gbd_mortality_rate_request.json` 仅展示历史语法。核对当前版本和维度编号，将非秘密参数保存到个人配置目录，然后预检；确认参数和授权会话后再执行。
 
 ```powershell
-python -m airmosaic_core.cli describe-tool ihme_gbd_fetch_results
+python -m airmosaic.cli describe-tool ihme_gbd_fetch_results
 $gbdParams = Join-Path $env:AIRMOSAIC_CONFIG_DIR "gbd-task.json"
-python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdParams --dry-run --allow-network --confirm-browser-session
-python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdParams --allow-network --confirm-browser-session --timeout 300
+python -m airmosaic.cli run-tool ihme_gbd_fetch_results --project-id example_project --stage 04_integrated_impacts --params-file $gbdParams --dry-run --allow-network --confirm-browser-session
+python -m airmosaic.cli run-tool ihme_gbd_fetch_results --project-id example_project --stage 04_integrated_impacts --params-file $gbdParams --allow-network --confirm-browser-session --timeout 300
 ```
 
 必填字段为 `years`、`locations`、`causes`、`ages`、`sexes`、`measures`、`metrics`，均使用逗号分隔的数字编号字符串，如 `"ages":"10,11"`，不使用数组或冒号范围。可选字段包括整数 `port`、`version`、`population_group`、`wait_ms`，以及字符串 `context`。`out` 默认自动分配。参数不得包含凭证或浏览器配置路径。
@@ -124,3 +124,5 @@ python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdP
 - 显式映射后，按适用键核对派生值与源值及数值容差；项目别名不是默认源字段。
 - 列出派生表存在而源表缺少的组合。
 - 确认共享文件没有凭据、会话或私人浏览器路径。
+
+数据与结果按[资产目录与复核入库规范](../../../../harness/assets_ZH.md)管理：数据按阶段、实际名称和版本共享；结果按项目及运行归集。跨阶段引用同一数据，复用入库需人工批准。

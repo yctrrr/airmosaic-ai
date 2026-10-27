@@ -16,7 +16,7 @@ description: Inspect GCAM output structure through run-tool with a fixed R scrip
 
 ## Local paths and authentication
 
-Follow the [shared storage contract](../../../../../harness/storage-and-credentials.md) and [execution guide](../../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_LOCAL_WORKSPACE` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `output/<run_id>/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
+Follow the [shared storage contract](../../../../../harness/storage-and-credentials.md) and [execution guide](../../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_ASSETS_DIR` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `results/<project_id>/<run_id>/<stage>/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
 
 ## Purpose
 
@@ -68,12 +68,12 @@ Runner parameters are `max_memory` (default `1g`, e.g. `512m`) and optional task
 
 ## Unified execution boundary
 
-Use the public [parameter example](../../../../../examples/run-tool/gcam-inspect.json) and the installed project interpreter:
+Use the public [parameter example](../../../../../config/examples/run-tool/gcam-inspect.json) and the installed project interpreter:
 
 ```powershell
-python -m airmosaic_core.cli describe-tool gcam_inspect_output_structure
-python -m airmosaic_core.cli run-tool gcam_inspect_output_structure --params-file examples/run-tool/gcam-inspect.json --dry-run
-python -m airmosaic_core.cli run-tool gcam_inspect_output_structure --params-file examples/run-tool/gcam-inspect.json --timeout 600
+python -m airmosaic.cli describe-tool gcam_inspect_output_structure
+python -m airmosaic.cli run-tool gcam_inspect_output_structure --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/gcam-inspect.json --dry-run
+python -m airmosaic.cli run-tool gcam_inspect_output_structure --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/gcam-inspect.json --timeout 600
 ```
 
 Rscript runs with --vanilla, task HOME/TEMP and no personal startup/profile/library settings. Install data.table and rgcam in that R installation's standard library; Java uses rgcam's classpath, whose compatibility still needs verification. check-tool/dry-run do not launch R and leave package loading unverified. Actual execution checks namespaces before sourcing the script; the receipt reports r_dependency_unavailable when loading fails.
@@ -88,3 +88,5 @@ Custom queries and a per-scenario database layout require manual adaptation. Pre
 - `references/xquery-csv-templates.md`: reusable XQuery templates for CSV output
 - `references/output-price-quantity-units.md`: explanation of price-unit vs output-unit and compatibility
 - `references/province-region-mapping.md`: province codes, China aggregate node, and mapping conventions
+
+Follow the [asset layout and review contract](../../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.

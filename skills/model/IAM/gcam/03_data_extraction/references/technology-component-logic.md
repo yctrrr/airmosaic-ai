@@ -1,4 +1,4 @@
-﻿# Technology Component Decomposition Logic
+# Technology Component Decomposition Logic
 
 How sector costs are decomposed into technology-level components: energy, non-energy, capital, carbon, and residual.
 

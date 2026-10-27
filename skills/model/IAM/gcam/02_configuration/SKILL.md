@@ -16,7 +16,7 @@ description: Read GCAM configuration and input-chain references to explain scena
 
 ## Local paths and authentication
 
-Follow the [shared storage contract](../../../../../harness/storage-and-credentials.md) and [execution guide](../../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_LOCAL_WORKSPACE` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `output/<run_id>/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
+Follow the [shared storage contract](../../../../../harness/storage-and-credentials.md) and [execution guide](../../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_ASSETS_DIR` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `results/<project_id>/<run_id>/<stage>/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
 
 ## Purpose
 
@@ -47,3 +47,5 @@ Use an explicitly configured `GCAM_RELEASE_DIR` for authorized read-only source 
 `gcam_configuration_reference` is the real catalog ID. `describe-tool gcam_configuration_reference` shows its reference status; `run-tool` rejects execution. The JSON files in `examples/` are marked manual plans, not `--params-file` payloads or registered actions.
 
 For explanation, inspect only the requested XML, component order and referenced files. For an authorized change, copy the required configuration/dependencies to a fresh local task directory, edit the copy, check XML parsing, order and reference resolution, then review a scoped diff. Do not modify shared model originals or launch a new simulation without task-specific authorization. Read-only configuration review, modification and model execution are separate operations.
+
+Follow the [asset layout and review contract](../../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.

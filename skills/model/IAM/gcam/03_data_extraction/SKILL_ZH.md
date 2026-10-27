@@ -16,7 +16,7 @@ description: 通过注册工具提取既有市场、部门及技术组成记录�
 
 ## 工作目录与认证
 
-遵守[共享存储约定](../../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../../harness/usage/run-tool.md)。仓库外三个已存在根目录相互独立：`AIRMOSAIC_LOCAL_WORKSPACE` 存数据与结果，`AIRMOSAIC_CONFIG_DIR` 存非秘密设置和显式任务参数，`AIRMOSAIC_AUTH_DIR` 存浏览器状态。密码和令牌留在秘密管理器，不读取或分享凭据及浏览器配置内容。命令从仓库根目录使用安装项目的解释器运行；执行器自动分配 `output/<run_id>/<tool_id>/`，没有需要时省略输出参数。个人配置不自动加载。直接运行脚本会绕过检查；执行器不是操作系统沙箱。
+遵守[共享存储约定](../../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../../harness/usage/run-tool.md)。仓库外三个已存在根目录相互独立：`AIRMOSAIC_ASSETS_DIR` 存数据与结果，`AIRMOSAIC_CONFIG_DIR` 存非秘密设置和显式任务参数，`AIRMOSAIC_AUTH_DIR` 存浏览器状态。密码和令牌留在秘密管理器，不读取或分享凭据及浏览器配置内容。命令从仓库根目录使用安装项目的解释器运行；执行器自动分配 `results/<project_id>/<run_id>/<stage>/<tool_id>/`，没有需要时省略输出参数。个人配置不自动加载。直接运行脚本会绕过检查；执行器不是操作系统沙箱。
 
 ## 用途
 
@@ -24,7 +24,7 @@ description: 通过注册工具提取既有市场、部门及技术组成记录�
 
 ## 依赖
 
-显式配置 `GCAM_RELEASE_DIR`，放在仓库及三类个人根之外。提取需要 pandas、本地 Java、兼容的 `libs/jars/BaseX-*.jar` 和 `${GCAM_RELEASE_DIR}/output/<scenario>/database_basexdb/`。模型资源作为逻辑只读输入，执行器不是操作系统只读沙箱。汇总需要 pandas 及工作区 `data_cache/` 或 `output/` 内的已有表。
+显式配置 `GCAM_RELEASE_DIR`，放在仓库及三类个人根之外。提取需要 pandas、本地 Java、兼容的 `libs/jars/BaseX-*.jar` 和 `${GCAM_RELEASE_DIR}/output/<scenario>/database_basexdb/`。模型资源作为逻辑只读输入，执行器不是操作系统只读沙箱。汇总需要 pandas 及工作区 `data/` 或 `results/` 内的已有表。
 
 提取的 `scenarios`、`sectors` 使用逗号分隔字符串，同时限定 `regions`、`years`，因为原默认值可能包含全国、多省份和多年。执行器分配 `out_dir`；参数名以真实声明为准，不虚构动作字段。
 
@@ -43,7 +43,7 @@ description: 通过注册工具提取既有市场、部门及技术组成记录�
 
 ## 参数示例及交接
 
-[市场示例](../../../../../examples/run-tool/gcam-market.json)和[技术示例](../../../../../examples/run-tool/gcam-technology.json)：
+[市场示例](../../../../../config/examples/run-tool/gcam-market.json)和[技术示例](../../../../../config/examples/run-tool/gcam-technology.json)：
 
 ```json
 {"scenarios":"example_scenario","regions":"AH,BJ","sectors":"cement","years":"2021,2035"}
@@ -52,35 +52,35 @@ description: 通过注册工具提取既有市场、部门及技术组成记录�
 将 `example_scenario` 替换为已有情景。AH/BJ 只是两个省份，不代表全国。真实任务使用个人配置目录内已核对的参数；报告全国前核验完整省级覆盖。
 
 ```powershell
-python -m airmosaic_core.cli describe-tool gcam_extract_market_sector
-python -m airmosaic_core.cli run-tool gcam_extract_market_sector --params-file examples/run-tool/gcam-market.json --dry-run
-python -m airmosaic_core.cli run-tool gcam_extract_technology_components --params-file examples/run-tool/gcam-technology.json --dry-run
+python -m airmosaic.cli describe-tool gcam_extract_market_sector
+python -m airmosaic.cli run-tool gcam_extract_market_sector --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/gcam-market.json --dry-run
+python -m airmosaic.cli run-tool gcam_extract_technology_components --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/gcam-technology.json --dry-run
 ```
 
-预检和授权满足后去掉 `--dry-run` 执行，每次调用有独立运行编号。市场任务状态及内容通过后再交给汇总。[汇总示例](../../../../../examples/run-tool/aggregate.json)中的 `<source_run_id>` 替换为成功市场任务的真实编号：
+预检和授权满足后去掉 `--dry-run` 执行，每次调用有独立运行编号。市场任务状态及内容通过后再交给汇总。[汇总示例](../../../../../config/examples/run-tool/aggregate.json)中的 `<source_run_id>` 替换为成功市场任务的真实编号：
 
 ```json
-{"input_csv":"${AIRMOSAIC_LOCAL_WORKSPACE}/output/<source_run_id>/gcam_extract_market_sector/market_sector_rows.csv"}
+{"input_csv":"${AIRMOSAIC_ASSETS_DIR}/results/<source_project_id>/<source_run_id>/01_socioeconomic_natural_change/gcam_extract_market_sector/market_sector_rows.csv"}
 ```
 
 将已解析的非秘密参数存为个人配置目录中的 `gcam-aggregate.json`：
 
 ```powershell
 $aggregateParams = Join-Path $env:AIRMOSAIC_CONFIG_DIR "gcam-aggregate.json"
-python -m airmosaic_core.cli run-tool gcam_aggregate_provinces --params-file $aggregateParams --dry-run
-python -m airmosaic_core.cli run-tool gcam_aggregate_provinces --params-file $aggregateParams
+python -m airmosaic.cli run-tool gcam_aggregate_provinces --project-id example_project --stage 01_socioeconomic_natural_change --params-file $aggregateParams --dry-run
+python -m airmosaic.cli run-tool gcam_aggregate_provinces --project-id example_project --stage 01_socioeconomic_natural_change --params-file $aggregateParams
 ```
 
-JSON 路径只展开 `${AIRMOSAIC_LOCAL_WORKSPACE}`；`<source_run_id>` 是需人工替换的说明。不能传入运行记录、工具外壳或技术组成表作为汇总参数。不自动串联工具、发布缓存或完成科学验收。
+JSON 路径只展开 `${AIRMOSAIC_ASSETS_DIR}`；`<source_run_id>` 是需人工替换的说明。不能传入运行记录、工具外壳或技术组成表作为汇总参数。不自动串联工具、发布缓存或完成科学验收。
 
 ## 绘制已核验的市场输出
 
-[绘图示例](../../../../../examples/run-tool/gcam-plot.json)也需替换源运行编号和情景。保留源表，核对两年、部门、省级覆盖和单位，将参数存入个人配置目录：
+[绘图示例](../../../../../config/examples/run-tool/gcam-plot.json)也需替换源运行编号和情景。保留源表，核对两年、部门、省级覆盖和单位，将参数存入个人配置目录：
 
 ```powershell
 $plotParams = Join-Path $env:AIRMOSAIC_CONFIG_DIR "gcam-plot.json"
-python -m airmosaic_core.cli run-tool gcam_plot_sector_change --params-file $plotParams --dry-run
-python -m airmosaic_core.cli run-tool gcam_plot_sector_change --params-file $plotParams
+python -m airmosaic.cli run-tool gcam_plot_sector_change --project-id example_project --stage 01_socioeconomic_natural_change --params-file $plotParams --dry-run
+python -m airmosaic.cli run-tool gcam_plot_sector_change --project-id example_project --stage 01_socioeconomic_natural_change --params-file $plotParams
 ```
 
 原有 `sector_cost` 筛选、全国及全球排除、非负权重和零权重均值回退保持不变。其他年份、样式或算法需人工适配并另行验证。不得使用省级汇总表或技术组成记录作为绘图输入。
@@ -97,3 +97,5 @@ python -m airmosaic_core.cli run-tool gcam_plot_sector_change --params-file $plo
 - `references/output-unit-compatibility.md`：单位兼容性。
 - `references/price-unit-interpretation.md`：价格解释及部门差异。
 - `references/technology-component-logic.md`：技术成本组成。
+
+数据与结果按[资产目录与复核入库规范](../../../../../harness/assets_ZH.md)管理：数据按阶段、实际名称和版本共享；结果按项目及运行归集。跨阶段引用同一数据，复用入库需人工批准。

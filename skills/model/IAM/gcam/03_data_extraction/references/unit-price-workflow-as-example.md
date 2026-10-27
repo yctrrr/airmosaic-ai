@@ -4,7 +4,7 @@ This reference describes registered tools, not an automatic unit-price selection
 
 ## Implemented artifacts
 
-Each tool creates its own `output/<run_id>/<tool_id>/`:
+Each tool creates its own `results/<project_id>/<run_id>/<stage>/<tool_id>/`:
 
 | Tool ID | Actual files |
 |---|---|

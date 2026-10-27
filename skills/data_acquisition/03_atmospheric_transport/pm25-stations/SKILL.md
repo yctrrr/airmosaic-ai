@@ -60,11 +60,13 @@ Do not copy, directly invoke or register old scripts. Future adapters need expli
 Follow the [storage contract](../../../../harness/storage-and-credentials.md) and [agent boundaries](../../../../harness/agent-boundaries.md):
 
 - Plans/mappings: `AIRMOSAIC_CONFIG_DIR/pm25-stations/`; member-configured roots are not automatically loaded. Public examples contain no personal absolute paths.
-- Downloads/derived outputs: `AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/pm25-stations/`, separating raw files, processed data, station metadata and quality summaries. Authorized reusable cache: `data_cache/pm25_stations/<source>/`.
-- Receipts: `AIRMOSAIC_LOCAL_WORKSPACE/runs/<run_id>/`; shared records contain logical sources, relative locations and sanitized states, not signed URLs or raw authentication logs.
+- Downloads/derived outputs: `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/03_atmospheric_transport/pm25-stations/`, separating raw files, processed data, station metadata and quality summaries. Authorized reusable cache: `data/03_atmospheric_transport/PM25_Stations/<source>/<version>/`.
+- Receipts: `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/records/<tool_id>/`; shared records contain logical sources, relative locations and sanitized states, not signed URLs or raw authentication logs.
 - Browser sessions, when required: `AIRMOSAIC_AUTH_DIR/browser_profiles/<source>/`; credentials stay in a secret manager. Three roots remain separate/outside Git; directory conventions are not OS isolation.
 - Remote inspection uses only authorized client/configuration/alias combinations, verifies the final compute endpoint and scopes directories. Do not read full SSH configurations, keys or unrelated logs, or process on management nodes. Personal connection mappings are excluded.
 
 ## Completion criteria
 
 Documentation tasks deliver source choices, gaps and adaptation plans without claiming acquisition. Acquisition/preparation tasks deliver authorized artifacts and evidence separately. Leave unresolved source, time, scope or permission questions explicit rather than guessing.
+
+Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.

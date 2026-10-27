@@ -15,3 +15,5 @@ Start from the [four-step workflow](../../harness/four-step-workflow.md):
 - [04: Integrated Impacts](04_integrated_impacts/README.md)
 
 Cross-stage capabilities are in [shared](shared/README.md). See the [methods library](../../methods/README.md) for each stage's methods.
+
+Follow the [asset contract](../../harness/assets.md): share data by stage, actual name and version; group results by project and run, referencing the same data across stages. Registration uses compute/check, human review and a fresh data version.

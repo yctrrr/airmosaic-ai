@@ -22,6 +22,10 @@
 
 ## 证据范围
 
+2026-10-27 按授权委派子 agent 完成空气质量可解释建模项目的服务器只读核对。先复核两份 SSH 技能与助手已同步并支持专用配置，再复用已有授权成功组合，于北京时间 15:42:06 验证到计算节点；不将其写成原默认别名已修复。只读取相关源码及说明，检查数据与产物目录元信息，没有读取原始数据正文、模型内容、凭据或真实 SSH 配置正文，没有修改远程文件或运行训练。
+
+`script/AQ_Bench.r` 的相对入口、数据字段、训练调参与解释职责、输出和适配项见[臭氧参考案例](pathways/references/air_quality_o3_reference_ZH.md)，能力与任务设计见[需求驱动建模](pathways/requirements_driven_model_building_ZH.md)。未修改源码快照及与服务器一致的 SHA256 只留仓库外审计目录。原始代码是复现参考，不是已通过数值验证的标准答案；缺失过滤与索引、划分标签、解释模型来源及背景等需正式适配。
+
 2026-10-26 核对 IHME GBD 官方页面、GBD 2023 原始方法论文及明确标注版本的 IHME 工具指南，补齐[来源与规范化](04_integrated_impacts/ihme_gbd.md)、[数据范围与下载计划](04_integrated_impacts/ihme_gbd_availability.md)和[首次获取向导](../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/references/first-download-guide.md)。本人完成页面前置操作后，通过 GBD 2023 / Global / All causes / All ages / Both / Deaths / Number / 2023 的单条网页查询及导出；北京时间 21:00 核对新结果，21:02 提交导出，21:05 确认取得 717 字节 ZIP，21:05:42 完成 1 条、18 列 CSV 内容检查。
 
 旧版工具指南只用于产品范围说明，不用于确认当前 ID 或下载成功。核对现有 manifest 与脚本后，明确独立风险及其他专题参数仍需适配；网页获取不等于 run-tool 已验证。未修改执行代码、绕过访问验证或读取既有原始数据与认证内容。原导出和任务引用保留成员工作区。

@@ -25,3 +25,5 @@ See the [method and handoff guidance](../../../../methods/02_emission_inventory/
 List conceptual methods only. Do not add concrete data, parameter values, project fields, script names, source fingerprints, commands or implementation code.
 
 Documentation maintenance and routine validation use only documents, interfaces and synthetic inputs. Real-data work requires an explicit scope. Keep personal paths and non-secret settings in CONFIG_DIR, credentials in a credential manager, and sessions in AUTH_DIR; data, configuration and authentication roots must be separate and outside Git. Reference skills do not automatically enforce paths or create sanitized run receipts.
+
+Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.

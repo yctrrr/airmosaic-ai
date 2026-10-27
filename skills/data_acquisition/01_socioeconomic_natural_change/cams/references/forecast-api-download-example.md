@@ -62,7 +62,7 @@ $forecastScript = Join-Path $env:AIRMOSAIC_CONFIG_DIR "copernicus/cams-forecast-
 & $forecastPython $forecastScript
 ```
 
-运行后保存到 `AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/cams/download.grib`。日志只记录状态与时间，不打印令牌、认证头或签名地址；中断后先查询原任务状态。
+运行后保存到 `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/01_socioeconomic_natural_change/cams/download.grib`。日志只记录状态与时间，不打印令牌、认证头或签名地址；中断后先查询原任务状态。
 
 ## 4. 解码与整理
 

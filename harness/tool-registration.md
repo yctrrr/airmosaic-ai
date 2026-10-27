@@ -45,7 +45,7 @@ Only the canonical entry is discovered as a skill; a translation is not another 
 
 Use `skill_id`, `layer` and repository-relative `skill_path` in the owning acquisition declaration. Records need the service's `dataset_id`, `name`, `domain`, `description`, plus clear access mode, provenance, coverage and logical cache root.
 
-Use `${AIRMOSAIC_LOCAL_WORKSPACE}`, never private mappings, actual cache manifests or credentials. Check listings, details, filters, uniqueness and references. Current loading does not enforce every dataset schema/duplicate-ID constraint automatically; do not claim otherwise.
+Use `${AIRMOSAIC_ASSETS_DIR}`, never private mappings, actual cache manifests or credentials. Check listings, details, filters, uniqueness and references. Current loading does not enforce every dataset schema/duplicate-ID constraint automatically; do not claim otherwise.
 
 The separate `catalog/datasets/` directory is also a detail-query fallback. Adding only a fallback record does not guarantee listing. Define the authoritative declaration for an ID and prevent drift.
 

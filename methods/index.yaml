@@ -1,10 +1,10 @@
 schema_version: 2
-reviewed_on: '2026-10-26'
+reviewed_on: '2026-10-27'
 purpose: Four-step documentation inventory and skill mapping; not a tool registry
   or workflow executor.
 execution_performed_this_review: true
 execution_scope: Three authorized API requests for ERA5 single levels, CAMS EAC4
-  surface PM2.5 and CAMS global PM2.5 forecasts, plus one public PM2.5 station daily CSV and hourly long-table check, and one PANGAEA homogenized release archive with a seven-day sample, and one WorldPop Global2 official GeoTIFF with metadata and raster checks, using newly downloaded files only.
+  surface PM2.5 and CAMS global PM2.5 forecasts, plus one public PM2.5 station daily CSV and hourly long-table check, and one PANGAEA homogenized release archive with a seven-day sample, and one WorldPop Global2 official GeoTIFF with metadata and raster checks. GBD and CSMAR each have one bounded browser export and content check. These acquisitions used newly downloaded files only. The model-building source audit did not read original data or run models.
 status_definitions:
   local_source: Source exists in a separate local project; no AirMosaic adapter.
   mixed: Some related AirMosaic tools exist; the whole workflow is not executable
@@ -40,7 +40,7 @@ methods:
   evidence: recent_task_record_and_current_template_guides
   source_projects:
   - statistical_yearbooks
-  - airmosaic_core
+  - airmosaic
   tool_ids:
   - yearbook_regional_sector_template
   - yearbook_product_output_template
@@ -58,7 +58,7 @@ methods:
   source_projects:
   - enterprise_disclosure
   - enterprise_database
-  - airmosaic_core
+  - airmosaic
   tool_ids:
   - csmar_browser_download
   - csmar_process_company_info
@@ -82,7 +82,7 @@ methods:
   status: registered_tools
   evidence: current_manifest_and_skill_guides
   source_projects:
-  - airmosaic_core
+  - airmosaic
   tool_ids:
   - worldpop_download
   - ihme_gbd_fetch_results
@@ -173,7 +173,7 @@ methods:
   evidence: health_method_guidance_and_existing_repository_templates
   source_projects:
   - cost_burden
-  - airmosaic_core
+  - airmosaic
   tool_ids:
   - pm25_hia_calculate_template
   - pm25_hia_visualize_template
@@ -189,7 +189,7 @@ methods:
   status: registered_tools
   evidence: current_manifest_and_skill_guides
   source_projects:
-  - airmosaic_core
+  - airmosaic
   tool_ids:
   - gcam_inspect_output_structure
   - gcam_extract_market_sector
@@ -211,7 +211,7 @@ methods:
   status: reference
   evidence: current_reference_skills_and_prior_static_checks
   source_projects:
-  - airmosaic_core
+  - airmosaic
   tool_ids:
   - mlr3_workflow_reference
   - timexer_workflow_reference
@@ -219,6 +219,30 @@ methods:
   applies_to:
   - 01_socioeconomic_natural_change
   - 02_emission_inventory
+  - 03_atmospheric_transport
+  - 04_integrated_impacts
+  skills:
+  - skills/model/machine_learning/mlr3/SKILL.md
+  - skills/model/machine_learning/timexer/SKILL.md
+- method_id: requirements_driven_model_building
+  category: model_use
+  title: 从研究要求构建模型与复现验证
+  document: pathways/requirements_driven_model_building.md
+  supporting_documents:
+  - pathways/requirements_driven_model_building_ZH.md
+  - pathways/references/air_quality_o3_reference.md
+  - pathways/references/air_quality_o3_reference_ZH.md
+  status: reference
+  evidence: user_requirements_and_read_only_remote_source_audit_2026_10_27
+  source_projects:
+  - airmosaic
+  - interpretable_air_quality
+  tool_ids:
+  - mlr3_workflow_reference
+  - timexer_workflow_reference
+  primary_stage: shared
+  applies_to:
+  - 01_socioeconomic_natural_change
   - 03_atmospheric_transport
   - 04_integrated_impacts
   skills:

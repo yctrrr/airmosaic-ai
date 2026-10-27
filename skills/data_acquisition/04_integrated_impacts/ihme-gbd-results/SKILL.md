@@ -39,7 +39,7 @@ Fix round, years, locations, cause/risk, ages, sexes, measure and metric before 
 
 ## Local paths and authentication
 
-Follow the [shared storage contract](../../../../harness/storage-and-credentials.md) and [execution guide](../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_LOCAL_WORKSPACE` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `output/<run_id>/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
+Follow the [shared storage contract](../../../../harness/storage-and-credentials.md) and [execution guide](../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_ASSETS_DIR` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `results/<project_id>/<run_id>/04_integrated_impacts/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
 
 ## Purpose
 
@@ -47,7 +47,7 @@ Use this skill for IHME GBD Results acquisition and local processing. The skill 
 
 ## Results and cache boundary
 
-`run-tool` writes `output/<run_id>/ihme_gbd_fetch_results/results.csv` and its JSON sidecar. Raw/processed health tables stay local. Publishing a validated export into `${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/gbd_health/` is a separate authorized operation, not automatic runner behavior. Do not commit exports, account identity or browser artifacts.
+`run-tool` writes `results/<project_id>/<run_id>/04_integrated_impacts/ihme_gbd_fetch_results/results.csv` and its JSON sidecar. Raw/processed health tables stay local. Publishing a validated export into `${AIRMOSAIC_ASSETS_DIR}/data/04_integrated_impacts/GBD_MortalityRates/<version>/` is a separate authorized operation, not automatic runner behavior. Do not commit exports, account identity or browser artifacts.
 
 ## Workflow
 
@@ -66,8 +66,8 @@ Use this skill for IHME GBD Results acquisition and local processing. The skill 
 3. **Search and check:** submit once, wait for fresh results and verify labels and row counts. Hand verification prompts to the user. Do not accept old rows retained during loading or after an error.
 4. **Submit the export:** click Download and select Both to retain IDs and names. This field option is separate from the Both-sexes selection. Review the scope and submit once.
 5. **Obtain the file:** follow the progress link in the success message. When ready, download the ZIP from the data-file link. The user may instead use the platform email link; the agent does not need mailbox access. Follow the expiry shown on the page.
-6. **Validate locally:** preserve the ZIP under workspace `output/<run_id>/ihme-gbd/raw/`. Check archive integrity, CSV fields, IDs/names, years, unique keys, row counts and numeric validity, including `lower ≤ val ≤ upper`. Store derived tables in `processed` and summaries in `quality`; do not publish raw files or task links.
-7. **Record times:** save actual query-check, export-submission, acquisition and validation times in `runs/<run_id>/`. Keep non-secret parameters in CONFIG_DIR and authentication in AUTH_DIR. Do not put private records in shared documentation.
+6. **Validate locally:** preserve the ZIP under workspace `results/<project_id>/<run_id>/04_integrated_impacts/ihme-gbd/raw/`. Check archive integrity, CSV fields, IDs/names, years, unique keys, row counts and numeric validity, including `lower ≤ val ≤ upper`. Store derived tables in `processed` and summaries in `quality`; do not publish raw files or task links.
+7. **Record times:** save actual query-check, export-submission, acquisition and validation times in `results/<project_id>/<run_id>/records/<tool_id>/`. Keep non-secret parameters in CONFIG_DIR and authentication in AUTH_DIR. Do not put private records in shared documentation.
 
 **Verified example:** the one-record website download passed content checks on 2026-10-26 at 21:05:42 Beijing time (UTC+8): a 717-byte ZIP containing one CSV, one record and 18 columns. See the [verified guide](references/first-download-guide.md) for times and IDs. The real run-tool call remains unverified pending task CDP ownership checks.
 
@@ -81,13 +81,13 @@ Keep the executable path mapping in `${AIRMOSAIC_CONFIG_DIR}`; keep the profile 
 
 ## Registered execution
 
-From the repository root, inspect `ihme_gbd_fetch_results`. [The public example](../../../../examples/run-tool/gbd.json) and the local `examples/gbd_mortality_rate_request.json` are parameter-only JSON. They contain historical example IDs, not a validated current request. Confirm version and all dimensions in the current page, then save a reviewed non-secret copy under CONFIG_DIR.
+From the repository root, inspect `ihme_gbd_fetch_results`. [The public example](../../../../config/examples/run-tool/gbd.json) and the local `examples/gbd_mortality_rate_request.json` are parameter-only JSON. They contain historical example IDs, not a validated current request. Confirm version and all dimensions in the current page, then save a reviewed non-secret copy under CONFIG_DIR.
 
 ```powershell
-python -m airmosaic_core.cli describe-tool ihme_gbd_fetch_results
+python -m airmosaic.cli describe-tool ihme_gbd_fetch_results
 $gbdParams = Join-Path $env:AIRMOSAIC_CONFIG_DIR "gbd-task.json"
-python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdParams --dry-run --allow-network --confirm-browser-session
-python -m airmosaic_core.cli run-tool ihme_gbd_fetch_results --params-file $gbdParams --allow-network --confirm-browser-session --timeout 300
+python -m airmosaic.cli run-tool ihme_gbd_fetch_results --project-id example_project --stage 04_integrated_impacts --params-file $gbdParams --dry-run --allow-network --confirm-browser-session
+python -m airmosaic.cli run-tool ihme_gbd_fetch_results --project-id example_project --stage 04_integrated_impacts --params-file $gbdParams --allow-network --confirm-browser-session --timeout 300
 ```
 
 Required caller fields: `years`, `locations`, `causes`, `ages`, `sexes`, `measures`, `metrics`; each is a comma-separated string of numeric IDs. Use `"ages":"10,11"`, not a JSON array or colon range. Optional fields include integer `port`, `version`, `population_group`, `wait_ms` and string `context`; `out` is automatically allocated. No field accepts cookies, passwords, profile paths or login tokens.
@@ -124,3 +124,5 @@ Use only `ihme_gbd_fetch_results` for this runner task. Browser authentication m
 - For overlapping raw/final years, join by `year, location, metric, endpoint, agegroup, sex` and confirm numeric values match raw IHME data within tolerance.
 - List combinations present in processed output but absent in raw IHME output.
 - Confirm no credentials, access tokens, cookies, or personal browser paths were written to reusable files.
+
+Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.

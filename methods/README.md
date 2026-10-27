@@ -18,7 +18,7 @@ Methods primarily explain scientific reasoning to researchers: purpose, suitabil
 | 04 Integrated Impacts | [Methods](04_integrated_impacts/README.md) | [Operations](../skills/data_acquisition/04_integrated_impacts/README.md) | [Operations](../skills/model/04_integrated_impacts/README.md) |
 | Cross-stage | [Shared methods](shared/README.md) | [Shared operations](../skills/data_acquisition/shared/README.md) | [Shared operations](../skills/model/shared/README.md) |
 
-Complete paths are explained in [pathways](pathways/README.md). Their executable definitions would belong in [core/workflows](../core/workflows/README.md), where no engine or executable path is implemented. The [four-stage guide](../harness/four-step-workflow.md) gives current operational status. Stages classify responsibilities, not mandatory execution order. Stage 02 remains conceptual methods only, with no concrete data, parameter values or implementation.
+Complete paths are explained in [pathways](pathways/README.md). Their executable definitions would belong in [workflows](../workflows/README.md), where no engine or executable path is implemented. The [four-stage guide](../harness/four-step-workflow.md) gives current operational status. Stages classify responsibilities, not mandatory execution order. Stage 02 remains conceptual methods only, with no concrete data, parameter values or implementation.
 
 ## Data explanations
 
@@ -62,3 +62,7 @@ The index contains 16 method topics. `document` identifies the main explanation 
 Choose a method and define scope and handoff requirements, then read the mapped skill and query actual tool IDs. For supported tools, prepare non-secret parameters and inspect dry-run `can_execute` and `blockers`. Real acquisition, data reading or computation needs a bounded task; routine documentation checks use interfaces and synthetic inputs.
 
 [index.yaml](index.yaml) maps documents, stages and skills; it is not a registry or executor. Data/results, non-secret settings and authentication remain in separate external roots. [Local-source examples](examples/local-sources.example.yaml) have empty roots and are not automatically loaded. See [sources](SOURCES.md) for dated evidence. Public source fingerprints are not data snapshots; emission methods contain no concrete implementation anchors.
+
+## Data and project results
+
+Follow the [asset contract](../harness/assets.md). Shared data outside Git uses `assets/data/<stage>/<dataset-name>/<version>/` with actual dataset names. Projects reference fixed versions in configuration without cross-stage duplication. New results use `assets/results/<project_id>/<run_id>/<stage>/<tool_id>/`, with records and temporary files inside that run. New calls provide project and stage together. Compute/check, obtain human review, then register selected data in a fresh version; never overwrite originals or existing versions. Personal settings, authentication and credentials remain separate. Existing files are not migrated; automatic approval and registration services are not implemented.

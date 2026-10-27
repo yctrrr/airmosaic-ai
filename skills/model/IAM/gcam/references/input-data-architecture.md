@@ -1,4 +1,4 @@
-﻿# GCAM Input Data Architecture
+# GCAM Input Data Architecture
 
 The complete pipeline from raw data to queriable output, so agents understand where values originate and how to trace them.
 

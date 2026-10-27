@@ -1,4 +1,4 @@
-﻿# Price Unit Interpretation
+# Price Unit Interpretation
 
 How to interpret GCAM price units, the difference between output-unit and price-unit, and sector-specific unit quirks in GCAM-China.
 

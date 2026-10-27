@@ -8,7 +8,7 @@
 
 This area explains complete research paths for people and research-design agents: purpose, applicability, scientific assumptions, inputs, sequence, handoffs and acceptance. Computer operations live in skills; shared execution lives in core. See the [layout](../../harness/project-layout.md).
 
-**Status: design references.** No pathway here is executable. The previous workflow entry and stage proposals have moved here as method documentation. They are not discovered skills, registered tools or runtime policies. The [core workflow area](../../core/workflows/README.md) has no implemented engine or executable path definitions.
+**Status: design references.** No pathway here is executable. The previous workflow entry and stage proposals have moved here as method documentation. They are not discovered skills, registered tools or runtime policies. The [core workflow area](../../workflows/README.md) has no implemented engine or executable path definitions.
 
 ## Research stages and handoffs
 
@@ -25,6 +25,8 @@ The historical YAML files preserve earlier candidates and interface ideas, not v
 
 ## How to use a path
 
+For user-specified model construction and reference-code validation, see [model building from research requirements](requirements_driven_model_building.md). It separates reusable capabilities, new task specifications and reproduction cases; it is a design reference rather than an implemented training path.
+
 1. Define the research question, scope, required result and permitted operations.
 2. Read relevant methods and use the [four-stage navigation](../../harness/four-step-workflow.md) to select existing skills.
 3. Query actual tool IDs and readiness; review input compatibility and missing manual preparation.
@@ -34,6 +36,10 @@ The historical YAML files preserve earlier candidates and interface ideas, not v
 
 ## Future validated paths
 
-A future human narrative may use `<pathway_id>.md` and its Chinese sibling. Its corresponding execution definition would live under `core/workflows/<pathway_id>/`. Keep scientific reasoning here and machine bindings there, with stable IDs and reciprocal links. A path must disclose its implementation, tested version, validation scope and manual parts. Do not add placeholder executable definitions for unsupported methods.
+A future human narrative may use `<pathway_id>.md` and its Chinese sibling. Its corresponding execution definition would live under `workflows/<pathway_id>/`. Keep scientific reasoning here and machine bindings there, with stable IDs and reciprocal links. A path must disclose its implementation, tested version, validation scope and manual parts. Do not add placeholder executable definitions for unsupported methods.
 
 Planning and reading a path grant no data access, software installation, network submission, model execution or publication authority. Use the [storage contract](../../harness/storage-and-credentials.md); original data and credentials are not needed for documentation maintenance.
+
+## Data and project results
+
+Follow the [asset contract](../../harness/assets.md). Shared data outside Git uses `assets/data/<stage>/<dataset-name>/<version>/` with actual dataset names. Projects reference fixed versions in configuration without cross-stage duplication. New results use `assets/results/<project_id>/<run_id>/<stage>/<tool_id>/`, with records and temporary files inside that run. New calls provide project and stage together. Compute/check, obtain human review, then register selected data in a fresh version; never overwrite originals or existing versions. Personal settings, authentication and credentials remain separate. Existing files are not migrated; automatic approval and registration services are not implemented.

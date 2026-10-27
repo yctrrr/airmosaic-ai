@@ -18,3 +18,5 @@ Activity, energy, technology, population and natural conditions. WorldPop and co
 Follow the [four-step workflow](../../../harness/four-step-workflow.md): confirm scope, choose methods, check prerequisites and hand off validated artifacts. See the [stage methods](../../../methods/01_socioeconomic_natural_change/README.md) and [shared methods](../../../methods/shared/README.md).
 
 Documentation maintenance reads descriptions and interfaces only, not original data. Actual execution depends on tool manifests; directories and SKILL.md do not register tools.
+
+Follow the [asset contract](../../../harness/assets.md): share data by stage, actual name and version; group results by project and run, referencing the same data across stages. Registration uses compute/check, human review and a fresh data version.

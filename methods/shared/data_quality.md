@@ -28,7 +28,7 @@
 6. **配准与比较**：确认相同物理量、时间支持和空间代表性，再做匹配；偏差订正或机器学习的参数只在训练集拟合。
 7. **交接说明**：覆盖、质量状态、已实施与未实施步骤、所用标准/文献版本、剩余限制。
 
-raw、processed、quality 分开放在工作区 `output/<run_id>/<source>/`；非秘密处理策略放 CONFIG_DIR，认证仍遵守[存储边界](../../harness/storage-and-credentials.md)。说明中的规则不是已经注册的处理工具或自动生效配置。
+raw、processed、quality 分开放在工作区 `results/<project_id>/<run_id>/<stage>/<source>/`；非秘密处理策略放 CONFIG_DIR，认证仍遵守[存储边界](../../harness/storage-and-credentials.md)。说明中的规则不是已经注册的处理工具或自动生效配置。
 
 ## 按数据类型进入
 
@@ -39,3 +39,5 @@ raw、processed、quality 分开放在工作区 `output/<run_id>/<source>/`；�
 - [IHME GBD](../04_integrated_impacts/ihme_gbd.md)：综合估计来源、轮次、数量/率/比例、年龄标化、病因层级和不确定区间；与人口分母分别配准。
 
 后续健康、企业及年鉴来源同样按此结构维护，采用各自的质量规则；PM2.5 的有效小时门槛不套用于其他产品。
+
+数据目录与人工复核入库遵循[资产规范](../../harness/assets_ZH.md)。每份数据只有一处主要归属，其他阶段引用固定版本；项目验收条件与通用质量规则分别维护。

@@ -1,4 +1,4 @@
-﻿# Yearbook Pipeline Blueprint
+# Yearbook Pipeline Blueprint
 
 ## Data Flow Overview
 

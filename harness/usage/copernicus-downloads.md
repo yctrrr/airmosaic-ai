@@ -41,9 +41,9 @@ ERA5-Land、ERA5 日统计、模式层和欧洲区域 CAMS 均须从各自产品
 | 内容 | 位置与管理 |
 |---|---|
 | 非秘密请求、个人路径和批次计划 | `AIRMOSAIC_CONFIG_DIR/copernicus/`，只显式读取本次文件 |
-| 新下载文件 | `AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/era5/` 或 `.../cams/` |
-| 验收后获准发布的缓存 | `AIRMOSAIC_LOCAL_WORKSPACE/data_cache/era5/` 或 `.../cams/`，不自动搬运 |
-| 本地请求/验收摘要 | `AIRMOSAIC_LOCAL_WORKSPACE/runs/<run_id>/`，不写认证秘密或签名链接 |
+| 新下载文件 | `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/<stage>/era5/` 或 `.../cams/` |
+| 验收后获准发布的缓存 | `AIRMOSAIC_ASSETS_DIR/data/01_socioeconomic_natural_change/ERA5/<version>/` 或 `.../cams/`，不自动搬运 |
+| 本地请求/验收摘要 | `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/records/<tool_id>/`，不写认证秘密或签名链接 |
 | 网页认证会话（如使用专用浏览器） | `AIRMOSAIC_AUTH_DIR/browser_profiles/copernicus-cds/` 或 `copernicus-ads/` |
 | API 访问令牌 | 优先由系统/团队秘密管理器保管，运行时按需传入；本人已配置的客户端秘密文件仅按明确授权由官方客户端内部复用，不写 CONFIG_DIR、AUTH_DIR 的明文秘密模板或仓库 |
 
@@ -110,7 +110,7 @@ def inside_git(path):
 # 只核对路径及文件元数据，不读取个人配置目录或认证目录的内容。
 try:
     roots = [Path(os.environ[name]).resolve(strict=True) for name in (
-        "AIRMOSAIC_CONFIG_DIR", "AIRMOSAIC_LOCAL_WORKSPACE", "AIRMOSAIC_AUTH_DIR"
+        "AIRMOSAIC_CONFIG_DIR", "AIRMOSAIC_ASSETS_DIR", "AIRMOSAIC_AUTH_DIR"
     )]
 except (KeyError, OSError, RuntimeError, ValueError):
     raise SystemExit("Three existing, explicitly configured roots are required") from None
@@ -128,7 +128,8 @@ if not isinstance(request, dict) or request.get("data_format") != "grib":
     raise SystemExit("This example requires a reviewed GRIB request")
 
 run_id = uuid4().hex
-target_dir = (workspace / "output" / run_id / source).resolve()
+project_id = "example_project"  # Replace with a reviewed non-identifying project label.
+target_dir = (workspace / "results" / project_id / run_id / "01_socioeconomic_natural_change" / source).resolve()
 if not target_dir.is_relative_to(workspace) or inside_git(target_dir):
     raise SystemExit("Output must remain inside workspace and outside Git checkouts")
 target_dir.mkdir(parents=True, exist_ok=False)

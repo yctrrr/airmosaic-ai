@@ -1,4 +1,4 @@
-﻿# Industry Code Matching Rules
+# Industry Code Matching Rules
 
 ## Code Lookup Table
 

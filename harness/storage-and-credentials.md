@@ -1,4 +1,4 @@
-# Workspace, personal configuration and credentials
+# Private assets, personal configuration and credentials
 
 <!-- README-I18N:START -->
 
@@ -14,14 +14,15 @@ Share code and rules; keep each member's data, actual paths and authentication s
 | Location | Contents | Boundary |
 |---|---|---|
 | Repository | Reusable code, documentation, schemas and public examples | No actual data, secrets or personal mappings |
-| `AIRMOSAIC_LOCAL_WORKSPACE` | Cache, new results, local receipts and temporary files | No authentication or credentials |
+| `AIRMOSAIC_ASSETS_DIR` | Private data, generated results, receipts and temporary files | Outside Git; no authentication or credentials |
+| Repository `assets/` | Declared synthetic inputs and reference results | Read-only examples; never a real-output destination |
 | `AIRMOSAIC_CONFIG_DIR` | Non-secret mappings and preferences | Explicitly reviewed/loaded, no secrets |
 | `AIRMOSAIC_AUTH_DIR` | Necessary member-owned browser state | Restricted access; no data or shared outputs |
 | External resource root | Authorized releases and existing external resources | Separate configured read-only input; no implied edit permission |
 
 All personal roots must exist separately outside Git. A shared input root may be read-only, but writable tasks remain member-specific. Repository `config/examples/` is different from personal configuration. Setting a variable does not launch a browser, authenticate, load configuration or authorize modification. `.env` is not automatically loaded.
 
-Within the workspace use `data_cache/<source>/`, `output/<run_id>/<tool>/`, `runs/<run_id>/` and `temp/<run_id>/`. Browser profiles use `browser_profiles/<service>/` in the authentication root. Directory labels are logical examples, not personal paths.
+Repository `assets/` contains only manifest-declared read-only toy fixtures. AIRMOSAIC_ASSETS_DIR maps actual data and generated outputs to a private root outside Git: data by stage/name/version, results by project/run/stage. Project and stage context is required. The old workspace layout and automatic old-cache fallback are removed. Browser profiles still use browser_profiles/<service>/ in AUTH_DIR. See the [asset contract](assets.md) for references and human review.
 
 ## 2. Setup and routine use
 

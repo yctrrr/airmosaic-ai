@@ -71,7 +71,7 @@ Reference skills may have no dataset declaration or tool ID. Do not invent eithe
 
 ## 6. Paths, credentials and data boundaries
 
-Use three separate existing roots outside Git: `AIRMOSAIC_LOCAL_WORKSPACE` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings, and `AIRMOSAIC_AUTH_DIR` for browser state. Credentials remain in a secret manager or an explicitly authorized official client's existing credential mechanism; do not inspect, copy or expose them. Keep model releases outside Git and use fresh task outputs.
+Use three separate existing roots outside Git: `AIRMOSAIC_ASSETS_DIR` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings, and `AIRMOSAIC_AUTH_DIR` for browser state. Credentials remain in a secret manager or an explicitly authorized official client's existing credential mechanism; do not inspect, copy or expose them. Keep model releases outside Git and use fresh task outputs.
 
 Documentation maintenance uses interfaces and synthetic inputs, not existing original data. Shared documents, examples and logs must exclude usernames, passwords, keys, cookies, private hosts, machine-specific absolute paths, signed URLs and personal task references. State what a reference workflow does not enforce; instructions are not OS isolation.
 
@@ -96,4 +96,4 @@ Documentation maintenance uses interfaces and synthetic inputs, not existing ori
 - Scan shared changes for private information, review findings without echoing secret values, and distinguish real secrets from synthetic fixtures.
 - When distributing a skill independently, include its needed resources or versioned public links; repository-relative harness/method links do not automatically travel with a copied folder.
 
-Human-facing complete pathways live in `methods/pathways/`; future executable definitions belong in `core/workflows/`. Neither a narrative nor a definition is a discovered skill or an implemented engine. See the [layout](project-layout.md).
+Human-facing complete pathways live in `methods/pathways/`; future executable definitions belong in `workflows/`. Neither a narrative nor a definition is a discovered skill or an implemented engine. See the [layout](project-layout.md).

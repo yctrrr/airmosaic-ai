@@ -60,11 +60,13 @@ description: 指导 PM2.5 站点获取与整理，区分官方、历史归档和
 遵守[统一存储约定](../../../../harness/storage-and-credentials_ZH.md)和 [代理 边界](../../../../harness/agent-boundaries_ZH.md)：
 
 - 非秘密计划/来源映射：`AIRMOSAIC_CONFIG_DIR/pm25-stations/`。来源根由成员配置，不自动加载；公开示例不用个人绝对路径。
-- 任务下载及派生产物：`AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/pm25-stations/`，原文件、处理结果、站点元数据和质控摘要分开；按授权发布的缓存使用 `data_cache/pm25_stations/<source>/`。
-- 运行与验收摘要：`AIRMOSAIC_LOCAL_WORKSPACE/runs/<run_id>/`；共享记录仅含逻辑来源、相对位置和脱敏状态，不写签名 URL 或原始认证日志。
+- 任务下载及派生产物：`AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/03_atmospheric_transport/pm25-stations/`，原文件、处理结果、站点元数据和质控摘要分开；按授权发布的缓存使用 `data/03_atmospheric_transport/PM25_Stations/<source>/<version>/`。
+- 运行与验收摘要：`AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/records/<tool_id>/`；共享记录仅含逻辑来源、相对位置和脱敏状态，不写签名 URL 或原始认证日志。
 - 如渠道需浏览器，会话位于 `AIRMOSAIC_AUTH_DIR/browser_profiles/<source>/`；密码/令牌 放秘密管理器。三根独立、位于 Git 外；目录约定不是 操作系统隔离证明。
 - 远程检查只复用已授权的客户端/配置/别名组合，核验最终计算端点并限定目录；不读完整 SSH 配置、密钥或无关任务日志，不将管理节点作为处理入口。技能不包含个人连接映射。
 
 ## 完成条件
 
 说明类任务交付来源选择、缺口及适配清单即可，不声称数据已下载或验收。获取/整理类任务分别交付其授权范围内的产物与验证证据；范围、来源、时间语义或权限无法确认时，保留待核实项，不推测结果。
+
+数据与结果按[资产目录与复核入库规范](../../../../harness/assets_ZH.md)管理：数据按阶段、实际名称和版本共享；结果按项目及运行归集。跨阶段引用同一数据，复用入库需人工批准。

@@ -16,7 +16,7 @@ description: 将工业年鉴地区行业和产品产量模板适配至授权工�
 
 ## 工作目录与认证
 
-遵守[存储约定](../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../harness/usage/run-tool.md)。仓库外的 `AIRMOSAIC_LOCAL_WORKSPACE`、`AIRMOSAIC_CONFIG_DIR`、`AIRMOSAIC_AUTH_DIR` 分别存数据结果、非秘密设置与任务参数、浏览器状态，三根相互独立且已存在。凭据留在秘密管理器，不读取或分享秘密、浏览器配置内容。命令从仓库根目录使用安装项目的解释器运行；可执行适配器自动分配任务输出。个人配置不自动加载，直接运行脚本绕过检查；执行器不是操作系统沙箱。
+遵守[存储约定](../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../harness/usage/run-tool.md)。仓库外的 `AIRMOSAIC_ASSETS_DIR`、`AIRMOSAIC_CONFIG_DIR`、`AIRMOSAIC_AUTH_DIR` 分别存数据结果、非秘密设置与任务参数、浏览器状态，三根相互独立且已存在。凭据留在秘密管理器，不读取或分享秘密、浏览器配置内容。命令从仓库根目录使用安装项目的解释器运行；可执行适配器自动分配任务输出。个人配置不自动加载，直接运行脚本绕过检查；执行器不是操作系统沙箱。
 
 ## 用途
 
@@ -156,3 +156,5 @@ region_names <- c(
 - `examples/workflow_national_sector.R`：全国行业适配示例，先核对输入与来源路径。
 - `examples/workflow_regional_sector.R`：地区行业示例，执行前审查路径与加载调用。
 - `examples/workflow_product_output.R`：产品产量示例，审查缺失规则与全部写入位置。
+
+数据与结果按[资产目录与复核入库规范](../../../../harness/assets_ZH.md)管理：数据按阶段、实际名称和版本共享；结果按项目及运行归集。跨阶段引用同一数据，复用入库需人工批准。

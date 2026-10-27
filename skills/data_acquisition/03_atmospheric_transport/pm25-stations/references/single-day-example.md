@@ -9,11 +9,11 @@
 ## 第一次使用：下载一天
 
 1. 打开来源说明，确认选择全国**站点**文件 `china_sites`，而非城市汇总 `china_cities`。
-2. 在成员自己的 `AIRMOSAIC_LOCAL_WORKSPACE` 下新建 `output/<run_id>/pm25-stations/raw/`；每次使用新任务目录，保留已有文件。
+2. 在成员自己的 `AIRMOSAIC_ASSETS_DIR` 下新建 `results/<project_id>/<run_id>/03_atmospheric_transport/pm25-stations/raw/`；每次使用新任务目录，保留已有文件。
 3. 打开[2024-01-01 单日站点 CSV](https://quotsoft.net/air/data/china_sites_20240101.csv)，另存为 `china_sites_20240101.csv` 到上述 raw 目录。其他日期替换为八位 `YYYYMMDD`，先核对归档范围。
 4. 检查下载成功、文件非空且不是错误 HTML。以 UTF-8 读取；Excel 使用“数据 → 从文本/CSV”，明确选 UTF-8，不直接用错误编码保存回原文件。
 5. 核对前三列 `date,hour,type`、其余站点编码、目标日期及实际小时标签；拒绝重复列、列数异常和重复 `(date,hour,type)` 行。
-6. 保存来源、取得时间、相对文件位置、字节数和 SHA-256。非秘密获取计划放 `AIRMOSAIC_CONFIG_DIR/pm25-stations/`，运行摘要放工作区的 `runs/<run_id>/record.json`。
+6. 保存来源、取得时间、相对文件位置、字节数和 SHA-256。非秘密获取计划放 `AIRMOSAIC_CONFIG_DIR/pm25-stations/`，运行摘要放工作区的 `results/<project_id>/<run_id>/records/<tool_id>/record.json`。
 
 程序调用使用同一个公开 HTTPS URL。本次验证使用 Python `requests`，一个 GET、连接超时 15 秒、读取超时 60 秒、响应上限 20 MiB、不自动跟随重定向或重试；保留 TLS 验证。HTTP 状态异常、HTML 或文件格式不符时终止，不能当成缺测值继续处理。当前没有注册下载工具 ID，不使用 `run-tool pm25-station-acquisition`。
 

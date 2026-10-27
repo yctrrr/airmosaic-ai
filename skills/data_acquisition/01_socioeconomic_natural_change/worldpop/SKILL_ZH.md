@@ -20,7 +20,7 @@ description: 通过 worldpop_download 发现并按需下载指定国家、年份
 
 ## 工作目录与认证
 
-遵守[存储约定](../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../harness/usage/run-tool.md)。仓库外三个已存在根目录相互独立：`AIRMOSAIC_LOCAL_WORKSPACE` 存数据与结果，`AIRMOSAIC_CONFIG_DIR` 存非秘密设置与任务参数，`AIRMOSAIC_AUTH_DIR` 存浏览器状态。密码和令牌留在秘密管理器，不读取或分享凭据、浏览器配置内容。命令从仓库根目录使用已安装解释器运行，默认输出为 `output/<run_id>/<tool_id>/`。个人配置不自动加载。直接运行脚本会绕过检查；执行器不是操作系统沙箱。
+遵守[存储约定](../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../harness/usage/run-tool.md)。仓库外三个已存在根目录相互独立：`AIRMOSAIC_ASSETS_DIR` 存数据与结果，`AIRMOSAIC_CONFIG_DIR` 存非秘密设置与任务参数，`AIRMOSAIC_AUTH_DIR` 存浏览器状态。密码和令牌留在秘密管理器，不读取或分享凭据、浏览器配置内容。命令从仓库根目录使用已安装解释器运行，默认输出为 `results/<project_id>/<run_id>/01_socioeconomic_natural_change/<tool_id>/`。个人配置不自动加载。直接运行脚本会绕过检查；执行器不是操作系统沙箱。
 
 ## 用途
 
@@ -36,19 +36,19 @@ description: 通过 worldpop_download 发现并按需下载指定国家、年份
 
 ## 结果与缓存
 
-执行器写入 `${AIRMOSAIC_LOCAL_WORKSPACE}/output/<run_id>/worldpop_download/`：元数据位于 `metadata/`，下载位于 `raw/<iso3>/<project>/<year>/`。运行记录位于 `runs/<run_id>/record.json`，不含原参数值和文件名。
+执行器写入 `${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/01_socioeconomic_natural_change/worldpop_download/`：元数据位于 `metadata/`，下载位于 `raw/<iso3>/<project>/<year>/`。运行记录位于 `results/<project_id>/<run_id>/records/<tool_id>/record.json`，不含原参数值和文件名。
 
-`${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/worldpop/` 是可复用缓存，不是执行器输出位置。发布缓存需另行授权；没有自动发布、栅格重采样或分区统计。
+`${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/WorldPop/<version>/` 是可复用缓存，不是执行器输出位置。发布缓存需另行授权；没有自动发布、栅格重采样或分区统计。
 
 ## 注册工具的调用
 
 从仓库根目录使用真实工具编号，先查声明。工具编号是命令参数，不是参数文件内的键。
 
 ```powershell
-python -m airmosaic_core.cli describe-tool worldpop_download
-python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --dry-run
+python -m airmosaic.cli describe-tool worldpop_download
+python -m airmosaic.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --dry-run
 # Discovery also uses the network and writes metadata; execute only within task authorization.
-python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/run-tool/worldpop.json --allow-network
+python -m airmosaic.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --allow-network
 ```
 
 公开示例：
@@ -94,3 +94,5 @@ python -m airmosaic_core.cli run-tool worldpop_download --params-file examples/r
 
 - `references/worldpop-api.md`：接口地址和元数据字段。
 - `references/privacy-redaction-rules.md`：脱敏检查。
+
+数据与结果按[资产目录与复核入库规范](../../../../harness/assets_ZH.md)管理：数据按阶段、实际名称和版本共享；结果按项目及运行归集。跨阶段引用同一数据，复用入库需人工批准。

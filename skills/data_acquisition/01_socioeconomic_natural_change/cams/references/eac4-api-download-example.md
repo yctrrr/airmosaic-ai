@@ -67,7 +67,7 @@ $camsScript = Join-Path $env:AIRMOSAIC_CONFIG_DIR "copernicus/cams-eac4-download
 & $camsPython $camsScript
 ```
 
-运行后文件保存到 `AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/cams/download.grib`。日志记录状态和时间，不打印令牌、认证头、客户端对象或签名地址。失败或中断后先查询原任务状态。
+运行后文件保存到 `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/01_socioeconomic_natural_change/cams/download.grib`。日志记录状态和时间，不打印令牌、认证头、客户端对象或签名地址。失败或中断后先查询原任务状态。
 
 ## 5. 内容验收
 

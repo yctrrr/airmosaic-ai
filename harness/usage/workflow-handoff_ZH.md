@@ -20,4 +20,4 @@
 
 区分方法选择、工程运行和科学验收。明确基准与干预情景、允许变化的条件和共同有效范围；来源可追溯不能单独证明因果识别。单独列出缺失项和未运行检查。
 
-已支持工具在 `${AIRMOSAIC_LOCAL_WORKSPACE}/runs/<run_id>/record.json` 记录允许的脱敏元数据；它不是完整跨阶段来源链或科学校验服务。未适配流程不自动获得执行器保护。参见[路径说明](../../methods/pathways/README_ZH.md)、[编排实现状态](../../core/workflows/README_ZH.md)、[四步流程](../four-step-workflow.md)和[单工具执行](run-tool.md)。
+已支持工具在 `${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/records/<tool_id>/record.json` 记录允许的脱敏元数据；它不是完整跨阶段来源链或科学校验服务。未适配流程不自动获得执行器保护。参见[路径说明](../../methods/pathways/README_ZH.md)、[编排实现状态](../../workflows/README_ZH.md)、[四步流程](../four-step-workflow.md)和[单工具执行](run-tool.md)。

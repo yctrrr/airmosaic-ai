@@ -67,4 +67,8 @@
 
 本轮及常规方法维护只使用说明、接口定义和合成输入，不读取、复制或运行原始数据。真实数据任务须另有明确范围。数据、非秘密个人配置、认证分别位于 Git 外的 LOCAL_WORKSPACE、CONFIG_DIR、AUTH_DIR；模型源码/发行包也在 Git 外。详见[存储约定](storage-and-credentials.md)和 [agent 边界](agent-boundaries.md)。
 
-布局迁移后，完整路径说明见[方法路径](../methods/pathways/README_ZH.md)，历史阶段 YAML 归入其中参考目录，人工交接见[交接指南](usage/workflow-handoff_ZH.md)。`core/workflows/` 尚无执行引擎或已实现路径；目录迁移不改变本页的能力边界。
+布局迁移后，完整路径说明见[方法路径](../methods/pathways/README_ZH.md)，历史阶段 YAML 归入其中参考目录，人工交接见[交接指南](usage/workflow-handoff_ZH.md)。`workflows/` 尚无执行引擎或已实现路径；目录迁移不改变本页的能力边界。
+
+## 数据与结果位置
+
+四步数据统一存放在 Git 外 `assets/data/<stage>/<实际数据名称>/<版本>/`，跨阶段引用同一版本。结果先按项目、运行归集，再按阶段保存到 `assets/results/<project_id>/<run_id>/<stage>/`。计算与检查后由人类复核，选定数据再登记入库，见[资产规范](assets_ZH.md)。第二步仍只列方法，空目录不代表已有数据或计算能力。

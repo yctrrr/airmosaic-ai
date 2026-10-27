@@ -1,4 +1,4 @@
-﻿# Sector Naming Conventions in GCAM-China
+# Sector Naming Conventions in GCAM-China
 
 Internal names, mappings, and conventions that agents must know before writing queries or modifying configurations.
 

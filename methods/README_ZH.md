@@ -18,7 +18,7 @@
 | 04 综合影响评估 | [方法](04_integrated_impacts/README.md) | [操作](../skills/data_acquisition/04_integrated_impacts/README_ZH.md) | [操作](../skills/model/04_integrated_impacts/README_ZH.md) |
 | 跨阶段 | [共享方法](shared/README.md) | [共享操作](../skills/data_acquisition/shared/README_ZH.md) | [共享操作](../skills/model/shared/README_ZH.md) |
 
-完整路径见[路径说明](pathways/README_ZH.md)，其执行定义未来归入[核心工作流](../core/workflows/README_ZH.md)，当前未实现引擎或可执行路径。[四步指南](../harness/four-step-workflow.md)提供实际操作状态。阶段划分职责，不强制执行顺序。第二步继续仅列概念方法，不含具体数据、参数值或实现。
+完整路径见[路径说明](pathways/README_ZH.md)，其执行定义未来归入[核心工作流](../workflows/README_ZH.md)，当前未实现引擎或可执行路径。[四步指南](../harness/four-step-workflow.md)提供实际操作状态。阶段划分职责，不强制执行顺序。第二步继续仅列概念方法，不含具体数据、参数值或实现。
 
 ## 数据说明
 
@@ -62,3 +62,7 @@
 选择方法并明确范围和交接条件，再阅读映射技能、查询真实工具编号。已支持工具准备非秘密参数并检查预检返回的 `can_execute` 与 `blockers`。真实获取、数据读取和计算需要明确任务范围；常规说明检查只用接口与合成输入。
 
 [index.yaml](index.yaml)关联文档、阶段与技能，不是注册表或执行器。数据结果、非秘密设置和认证继续分别存放于外部根目录。[本地来源示例](examples/local-sources.example.yaml)根路径为空，不会自动加载。[来源说明](SOURCES.md)保存有日期的依据。公开源码指纹不是数据快照，排放方法不保留具体实现锚点。
+
+## 数据与项目结果
+
+数据和项目结果按[资产规范](../harness/assets_ZH.md)管理。Git 外共享 `assets/data/<stage>/<dataset-name>/<version>/`，数据目录使用实际名称；项目按配置引用固定版本，跨阶段不复制。新结果保存到 `assets/results/<project_id>/<run_id>/<stage>/<tool_id>/`，运行记录和临时文件留在该批次内。新调用同时提供项目和阶段。计算与检查 → 人工复核 → 将选定数据登记到新版本；不覆盖原始数据或既有版本。个人配置、认证及凭据继续独立管理。旧文件不迁移，自动审批和入库服务尚未实现。

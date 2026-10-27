@@ -5,7 +5,7 @@
 ## 首次获取
 
 1. 打开 [PANGAEA 数据 DOI 页](https://doi.pangaea.de/10.1594/PANGAEA.917557)，核对标题、2015–2019、作者、CC BY 4.0 和约 2.8 MB 发布大小，不需注册或 API 凭据。
-2. 在工作区创建本次 `output/<run_id>/pm25-homogenized/raw/`；非秘密计划放 `AIRMOSAIC_CONFIG_DIR/pm25-stations/`，记录放工作区 `runs/<run_id>/record.json`。所有路径位于 Git 外，使用新任务目录。
+2. 在工作区创建本次 `results/<project_id>/<run_id>/03_atmospheric_transport/pm25-homogenized/raw/`；非秘密计划放 `AIRMOSAIC_CONFIG_DIR/pm25-stations/`，记录放工作区 `results/<project_id>/<run_id>/records/<tool_id>/record.json`。所有路径位于 Git 外，使用新任务目录。
 3. 点击 **Download dataset**，将 `PM2.5_data_in_China.zip` 保存在 raw 目录。Python HTTP 客户端可使用该按钮实际指向的[公开发布文件](https://store.pangaea.de/Publications/Bai-etal_2020/PM2.5_data_in_China.zip)；取得前核对 DOI 页，链接变化不能随意改源。
 4. 检查 HTTP 状态、ZIP 格式、文件大小、SHA-256、成员列表及 CRC。单包检查使用下载上限 10 MiB、解压后总量上限 50 MiB，不执行包内代码，不向仓库解压或覆盖既有文件。
 5. 优先用标准库 `zipfile` 直接打开目标成员、`io.TextIOWrapper(..., encoding="utf-8-sig")` 读取文本；核对说明和表头后按空白分隔，不对所有文件套 CSV 解析器。

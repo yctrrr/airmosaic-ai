@@ -5,12 +5,12 @@
 ## 1. 找工具
 
 ```sh
-python -m airmosaic_core.cli list-tools
-python -m airmosaic_core.cli list-tools --category data_acquisition
-python -m airmosaic_core.cli list-tools --skill worldpop
-python -m airmosaic_core.cli list-tools --query "gcam extract"
-python -m airmosaic_core.cli list-tools --status ready
-python -m airmosaic_core.cli list-tools --format json
+python -m airmosaic.cli list-tools
+python -m airmosaic.cli list-tools --category data_acquisition
+python -m airmosaic.cli list-tools --skill worldpop
+python -m airmosaic.cli list-tools --query "gcam extract"
+python -m airmosaic.cli list-tools --status ready
+python -m airmosaic.cli list-tools --format json
 ```
 
 默认按 `core`、`data_acquisition`、`model` 分组，显示稳定 ID、名称、当前检查状态、入口、依赖、登录要求和下一步。`--query` 在 ID、标题、描述和 skill 名称中按空白拆词，全部词均需匹配；不进行网络搜索。
@@ -20,9 +20,9 @@ Agent 使用 `--format json` 获取结构化结果。筛选无结果返回空数
 ## 2. 查详情与检查条件
 
 ```sh
-python -m airmosaic_core.cli describe-tool worldpop_download
-python -m airmosaic_core.cli describe-tool gcam_extract_market_sector --format table
-python -m airmosaic_core.cli check-tool ihme_gbd_fetch_results
+python -m airmosaic.cli describe-tool worldpop_download
+python -m airmosaic.cli describe-tool gcam_extract_market_sector --format table
+python -m airmosaic.cli check-tool ihme_gbd_fetch_results
 ```
 
 详情包括声明源、实现/登记状态、原始入口、参数 schema 与映射、依赖、非秘密配置名、认证方式、副作用和分类说明。`invocation.tokens` 只给原命令前缀，调用者还须提供所需参数；它不是可直接执行的完整命令，也不是一个执行授权。
@@ -56,14 +56,14 @@ python -m airmosaic_core.cli check-tool ihme_gbd_fetch_results
 - 输出只展示配置名、逻辑资源路径、依赖名和受控错误，不展示解释器位置、PATH 命中位置、实际数据目录或环境变量值。
 - 为避免探测时跟随网络或链接，拒绝 UNC、Windows 网络/未知驱动器、检测到的 Linux 网络/FUSE 挂载、`..` 和符号链接/reparse 路径；可执行程序不隐式搜索当前目录。合法本地链接也需要另行确认，不自动当成可用。macOS 和其他平台的挂载识别尚未实测；这些前置检查不构成操作系统级隔离。
 - 不打开 cookie、token、profile 内容或私人配置；不把 profile 目录存在作为已登录证据；不连 CDP 或网站检查账号。
-- 查询不调用原脚本或任意 shell，不写状态缓存。需要执行时使用独立的 [run-tool](run-tool.md)，按 `execution_supported` / `runner_tokens` 判断适配器是否已实现；查询的 `ready` 不是运行授权。MCP 和自动登录代理尚未实现。
+- 查询不调用原脚本或任意 shell，不写状态缓存。需要执行时使用独立的 [run-tool](run-tool.md)，按 `execution_supported` / `runner_tokens` 判断适配器是否已实现；查询的 `ready` 不是运行授权。本地 MCP 已实现并沿用这些声明，见[MCP 指南](mcp_ZH.md)；自动登录代理尚未实现。
 
 完整管理规则见[工作区与凭据](../storage-and-credentials.md)。查询前置检查不能代替原脚本执行时的路径约束和结果验收。
 
 ## 5. SDK
 
 ```python
-from airmosaic_core.services import ToolRegistryService
+from airmosaic.services import ToolRegistryService
 
 registry = ToolRegistryService()
 tools = registry.list_tools(category="data_acquisition", query="worldpop")

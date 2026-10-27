@@ -16,7 +16,7 @@ description: 通过已注册 R 工具检查 GCAM 输出节点和单位；查询�
 
 ## 工作目录与认证
 
-遵守[共享存储约定](../../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../../harness/usage/run-tool.md)。仓库外三个已存在根目录相互独立：`AIRMOSAIC_LOCAL_WORKSPACE` 存数据与结果，`AIRMOSAIC_CONFIG_DIR` 存非秘密设置和显式任务参数，`AIRMOSAIC_AUTH_DIR` 存浏览器状态。密码和令牌留在秘密管理器，不读取或分享凭据及浏览器配置内容。命令从仓库根目录使用安装项目的解释器运行；执行器自动分配 `output/<run_id>/<tool_id>/`，没有需要时省略输出参数。个人配置不自动加载。直接运行脚本会绕过检查；执行器不是操作系统沙箱。
+遵守[共享存储约定](../../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../../harness/usage/run-tool.md)。仓库外三个已存在根目录相互独立：`AIRMOSAIC_ASSETS_DIR` 存数据与结果，`AIRMOSAIC_CONFIG_DIR` 存非秘密设置和显式任务参数，`AIRMOSAIC_AUTH_DIR` 存浏览器状态。密码和令牌留在秘密管理器，不读取或分享凭据及浏览器配置内容。命令从仓库根目录使用安装项目的解释器运行；执行器自动分配 `results/<project_id>/<run_id>/<stage>/<tool_id>/`，没有需要时省略输出参数。个人配置不自动加载。直接运行脚本会绕过检查；执行器不是操作系统沙箱。
 
 ## 用途
 
@@ -68,12 +68,12 @@ collection()/scenario/world/*[@type="region" and @name="China"]
 
 ## 统一执行边界
 
-使用[公开参数](../../../../../examples/run-tool/gcam-inspect.json)及项目解释器：
+使用[公开参数](../../../../../config/examples/run-tool/gcam-inspect.json)及项目解释器：
 
 ```powershell
-python -m airmosaic_core.cli describe-tool gcam_inspect_output_structure
-python -m airmosaic_core.cli run-tool gcam_inspect_output_structure --params-file examples/run-tool/gcam-inspect.json --dry-run
-python -m airmosaic_core.cli run-tool gcam_inspect_output_structure --params-file examples/run-tool/gcam-inspect.json --timeout 600
+python -m airmosaic.cli describe-tool gcam_inspect_output_structure
+python -m airmosaic.cli run-tool gcam_inspect_output_structure --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/gcam-inspect.json --dry-run
+python -m airmosaic.cli run-tool gcam_inspect_output_structure --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/gcam-inspect.json --timeout 600
 ```
 
 Rscript 使用 `--vanilla`、任务专用主目录和临时目录，不加载个人启动、浏览器配置或包库设置。data.table 和 rgcam 安装在所选 R 的标准库；Java 使用 rgcam 类路径，兼容性仍需核对。查询和预检不启动 R，因此不证明包能加载；实际执行先检查命名空间，失败记录 `r_dependency_unavailable`。
@@ -88,3 +88,5 @@ Rscript 使用 `--vanilla`、任务专用主目录和临时目录，不加载个
 - `references/xquery-csv-templates.md`：查询模板。
 - `references/output-price-quantity-units.md`：价格与数量单位兼容性。
 - `references/province-region-mapping.md`：省份与全国节点映射。
+
+数据与结果按[资产目录与复核入库规范](../../../../../harness/assets_ZH.md)管理：数据按阶段、实际名称和版本共享；结果按项目及运行归集。跨阶段引用同一数据，复用入库需人工批准。

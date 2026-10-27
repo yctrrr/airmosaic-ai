@@ -10,12 +10,12 @@
 ## 1. 查询入口和执行状态
 
 ```powershell
-python -m airmosaic_core.cli list-tools --category model --query mlr3
-python -m airmosaic_core.cli describe-tool mlr3_workflow_reference
-python -m airmosaic_core.cli check-tool mlr3_workflow_reference
-python -m airmosaic_core.cli list-tools --category model --query TimeXer
-python -m airmosaic_core.cli describe-tool timexer_workflow_reference
-python -m airmosaic_core.cli check-tool timexer_workflow_reference
+python -m airmosaic.cli list-tools --category model --query mlr3
+python -m airmosaic.cli describe-tool mlr3_workflow_reference
+python -m airmosaic.cli check-tool mlr3_workflow_reference
+python -m airmosaic.cli list-tools --category model --query TimeXer
+python -m airmosaic.cli describe-tool timexer_workflow_reference
+python -m airmosaic.cli check-tool timexer_workflow_reference
 ```
 
 这两个条目均为 reference / catalogued，状态 not_executable，execution_supported 为 false。查询只展示说明和静态依赖条件，不加载 R/PyTorch、不安装包、不读取个人数据。它们没有 run-tool 训练、预测、调参命令；R 包 API 或上游 run.py 不能当作 AirMosaic 工具 ID。reference 状态也不证明列出的模型依赖版本兼容。
@@ -40,8 +40,8 @@ python -m airmosaic_core.cli check-tool timexer_workflow_reference
 
 | 内容 | 位置与管理 |
 |---|---|
-| 已授权输入 | `${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/` 或既有 `output/`；原始数据保持不变 |
-| 新模型/预测/本地记录 | 新的 `output/<run_id>/mlr3_workflow/` 或 `output/<run_id>/timexer_workflow/`；目录标签不是工具 ID，不复用旧结果覆盖 |
+| 已授权输入 | `${AIRMOSAIC_ASSETS_DIR}/data/` 或显式引用的 `results/`；原始数据保持不变 |
+| 新模型/预测/本地记录 | 新的 `results/<project_id>/<run_id>/<stage>/mlr3_workflow/` 或 `results/<project_id>/<run_id>/<stage>/timexer_workflow/`；目录标签不是工具 ID，不复用旧结果覆盖 |
 | TimeXer 外部源码 | 仓库外的独立源码目录，以本地 `TIMEXER_SOURCE_DIR` 表示；不是自动加载配置，不在此运行产生结果 |
 | 非秘密个人配置 | `${AIRMOSAIC_CONFIG_DIR}`；显式读取本次需要的路径/参数，不扫描全目录 |
 | 登录状态/凭据 | 本地建模不需要登录；AUTH_DIR 的会话内容不参与建模；密码/token 留在凭据管理器 |
@@ -50,6 +50,8 @@ python -m airmosaic_core.cli check-tool timexer_workflow_reference
 上述三类根须独立且位于 Git 外，详见[存储约定](../storage-and-credentials.md)。这份参考指南不执行路径预检、环境隔离或自动脱敏；实际任务代码应实现相应检查。模型对象与完整 R 会话记录可能携带训练数据、身份字段、后端或路径，不能默认作为可共享附件。
 
 ## 5. 跟踪参考项目与后续接入
+
+若用户提供数据和建模要求，先按[需求驱动的工作流说明](../../methods/pathways/requirements_driven_model_building_ZH.md)形成数据、模型、验证与预算契约。既有代码用作版本化复现案例，首个[臭氧回归参考](../../methods/pathways/references/air_quality_o3_reference_ZH.md)列出了源入口、输入、产物和适配风险；该说明不新增训练工具或自动执行任意生成代码。
 
 [mlr3 跟踪记录](../../skills/model/machine_learning/mlr3/UPSTREAM.md)和 [TimeXer 跟踪记录](../../skills/model/machine_learning/timexer/UPSTREAM.md)分别记录参考仓库、核对 SHA/日期、许可核对、采用内容及更新步骤。跟踪是按需复核，没有自动拉取、安装或定时任务。上游版本或验证报告不能替代本机运行证据。
 

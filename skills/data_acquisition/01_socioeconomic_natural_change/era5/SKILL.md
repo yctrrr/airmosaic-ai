@@ -43,7 +43,9 @@ Use its request with `selection = "era5-single-levels"` and `credential_mode = "
 
 ## Boundaries
 
-- Requests: `AIRMOSAIC_CONFIG_DIR/copernicus/`; downloads: `AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/era5/`; validated cache: `data_cache/era5/`. Dedicated browser sessions may use `AIRMOSAIC_AUTH_DIR/browser_profiles/copernicus-cds/`. Keep the three roots separate and outside Git.
+- Requests: `AIRMOSAIC_CONFIG_DIR/copernicus/`; downloads: `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/01_socioeconomic_natural_change/era5/`; validated cache: `data/01_socioeconomic_natural_change/ERA5/<version>/`. Dedicated browser sessions may use `AIRMOSAIC_AUTH_DIR/browser_profiles/copernicus-cds/`. Keep the three roots separate and outside Git.
 - Do not scan, open, copy or create token-bearing `.cdsapirc` files. An explicitly authorized official client may internally reuse the user's existing file; this does not permit agent inspection or migration into workspace, non-secret configuration or Git. Do not put tokens in JSON, command lines or logs. The runner does not load credentials on the user's behalf.
 - ERA5 acquisition does not convert GEOS-Chem meteorological forcing; check version-specific input contracts separately.
 - Matching [PM2.5 stations](../../03_atmospheric_transport/pm25-stations/SKILL.md) is a separately scoped preparation task. Check station time zone, averaging, spatial matching and representativeness. Meteorological grids are not pollution observations. Primary stage is 01, referenced by 03/04 without duplicating the workflow.
+
+Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.

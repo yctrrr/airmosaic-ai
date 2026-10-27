@@ -28,7 +28,9 @@ TimeXer forecasts target time series using exogenous variables. This directory t
 
 ## Paths and credentials
 
-- Inputs remain in `${AIRMOSAIC_LOCAL_WORKSPACE}/data_cache/` or authorized existing `output/`; new results use `output/<run_id>/timexer_workflow/`. The label is not a tool ID.
+For turning a user requirement into a modeling task and keeping source-code reproduction separate from new model construction, see [requirements-driven model building](../../../../methods/pathways/requirements_driven_model_building.md). Select this forecasting method only when it fits the task; the ozone reference case there uses a different implementation.
+
+- Inputs remain in `${AIRMOSAIC_ASSETS_DIR}/data/` or explicitly referenced `results/`; new results use `results/<project_id>/<run_id>/<stage>/timexer_workflow/`. The label is not a tool ID.
 - Upstream source stays outside this repository, represented by local `TIMEXER_SOURCE_DIR`. It is not automatically loaded and grants no access to adjacent directories.
 - Keep mappings/non-secret parameters in `AIRMOSAIC_CONFIG_DIR`. Local modeling requires no login or `AIRMOSAIC_AUTH_DIR` access. Data-portal acquisition follows its own workflow; tokens remain in a credential manager.
 - Raw scripts do not inherit runner path preflight, timeout cleanup, environment isolation or sanitized receipts. Keep artifacts, logs, weights and row-level predictions in local task directories. Do not train from the shared repository root.
@@ -38,3 +40,5 @@ See the [storage contract](../../../../harness/storage-and-credentials.md), [age
 ## Sources and validation
 
 [Upstream tracking](UPSTREAM.md) records the paper, pinned commit, license review and update procedure. Current evidence covers source/parameter review and documentation/syntax checks, without PyTorch installation, data download or training. Do not report this as a successful model run.
+
+Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.

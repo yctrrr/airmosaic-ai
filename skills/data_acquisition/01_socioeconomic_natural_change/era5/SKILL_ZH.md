@@ -43,7 +43,9 @@ description: 指导通过官方网页或接口获取 ERA5，核对产品、批�
 
 ## 边界
 
-- 非秘密请求在 `AIRMOSAIC_CONFIG_DIR/copernicus/`；下载在 `AIRMOSAIC_LOCAL_WORKSPACE/output/<run_id>/era5/`；已验收缓存在 `data_cache/era5/`。如使用专用浏览器，会话在 `AIRMOSAIC_AUTH_DIR/browser_profiles/copernicus-cds/`。三类根分开、位于 Git 外。
+- 非秘密请求在 `AIRMOSAIC_CONFIG_DIR/copernicus/`；下载在 `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/01_socioeconomic_natural_change/era5/`；已验收缓存在 `data/01_socioeconomic_natural_change/ERA5/<version>/`。如使用专用浏览器，会话在 `AIRMOSAIC_AUTH_DIR/browser_profiles/copernicus-cds/`。三类根分开、位于 Git 外。
 - 不扫描、打开、复制或创建含令牌的 `.cdsapirc`。本人已配置且明确授权复用时，允许官方客户端在本机内部读取该文件；这不授权 代理 查看其内容，也不允许将其迁入工作区、个人非秘密配置根或仓库。不把令牌放入 JSON、命令行或日志。当前 runner 不会代为加载凭据。
 - ERA5 下载不是 GEOS-Chem 气象驱动转换；模型可用性必须按版本和输入契约另行核对。
 - 与 [PM2.5 站点记录](../../03_atmospheric_transport/pm25-stations/SKILL_ZH.md)匹配属于后续单独限定范围的整理任务；先核对站点时区、平均时段、空间匹配和代表性，不能把气象网格当作污染观测。主阶段为 01，03/04 引用，不复制流程。
+
+数据与结果按[资产目录与复核入库规范](../../../../harness/assets_ZH.md)管理：数据按阶段、实际名称和版本共享；结果按项目及运行归集。跨阶段引用同一数据，复用入库需人工批准。
