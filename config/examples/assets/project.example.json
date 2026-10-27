@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "example_project",
+  "inputs": {
+    "shared_input": {
+      "asset_id": "example_dataset",
+      "version": "v1",
+      "path": "data/01_socioeconomic_natural_change/ExampleDataset/v1/sample.csv",
+      "used_in_stages": ["01_socioeconomic_natural_change", "04_integrated_impacts"]
+    }
+  },
+  "requirements": "Define the task before execution.",
+  "acceptance_conditions": ["Check the agreed input and output contract."]
+}

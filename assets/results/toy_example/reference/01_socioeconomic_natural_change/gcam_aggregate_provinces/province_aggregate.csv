@@ -1,0 +1,2 @@
+scenario,source,sector,year,weighted_price,quantity_sum,province_count
+synthetic,marketplace,example_sector,2020,13.333333333333334,3,2

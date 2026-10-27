@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "asset_id": "example_dataset",
+  "name": "ExampleDataset",
+  "version": "v1",
+  "primary_stage": "01_socioeconomic_natural_change",
+  "applies_to": ["01_socioeconomic_natural_change", "04_integrated_impacts"],
+  "path": "data/01_socioeconomic_natural_change/ExampleDataset/v1/",
+  "data_type": "processed",
+  "source_project_id": "example_project",
+  "source_run_id": null,
+  "approved_use": null,
+  "review_record": null,
+  "files": []
+}

@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "files": {
+    "data/01_socioeconomic_natural_change/ExampleMarketRows/v1/rows.csv": "7de9f9e50a845d522b0fe4702b024450a3631624b927709e5979b0e0c6c2981e",
+    "results/toy_example/reference/01_socioeconomic_natural_change/gcam_aggregate_provinces/province_aggregate.csv": "849b4c8a92a0587262b6ccdec726f67b518109b9ba1570371967eed8139ca46e"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "project_id": "example_project",
+  "run_id": null,
+  "selected_files": [],
+  "validation_summary": null,
+  "decision": "pending",
+  "approved_use": null,
+  "approved_at": null,
+  "destination": null
+}

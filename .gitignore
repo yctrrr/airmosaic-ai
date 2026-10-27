@@ -24,6 +24,8 @@ coverage/
 docs/
 
 # Local data and outputs
+assets/data/
+assets/results/
 data/
 data_cache/
 outputs/
@@ -50,3 +52,31 @@ temp/
 *.duckdb
 *.sqlite
 *.zip
+
+# Public assets are an explicit allowlist; arbitrary local files remain ignored.
+/assets/**
+!/assets/data/
+!/assets/results/
+!/assets/data/01_socioeconomic_natural_change/
+!/assets/data/02_emission_inventory/
+!/assets/data/03_atmospheric_transport/
+!/assets/data/04_integrated_impacts/
+!/assets/results/toy_example/
+!/assets/data/01_socioeconomic_natural_change/ExampleMarketRows/
+!/assets/results/toy_example/reference/
+!/assets/data/01_socioeconomic_natural_change/ExampleMarketRows/v1/
+!/assets/results/toy_example/reference/01_socioeconomic_natural_change/
+!/assets/results/toy_example/reference/01_socioeconomic_natural_change/gcam_aggregate_provinces/
+!/assets/README.md
+!/assets/README_ZH.md
+!/assets/toy-manifest.json
+!/assets/data/01_socioeconomic_natural_change/ExampleMarketRows/v1/rows.csv
+!/assets/results/toy_example/reference/01_socioeconomic_natural_change/gcam_aggregate_provinces/province_aggregate.csv
+!/assets/data/01_socioeconomic_natural_change/README.md
+!/assets/data/01_socioeconomic_natural_change/README_ZH.md
+!/assets/data/02_emission_inventory/README.md
+!/assets/data/02_emission_inventory/README_ZH.md
+!/assets/data/03_atmospheric_transport/README.md
+!/assets/data/03_atmospheric_transport/README_ZH.md
+!/assets/data/04_integrated_impacts/README.md
+!/assets/data/04_integrated_impacts/README_ZH.md

@@ -1,0 +1,5 @@
+scenario,source,sector,year,region,price,quantity
+synthetic,marketplace,example_sector,2020,AH,10,2
+synthetic,marketplace,example_sector,2020,BJ,20,1
+synthetic,marketplace,example_sector,2020,China,900,100
+synthetic,marketplace,example_sector,2020,Global,900,100
