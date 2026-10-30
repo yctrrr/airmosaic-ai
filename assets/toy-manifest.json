@@ -3,6 +3,19 @@
   "synthetic": true,
   "files": {
     "data/01_socioeconomic_natural_change/ExampleMarketRows/v1/rows.csv": "7de9f9e50a845d522b0fe4702b024450a3631624b927709e5979b0e0c6c2981e",
-    "results/toy_example/reference/01_socioeconomic_natural_change/gcam_aggregate_provinces/province_aggregate.csv": "849b4c8a92a0587262b6ccdec726f67b518109b9ba1570371967eed8139ca46e"
+    "data/01_socioeconomic_natural_change/SyntheticEconometrics/v1/rows.csv": "4cb4b033cedb033110273f7661c48ef9ed67b8313f525be51d62005e8136f206",
+    "data/01_socioeconomic_natural_change/SyntheticCGE/v1/sam.csv": "2691722e57e8b90e18f6a692f17fae200cc65a2e894939f11bc34e9758daabcb",
+    "data/01_socioeconomic_natural_change/SyntheticCGE/v1/scenarios.csv": "39527294108d0267b1364503166115b4b20b35be3fcb31c651aaf17d1722d1c3",
+    "data/01_socioeconomic_natural_change/SyntheticCGE/v1/satellite.csv": "fb2dfb45dbfe252a98eacd6d8e4f226b69a22317343757f9cfb33d72b44e578f",
+    "data/01_socioeconomic_natural_change/SyntheticIO/v1/sectors.csv": "7e26c43a5254b1c0e4ad3a1c174775ff962d2a24669b20eb6480aaac07fc3749",
+    "data/01_socioeconomic_natural_change/SyntheticIO/v1/transactions.csv": "63bb6a1f43805adbc2f6574d1472138c100721d7caf8ac112bc3bd668b95984e",
+    "data/01_socioeconomic_natural_change/SyntheticMFA/v1/flows.csv": "6c365a50405a031a07742991cd749375dac979a703ea84c76fe4316fa8a8932c",
+    "data/01_socioeconomic_natural_change/SyntheticLCA/v1/biosphere.csv": "3682ba04160ac18853b24e1cd117dd7b9b4e6940dc8377c92bef9480fe810860",
+    "data/01_socioeconomic_natural_change/SyntheticLCA/v1/characterization.csv": "58be095ad59998b49699afd60cebc7c61897925cd91329f10cb50da8c954e5fc",
+    "data/01_socioeconomic_natural_change/SyntheticLCA/v1/demand.csv": "a90739180f3ddf5e3c543277989cca6ff200d041f2172f55987e5c4c23be6e03",
+    "data/01_socioeconomic_natural_change/SyntheticLCA/v1/processes.csv": "06a3df71c9b84565b43b71b366e36c81bc145be71ca4c5eba9175a0f471cfc87",
+    "data/01_socioeconomic_natural_change/SyntheticLCA/v1/technosphere.csv": "5d802c4106fb5e3aa2665c0f3a6520ec3f8a7f11e31fa8939ab18a07f7edb319",
+    "results/toy_example/reference/01_socioeconomic_natural_change/gcam_aggregate_provinces/province_aggregate.csv": "849b4c8a92a0587262b6ccdec726f67b518109b9ba1570371967eed8139ca46e",
+    "data/03_atmospheric_transport/SyntheticCausal/v1/rows.csv": "572538d18d921780397aa14b1fff20c2528b72376771d0c81058d387654dec9c"
   }
 }

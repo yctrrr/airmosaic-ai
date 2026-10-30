@@ -1,0 +1,33 @@
+# Record review interface
+
+<!-- README-I18N:START -->
+
+**English** | [中文](operations_ZH.md)
+
+<!-- README-I18N:END -->
+
+Run `scripts/maintain.py` with Python 3.10+ and the standard library. Every path is explicit: an existing Git-external `--task-root`; repeated relative `--input` paths under it; a relative `--catalog`; an optional relative `--proposal`; a lowercase hyphenated `--task-id` (up to 50 characters); and existing external `--assets-root`, `--config-root`, `--auth-root`. The three storage roots must be disjoint, not nested or linked. Task input must not overlap config/auth. No settings or authentication files are read and no environment file is loaded. Root arguments are caller-selected trusted boundaries, not OS isolation.
+
+Only explicitly named `.json`, `.md` and `.txt` files are read, at most 16 inputs and 256 KiB each. Symbolic links, reparse points, multiply linked files, traversal, hidden paths, nested repositories and credential/configuration/auth/history/screen-capture path components or stems are refused. Choose reviewed source text explicitly; do not point to raw source trees or histories. An input file is never executed, imported or evaluated. No catalog, proposal, session, skill or directory discovery occurs.
+
+The controlled catalog has exactly `skills`, an array of at most 200 objects, each with exactly `name` and `description`. Names follow new-skill naming rules; use public descriptions only. It is not the tool catalog, host discovery or executable registration. Historical IDs are not renamed by this helper; review a separate public alias catalog when an existing ID cannot fit the controlled profile.
+
+Record JSON has `schema_version: 1` and `records` (at most 100 per file). Each record has `status` (`observed`, `reported`, `stale`), `outcome` (`success`, `failure`, `unknown`), optional `summary` (at most 16000 characters), optional `skills` (names from the supplied catalog), optional `id` (ignored). Unknown fields and malformed JSON fail. Markdown/text is treated as one `reported`/`unknown` record. Input IDs and prose are never copied to output; generated `input-N-record-M` identifiers identify selected-file ordinals. No data rows or raw excerpts are emitted. The report retains input SHA256 values for local provenance, controlled matches and status/outcome. Hashes identify bytes, not source reliability.
+
+Matching reports explicit catalog names, exact name mentions and whole-word terms of at least four characters from public descriptions. It emits only catalog terms, never arbitrary source tokens. Description overlap is lexical evidence only and does not drive the suggested route. Only `observed` records with explicit names or exact-name mentions contribute to routing: zero names -> `novel`, multiple -> `compose`, one with an observed failure -> `revise`, otherwise -> `reuse`. `reported` and `stale` claims remain unverified. A suggested route is a review aid, not proof of operational compatibility or scientific acceptance. Record status is supplied by the caller; the helper cannot authenticate its truth. The current agent must check observed evidence and unmet prerequisites before adopting a recommendation.
+
+Optional proposal JSON requires `schema_version: 1`, `sanitized: true`, `authorship` (`current-agent` or `supplied-reviewed`), a `route`, `skill_names` from the catalog, and nonempty `evidence_ids` from the report's generated IDs. An optional `draft` has exactly `name`, `description`, `description_zh`, `version` (three numeric components), `compatibility`, `instructions`, `instructions_zh`. Metadata is one line; instructional prose is at most 12000 characters per language. Drafts reject code fences, tables, images and Markdown resources pending explicit resource review. URL/private-path/email/credential-marker heuristics reject sensitive catalog/proposal fields; raw record summaries are omitted entirely. Review inputs before supplying them: `sanitized: true` is an explicit caller attestation, not a proof that arbitrary prose is safe or scientifically correct. No deterministic script can derive a scientific method from these records. Write and review the proposal yourself or accept a supplied reviewed proposal; the helper only formats it.
+
+The fresh output is `assets/results/skill_maintenance/<YYYYMMDDTHHMMZ>_<task-id>/review.json`, with optional `draft/<name>/SKILL.md` and `SKILL_ZH.md`. Current UTC minute plus task ID is intentional: same-minute collisions fail without overwrite. On later retries use a new task ID after checking partial output. There is no draft discovery or repository mutation. A proposal route is kept separately from the lexical suggestion; it may differ after agent review. `compose` proposals should describe a workflow referencing existing skills and methods, rather than duplicate implementation or move scientific assumptions into operations. Optional formatted skill drafts still require authoring checks and meaningful synthetic tests before any separately authorized promotion.
+
+Synthetic example, from the repository root in PowerShell. Set the four variables to explicit existing external roots in your task environment first; config/auth roots are never read. Copying these known synthetic fixtures is an explicit preparation step, not automatic discovery:
+
+```powershell
+Copy-Item -LiteralPath skills/agent_operations/shared/autoskill/examples/catalog.json -Destination (Join-Path $TaskRoot 'catalog.json')
+Copy-Item -LiteralPath skills/agent_operations/shared/autoskill/examples/records.json -Destination (Join-Path $TaskRoot 'records.json')
+Copy-Item -LiteralPath skills/agent_operations/shared/autoskill/examples/proposal.json -Destination (Join-Path $TaskRoot 'proposal.json')
+python skills/agent_operations/shared/autoskill/scripts/maintain.py --task-root $TaskRoot --assets-root $AssetsRoot --config-root $ConfigRoot --auth-root $AuthRoot --catalog catalog.json --input records.json --task-id synthetic-review --proposal proposal.json
+python -m pytest harness/checks/test_skill_authoring.py harness/checks/test_autoskill.py -q
+```
+
+Expected stdout: `{"status": "review-written", "route": "reuse", "draft_written": true}`. The supplied example's explicit proposal is `revise`; inspect both fields in `review.json` and review the draft. `example-check`/`example-format` are synthetic names, not installed skills or tools. Without `--proposal`, no draft is produced. There are no automatic proposal-writing, installation, promotion, registration or commit commands. Exit 2 returns a fixed refusal code without paths, source snippets or argument values. The filesystem cannot be protected against a concurrent malicious process by these checks; use trusted, task-owned roots.

@@ -1,35 +1,23 @@
-# 统计年鉴与表格来源
+# Statistical yearbooks and comparable tables
 
-**状态**：近期已有环境统计年鉴来源查找、下载状态和表内年份核对记录；本次按该记录梳理步骤，未重开全部原始工作簿。AirMosaic 的工业年鉴模板只处理已有表格，没有通用下载器。
+**English** | [中文](statistical_yearbooks_ZH.md)
 
-## 输入、依赖与产物
+## Research question
 
-- 输入：指标、数据年份、版次、地区/行业范围、单位，以及需要原表还是经过加工的面板。
-- 依赖：浏览器；Excel/CSV 读取器，扫描表另需 OCR/人工复核；CAJ 等格式使用对应工具，不能仅改扩展名。
-- 登录：按来源使用本人机构权限；当前文章、目录、下载权限和最终文件须分别核对，不复用历史认证链接。
-- 产物：原件清单、版次—数据年映射、表头/单位记录、清洗表与覆盖缺口。
+Use yearbook tables to describe trends or provide aggregate benchmarks for a defined population. Identify the indicator, geography, industry, time interval and coverage threshold before comparing editions.
 
-## 操作步骤
+## Sources and definitions
 
-1. 先查官方年报/年鉴或可授权数据库；公众号/聚合站可用于发现线索，最终记录实际文件来源。
-2. 分开记录“看到目录”“取得文件”“打开内容”“完成核验”。网页标题与压缩包名称都不能证明表内年份完整。
-3. 检查下载完成状态和文件格式；排除未完成下载文件、登录页及错误响应。
-4. 打开目标工作表，核对年份列、指标释义、地区/行业、原单位和备注。版次和内容年单独记录。
-5. 明确原始值、插值、补零及外推，保留原表和变换规则；变动分类按映射表处理。
+Prefer official publications or an authorized database and record the actual file source. Edition year and observation year are separate: an edition often describes the preceding year, but the table headers and notes determine the true period. Preserve original table title, unit, reporting population, classification version and explanatory notes. Industrial, energy and environmental yearbooks are not interchangeable schemas.
 
-## 已有 AirMosaic 入口
+## Organization
 
-| tool_id | 可执行性 |
-|---|---|
-| yearbook_regional_sector_template | 处理模板，run-tool 不支持 |
-| yearbook_product_output_template | 处理模板，run-tool 不支持 |
+Create an edition–table–data-year inventory, then a long table with geographic/industry/product keys and source references. Reconstruct merged headers and continuation tables without duplicating totals. Maintain reviewed crosswalks when classifications or administrative units change. Keep reported observations, interpolation, extrapolation and external supplementation distinguishable; attach a reason and method to each estimate. Missing cells require interpretation before any zero fill.
 
-模板详见[工业年鉴 skill](../../skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook/SKILL.md)及[分类说明](../../harness/usage/data-acquisition.md)。模板的行业/产品表结构不自动适用于环境统计年鉴；读取编码、表头和数值规则均须适配。
+## Error and quality
 
-## 验收
+Check file readability, actual year coverage, repeated tables, numeric-conversion failures, units and source-cell agreement. An archive name or catalog listing is evidence of packaging/discovery, not verified content coverage. Compare totals only when denominator and statistical scope agree. Scanned/OCR tables need targeted visual review of units, signs, decimal points and row alignment. Encoding repair must preserve source text and be checked on known labels.
 
-逐指标记录预期与实际覆盖、缺失年、重复表、单位与原始/加工标记。近期核对曾遇到“包名年份晚于表内年份”的情况；本库提炼该检查方法，不将历史下载状态当作今天的库存证明。
+## Interpretation
 
-## 阶段与 Skill 映射
-
-主目录：01_socioeconomic_natural_change；适用阶段：01_socioeconomic_natural_change。对应 [ind_yearbook](../../skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook/SKILL.md)。执行状态以本文及真实工具 manifest 为准；没有 tool_id 的方法只供指导。
+A change can reflect classification, enterprise coverage or revision rather than a real trend. Report breaks and missing years; compare harmonized estimates with original values. When yearbooks constrain enterprise panels, benchmark agreement is an aggregate property and does not prove individual accounts or representativeness. Operations and existing adaptation templates are described in the [industrial-yearbook skill](../../skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook/SKILL.md).

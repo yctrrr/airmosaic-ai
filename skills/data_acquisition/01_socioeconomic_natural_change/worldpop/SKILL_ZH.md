@@ -1,98 +1,36 @@
 ---
 name: worldpop
-description: 通过 worldpop_download 发现并按需下载指定国家、年份和产品的人口文件；分区统计另行实现。
+description: 通过 worldpop_download 发现并按需下载 WorldPop 人口产品，明确国家、人口年份和发布版；栅格分析另行实现。
 ---
 
-# WorldPop 人口数据获取
-
-<!-- README-I18N:START -->
+# WorldPop 获取
 
 [English](SKILL.md) | **中文**
 
-<!-- README-I18N:END -->
+`worldpop_download` 支持公开目录发现和可选下载。依赖 Python 3.10+、已安装项目与 `requests`。设置 Git 外独立且已存在的 `AIRMOSAIC_ASSETS_DIR`、`AIRMOSAIC_CONFIG_DIR` 和 `AIRMOSAIC_AUTH_DIR`；公开请求无需账号或令牌。
 
+历史状态（2026-10-26）：官方 Hub 元数据与直接 Global2 小文件获取通过；runner 预检通过，但真实目录调用失败。见[接口状态](references/worldpop-api.md)和[直接获取示例](references/first-download-example.md)，两条路线证据分别记录。
 
-> 调用状态：`worldpop_download` 支持通过执行器查询元数据及按需下载；分区统计没有独立可执行工具。
+## 配置与运行
 
-当前本机状态：官方目录元数据与直接获取的小文件已验证；执行器参数预检通过，实际目录调用尚未通过。见[接口状态](references/worldpop-api.md)。`year` 严格匹配 `popyear`，接受整数或整数文本，拒绝缺失、布尔、浮点及非精确年份；其他产品条件仍须核对。
-
-产品来源、误差和规范化见[人口栅格方法](../../../../methods/01_socioeconomic_natural_change/worldpop.md)。首次获取按[公开目录与小文件示例](references/first-download-example.md)操作，无需账号或令牌。
-
-## 工作目录与认证
-
-遵守[存储约定](../../../../harness/storage-and-credentials_ZH.md)和[执行指南](../../../../harness/usage/run-tool.md)。仓库外三个已存在根目录相互独立：`AIRMOSAIC_ASSETS_DIR` 存数据与结果，`AIRMOSAIC_CONFIG_DIR` 存非秘密设置与任务参数，`AIRMOSAIC_AUTH_DIR` 存浏览器状态。密码和令牌留在秘密管理器，不读取或分享凭据、浏览器配置内容。命令从仓库根目录使用已安装解释器运行，默认输出为 `results/<project_id>/<run_id>/01_socioeconomic_natural_change/<tool_id>/`。个人配置不自动加载。直接运行脚本会绕过检查；执行器不是操作系统沙箱。
-
-## 用途
-
-按任务范围获取所需国家、年份和产品；栅格及派生表留在本地工作区，不进入 GitHub。
-
-## 官方接口
-
-- 当前数据目录及脚本地址：`https://hub.worldpop.org/rest/data`，不再从旧跳转地址开始。
-- 独立区域统计服务：`https://api.worldpop.org/v2/`；本项目没有对应适配器或真实统计验证。
-- 元数据常用文件服务器：`https://data.worldpop.org`。
-
-官方有接口频率限制。缓存元数据与文件，避免重复查询相同产品。
-
-## 结果与缓存
-
-执行器写入 `${AIRMOSAIC_ASSETS_DIR}/results/<project_id>/<run_id>/01_socioeconomic_natural_change/worldpop_download/`：元数据位于 `metadata/`，下载位于 `raw/<iso3>/<project>/<year>/`。运行记录位于 `results/<project_id>/<run_id>/records/<tool_id>/record.json`，不含原参数值和文件名。
-
-`${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/WorldPop/<version>/` 是可复用缓存，不是执行器输出位置。发布缓存需另行授权；没有自动发布、栅格重采样或分区统计。
-
-## 注册工具的调用
-
-从仓库根目录使用真实工具编号，先查声明。工具编号是命令参数，不是参数文件内的键。
-
-```powershell
-python -m airmosaic.cli describe-tool worldpop_download
-python -m airmosaic.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --dry-run
-# Discovery also uses the network and writes metadata; execute only within task authorization.
-python -m airmosaic.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --allow-network
-```
-
-公开示例：
+依据 [WorldPop 方法](../../../../methods/01_socioeconomic_natural_change/worldpop_ZH.md)选择产品、国家、`popyear`、版本、分辨率、约束方式和调整基准。[公共参数文件](../../../../config/examples/run-tool/worldpop.json)为：
 
 ```json
 {"project":"wpgp","iso3":"CHN","year":2020,"download":false,"limit":1}
 ```
 
-调用方只需提供 `project`，执行器补齐 `root`。`year` 与 `limit` 是整数，`download` 是布尔值，`contains`、`extensions` 是逗号分隔字符串而非数组。任务参数另存个人配置目录。只有明确下载任务才设置 `download=true`；即使为假仍会联网查询。未允许联网的预检返回权限阻塞，不执行请求。
+复制至 CONFIG_DIR 后适配。`project` 是 WorldPop 别名，不是 AirMosaic 项目 ID；runner 提供 `root`。`year`/`limit` 为整数（limit 1–100），`download` 为布尔，`contains`/`extensions` 是逗号分隔字符串。年份仅精确匹配 `popyear`，接受整数/整数文本，排除缺失、布尔和浮点年份；其他产品条件另查。`limit` 在筛选后应用，不限制远端响应量。
 
-## 代理执行边界
+```sh
+python -m runtime.cli describe-tool worldpop_download
+python -m runtime.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --allow-network --dry-run
+python -m runtime.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --allow-network
+```
 
-仅使用注册工具，不直接执行原脚本绕过路径或权限拒绝。元数据筛选不证明年份或产品适用；格式有效的国家代码或别名仍可能不存在。工具不自动验证下载内容、坐标系统、人口总量或科学适用性；复用或分享前核对任务产物。
+检查 `can_execute` 和 `blockers`。dry-run 不请求网络；真正运行时 `download=false` 仍联网并写元数据，限定文件获取改为 `true`。命令从仓库根执行，实际任务改用个人参数文件路径。
 
-## 产品选择
+## 检查输出
 
-知道准确产品名时使用准确名称；含糊请求先查元数据，核对标题、文件名、年份和分辨率，再下载。
+目录为 `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/01_socioeconomic_natural_change/worldpop_download/`，`metadata/` 含 JSON/CSV，`raw/<iso3>/<project>/<year>/` 含文件。检查真实状态、元数据数量与条件、文件名及非空下载，再解码核对单位、CRS、网格、NoData、有限非负有效值和覆盖。零匹配不等于完成所需获取。
 
-人口目录使用 `pop` 组下的项目别名，例如 `wpgp` 对应 2000–2020 年分国全球产品。
-
-新一代全球产品属于独立系列。已验证样例为 `G2_CN_POP_R25A_1km`、LIE、`popyear = 2020`、R2025A v1、受约束且经联合国总量调整。查询真实别名并审查元数据，不能根据旧别名或日期文本认定支持。
-
-常见筛选维度：
-
-- 国家三字母代码。
-- 产品或项目别名。
-- 年份。
-- 文件扩展名，如 `.tif`、`.tiff`、`.zip`、`.csv`。
-- 标题、文件名和元数据中的年龄、性别说明。
-- 是否经联合国总量调整。
-- 是否为空间受约束产品。
-
-## 检查清单
-
-- 文件非空，扩展名符合预期。
-- 文件旁保留元数据。
-- 记录项目别名、国家、年份与下载地址。
-- 核对显式年份、单位、版本、约束与调整口径、坐标、网格、缺失编码及有效值的有限非负性；发布日期或文本匹配不能替代这些检查。
-- 未获任务授权不解压或重采样。
-- 不提交原栅格、派生栅格、缓存清单或私人路径。
-
-## 参考资料
-
-- `references/worldpop-api.md`：接口地址和元数据字段。
-- `references/privacy-redaction-rules.md`：脱敏检查。
-
-数据与结果按[资产目录与复核入库规范](../../../../harness/assets_ZH.md)管理：数据按阶段、实际名称和版本共享；结果按项目及运行归集。跨阶段引用同一数据，复用入库需人工批准。
+[已验证直接示例](references/first-download-example.md)使用 `G2_CN_POP_R25A_1km`、LIE、2020、R2025A v1、constrained 和 UN-adjusted，不证明旧 `wpgp` 别名支持 Global2。本目录无区域统计 API v2、重采样或分区统计适配器。复用缓存 `data/01_socioeconomic_natural_change/WorldPop/<version>/` 需另行复核发布，runner 不自动提升文件。

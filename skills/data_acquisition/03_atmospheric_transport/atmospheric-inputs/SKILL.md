@@ -1,31 +1,28 @@
 ---
 name: atmospheric-input-methods
-description: Plan meteorology, initial and boundary conditions and diagnostic input contracts for version-specific GEOS-Chem workflows. No downloader.
+description: Specify version-specific GEOS-Chem meteorology, initial and boundary conditions and diagnostic input contracts. Reference guidance without a downloader.
 ---
 
-# Atmospheric-model input preparation
-
-<!-- README-I18N:START -->
+# Atmospheric-model input contracts
 
 **English** | [中文](SKILL_ZH.md)
 
-<!-- README-I18N:END -->
+Use this reference to prepare an input checklist for a selected GEOS-Chem Classic or GCHP version. It has no downloader, execution adapter or run-tool ID.
 
+## Specify a configuration
 
-**Status:** documentation only; no execution adapter or tool ID for run-tool.
+Record the exact model release, Classic/GCHP variant, simulation type, time range, horizontal/vertical grid and restart time. Use the selected release's own configuration and input documentation; do not infer compatibility from filenames.
 
-## Workflow
+| Input | Contract to record | Check before handoff |
+|---|---|---|
+| Meteorology | Product/release, frequency, grid, vertical coordinates and required variables | Full time coverage, units, calendar and level ordering |
+| Initial/restart state | Model/species version, initialization time, units and grid | Species mapping and exact start-time compatibility |
+| Nested boundaries | Parent source, boundary schedule, species and vertical/horizontal mapping | Domain coverage, time interpolation and edge/level consistency |
+| Diagnostics | Selected fields, frequency, averaging and output coordinates | Definitions sufficient for evaluation and mass-budget interpretation |
+| Emission interface | Required species, units, time support and spatial support | Conceptual compatibility only; inventory construction is a separate method |
 
-Choose Classic/GCHP and a version → list meteorology, emissions, initial/boundary conditions and diagnostics → check time, grid, species and unit contracts → scope and authorize acquisition separately.
+Deliver the checklist, unresolved compatibility decisions and a scoped acquisition plan with source versions and expected files. A model-generated dry-run is an actual program execution that writes logs; it requires its own run scope.
 
-See the [method and handoff guidance](../../../../methods/03_atmospheric_transport/README.md).
+For general meteorological covariates or composition fields, use [ERA5](../../01_socioeconomic_natural_change/era5/SKILL.md) or [CAMS](../../01_socioeconomic_natural_change/cams/SKILL.md). Their files need separate conversion to a GEOS-Chem contract. See [transport methods](../../../../methods/03_atmospheric_transport/README.md) for scientific context.
 
-For meteorological covariates or atmospheric-composition data, read [ERA5](../../01_socioeconomic_natural_change/era5/SKILL.md) and [CAMS](../../01_socioeconomic_natural_change/cams/SKILL.md). Their manual acquisition guidance does not replace version-specific GEOS-Chem meteorology, species or boundary inputs; no automatic conversion or download tool is provided.
-
-## Boundaries
-
-Do not read original data or authentication directories or automatically download inputs. GEOS-Chem's own dry-run executes a program and writes logs. Emission inputs are interface requirements only, without concrete inventory data or implementation.
-
-Documentation maintenance and routine validation use only documents, interfaces and synthetic inputs. Real-data work requires an explicit scope. Keep personal paths and non-secret settings in CONFIG_DIR, credentials in a credential manager, and sessions in AUTH_DIR; data, configuration and authentication roots must be separate and outside Git. Reference skills do not automatically enforce paths or create sanitized run receipts.
-
-Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.
+Keep non-secret task settings in CONFIG_DIR, data/results in ASSETS_DIR and sessions in AUTH_DIR, separately outside Git. This skill prepares contracts; it does not acquire or inspect original inputs automatically.

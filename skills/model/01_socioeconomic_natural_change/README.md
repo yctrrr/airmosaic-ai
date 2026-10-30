@@ -7,11 +7,15 @@
 <!-- README-I18N:END -->
 
 
-Activity, energy, technology, population and natural conditions. WorldPop and company-basic-information ZIP processing support run-tool; yearbook, energy and disclosure workflows need adaptation. Socioeconomic modeling is method guidance.
+Activity, energy, technology, population and natural conditions. WorldPop and company-basic-information ZIP processing support run-tool; yearbook, energy and disclosure workflows need adaptation. IO, MFA, LCA, cross-sectional OLS and a two-factor CGE tutorial have bounded direct-script synthetic calculations. CHEER remains an external source-review and reproduction example; its numerical execution depends on GAMS, model data and license.
 
 ## Entry points
 
-- [Driver methods](socioeconomic-drivers/SKILL.md)
+- [Computable general equilibrium (CGE)](cge/SKILL.md)
+- [Input-output analysis](input-output-analysis/SKILL.md)
+- [Material flow analysis](material-flow-analysis/SKILL.md)
+- [Life cycle assessment](life-cycle-assessment/SKILL.md)
+- [Econometric analysis](econometric-analysis/SKILL.md)
 
 ## Workflow and handoff
 

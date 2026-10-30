@@ -1,10 +1,18 @@
-# 02_emission_inventory：排放清单
+# Emission Inventory
 
-活动和技术转成排放的方法。仅方法；不提供具体数据、参数值、实现代码、脚本名称、源码指纹或命令。没有执行工具。
+<!-- README-I18N:START -->
 
-| 方法 | 状态 |
+**English** | [中文](README_ZH.md)
+
+<!-- README-I18N:END -->
+
+Select accounting and allocation methods, consistent boundaries and quality principles. Activity/technology/control accounting now has one direct Python path with synthetic input and numeric checks in its linked skill. Other conceptual entries and spatial-allocation adaptations are not automatically executable; no stage-02 run-tool adapter is registered.
+
+| Method | Explanation |
 |---|---|
-| [空间清单重建与对齐](spatial_inventory.md) | methods_only |
-| [排放核算与治理效率](emission_accounting.md) | methods_only |
+| Accounting and control efficiency | [Read method](emission_accounting.md) |
+| Spatial allocation and conservation | [Read method](spatial_inventory.md) |
 
-[数据获取入口](../../skills/data_acquisition/02_emission_inventory/README.md)与[模型使用入口](../../skills/model/02_emission_inventory/README.md)逐项连接 skill。具体顺序及交接见[四步流程](../../harness/four-step-workflow.md)。[共享方法](../shared/README.md)只在本步需要时引用，不复制实现。
+Configuration, invocation and actual execution status are in the [acquisition skills](../../skills/data_acquisition/02_emission_inventory/README.md) and [model skills](../../skills/model/02_emission_inventory/README.md).
+
+[Shared methods](../shared/README.md) cover cross-stage design and quality; the [main index](../README.md) provides the full mapping.

@@ -83,4 +83,4 @@ cn <- list(
 
 - Always read Excel files with col_types = "text" to avoid premature type coercion
 - Use writeLines(..., useBytes = TRUE) when writing Chinese text files
-- Use write(dt, path, bom = TRUE) for CSV output with UTF-8 BOM
+- Use data.table::fwrite(dt, path, bom = TRUE) for CSV output with UTF-8 BOM

@@ -6,9 +6,16 @@
       "asset_id": "example_dataset",
       "version": "v1",
       "path": "data/01_socioeconomic_natural_change/ExampleDataset/v1/sample.csv",
-      "used_in_stages": ["01_socioeconomic_natural_change", "04_integrated_impacts"]
+      "used_in_stages": [
+        "01_socioeconomic_natural_change",
+        "04_integrated_impacts"
+      ]
     }
   },
   "requirements": "Define the task before execution.",
-  "acceptance_conditions": ["Check the agreed input and output contract."]
+  "acceptance_conditions": [
+    "Check the agreed input and output contract."
+  ],
+  "result_root": "results/example_project/",
+  "result_layout": "task_selected_within_adapter_contract"
 }

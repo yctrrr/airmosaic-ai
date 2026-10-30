@@ -1,0 +1,4 @@
+interface:
+  display_name: "Machine learning model"
+  short_description: "Plan studies and route prediction or causal runtimes."
+  default_prompt: "Use $machine-learning-model to review the study plan, choose its R or Python runtime, and verify prediction, contribution or causal outputs."

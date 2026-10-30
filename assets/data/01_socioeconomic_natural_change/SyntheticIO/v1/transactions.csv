@@ -1,0 +1,5 @@
+from_sector,to_sector,value
+Energy,Energy,10
+Energy,Goods,20
+Goods,Energy,5
+Goods,Goods,15

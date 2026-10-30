@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "task_type": "regression",
+  "target": "o3_average_values",
+  "target_unit": "ppb",
+  "features": [
+    "climatic_zone",
+    "alt",
+    "water_25km",
+    "grasslands_25km",
+    "croplands_25km",
+    "urban_and_built-up_25km",
+    "no2_column",
+    "population_density",
+    "nightlight_1km"
+  ],
+  "id_column": "id",
+  "split": {
+    "column": "dataset",
+    "train": "train",
+    "val": "val",
+    "test": "test"
+  },
+  "categorical_features": [
+    "climatic_zone"
+  ],
+  "missing": {
+    "policy": "train_median_mode",
+    "sentinels": [
+      -999
+    ]
+  },
+  "models": [
+    {
+      "id": "tree",
+      "learner": "regr.rpart",
+      "parameters": {
+        "cp": 0.01,
+        "maxdepth": 4
+      }
+    },
+    {
+      "id": "forest",
+      "learner": "regr.ranger",
+      "parameters": {
+        "num.trees": 32,
+        "max.depth": 8,
+        "min.node.size": 10
+      }
+    }
+  ],
+  "selection_metric": "rmse",
+  "seed": 20261027,
+  "row_limits": {
+    "train": 400,
+    "val": 120,
+    "test": 120
+  },
+  "explanation": {
+    "features": [
+      "alt",
+      "population_density",
+      "no2_column"
+    ],
+    "background_rows": 40,
+    "validation_rows": 60,
+    "permutation_repeats": 3,
+    "pdp_points": 7
+  },
+  "requirements": "Compare bounded tree models for station-level ozone regression; preserve the published split.",
+  "unseen_categories": "train_mode",
+  "analysis": "prediction",
+  "feature_selection": {
+    "mode": "manual"
+  },
+  "target_definition": {
+    "sample_unit": "monitoring station",
+    "averaging_period": "2010-2014",
+    "prediction_time": "historical station-level metric"
+  }
+}

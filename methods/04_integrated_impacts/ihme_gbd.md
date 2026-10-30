@@ -6,7 +6,7 @@
 
 <!-- README-I18N:END -->
 
-Reviewed: 2026-10-26. Primary stage: 04. The [shared population and health method](../shared/population_health.md) links this reference; execution is described in the [GBD skill](../../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/SKILL.md). Documentation adds no tool or acquisition permission.
+GBD supports baseline health outcomes and comparisons of disease burden. Define the estimand, release and population before combining its results with exposure data. See [population and health alignment](../shared/population_health.md); acquisition is described by the [GBD skill](../../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/SKILL.md). Product-source review dated 2026-10-26.
 
 ## Provenance and product identity
 
@@ -47,7 +47,7 @@ Consult the specific round and indicator methods. For example, the [GBD 2023 cau
 ## Normalization and validation sequence
 
 1. **Fix the query contract:** record round, context, years, locations, causes/risks, ages, sexes, measure and metric with IDs and labels. Verify a small scope first; historical IDs are syntax examples.
-2. **Require fresh results:** wait for completion and check returned dimensions. Old rows during loading, residual rows after errors and previous files are not current success evidence.
+2. **Check the estimand:** returned release and dimensions must match the research contract; do not mix stale-query records or incompatible definitions into one analysis.
 3. **Preserve the export:** save the new raw file with non-secret request metadata, acquisition time and checksum. Keep derived tables separate; exclude account details and temporary URLs from shared records.
 4. **Define schema and keys:** common fields include dimension IDs/names, year and `val/lower/upper`. Follow the actual export schema. Include round, context and every applicable dimension in the key; do not infer IDs from column order or translated names.
 5. **Validate content:** compare requested and returned IDs/labels, counts and missing combinations. Require parsable finite values and `lower ≤ val ≤ upper`. Missing rows are not zeros. Check valid ranges by indicator; structure alone does not establish model accuracy.

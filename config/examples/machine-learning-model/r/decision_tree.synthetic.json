@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "task_type": "regression",
+  "analysis": "prediction",
+  "target": "outcome",
+  "target_unit": "synthetic_outcome_unit",
+  "target_definition": {
+    "sample_unit": "independent synthetic row",
+    "averaging_period": "not applicable",
+    "prediction_time": "all declared features available before prediction"
+  },
+  "features": [
+    "x1",
+    "x2",
+    "treatment"
+  ],
+  "id_column": "id",
+  "split": {
+    "column": "dataset",
+    "train": "train",
+    "val": "val",
+    "test": "test"
+  },
+  "categorical_features": [],
+  "missing": {
+    "policy": "drop",
+    "sentinels": [
+      -999
+    ]
+  },
+  "feature_selection": {
+    "mode": "manual"
+  },
+  "models": [
+    {
+      "id": "tree",
+      "learner": "regr.rpart",
+      "parameters": {
+        "cp": 0.005,
+        "maxdepth": 5,
+        "minsplit": 10,
+        "minbucket": 3
+      }
+    }
+  ],
+  "selection_metric": "rmse",
+  "seed": 20261028,
+  "row_limits": {
+    "train": 1000,
+    "val": 1000,
+    "test": 1000
+  },
+  "explanation": {
+    "methods": [
+      "permutation"
+    ],
+    "features": [
+      "x1",
+      "treatment"
+    ],
+    "background_rows": 16,
+    "validation_rows": 16,
+    "permutation_repeats": 2,
+    "pdp_points": 4
+  }
+}

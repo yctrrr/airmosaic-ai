@@ -1,48 +1,37 @@
-# 来源、获取方式与格式边界
+# PM2.5 sources and available coverage
 
-公开说明复核日期：2026-10-26。已完成 Quotsoft 2024-01-01 单日站点 CSV 的直接获取和小时 PM2.5 长表检查，步骤及时间见[使用示例](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/references/single-day-example.md)。随后验证 PANGAEA 均一化发布包、序列/位置表及一个 7 天样例；未读取成员既有原始数据。其余来源仅核对公开说明。
+**English** | [中文](pm25_stations_sources_ZH.md)
 
-## 来源选择
+Review dated 2026-10-26. Quotsoft 2024-01-01 station CSV/hourly long-table checks and a PANGAEA release/seven-day sample passed. Other sources have description-level evidence. Dated operations are in the [single-day](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/references/single-day-example.md) and [homogenized](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/references/homogenized-download-example.md) examples.
 
-| 来源 | 获取方式 | 登录、版本与人工核对 |
+| Source | Access and coverage | Evidence and gaps |
 |---|---|---|
-| 中国环境监测总站 | 从[官方站点](https://www.cnemc.cn/)进入当前空气质量发布入口；历史批量导出须确认平台或机构提供的渠道 | 未验证通用历史批量 API；由成员确认权限、导出范围、字段及条款，不把实时展示当作多年归档 |
-| Quotsoft 历史归档 | 按[维护者说明](https://quotsoft.net/air/)直接获取全国站点单日 CSV；本流程采用公开直链，不依赖网盘 | 不需登录/API key；第三方归档与官方发布分开记录。历史站点表的公开直链尚未核实，不用当前坐标冒充历史元数据 |
-| Bai 等均一化日值 | 从 [PANGAEA DOI](https://doi.org/10.1594/PANGAEA.917557)直接取得公开 ZIP；[产品说明](pm25_homogenized.md)与[操作示例](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/references/homogenized-download-example.md)分别维护 | 无需登录，CC BY 4.0；2015–2019 日尺度填补/均一化产品，已验证发布包、序列/位置关联及一个 7 天样例；不替代原始小时观测 |
-| 加拿大 NAPS | 从[官方 NAPS 页面](https://www.canada.ca/en/environment-climate-change/services/air-pollution/monitoring-networks-data/national-air-pollution-program.html)进入文件门户或查询工具，选择网络、年份和污染物 | 国际扩展参考，不默认纳入中国流程；需重新适配字段、单位、时区、质量标记及访问要求 |
-| 台湾站点历史整理资料 | 现有接口审查仅发现小时字段整理方法 | 原始发布入口和下载记录尚未确认；不得由字段名推断下载 API，补齐来源证据后才制定获取计划 |
+| [CNEMC](https://www.cnemc.cn/) | Official publication; historical exports need an institutional/platform route | No general historical bulk API verified; real-time display is not a multiyear archive |
+| [Quotsoft](https://quotsoft.net/air/) | Public nationwide daily station CSV; declared start 2014-05-13, possible gaps; no account/key | One date verified; historical station-table direct link and time/coordinate semantics unresolved |
+| [Bai et al./PANGAEA](https://doi.org/10.1594/PANGAEA.917557) | Public 2015–2019 daily gap-filled/homogenized ZIP, CC BY 4.0 | Release, series/location relation and seven-day sample checked; not original hourly observations |
+| [Canada NAPS](https://www.canada.ca/en/environment-climate-change/services/air-pollution/monitoring-networks-data/national-air-pollution-program.html) | Official year/pollutant portal | Separate international extension requiring fields, units, time zone, flags and access review |
+| Taiwan historical station tables | Hourly-field preparation interface reviewed | Original endpoint/acquisition records unconfirmed; field names do not establish an API |
 
-任何来源都应分别记录原发布机构、实际下载提供者和后续处理产品作者。公开访问不等于所有数据均可再分发，也不证明本地存量来自该渠道。
+Record original publisher, actual provider and processed-product author separately. Public access does not establish redistribution rights or existing local-file provenance. See [quality/normalization](pm25_stations.md).
 
-来源链、测量/采集误差、2019 年起的颗粒物监测状态口径及日均统计依据见[数据说明与规范化](pm25_stations.md)。数据提供者、质量信息和研究处理须分别记录。
+## Archive format
 
-## 全国站点历史归档：操作顺序
+The provider separates station `china_sites` from city-summary `china_cities` files. Published pattern: `https://quotsoft.net/air/data/china_sites_YYYYMMDD.csv`. This is a source pattern, not a registered tool. Annual packages require actual inventories; declared start dates do not imply completeness.
 
-1. 在来源说明中确认选择的是站点文件；`china_cities` 是城市汇总，不替代站点记录。
-2. 日期使用 `YYYYMMDD`，维护者公布的模式为 `https://quotsoft.net/air/data/china_sites_YYYYMMDD.csv`。这是来源 URL 模式，不是可执行命令或注册工具。
-3. 维护者声明全国归档从 2014-05-13 起且可能缺日。先检查计划范围是否适用，再在有明确授权的下载任务中取得文件；年度包同样需要核验实际文件清单。
-4. 若需站点名称或空间关联，配套适用日期的站点表，保留版本与有效期；未取得时仅处理站号长表，不猜坐标。不要仅用最新坐标表覆盖所有历史站点。
-5. 小批次核验实际文件类型和内容契约后再扩展；错误 HTML、缺日、截断或响应异常单独记录。限速、超时、重试上限和恢复策略须由后续调用方明确，当前没有自动下载实现。
+UTF-8 fields begin `date,hour,type`, then station-code columns. `PM2.5` is hourly concentration and `PM2.5_24h` a 24-hour average, both µg/m³; AQI is an index. Do not treat 24-hour rows as hourly observations or infer station values from city averages.
 
-来源说明将 CSV 定义为 UTF-8：前列为 `date`、`hour`、`type`，随后为站点编码；站点表另含编码、名称、城市和经纬度。`PM2.5` 为小时均值，`PM2.5_24h` 为 24 小时均值，两者单位为微克/立方米；AQI 是指数。不能用 24 小时均值行充当独立小时实测，或从城市均值反推站点值。
+The checked date matched this schema with labels 0–23 and missing empty cells. Time zone, interval start/end, coordinate reference and historical metadata revision remain unknown. A current station table cannot establish historical relocation positions; retain IDs without guessed coordinates when dated metadata are absent. One date does not validate all history.
 
-实测单日 schema 与上述说明一致，小时 PM2.5 标签为 0–23，空单元格保留缺失。时区、小时起止定义、坐标参考和站点修订版本仍待核实；其他批次逐次检查，不从一个日期推断全部历史格式。
+## Other channels
 
-## 公开归档和定时采集渠道
-
-| 渠道 | 公开能力 | 当前判断 |
+| Channel | Public description | Dated review outcome |
 |---|---|---|
-| [Quotsoft](https://quotsoft.net/air/) | 每日更新、全国站点单日 CSV，历史从 2014-05-13 起，可能缺日 | 已验证本例；已有归档优先直接获取，不必重建实时采集 |
-| [HeQinWill/CNEMC](https://github.com/HeQinWill/CNEMC) | 维护者提供逐小时采集说明、定时任务示例和 Archive 目录 | 第三方公开采集参考；仅审查 README，未验证所需日期完整性、历史站点表或脚本可运行性，不复制其关闭 TLS 验证的写法 |
-| [AQIStudy](https://www.aqistudy.cn/html/about.html) | 平台说明有逐小时更新及历史查询 | 检索到公开平台介绍，直接页面检查返回 403；站点导出权限、接口与历史元数据尚未核实，不列为已验证下载路线 |
-| [WAQI 历史页](https://aqicn.org/historical/) | 提供历史 AQI 查询，原浓度及小时资料另走申请入口 | 页面 PM2.5 数值是污染物分指数，不能当 µg/m³ 浓度；不作为本例替代源 |
+| [HeQinWill/CNEMC](https://github.com/HeQinWill/CNEMC) | Hourly collection, scheduling example and Archive directory | README only; required coverage, historical metadata and runnable code unverified; do not copy disabled-TLS examples |
+| [AQIStudy](https://www.aqistudy.cn/html/about.html) | Hourly updates/historical queries | Direct page returned 403; export rights/interface/history unverified |
+| [WAQI historical](https://aqicn.org/historical/) | Historical AQI; separate concentration/hourly request route | Displayed PM2.5 subindices are not µg/m³ concentrations |
 
-本次未核实可免网盘直接取得、并适用于该日期的完整历史站点表。保留这一缺口，不从网页示例行、其他网络当前列表或未验证镜像拼出历史坐标。没有部署采集服务或设置定时任务。
+No complete historical station table applicable to the example date was verified through a direct public route. Do not construct history from example rows, current lists or unverified mirrors. No collector or scheduled service was deployed.
 
-## 依赖和证据限度
+Earlier interface review found preparation logic without a verified downloader: one candidate concerned meteorological reanalysis and another was empty. Existing local homogenized versions were not compared file-by-file with the DOI release. These are evidence limits, not proof of incorrect old outputs. Private paths, hosts, identities and logs are excluded.
 
-阅读本 skill 不需要 R/Python 或登录。人工获取取决于渠道和浏览器权限；解析/整理需要另选实现及其依赖，当前不提供安装即用的脚本。台湾小时字段与大陆站点宽列不能直接共用一个未经检查的解析器。
-
-此前本地/远程审查只覆盖说明、候选脚本接口和有限文件清单：一个下载候选实际属于气象再分析，另一个下载文件为空；远程发现的是整理逻辑，没有可核对的下载请求。均一化产品的本地版本也未与 DOI 数据逐文件比对。本技能只保留通用结论，不公开私人路径、服务器别名、原脚本副本、作者身份或日志。
-
-TAP、CAMS、卫星反演及其他网格预测要按网格产品管理；不能在本技能中标成站点原始观测。来源变更需重新核对权限、说明和数据契约，不沿用旧下载成功记录。
+Mainland wide columns, Taiwan hourly fields and international products require separate parser adaptation. TAP, CAMS, satellite retrievals and gridded predictions remain grid products. Renew rights/contract checks when sources change.

@@ -1,0 +1,61 @@
+{
+  "checked_at": "2026-10-29T17:46+08:00",
+  "scope": "in_memory_synthetic_spatial_operations_only",
+  "real_data_reads": false,
+  "geocoding_requests": 0,
+  "raster_validation_performed": false,
+  "run_tool_or_mcp_adapter_registered": false,
+  "scientifically_approved": false,
+  "checks_per_language": {
+    "intersects_counts": [
+      1,
+      2,
+      0
+    ],
+    "within_counts": [
+      1,
+      0,
+      0
+    ],
+    "all_candidate_ids_preserved": true,
+    "coordinate_roundtrip_tolerance_m": 0.001,
+    "plot_types": [
+      "polygons",
+      "points",
+      "rectangular_grid",
+      "faceted_rectangular_grid"
+    ],
+    "refusals": [
+      "crs_mismatch",
+      "colour_limits_exclude_values",
+      "duplicate_grid_cells",
+      "unknown_source_crs",
+      "duplicate_keys",
+      "geographic_matching_crs"
+    ]
+  },
+  "r_environment": {
+    "R": "4.5.3",
+    "sf": "1.1.0",
+    "ggplot2": "4.0.3",
+    "GEOS": "3.14.1",
+    "GDAL": "3.12.1",
+    "PROJ": "9.7.1"
+  },
+  "python_environment": {
+    "isolated_from_main_project": true,
+    "Python": "3.12.10",
+    "geopandas": "1.2.0",
+    "shapely": "2.2.0",
+    "pyproj": "3.8.0",
+    "pandas": "3.1.0",
+    "numpy": "2.5.4",
+    "matplotlib": "3.11.2"
+  },
+  "source_sha256": {
+    "scripts/r/spatial_helpers.R": "0bdde07e964131bb73f43ac112e1361ace37d3200a4ed713cf364751da922702",
+    "scripts/python/spatial_helpers.py": "2b989f46fc377bcb024b4c0d8007e27cb6f34bc71a350b29d6681d7c994ed9d9",
+    "examples/r/synthetic_spatial.R": "aa48e78b50bcb6dc39755b75466f4a66e11af09e8d424421bd054b7de3d83f6a",
+    "examples/python/synthetic_spatial.py": "633bc4026bb90b6d0f0dbb5862d168ede799020eaba53814454d82f861333251"
+  }
+}

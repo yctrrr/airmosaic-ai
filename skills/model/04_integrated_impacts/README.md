@@ -11,7 +11,8 @@ Health, economic, distributional, ecological, agricultural and climate impacts. 
 
 ## Entry points
 
-- [Health templates](health_impact_analysis/SKILL.md)
+- [Health-risk methods, response data and templates](health_impact_analysis/SKILL.md): baseline rates and exposure-response functions are separate inputs; calculation and plotting templates remain disabled in run-tool.
+- [GCAM output analysis](gcam/SKILL.md): registered inspection, extraction, aggregation and plotting; compilation and simulation remain unsupported.
 
 ## Workflow and handoff
 
@@ -22,3 +23,5 @@ Documentation maintenance reads descriptions and interfaces only, not original d
 Ecology, agriculture and climate impacts are scope navigation, requiring manual receptor, indicator, method and evidence selection. No dedicated executor exists. Natural conditions are upstream drivers in 01 and evaluated responses here.
 
 Follow the [asset contract](../../../harness/assets.md): share data by stage, actual name and version; group results by project and run, referencing the same data across stages. Registration uses compute/check, human review and a fresh data version.
+
+This directory is the primary home for these capabilities. Other research stages reference them as needed without copying skills; cross-stage use does not change their stage-04 ownership.

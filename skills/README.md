@@ -1,4 +1,4 @@
-# Skills: four stages and shared capabilities
+# Skills: operations across four research steps
 
 <!-- README-I18N:START -->
 
@@ -6,20 +6,29 @@
 
 <!-- README-I18N:END -->
 
-Skills describe concrete computer operations: software setup, input preparation, invocation and operational checks. Keep scientific explanations in [methods](../methods/README.md), human pathway narratives in [methods/pathways](../methods/pathways/README.md), and shared runtime code in [core](../harness/usage/runtime.md).
+Skills explain how to prepare software and inputs, perform an operation and check its outputs. [Methods](../methods/README.md) explain the research reasoning; [workflows](../workflows/README.md) combine data and skills.
 
+## Find the research step
 
+| Step | Operational coverage | Acquisition | Modeling and analysis |
+|---|---|---|---|
+| 01 Socioeconomic and Natural Change | Prepare upstream activity, population and natural-condition inputs | [Category](data_acquisition/01_socioeconomic_natural_change/README.md) | [Category](model/01_socioeconomic_natural_change/README.md) |
+| 02 Emission Inventory | Select accounting and input methods; conceptual guidance only | [Category](data_acquisition/02_emission_inventory/README.md) | [Category](model/02_emission_inventory/README.md) |
+| 03 Atmospheric Transport and Chemistry | Prepare atmospheric inputs and support simulation/observation analysis | [Category](data_acquisition/03_atmospheric_transport/README.md) | [Category](model/03_atmospheric_transport/README.md) |
+| 04 Integrated Impacts | Prepare outcome inputs and assess human or natural impacts | [Category](data_acquisition/04_integrated_impacts/README.md) | [Category](model/04_integrated_impacts/README.md) |
 
+Cross-stage operations have one home in shared [acquisition](data_acquisition/shared/README.md) or [modeling](model/shared/README.md), referenced where needed.
 
-Data acquisition and modeling follow four stages: 01 Socioeconomic and Natural Change, 02 Emission Inventory, 03 Atmospheric Transport and Chemistry, and 04 Integrated Impacts. See the [four-step guide](../harness/four-step-workflow.md) for sequence and status.
+Project maintenance has a separate [agent-operations category](agent_operations/README.md), kept in shared rather than adding a research stage.
 
-- [Data acquisition](data_acquisition/README.md): sources, inputs and processing boundaries.
-- [Modeling](model/README.md): methods, configuration and acceptance.
-- [Methods](../methods/README.md): mappings to real skill files, not skill/tool registration.
-- [Add or maintain a skill](../harness/skill-authoring.md): bilingual files, required content, registration boundaries and review checks.
+## Check the current capability
 
-Shared capabilities retain their shared, IAM and machine_learning homes. A SKILL.md adds guidance only; tool registration and executability depend on catalog/tools and the runner allowlist. English entry points use canonical filenames; Chinese counterparts end in `_ZH.md`. Historical long references retain their current language in this migration.
+Category pages and individual `SKILL.md` files maintain the available operations and their status. Read the selected skill's dependencies, configuration, actual entrypoint and result checks. Use [tool queries](../harness/usage/tool-registry.md) for registered execution support and static prerequisites, and [run-tool](../harness/usage/run-tool.md) for reviewed adapters.
 
-## Data and project results
+Detailed method relationships live in [methods/index.yaml](../methods/index.yaml). A skill document, a reference/template and an executable registration are distinct; inspect the selected entry rather than inferring support from its folder name.
 
-Follow the [asset contract](../harness/assets.md). Shared data outside Git uses `assets/data/<stage>/<dataset-name>/<version>/` with actual dataset names. Projects reference fixed versions in configuration without cross-stage duplication. New results use `assets/results/<project_id>/<run_id>/<stage>/<tool_id>/`, with records and temporary files inside that run. New calls provide project and stage together. Compute/check, obtain human review, then register selected data in a fresh version; never overwrite originals or existing versions. Personal settings, authentication and credentials remain separate. Existing files are not migrated; automatic approval and registration services are not implemented.
+## Contribute
+
+Keep stage-specific skills in their primary stage and cross-stage capabilities under `shared`. Maintain bilingual instructions and the appropriate category/index when a capability changes; keep this overview focused on research steps and scope.
+
+Follow [skill authoring](../harness/skill-authoring.md), [registration](../harness/tool-registration.md) and [asset storage](../harness/assets.md) for the operational details.

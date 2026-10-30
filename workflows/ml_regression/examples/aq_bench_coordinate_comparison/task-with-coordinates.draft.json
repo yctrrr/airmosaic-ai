@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "task_type": "regression",
+  "analysis": "prediction",
+  "target": "o3_average_values",
+  "target_unit": "ppb",
+  "target_definition": {
+    "sample_unit": "monitoring station",
+    "averaging_period": "2010-2014",
+    "prediction_time": "retrospective long-term ozone at held-out locations, not a time-resolved forecast"
+  },
+  "features": [
+    "alt",
+    "relative_alt",
+    "water_25km",
+    "forest_25km",
+    "grasslands_25km",
+    "croplands_25km",
+    "urban_and_built-up_25km",
+    "nox_emissions",
+    "lat",
+    "lon_sin",
+    "lon_cos"
+  ],
+  "id_column": "id",
+  "split": {
+    "column": "dataset",
+    "train": "train",
+    "val": "val",
+    "test": "test"
+  },
+  "categorical_features": [],
+  "missing": {
+    "policy": "train_median_mode",
+    "sentinels": [
+      -999
+    ]
+  },
+  "feature_selection": {
+    "mode": "manual"
+  },
+  "models": [
+    {
+      "id": "rf_m3_n5",
+      "learner": "regr.ranger",
+      "parameters": {
+        "num.trees": 500,
+        "mtry": 3,
+        "min.node.size": 5,
+        "sample.fraction": 0.632,
+        "replace": false
+      }
+    },
+    {
+      "id": "rf_m3_n25",
+      "learner": "regr.ranger",
+      "parameters": {
+        "num.trees": 500,
+        "mtry": 3,
+        "min.node.size": 25,
+        "sample.fraction": 0.632,
+        "replace": false
+      }
+    },
+    {
+      "id": "rf_m6_n5",
+      "learner": "regr.ranger",
+      "parameters": {
+        "num.trees": 500,
+        "mtry": 6,
+        "min.node.size": 5,
+        "sample.fraction": 0.632,
+        "replace": false
+      }
+    },
+    {
+      "id": "rf_m6_n25",
+      "learner": "regr.ranger",
+      "parameters": {
+        "num.trees": 500,
+        "mtry": 6,
+        "min.node.size": 25,
+        "sample.fraction": 0.632,
+        "replace": false
+      }
+    }
+  ],
+  "selection_metric": "rmse",
+  "seed": 4101,
+  "seeds": {
+    "sampling": 8101,
+    "model": 4101,
+    "explanation": 9101,
+    "causal": 10101
+  },
+  "row_limits": {
+    "train": 3348,
+    "val": 1114,
+    "test": 1115
+  },
+  "explanation": {
+    "methods": [
+      "permutation",
+      "pdp",
+      "ice"
+    ],
+    "features": [
+      "alt",
+      "nox_emissions"
+    ],
+    "background_rows": 100,
+    "validation_rows": 100,
+    "permutation_repeats": 5,
+    "pdp_points": 9
+  },
+  "unseen_categories": "error",
+  "requirements": "Unexecuted draft for a paired comparison under the published benchmark split. Prepared derived columns and common cohorts must be materialized after plan review. These tasks do not implement spatial CV or regional prediction."
+}

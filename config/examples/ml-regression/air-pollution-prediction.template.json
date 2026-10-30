@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "task_type": "regression",
+  "analysis": "prediction",
+  "target": "pm25",
+  "target_unit": "ug/m3",
+  "target_definition": {
+    "sample_unit": "one observed station-day for fitting/evaluation; regional prediction support declared separately",
+    "averaging_period": "daily mean defined in the preparation record",
+    "prediction_time": "retrospective reconstruction of unmonitored areas; check product release times and observation reuse"
+  },
+  "features": ["temperature", "relative_humidity", "wind_speed", "boundary_layer_height", "season"],
+  "excluded_features": [],
+  "id_column": "sample_id",
+  "split": {"column": "dataset", "train": "train", "val": "val", "test": "test"},
+  "categorical_features": ["season"],
+  "missing": {"policy": "train_median_mode", "sentinels": []},
+  "feature_selection": {"mode": "manual"},
+  "models": [
+    {"id": "tree", "learner": "regr.rpart", "parameters": {"cp": 0.01, "maxdepth": 5, "minsplit": 20}},
+    {"id": "forest", "learner": "regr.ranger", "parameters": {"num.trees": 100, "mtry": 2, "min.node.size": 5}}
+  ],
+  "selection_metric": "rmse",
+  "seed": 20261028,
+  "row_limits": {"train": 20000, "val": 5000, "test": 5000},
+  "explanation": {
+    "methods": ["permutation", "pdp", "ice"],
+    "features": ["temperature", "wind_speed"],
+    "background_rows": 16,
+    "validation_rows": 16,
+    "permutation_repeats": 2,
+    "pdp_points": 4
+  },
+  "requirements": "Adaptation template only. Define unmonitored prediction domain and labelled reference separately. Review field mapping, physical meanings, units, coverage, product/version/assimilation/fusion/calibration lineage, evaluation-observation overlap, release-time availability, study-specific splits and missingness. row_limits are adapter maximum computation ceilings, not required sample sizes or ratios; review cohort/budget and scaling or sampling needs. Learner parameters are starting values, not validated scientific recommendations. Separate unlabelled regional inference/export requires adaptation."
+}

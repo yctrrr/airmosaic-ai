@@ -1,33 +1,27 @@
-# 企业主体、面板与统计约束
+# Enterprise panels and statistical constraints
 
-**状态**：本次核对企业项目 README、03a 财务合并逻辑及 03b/03c 分工。代码与离线检查存在，不代表当前线上身份识别、生产数据获取或全流程已完成。AirMosaic 暂无这组流程的执行适配器。
+**English** | [中文](enterprise_panels_ZH.md)
 
-## 输入、依赖与输出
+## Research question
 
-输入为授权企业基础/财务表、来源主体证据、统计年鉴、行业与地理映射；R 表格处理为主，来源查找还依赖 Python/浏览器。原始双 ID、名称、地址、财务细目和证据正文留在个人数据工作区。
+Build a comparable enterprise–year panel for activity, energy or financial analysis. Decide whether the observation is a legal entity, consolidated group or production facility; changes in ownership and reporting scope can otherwise look like economic change.
 
-| 阶段 | 已核对的本地职责 | 不应跨越的边界 |
-|---|---|---|
-| 03a 财务合并 | 基础清洗、去重、子公司关系和统一面板 | 派生财务值须标注，不能冒充原表报告值 |
-| 03b 主体识别 | 双 ID、统一代码校验、主体和来源行业证据 | 不直接写成本承担者、物理资格或下游财务修正 |
-| 03c 生产证据 | 从已确认主体搜集带期间、单位、类型的数量 | 产能不能当产量，缺少来源不修改身份结论 |
-| 04 统计约束 | 在当前方法中做映射、填补及分组校准 | 汇总闭合不保证企业逐行会计恒等式成立 |
+## Sources and definitions
 
-## 操作步骤
+Combine reviewed identity evidence, financial tables, production evidence and statistical benchmarks with explicit source mappings. Preserve original identifiers and text codes. Financial variable names must be mapped to the source's actual definition, currency, price basis and consolidation scope.
 
-1. 固定原始来源、键类型和主体范围，保留文本 ID，检查重复和母子公司口径。
-2. 按所属任务队列分派来源核查；worker 仅写被分配的证据包，由中心合并校验任务、哈希、身份和冲突。
-3. 对需要审核的候选行业等保留 proposed/reviewed 状态；只消费已确认范围，不把候选名当实体识别成功。
-4. 生产数量必须有原文、期间、单位和 quantity type；搜索摘要只能发现线索。
-5. 明确财务字段含义、原始/推导/填补值及统计约束层级，校准前后分别验收。
-6. 同时检查省份×行业×年合计、企业行恒等式、映射覆盖和被排除记录；共享聚合摘要，明细保留本地。
+## Organization and estimation
 
-## 需人工适配
+1. Deduplicate entity–year–version records and resolve parent/subsidiary overlap before aggregation. Keep proposed identities separate from confirmed ones.
+2. Retain reported, derived and filled values in distinct fields with their rule and source. For example, revenue minus pre-tax profit is a derived residual; it is not automatically the same concept as reported operating cost.
+3. Accept physical quantities only with period, unit, quantity type and original evidence. Capacity, production, sales and financial revenue measure different things.
+4. Map industry/region versions explicitly. If filling from sector growth or calibrating to yearbook totals, state the grouping, denominator, weights, treatment of zeros and minimum supporting observations.
+5. Compare original and adjusted distributions as well as province–sector–year totals. Test applicable enterprise-row identities separately from aggregate agreement.
 
-本地 03a 中 CSMAR 缺少报告 TotalCost 时，以 TotalRevenue − PreTaxProfit 构造；RESSET 读取 BusiCost。不要把两者当完全相同的原始字段。年鉴英文字段名也不能代替中文表头释义，迁移前建立数据字典。
+## Error and quality
 
-合并入口可能改变中心缓存，必须按具体任务和 worker 范围操作；不要直接复用旧任务 ID 或全目录扫描合并。采集结束、队列 terminal、工程测试通过与有证据的数据成功是不同状态。数据来源选择见[企业获取方法](enterprise_sources.md)。
+Entity merges, duplicated group accounts and mismatched sector versions can dominate apparent trends. Missingness may depend on firm size, survival or disclosure obligations. Independent scaling of revenue, cost and profit can satisfy each aggregate target while breaking row-level accounting identities; report both diagnostics and resolve the chosen accounting convention. Validate calibration on the population it represents rather than treating a benchmark as universal ground truth.
 
-## 阶段与 Skill 映射
+## Interpretation
 
-主目录：01_socioeconomic_natural_change；适用阶段：01_socioeconomic_natural_change。对应 [socioeconomic-drivers](../../skills/model/01_socioeconomic_natural_change/socioeconomic-drivers/SKILL.md)、[csmar](../../skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md)。执行状态以本文及真实工具 manifest 为准；没有 tool_id 的方法只供指导。
+A calibrated panel is a model-assisted estimate, not a new set of enterprise disclosures. Report the observed share, imputed share and affected groups, and retain an unadjusted comparison. Entity identity, production eligibility and economic incidence are separate conclusions. Source selection is described in [enterprise sources](enterprise_sources.md). Operational panel assembly requires reviewed task-specific adaptation; no dedicated assembly skill is currently provided.

@@ -1,0 +1,52 @@
+dataset_id: pm25_exposure_response
+name: Published PM2.5 Exposure-Response Functions and Parameters
+domain: health
+description: Versioned response coefficients, nonlinear function parameters or risk curves, separate from baseline mortality and population inputs. No function is a universal default.
+spatial_coverage: Function-specific source populations; transferability requires study review
+spatial_resolution: Epidemiological function and population strata, not a physical grid
+temporal_coverage: Source-release-specific; distinguish exposure period from publication year
+temporal_resolution: Function-specific long-term exposure window
+formats:
+  - csv
+  - json
+  - zip
+variables:
+  - name: function_id
+    description: Exact response model, source release and population variant.
+    unit: identifier
+  - name: endpoint
+    description: Cause/outcome and eligible age-sex population.
+    unit: source-defined category
+  - name: relative_risk
+    description: A reported RR per specified exposure contrast, or a value from a fully specified curve.
+    unit: dimensionless
+  - name: response_parameters
+    description: Model-specific parameters with uncertainty and an explicitly recorded concentration increment, units and counterfactual rule.
+    unit: function-specific
+access_method: Review an author parameter archive or official report, store a versioned source subset outside Git, then apply the health skill's data-contract checks. No automatic authenticated downloader or executable health adapter is provided.
+access_mode: public_reference_metadata_and_local_ingest
+license_or_terms: Source-specific terms. Author-repository availability does not establish redistribution rights; WHO report licensing and attribution conditions apply separately from the project software license.
+local_cache_policy: Keep source identifiers, hashes, extraction records and applicability metadata with fresh versioned parameter data. Do not bundle private exposure, population, baseline-health inputs or credentials.
+cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/04_integrated_impacts/ExposureResponse
+acquisition_skill: skills/model/04_integrated_impacts/health_impact_analysis
+quality_notes: Match pollutant, units, exposure statistic/window, outcome, eligible population and reference exposure. Do not treat an unavailable curve row as RR=1, overlap broad and cause-specific deaths, or apply PM2.5 functions to ozone by renaming a column. The health calculation and plotting tool IDs remain disabled templates.
+sources:
+  - title: Burnett et al. 2018 author DataGEMM archive
+    url: https://github.com/mszyszkowicz/DataGEMM
+    pinned_revision: c0640d86a852e2e3565392ba014964bd43edb8ff
+    function_family: nonlinear_GEMM
+  - title: WHO HRAPIE-2 updated guidance 2025
+    url: https://www.who.int/publications/b/81870
+    isbn: '9789289062633'
+    function_family: endpoint_specific_published_response_recommendations
+  - title: WHO HRAPIE 2013 historical guidance
+    url: https://iris.who.int/handle/10665/153692
+    function_family: historical_log_linear_response_recommendations
+related_datasets:
+  - gbd_health
+  - ihme_gbd_mortality_rates
+  - population_grid
+example_queries:
+  - PM2.5 long-term mortality response version and eligible ages
+  - GEMM parameter provenance and overlapping endpoint checks
+discovery_note: This catalog reference supports describe-dataset by its exact ID. Acquisition-only list-datasets is not extended by this metadata file, and file-presence checks do not establish scientific validity.

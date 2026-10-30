@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "mode": "compare_existing",
+  "project_id": "model_reproduction_demo",
+  "target": {"name": "synthetic_response", "unit": "arbitrary"},
+  "candidate": {
+    "root": "${AIRMOSAIC_ASSETS_DIR}/results/model_reproduction_demo/synthetic_v1/candidate",
+    "manifest": "manifest.json",
+    "prediction_origin": "independent_run",
+    "models": [{
+      "id": "forest", "predictions": "predictions.csv", "id_column": "sample_id",
+      "truth_column": "truth", "prediction_column": "response",
+      "reported_metrics": {"file": "metrics.json", "pointers": {
+        "rmse": "/forest/rmse", "mae": "/forest/mae", "r_squared": "/forest/r_squared"
+      }}
+    }]
+  },
+  "reference": {
+    "root": "${AIRMOSAIC_ASSETS_DIR}/results/model_reproduction_demo/synthetic_v1/reference",
+    "manifest": "manifest.json",
+    "prediction_origin": "stored_predictions",
+    "models": [{
+      "id": "forest", "predictions": "predictions.csv", "id_column": "sample_id",
+      "truth_column": "truth", "prediction_column": "response",
+      "reported_metrics": {"file": "metrics.json", "pointers": {
+        "rmse": "/forest/rmse", "mae": "/forest/mae", "r_squared": "/forest/r_squared"
+      }}
+    }]
+  },
+  "tolerances": {"truth_abs": 1e-10, "metric_abs": 1e-9, "metric_relative": 1e-9}
+}

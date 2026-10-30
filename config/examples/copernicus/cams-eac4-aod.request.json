@@ -1,0 +1,7 @@
+{
+  "variable": ["total_aerosol_optical_depth_550nm"],
+  "date": ["2024-01-01/2024-01-01"],
+  "time": ["00:00"],
+  "area": [40.5, 110.25, 35.25, 115.5],
+  "data_format": "grib"
+}

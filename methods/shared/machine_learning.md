@@ -1,30 +1,27 @@
-# mlr3 与 TimeXer
+# Choosing a machine-learning approach
 
-**状态**：这两项是近期新增的方法学习和使用说明，当前没有训练/预测适配器，也没有本机模型训练通过记录。保留原有详细文档，方法库只提供选择入口。
+**English** | [中文](machine_learning_ZH.md)
 
-| 方法 | 适用任务 | 真实参考 tool_id |
-|---|---|---|
-| [mlr3](../../skills/model/machine_learning/mlr3/SKILL.md) | R 表格回归/分类、比较、调参与新数据预测 | mlr3_workflow_reference |
-| [TimeXer](../../skills/model/machine_learning/timexer/SKILL.md) | Python/PyTorch 外生变量时间序列预测 | timexer_workflow_reference |
+Choose a model from the research question and data structure. A familiar framework is a way to implement the choice; it does not decide the scientific target or validation design.
 
-## 共用步骤
+## What should the model predict?
 
-用户数据和自然语言要求如何组织为建模任务，见[需求驱动的模型构建](../pathways/requirements_driven_model_building_ZH.md)。现有代码作为复现验证案例，不将所有新请求固定为原模型；首个[臭氧回归案例](../pathways/references/air_quality_o3_reference_ZH.md)仅完成源码核对，尚未数值复现。
+A numeric response suggests regression. A defined category suggests classification, with attention to class frequency, the positive class and the cost of different mistakes. A sequence forecast adds a prediction origin, horizon and information-availability boundary. [Regression design](machine_learning_model/README.md) and [forecasting design](time_series_forecasting.md) develop these choices.
 
-1. 定义目标、预测时点、实体和特征可获得时间，先设计与部署场景一致的划分。
-2. 在任务环境检查依赖与数据契约；拟合型预处理只使用开发训练范围。
-3. 设置基线、预算和评价指标，在开发数据中比较/调参；冻结方案后进行约定的独立评估。
-4. 保存模型、配置、训练期变换、列顺序、类型、单位和版本；预测新数据时复用同一契约。
-5. 检查分布变化、缺失预测和适用范围。模型对象与逐条结果留在本地，预测表现不证明因果机制。
+## What structure does the data have?
 
-## 方法专属边界
+Identify repeated entities, spatial relationships, time order and measurement support. A table of independent cases, a station panel and a continuous sequence need different sampling and holdout designs. Decide how new cases will differ from development data before selecting a model family.
 
-mlr3 的拟合型预处理应置于重抽样流程内；Task/Learner 为可变对象，修改隔离与最终拟合范围见其工作流说明。
+## What should be compared?
 
-TimeXer 当前官方实现主要消费历史窗口；未来已知外生变量和多实体取窗需适配。`--is_training 0` 是带标签测试，不等于未知未来推理；开发期测试集访问、scaler 保存和输出路径见其使用方法。
+Use an interpretable baseline and candidates whose complexity can be supported by the sample. Keep the same target, samples and evaluation metric across meaningful comparisons. Fit learned preprocessing inside training boundaries. Use development data for selection and a frozen holdout for final assessment.
 
-详细参数、环境、上游 SHA 和验证范围统一维护在[机器学习分类](../../harness/usage/machine-learning.md)及各自 UPSTREAM.md，避免在本方法库产生第二套不一致命令。
+For classification inspect class-specific errors and probability calibration where relevant, not only overall accuracy. For regression inspect target-unit error and residual patterns. The [mlr3 evaluation guide](https://mlr3book.mlr-org.com/chapters/chapter3/evaluation_and_benchmarking.html) explains performance estimation and model comparison.
 
-## 阶段与 Skill 映射
+## What does the explanation support?
 
-主目录：shared；适用阶段：01_socioeconomic_natural_change, 02_emission_inventory, 03_atmospheric_transport, 04_integrated_impacts。对应 [mlr3](../../skills/model/machine_learning/mlr3/SKILL.md)、[timexer](../../skills/model/machine_learning/timexer/SKILL.md)。执行状态以本文及真实工具 manifest 为准；没有 tool_id 的方法只供指导。
+Predictive explanations describe the model under specified data/reference conditions. A causal effect additionally needs identification assumptions and an appropriate estimator. Use [requirements-driven design](requirements_driven_model_building.md) to make this distinction before implementation.
+
+## Move to implementation
+
+The [regression skill](../../skills/model/shared/machine_learning_model/SKILL.md) implements bounded numeric prediction and a declared PLR branch. [mlr3 guidance](../../skills/model/shared/machine_learning_model/frameworks/r/mlr3/SKILL.md) covers direct R framework use and extensions; [TimeXer guidance](../../skills/model/shared/machine_learning_model/models/time_series/timexer/SKILL.md) covers an external sequence model requiring adaptation. Their skills own dependencies, configuration and execution status.

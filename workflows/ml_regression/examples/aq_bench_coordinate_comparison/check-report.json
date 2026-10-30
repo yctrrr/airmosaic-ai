@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "kind": "planning_artifact_validation_not_model_execution",
+  "checked_on": "2026-10-29",
+  "scope": "Ten planning files and four navigation documents; no training, downloads or credentials.",
+  "task_drafts_valid": 2,
+  "new_plan_files": 10,
+  "local_links": 68,
+  "external_links": 16,
+  "source_and_code_hashes_unchanged": true,
+  "model_fits": 0,
+  "permissions": {
+    "generate_experiment_code": false,
+    "execute_models": false,
+    "read_credentials": false,
+    "publish": false
+  },
+  "errors": [],
+  "numerical_or_spatial_execution": false,
+  "generated_experiment_scripts": 0,
+  "scientific_acceptance": "not_assessed",
+  "runtime_change": "none",
+  "historical_results": "not_modified",
+  "note": "Configuration validity does not provide prepared inputs, approval or the proposed spatial adapters."
+}

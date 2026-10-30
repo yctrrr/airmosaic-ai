@@ -1,2 +1,2 @@
-# Public toy hashes must survive checkouts with core.autocrlf enabled.
+# Public asset hashes must survive checkouts with core.autocrlf enabled.
 /assets/** text eol=lf

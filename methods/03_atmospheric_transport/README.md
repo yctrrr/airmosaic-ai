@@ -1,12 +1,21 @@
-# 03_atmospheric_transport：大气输送与化学
+# Atmospheric Transport and Chemistry
 
-排放接口到浓度的模型方法，以及 ERA5/CAMS 气象与大气成分获取、PM2.5 站点观测整理参考。GEOS-Chem 编译、配置及排错为人工参考；没有本阶段的下载、整理、编译、模拟或调度适配器。网格资料和站点观测分别保留来源与时间/空间口径。
+<!-- README-I18N:START -->
 
-| 方法 | 状态 |
+**English** | [中文](README_ZH.md)
+
+<!-- README-I18N:END -->
+
+Connect an atmospheric modeling question with appropriate inputs, concentration evaluation and observational support. Product definitions and representativeness matter before comparing simulations and observations.
+
+| Method | Explanation |
 |---|---|
-| [GEOS-Chem 输入、编译与浓度交接](geos_chem.md) | reference |
-| [引用 01：ERA5 气象数据获取](../01_socioeconomic_natural_change/era5.md) | reference；网页/API 使用说明及实测示例 |
-| [引用 01：CAMS EAC4 / 全球预报获取](../01_socioeconomic_natural_change/cams.md) | reference；网页/API 使用说明及实测示例 |
-| [PM2.5 站点监测获取与整理](pm25_stations.md) | reference；小时归档与[均一化日值](pm25_homogenized.md)分别提供已验证小样例，无 run-tool 入口 |
+| Atmospheric simulation design | [Read method](geos_chem.md) |
+| Station observations | [Read method](pm25_stations.md) |
+| Observation sources | [Read method](pm25_stations_sources.md) |
+| Observation preparation | [Read method](pm25_stations_preparation.md) |
+| Homogenized daily series | [Read method](pm25_homogenized.md) |
 
-[数据获取入口](../../skills/data_acquisition/03_atmospheric_transport/README.md)与[模型使用入口](../../skills/model/03_atmospheric_transport/README.md)逐项连接 skill。具体顺序及交接见[四步流程](../../harness/four-step-workflow.md)。[共享方法](../shared/README.md)只在本步需要时引用，不复制实现。
+Configuration, invocation and actual execution status are in the [acquisition skills](../../skills/data_acquisition/03_atmospheric_transport/README.md) and [model skills](../../skills/model/03_atmospheric_transport/README.md).
+
+[Shared methods](../shared/README.md) cover cross-stage design and quality; the [main index](../README.md) provides the full mapping.

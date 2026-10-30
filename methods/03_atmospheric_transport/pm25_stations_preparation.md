@@ -1,55 +1,34 @@
-# 整理、人工适配与交接
+# Preparing PM2.5 station data for scientific handoff
 
-本页定义整理和交接要求。[单日示例](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/references/single-day-example.md)已完成新下载文件的小时筛选与宽转长检查；未做日均聚合和站点坐标关联。真实数据读取与处理须限定输入、日期、站点范围和输出位置；常规文档检查仅用说明与合成输入。
+**English** | [中文](pm25_stations_preparation_ZH.md)
 
-## 输入和目标契约
+Preparation creates traceable tables and summaries while preserving observation meaning. See the [main method](pm25_stations.md) for completeness and the [skill](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md) for operations.
 
-任务计划应明确来源、产品类型、监测网络、日期范围、站点选择、污染物、平均时段、原时区、单位、元数据版本和工作区相对目标。这里的字段是设计约定，不是已实现的 CLI 参数或自动加载配置。
+## Table design
 
-建议派生长表保留：
+Specify source/product/network, dates/stations, pollutant, averaging period, original time zone, units and metadata version. These are research design choices, not a CLI schema.
 
-| 字段族 | 约定 |
+| Family | Retain |
 |---|---|
-| 身份与来源 | `source`、`product_kind`、`station_id`、`station_metadata_version`；站号按字符串保留，来源和监测网络参与主键设计 |
-| 时间 | 原日期/小时、原时区、规范化时间、时间区间起止语义、平均时段；未知项不默认为 UTC |
-| 观测量 | 污染物、数值、单位、源质量标记及缺失原因；没有源标记时不伪造已质控 |
-| 加工 | 是否填补、校正或均一化，处理版本与规则；原观测和派生统计分开 |
-| 追溯 | 来源文件相对位置、取得日期、批次、校验摘要及站点表有效期；不记录个人绝对路径或签名下载链接 |
+| Identity | Source, product kind, string station ID, network and metadata version |
+| Time | Original date/hour, zone, normalized time and interval/averaging support; unknown is not UTC |
+| Observation | Pollutant, value, unit, source flags and missing reason; no invented passed-QC status |
+| Processing | Imputation/correction/homogenization status and rule/version, separate from originals |
+| Traceability | Relative source file, acquisition date, batch, checksum and station validity |
 
-设计唯一键时包含来源/网络、站点、时间和观测类型/平均时段；具体字段须依据实际 schema 确定。先发现重叠与冲突，再选择保留规则，不把连接操作当成自动去重。
+Unique keys include source/network, station, time and observation type/averaging. Detect overlap/conflicts before retention; joining does not automatically deduplicate.
 
-## 人工适配清单
+## Quality and comparison
 
-| 历史整理思路 | 可复用的方法 | 必须补齐或改正 |
-|---|---|---|
-| 大陆站点宽表 | 保留日期、小时和类型，将站点列转成长表 | 显式筛选输入文件和观测列，验证编码、字段、单位和缺失符号；不能读取目录中所有文件后假定格式相同 |
-| 早期长表与后续宽表衔接 | 先统一契约再检查重叠期 | 显式连接键、记录主键、来源优先级和冲突报告；旧流程的隐式全连接不是可靠去重规则 |
-| 日值汇总 | 分组统计与有效性判定分开 | 旧流程以行数计数，不能代表非缺失且唯一的小时数；全缺失、重复时次和无效值分别处理。有效性阈值需关联标准版本与研究目的，不复制旧常数 |
-| 站点坐标关联 | 保留站点表版本与有效期 | 按列名、显式键和有效期连接，检查键唯一性及连接后行数；拒绝按列位置匹配，不用当前坐标覆盖历史迁站 |
-| 台湾小时列展开 | 分别映射 `MonitorValue00`–`MonitorValue23`、`SiteId`、`ItemEngName`、`MonitorDate` | 确认源接口后再展开；缺失删除应基于必要观测字段，不能因无关列缺失整行丢弃。按唯一时次计数，污染物单位分别核对 |
-| 脚本运行方式 | 输入只读、结果另存、依赖明确 | 消除交互式 RStudio 工作目录、固定路径/年份和调试尾段；若采用 R，显式声明实际使用的 data.table、dplyr、tidyr、purrr 等依赖及函数命名空间，不把依赖清单当作已安装证明 |
+1. Check additions/closures, relocations, renaming and coordinate validity; distinguish station identity, network and city membership.
+2. Separate missing files/times, inactive stations, instrument gaps and quality exclusions. All-missing groups stay missing, not zero or a usable mean.
+3. Separate hourly observations, 24-hour averages, city summaries, AQI and homogenized daily products. Reaggregating moving means does not reproduce daily observations.
+4. Resolve zone, hour intervals and day boundaries. Choose standard edition, effective date and purpose. The historical 20-hour rule counts unique valid observations; a paper's validation threshold is not a regulatory rule.
+5. Point concentrations do not automatically represent cells or population exposure. Record distance, spatial support and representativeness; all-station means are not official city means.
+6. Control station/time overlap in training/evaluation. Processed-product imputation/correction can affect independence and must be disclosed.
 
-这些是静态审查得到的适配要求，不是已完成修复，也不证明任何历史输出有误。旧脚本保持原位，本项目不复制、直接执行或注册。
+## Handoff
 
-## 质量检查与科学边界
+Acquisition evidence includes original files, publisher/provider, release/license, requested/actual coverage, failures, station-table version and integrity checks. Preparation adds long tables, mappings, duplicate/conflict/missingness reports, aggregation policies and valid coverage. Preserve originals.
 
-具体依据、误差环节和日均操作顺序见[数据说明与规范化](pm25_stations.md)。历史国控站研究若选择 GB 3095—2012 表 4 的要求，按至少 20 个有效唯一小时生成日均；2026 新版标准另记适用日期。文献门槛按其具体数据对象引用，不能用宽松研究阈值冒充标准要求。
-
-1. 核验站点编码、新增/关闭、迁移、更名和坐标有效期。站点身份、监测网络和城市归属分别记录。
-2. 区分缺文件、缺时次、站点未启用、仪器缺测与质量剔除；不统一补零。全缺失组保留缺失状态，不能产生可用均值。
-3. 分离小时实测、24 小时均值、城市汇总、AQI 与均一化日值；不能重复汇总滑动均值来冒充日实测统计。
-4. 聚合前核对时区、小时标签和跨日规则；日均/年均有效性必须明确采用的标准、版本、适用日期和研究目的。未确认时只交付待核实项。
-5. 站点局部浓度不自动代表网格平均或人口暴露。下游匹配需记录距离、网格/站点关系和代表性选择；不把全站算术平均称为官方城市均值。
-6. 用于模型训练/验证时控制站点和时间重叠，避免信息泄漏；均一化产品的填补/校正也可能影响独立验证，须披露产品类型和加工方法。
-
-## 分开交付
-
-- **获取交付**：原文件清单、实际提供者与原发布来源、版本/许可、计划与实际覆盖、失败批次、站点表版本和文件完整性证据。下载成功不代表科学适用。
-- **整理交付**：派生长表、元数据、字段映射、重复/冲突/缺失报告、汇总规则及有效覆盖；不修改原文件。
-- **向 03/04 交接**：时间与单位、观测/派生标记、坐标有效期、使用范围、未决问题和验证层级。没有匹配与代表性检查，不能直接宣称是健康模型可用输入。
-
-路径与凭据沿用 [SKILL.md](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md#路径凭据与-agent-边界)。运行记录保留在成员工作区，公共摘要不得包含认证信息、私人身份或服务器路径。
-
-## 未来实现准入
-
-若另行开发适配器，先以完全合成的观测宽表、站点表和 HTTP 替身测试：小时/24h/AQI 筛选、字符串站号、重复和缺失、元数据版本变化、时间边界、越界路径、错误 HTML、超时与日志脱敏。定义并验证参数、依赖、失败状态和只读输入策略后，才考虑登记真实工具 ID；当前没有这些实现或测试通过的声明。真实小批次需另有明确范围。
+Downstream 03/04 use needs time/units, original/processed flags, dated coordinates, intended scope, unresolved questions and validation level. Download completion alone does not establish representativeness or health-model suitability.

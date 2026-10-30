@@ -1,0 +1,5 @@
+schema_version: 1
+purpose: Additional public operational skill references; metadata stays in each canonical SKILL.md. This does not register executable tools or install host skills.
+skills:
+  - skills/agent_operations/shared/skill_authoring/SKILL.md
+  - skills/agent_operations/shared/autoskill/SKILL.md

@@ -1,117 +1,47 @@
-# Data Requirements for PM2.5 Health Impact Analysis
+# Health-template input contract
 
-## Overview
+**English** | [中文](data_requirements_ZH.md)
 
-Five data components are required. All must share the same spatial resolution.
+This page describes fields expected by the existing templates. Scientific selection and interpretation belong to the [health method](../../../../../methods/04_integrated_impacts/health_impacts.md); [operations](operations.md) explains configuration and adaptations.
 
-## 1. PM2.5 Concentration Grid
+## Concentration
 
-**Schema**: X_Lon, Y_Lat, concentration
+Required fields: `X_Lon`, `Y_Lat`, `concentration`. The template expects annual mean PM2.5 in ug/m3 at the selected grid centroids. Describe the averaging/coverage rule, year and source product.
 
-| Field | Type | Description |
-|---|---|---|
-| X_Lon | numeric | Grid centroid longitude (decimal degrees) |
-| Y_Lat | numeric | Grid centroid latitude (decimal degrees) |
-| concentration | numeric | Annual mean PM2.5 (ug/m3) |
+Choose spatial aggregation for the exposure represented: an area mean and a population-weighted mean answer different questions. Keep the method explicit when changing resolution. The template's concentration rounding and hard cap at 200 are implementation assumptions requiring review against the selected curve domain.
 
-**Resolution**: Typically 0.1 degree (~11 km at equator)
+## Population
 
-**Source options**:
-- TAP (Tsinghua University): 1 km → aggregated, China coverage
-- Satellite-derived: MODIS/MISR/SeaWiFS AOD + GEOS-Chem simulation
-- CAMS global reanalysis (0.75 deg, coarser)
-- WRF-Chem or CMAQ model output
+Required fields: `X_Lon`, `Y_Lat`, `GridID`, `Year`, `urarea`, `Pop`. `Pop` is a population count; `urarea` distinguishes overall/urban/rural categories used by the task. Preserve counts when regridding, verify the census/product basis and avoid summing overlapping overall and subgroup populations.
 
-**Preprocessing notes**:
-- Original 1 km grids must be aggregated to analysis resolution by taking the mean within each grid cell
-- Concentration values should be capped at the RR curve maximum (default: 200 ug/m3)
+WorldPop, GPW and LandScan are possible product families, with different support and population concepts. Select a release and definition explicitly rather than treating these sources as interchangeable.
 
-## 2. Population Grid
+## Age-sex fractions
 
-**Schema**: X_Lon, Y_Lat, GridID, Year, urarea, Pop
+Required fields: `X_Lon`, `Y_Lat`, `GridID`, `Year`, `sex`, `agegroup`, `AgeStruc`. The template uses male/female labels and age-group lower bounds, ending in an open 80+ band.
 
-| Field | Type | Description |
-|---|---|---|
-| X_Lon | numeric | Grid centroid longitude |
-| Y_Lat | numeric | Grid centroid latitude |
-| GridID | integer | Unique grid identifier |
-| Year | integer | Data year |
-| urarea | character | Urban/rural/overall classification |
-| Pop | numeric | Total population count |
+Declare the denominator. Joint age-sex fractions sum to one across all age-sex groups when multiplied by total population. Within-sex fractions require sex-specific population and adapted multiplication. Inspect the original age-band metadata; if infant and ages 1–4 counts are separate, merge their non-overlapping counts before deriving a 0–4 fraction.
 
-**Source options**:
-- WorldPop: 100 m or 1 km, UN-adjusted, constrained/unconstrained
-- GPW (Gridded Population of the World): ~1 km
-- LandScan: ~1 km
+## Baseline mortality
 
-**Preprocessing**: Must be aggregated to match the analysis resolution and spatially aligned with the concentration grid.
+Required fields: `location_name`, `Year`, `metric`, `endpoint`, `sex`, `agegroup`, `MortRate`. `MortRate` represents deaths per 100,000 matched population, with `metric=Rate`. The template's endpoint labels are `copd`, `lc`, `lri`, `ihd`, `stroke`; eligibility follows the selected response model.
 
-## 3. Age Structure Fractions
+Filter the original source year/location and metric before joining. A missing target year requires a documented substitution/interpolation scenario and sensitivity review, not an automatic nearest-year default. The current template rewrites mortality year, so task-copy adaptation must preserve and verify the original source year.
 
-**Schema**: X_Lon, Y_Lat, GridID, Year, sex, agegroup, AgeStruc
+Do not sum age-specific rates to obtain an 80+ rate. Aggregate matched age-specific deaths and population, then divide to obtain the combined rate. Equivalently, use the matched population-weighted rate. If risk functions differ by fine age, calculate age-specific attributable deaths first and sum counts. The current template's rate summation needs adaptation.
 
-| Field | Type | Description |
-|---|---|---|
-| X_Lon | numeric | Grid centroid longitude |
-| Y_Lat | numeric | Grid centroid latitude |
-| GridID | integer | Unique grid identifier |
-| Year | integer | Data year |
-| sex | character | 'male' or 'female' |
-| agegroup | integer | Age group lower bound: 0, 5, 10, ..., 75, 80 |
-| AgeStruc | numeric | Fraction of population in this age-sex group (0-1) |
+## Relative-risk lookup
 
-**Constraints**:
-- For each grid cell and sex, AgeStruc must sum to 1.0
-- The 80 age group is the open-ended 80+ category
-- WorldPop produces ages 0, 1, 5, 10, ..., 75, 80; the 1-year group is summed into 0-4
+Required fields: `curve_name`, `endpoint`, `concentration`, `agegroup`, `RR`. Preserve the exact curve version, eligible endpoints/ages, reference exposure and supported concentration range. RR equals one at that curve's reference exposure; zero exposure is not a universal reference.
 
-**Preprocessing**: Population counts by age-sex per grid cell are divided by total population to obtain fractions.
+The template matches rounded concentration strings on a 0.1 grid. Normalize string formatting and review rounding, interpolation and out-of-range behavior in the adapted task. Do not assume a single adult-age row covers all baseline ages, and do not treat a missing join as RR=1 or zero burden.
 
-## 4. Baseline Mortality Rates
+## Alignment and checks
 
-**Schema**: location_name, Year, metric, endpoint, sex, agegroup, MortRate
+Concentration, population and age fractions need compatible spatial/temporal support. Mortality and risk tables join on their appropriate location, period, endpoint, sex, age and exposure definitions; they do not require a physical raster resolution themselves.
 
-| Field | Type | Description |
-|---|---|---|
-| location_name | character | Location (e.g., 'China') |
-| Year | integer | Data year |
-| metric | character | Always 'Rate' |
-| endpoint | character | Disease: 'copd', 'lc', 'lri', 'ihd', 'stroke' |
-| sex | character | 'male' or 'female' |
-| agegroup | integer | Age group: 0, 5, 10, ..., 75, 80, 85, 90, 95 |
-| MortRate | numeric | Deaths per 100,000 population |
+Check unique join keys, unmatched cells/groups, nonnegative populations, fraction denominators, rate units and curve support. Preserve excluded population and missing inputs in the quality report. Validate a small synthetic hand calculation and the equality of grid/summary totals after adaptation; see [operations](operations.md).
 
-**Source**: GBD Results from IHME (vizhub.healthdata.org/gbd-results)
+## Source parameter records are not RR lookup tables
 
-**Preprocessing notes**:
-- Must be filtered to the target country and metric='Rate'
-- If GBD data is not available for the target year, use the nearest available year
-- 80+ sub-groups (80, 85, 90, 95) are summed before matching to WorldPop age structure
-
-## 5. RR Curve Lookup Table
-
-**Schema**: curve_name, endpoint, concentration, agegroup, RR
-
-| Field | Type | Description |
-|---|---|---|
-| curve_name | character | 'GEMM-5COD' or 'IER' |
-| endpoint | character | 'copd', 'lc', 'lri', 'ihd', 'stroke' |
-| concentration | character | Rounded concentration for matching: '0', '0.1', ..., '200.0' |
-| agegroup | integer | Age group: 0, 5, 10, ..., 75, 80 |
-| RR | numeric | Relative risk at this concentration relative to TMREL |
-
-**Constraints**:
-- At concentration = 0 (TMREL), RR = 1.0 for all endpoints and ages
-- Concentration values are rounded to 0.1 ug/m3 for exact matching
-- For IER: agegroup is typically 25 (single curve for ages 25+)
-
-**Derivation**: Obtained by running the GEMM or IER parameterized model against a sequence of concentrations. This format enables fast lookup in the grid calculation without re-running the CRF model at each grid cell.
-
-## Resolution Alignment
-
-All five components must share the same spatial resolution and coordinate system. The standard pipeline:
-
-1. Define analysis grid from population data (0.1 degree centroids)
-2. Aggregate PM2.5 to same grid by spatial mean
-3. Match age structure fractions by GridID
-4. Join baseline mortality and RR curves by endpoint/age/concentration (non-spatial join)
+The [ER source contract](exposure_response.md) adds an external coefficient/provenance layer. A coefficient per increment is not a `concentration, RR` curve. Require an explicit task reference, age/sex/endpoint mapping, concentration support, and uncertainty branch before generating a task-specific lookup. Current WHO adult natural-cause coefficients do not match the template's five-cause baseline by renaming endpoints. GEMM cell extracts with ambiguous headers/ages must stop normalization. Preserve an exact expected endpoint/age set and reject missing members; the template's intersection is insufficient.

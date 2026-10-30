@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "data_type": "published_public_datasets",
+  "datasets": [
+    {
+      "asset_id": "aq_bench",
+      "version": "v1",
+      "license": {
+        "id": "CC-BY-4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "source": "https://b2share.eudat.eu/records/xp9ww-efm51",
+      "attribution": "Betancourt et al. (2020)",
+      "publication_authorized": true,
+      "files": {
+        "data/03_atmospheric_transport/AQ-Bench/v1/AQbench_dataset.csv": {
+          "bytes": 1531254,
+          "sha256": "34bc7d888264ea0d8a37ede2c84d1aab686cc8517e1f77d1c619717a329b1f56"
+        },
+        "data/03_atmospheric_transport/AQ-Bench/v1/AQbench_variables.csv": {
+          "bytes": 3933,
+          "sha256": "04825047ba63b8d43e574a2a4c5a7637dbf47edfe93e20f674f40c99edc4b59a"
+        }
+      }
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-# 技能：四步与共享能力
+# 技能：四个研究步骤中的操作
 
 <!-- README-I18N:START -->
 
@@ -6,22 +6,29 @@
 
 <!-- README-I18N:END -->
 
-技能说明具体电脑操作：软件准备、输入准备、调用和操作检查。科学解释放[方法库](../methods/README_ZH.md)，人类路径叙述放[完整路径说明](../methods/pathways/README_ZH.md)，公共运行代码放[核心程序](../harness/usage/runtime_ZH.md)。
+技能说明怎样准备软件和输入、完成操作并检查输出。[方法](../methods/README_ZH.md)解释研究依据，[工作流](../workflows/README_ZH.md)组合数据与技能。
 
+## 找到研究步骤
 
+| 步骤 | 操作覆盖范围 | 数据获取 | 建模与分析 |
+|---|---|---|---|
+| 01 社会经济与自然变化 | 准备活动、人口和自然条件等上游输入 | [分类](data_acquisition/01_socioeconomic_natural_change/README_ZH.md) | [分类](model/01_socioeconomic_natural_change/README_ZH.md) |
+| 02 排放清单 | 选择核算和输入方法，仅提供概念说明 | [分类](data_acquisition/02_emission_inventory/README_ZH.md) | [分类](model/02_emission_inventory/README_ZH.md) |
+| 03 大气输送与化学 | 准备大气输入，支持模拟与观测分析 | [分类](data_acquisition/03_atmospheric_transport/README_ZH.md) | [分类](model/03_atmospheric_transport/README_ZH.md) |
+| 04 综合影响评估 | 准备结果输入，评估人类或自然影响 | [分类](data_acquisition/04_integrated_impacts/README_ZH.md) | [分类](model/04_integrated_impacts/README_ZH.md) |
 
+跨阶段操作在共享[数据获取](data_acquisition/shared/README_ZH.md)或[建模](model/shared/README_ZH.md)目录维护一份，其他阶段按需引用。
 
-数据获取和模型使用均采用 01 社会经济与自然变化、02 排放清单、03 大气输送与化学、04 综合影响评估四步。逐步流程和状态见[四步导航](../harness/four-step-workflow.md)。
+项目维护另设[代理维护类别](agent_operations/README_ZH.md)，统一放在共享目录，不增加研究步骤。
 
-- [数据获取](data_acquisition/README_ZH.md)：来源、输入与处理边界。
-- [模型使用](model/README_ZH.md)：方法、模型配置与验收。
-- [方法库](../methods/README_ZH.md)：逐项链接真实 SKILL.md；不替代技能或工具注册。
-- [新增与维护技能](../harness/skill-authoring_ZH.md)：双语文件、最小内容、注册边界和交付检查。
+## 确认当前能力
 
-跨阶段保留共享目录与已有 IAM、machine_learning 入口。新增 SKILL.md 只表示有指导文档；是否登记、是否可执行分别以 catalog/tools 和运行器允许清单为准。
+分类页和具体 `SKILL.md` 维护可用操作及状态。阅读所选技能的依赖、配置、实际入口和结果检查，通过[工具查询](../harness/usage/tool-registry.md)查看已注册执行支持及静态前置条件，经审查适配器使用 [run-tool](../harness/usage/run-tool.md)。
 
-英文入口保留默认文件名，中文使用 `_ZH.md`。本轮仅整理入口与分类导航，历史长篇参考资料保留当前语言。
+详细方法关系保留在 [methods/index.yaml](../methods/index.yaml)。技能文档、参考或模板、可执行登记属于不同对象，应查看所选入口，不能根据文件夹名称推断支持情况。
 
-## 数据与项目结果
+## 贡献
 
-数据和项目结果按[资产规范](../harness/assets_ZH.md)管理。Git 外共享 `assets/data/<stage>/<dataset-name>/<version>/`，数据目录使用实际名称；项目按配置引用固定版本，跨阶段不复制。新结果保存到 `assets/results/<project_id>/<run_id>/<stage>/<tool_id>/`，运行记录和临时文件留在该批次内。新调用同时提供项目和阶段。计算与检查 → 人工复核 → 将选定数据登记到新版本；不覆盖原始数据或既有版本。个人配置、认证及凭据继续独立管理。旧文件不迁移，自动审批和入库服务尚未实现。
+专属阶段技能保留在主阶段，跨阶段能力放在 `shared`。能力变化时同步双语说明及相应分类或索引，本总览保持研究步骤和范围介绍。
+
+具体操作遵循[技能编写](../harness/skill-authoring_ZH.md)、[注册](../harness/tool-registration_ZH.md)和[资产存储](../harness/assets_ZH.md)规范。

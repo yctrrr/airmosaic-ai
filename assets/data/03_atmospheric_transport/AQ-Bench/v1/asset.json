@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "asset_id": "aq_bench",
+  "name": "AQ-Bench",
+  "version": "v1",
+  "primary_stage": "03_atmospheric_transport",
+  "data_type": "published_observation_metrics_with_site_metadata",
+  "synthetic": false,
+  "source": {
+    "title": "AQ-Bench",
+    "creators_citation": "Betancourt et al. (2020)",
+    "doi": "10.23728/b2share.30d42b5a87344e82855a486bf2123e9f",
+    "landing_page": "https://b2share.eudat.eu/records/xp9ww-efm51",
+    "paper_doi": "10.5194/essd-13-3013-2021",
+    "publication_date": "2020-11-05"
+  },
+  "license": {
+    "id": "CC-BY-4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  "observation_period": "2010-2014",
+  "sample_unit": "monitoring station",
+  "row_count": 5577,
+  "column_count": 53,
+  "target_column": "o3_average_values",
+  "target_unit": "ppb",
+  "split_counts": {
+    "train": 3348,
+    "val": 1114,
+    "test": 1115
+  },
+  "repository_copy_date": "2026-10-28",
+  "source_files_unmodified": true,
+  "copy_policy": "byte_identical_repository_snapshot_and_external_assets_copy",
+  "files": [
+    {
+      "path": "AQbench_dataset.csv",
+      "bytes": 1531254,
+      "sha256": "34bc7d888264ea0d8a37ede2c84d1aab686cc8517e1f77d1c619717a329b1f56"
+    },
+    {
+      "path": "AQbench_variables.csv",
+      "bytes": 3933,
+      "sha256": "04825047ba63b8d43e574a2a4c5a7637dbf47edfe93e20f674f40c99edc4b59a"
+    }
+  ]
+}

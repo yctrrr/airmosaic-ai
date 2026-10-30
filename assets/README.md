@@ -1,18 +1,18 @@
-# Public toy assets
+# Public data and synthetic assets
 
 **English** | [中文](README_ZH.md)
 
-This directory contains only synthetic data, reference results and their public metadata. It is the repository's asset entry point. Actual datasets and generated results are stored under the external private root selected by `AIRMOSAIC_ASSETS_DIR`.
+`assets/` is the reuse entry for selected outputs accepted through human scientific review. Experiments and their results belong to the corresponding project. Internal asset organization will be defined later; existing public examples below remain unchanged.
 
-- Data: `data/<stage>/<actual-dataset-name>/<version>/`.
-- Reference results: `results/<toy-project>/<reference-run>/<stage>/<tool_id>/`.
-- Private runs use the same logical layout under their configured external root.
-- Project settings reference one dataset version across stages rather than copying it.
+| Input kind | Declaration | Use |
+|---|---|---|
+| Published data | [public-data-manifest.json](public-data-manifest.json) | Reviewed source, license, attribution, exact file sizes and hashes; read-only inputs |
+| Synthetic examples | [toy-manifest.json](toy-manifest.json) | Explicitly synthetic fixtures and reference CSVs; read-only inputs |
 
-[toy-manifest.json](toy-manifest.json) explicitly lists the readable CSV fixtures and their content hashes. The runner accepts those inputs by a repository-relative `assets/...` path, verifies their content, and keeps them read-only. Unlisted files, changed fixture content, symlinks and reparse paths are rejected. Public reference results are not proof of real-data or scientific validation.
+[AQ-Bench v1](data/03_atmospheric_transport/AQ-Bench/v1/README.md) is the current authorized published snapshot. It retains its CC BY 4.0 license and source credit. The external working copy and repository copy share the same dataset/version layout and CSV hashes. This deliberate public mirror does not authorize copying other private data, source mappings, credentials or scientific results. No automatic synchronization is implemented; changes require an explicitly reviewed new version.
 
-The four-row example uses synthetic labels and dimensionless illustrative values. Its expected result excludes the two aggregate rows, sums the remaining weights to 3, and calculates a weighted mean of 40/3. It is not an original observation, production dataset or calibrated model result. See the [toy walkthrough](../harness/usage/toy-demo.md).
+The runner accepts only selected manifest-listed CSVs with matching hashes. Unlisted/changed files and unsafe paths are rejected. These manifests are input allowlists, not acquisition tools, automatic data-catalog registrations or scientific acceptance. Public data are not synthetic examples.
 
-Keep actual locations only in personal configuration outside Git, using the [path template](../config/examples/asset-paths.example.json) as a description. JSON is not automatically loaded; set the three environment variables explicitly or review the environment helper. This is a configuration reference, not a filesystem link and not another data store. Credentials and browser state stay separate.
+Start with the [synthetic walkthrough](../harness/usage/toy-demo.md) or the [repository-input regression preview](../config/examples/run-tool/aq-bench-repository.json). The four-row synthetic example has dimensionless values and reference weighted mean 40/3; it remains distinct from observations.
 
-Generated results always go to the configured private root. An unset or Git-contained private root is an error; the runner never falls back to writing real outputs here. Git ignore rules allow only the declared public files. Follow the [asset and review contract](../harness/assets.md).
+Keep experimental results and review records with the [project](../projects/README.md). Current runners retain their implemented external destinations and do not fall back to writing unreviewed results here. Human review of asset inclusion and public release are separate decisions. This revision does not move existing files; see the [result and review contract](../harness/assets.md).

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://airmosaic.ai/schemas/variable.schema.json",
+  "$id": "https://runtime.ai/schemas/variable.schema.json",
   "title": "AirMosaic Variable",
   "type": "object",
   "required": ["name", "description", "unit"],

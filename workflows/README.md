@@ -1,23 +1,16 @@
-# Executable workflow definitions
-
-<!-- README-I18N:START -->
+# Reusable data and skill combinations
 
 **English** | [中文](README_ZH.md)
 
-<!-- README-I18N:END -->
+Workflows explain reusable combinations of data and skills: purpose, input contracts, ordered handoffs, alternative branches, checks and review. Code and concrete software operations belong in skills; scientific reasoning belongs in methods; specific scientific questions and experiments belong in projects.
 
-**Status: not implemented.** No workflow engine, executable pathway, workflow schema or workflow command is registered. This directory contains only status and authoring guidance; it is not scanned by the current tool registry or runner.
+See the [regression combination](ml_regression/README.md), including target definition, variable roles and DAG design. Its referenced registered capability is executable, while the recipe YAML is documentation. There is no general YAML executor, project loader, automatic experiment orchestration or scientific approval service.
 
-Human-facing choices and handoffs live in [methods/pathways](../methods/pathways/README.md). Historical stage proposals remain there as non-executable references. Scientific explanations belong in methods, computer operations in skills, and shared execution in `airmosaic/`.
+The [model reproduction combination](model_reproduction/README.md) adds source audit, frozen candidate/reference snapshots, comparable views and fresh project comparison batches. `compare_existing` uses a reviewed direct helper with default preflight; `reproduce_and_compare` is agent-guided and requires explicitly selected skills. Its [prompt](model_reproduction/prompt.md) describes handoffs and review branches. Source collection is reviewed separately through an authorized route; no general remote execution or registered comparison adapter is provided.
 
-## Conditions for a future definition
+Generic demonstrations use adapter-supported ignored results, while scientific experiment outputs belong to the corresponding project. Current runners retain their existing external compatibility locations; direct project-directory output support is not implemented. Human review precedes any inclusion in `assets/`. Preserve historical outputs. See the [project guide](../projects/README.md) and [result and review contract](../harness/assets.md).
 
-A future `<pathway_id>/workflow.yaml` must identify its version, purpose, applicable stages, supported inputs and outputs, actual tool IDs, dependencies, artifact bindings, checks, manual prerequisites and stopping conditions. Path-specific contracts may live alongside it. Such a declaration will require a reviewed engine and meaningful validation before execution; adding YAML alone grants no capability or authorization.
 
-The planned engine will preflight the path, delegate single-tool operations to the existing execution service, register artifacts and check each handoff before continuing. Failed checks preserve partial artifacts and block downstream steps. Resume must account for prior external effects. Process success, contract validation and scientific validation remain separate states.
+## Synthetic workflow checks
 
-The catalog service may index definitions from this directory in the future, without keeping a duplicate definition. Local MCP and CLI already share single-tool services; they can use workflow services once those are implemented. There is currently no automatic connection between research stages. Stage 02 remains conceptual methods only, with no concrete data, parameter values or implementation.
-
-## Data and project results
-
-Follow the [asset contract](../harness/assets.md). Shared data outside Git uses `assets/data/<stage>/<dataset-name>/<version>/` with actual dataset names. Projects reference fixed versions in configuration without cross-stage duplication. New results use `assets/results/<project_id>/<run_id>/<stage>/<tool_id>/`, with records and temporary files inside that run. New calls provide project and stage together. Compute/check, obtain human review, then register selected data in a fresh version; never overwrite originals or existing versions. Personal settings, authentication and credentials remain separate. Existing files are not migrated; automatic approval and registration services are not implemented.
+The reviewed regression adapter additionally supports explicit `result_scope=workflow` (`--result-scope workflow` in the CLI). Only hash-verified manifest-listed repository synthetic CSVs are accepted. Outputs stay in Git-ignored `workflows/ml_regression/results/<timestamp>_<task>/`, with receipts/temp under `.airmosaic/<run_id>/` in that result root. Project IDs, real/external data, paths outside this fixed tree and nested repositories are rejected. The `auto` default is unchanged; scientific studies retain external project results. Reviewed workflow orchestration examples are reusable source; per-run generated code and design basis stay in the result's `gen_script/`, following the common handoff rules. This check provides neither scientific approval nor OS isolation.

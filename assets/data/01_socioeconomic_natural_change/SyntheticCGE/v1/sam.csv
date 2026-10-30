@@ -1,0 +1,8 @@
+account,ACT_food,ACT_manufacturing,COM_food,COM_manufacturing,FACTOR_LABOR,FACTOR_CAPITAL,HOUSEHOLD
+ACT_food,0,0,100,0,0,0,0
+ACT_manufacturing,0,0,0,100,0,0,0
+COM_food,10,20,0,0,0,0,70
+COM_manufacturing,20,10,0,0,0,0,70
+FACTOR_LABOR,42,28,0,0,0,0,0
+FACTOR_CAPITAL,28,42,0,0,0,0,0
+HOUSEHOLD,0,0,0,0,70,70,0

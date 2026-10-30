@@ -1,0 +1,35 @@
+schema_version: 1
+workflow_id: model_reproduction
+version: 1.0.0
+implementation: documented_data_skill_agent_combination
+direct_yaml_execution: false
+task_schema: catalog/schemas/model-reproduction-task.schema.json
+task_example: config/examples/model-reproduction/compare-existing.json
+synthetic_example_helper: skills/model/shared/model_reproduction/scripts/make_synthetic_fixture.py
+stages:
+- resolve_task
+- verify_or_create_and_freeze_candidate
+- audit_and_freeze_authorized_original_sources
+- normalize_comparable_views
+- recompute_and_compare
+- report_and_human_review
+modes:
+  compare_existing:
+    status: reviewed_direct_script
+    entry_script: skills/model/shared/model_reproduction/scripts/compare_existing.py
+    default_operation: preflight
+    execution_flag: --execute
+    inputs: frozen_local_result_snapshots
+    remote_source_collection: false
+    arbitrary_code_execution: false
+    registered_runner_or_mcp_adapter: false
+  reproduce_and_compare:
+    status: manual_or_agent_guided_only
+    automatic_execution: false
+    candidate_computation: explicitly_selected_reviewed_skill
+source_operations: agent_guided_authorized_route_with_review
+controlled_probes: optional_explicitly_configured_and_reviewed
+outputs: fresh_external_project_comparison_batch_with_task_defined_layout
+original_and_candidate_results: immutable
+automatic_project_execution: false
+scientific_approval: false

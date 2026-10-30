@@ -1,92 +1,50 @@
-# PM2.5 站点监测：获取、整理与浓度交接
+# PM2.5 station observations: provenance, quality and daily statistics
 
-**主阶段：03_atmospheric_transport。适用阶段：03、04。状态：reference；tool_ids 为空。**
+**English** | [中文](pm25_stations_ZH.md)
 
-操作说明见 [pm25-station-acquisition skill](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md)。本卡说明方法选择与适用性，skill 规定执行顺序和行为边界；两者都不是下载器或工具注册。04 引用本卡，不复制流程；02 排放清单仍只列方法。
+Station observations support concentration comparisons, model evaluation and exposure research. Distinguish original hourly publication records, city summaries and processed daily products. Operations are in the [skill](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md), coverage in the [source table](pm25_stations_sources.md), and adjusted daily values in the [homogenized method](pm25_homogenized.md).
 
-原始来源、观测/采集误差、浓度状态和日均有效小时规则在下文统一说明。按所选标准统计有效唯一小时；不足 20 小时的日均分析记录保留缺失与原因，不删除原件、不用插补凑数。自然日语义未核实时暂不聚合。
+## Provenance and error
 
-## 按任务选择路线
+The example follows national stations → CNEMC publication → Quotsoft archive → selected-date acquisition → long table. The [provider description](https://quotsoft.net/air/) identifies the upstream source. This is a third-party historical record, not an official historical API, instrument signal or fully audited operating database. Hourly `PM2.5` is mass concentration in µg/m³; `PM2.5_24h` and AQI are different quantities. Complete per-record calibration/maintenance/review evidence is absent.
 
-| 需求 | 方法路线 | 适用边界 |
+| Error source | Research handling |
+|---|---|
+| Flow, inlet condition, conditioning, calibration and instrument changes | Retain available source flags and maintenance evidence; hourly CSV cannot reconstruct minute-level validity or instrument correction |
+| Relocation, renaming, surroundings and point representativeness | Use dated station history and explicit matching; a point does not represent every person or the full grid cell |
+| Collection failure, delay, revisions and duplicate retrieval | Separate absent files, hours, station values and quality exclusions; failure is not zero concentration |
+| Day/night or weather-dependent availability | Report missing times/seasons and sample composition before/after completeness screening |
+| Duplicate hours, moving averages, imputation and outlier removal | Count unique observed hours and preserve original/processed flags; high concentration alone is not an error |
+
+Measurement considerations follow [HJ 817—2018](https://www.mee.gov.cn/ywgz/fgbz/bz/bzwb/jcffbz/201808/t20180815_451405.shtml). [Bai et al. (2020), sections 2–3](https://essd.copernicus.org/articles/12/3067/2020/) discuss discontinuities and processing in that study; these are possible mechanisms, not measured station error sizes.
+
+The 2018 GB 3095 amendment, effective 2019-01-01, expresses particles at actual temperature/pressure and gases at reference conditions. Check retrospective conversion before trend analysis; do not convert by year alone or interpret a definition change as emission reduction. Temperature/pressure evidence and an explicit formula are needed. See the [amendment](https://www.mee.gov.cn/xxgk2018/xxgk/xxgk01/201808/t20180815_629602.html) and [ministry clarification](https://www.mee.gov.cn/xxgk2018/xxgk/xxgk13/202012/t20201201_810844_wh.html).
+
+## Daily completeness
+
+This source table preserves the review dated 2026-10-26.
+
+| Basis | Requirement | Scope |
 |---|---|---|
-| 获取站点历史观测 | 核对官方导出或第三方归档，按日期取得文件并配套站点表 | 真实提供者、许可、实际覆盖及登录要求单独确认；不把第三方归档当官方 API |
-| 使用均一化产品 | 核对产品 DOI、版本与处理方法，单独标记日尺度和加工类型 | 包含填补/校正，不作为原始小时观测；独立验证须评估处理带来的影响 |
-| 整理既有站点记录 | 核对接口，宽转长、类型筛选、显式连接、冲突检查和有效时次汇总 | 需要另有数据读取范围及人工适配；旧脚本不能直接运行或注册 |
-| 与浓度模型或暴露研究衔接 | 核对时间、单位、坐标历史、空间关系与代表性 | 站点不等于网格或人口暴露，不自动启动插值、训练或健康计算 |
+| [GB 3095—2012 section 6.4/table 4](https://www.mee.gov.cn/ywgz/fgbz/bz/bzwb/dqhjbh/dqhjzlbz/201203/W020250407403788086276.pdf) | At least 20 hourly values or sampling hours for PM2.5 daily mean | Historical evaluation/research adopting that edition with applicable amendments/evaluation rules |
+| [GB 3095—2026 chapter 6/table 4](https://www.mee.gov.cn/ywgz/fgbz/bz/bzwb/dqhjbh/dqhjzlbz/202602/W020260225340726552289.pdf), [HJ 663—2026 section 6.1.1](https://www.mee.gov.cn/ywgz/fgbz/bz/bzwb/jcffbz/202602/W020260225383639187925.pdf) | Minimum remains 20 hours; evaluation statistics follow GB 3095 | Effective 2026-03-01, not the edition effective in 2024 |
+| [Bai et al. (2020) section 2](https://essd.copernicus.org/articles/12/3067/2020/) | More than 12 valid hours, hence at least 13 | That paper's US embassy/consulate independent validation sample only, not all data or the national criterion |
 
-## 使用步骤
+The [announcement](https://www.mee.gov.cn/xxgk2018/xxgk/xxgk01/202602/t20260224_1144401.html) states effective dates. Regulatory evaluation follows applicable rules; reproduction follows the exact paper/data object; longitudinal research predetermines a consistent policy and explains differences from regulation.
 
-均一化路线单独见 [Bai 等（2020）产品说明](pm25_homogenized.md)，涵盖来源、加工误差、序列编号、位置表和未知标记。PANGAEA 发布包与一个序列的 7 天样例已验证，不能从成品日值反推原始有效小时。
+1. Resolve time zone, interval start/end, 0/24 and day assignment. These remain unresolved in the Quotsoft example; 24 rows do not establish a natural day.
+2. Select hourly PM2.5 and source-valid finite values. Missing source flags remain unknown; hourly files cannot prove minute-level compliance.
+3. Deduplicate source/station/day/hour intervals. Predetermine identical-repeat handling and report conflicting versions rather than treating them as independent observations.
+4. Count valid unique observed hours, excluding imputation. Coverage is normally `n_valid_hours/24`; daylight-saving days elsewhere need actual day length.
+5. Under a 20-hour policy, require `n_valid_hours >= 20`, averaging valid hours rather than dividing by 24. Otherwise retain `daily_mean=NA`, `daily_valid=false` and `insufficient_valid_hours`.
+6. Preserve excluded station-dates, counts and reasons. Report station/month valid days, gaps and sensitivity such as 20-hour versus complete-24-hour cohorts.
 
-初次获取可直接按[已验证的单日示例](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/references/single-day-example.md)取得公开 CSV，无需账号/API key。来源比较区分公开历史归档、实时采集代码、城市汇总及 AQI。
+Synthetic boundaries: 19 valid unique hours fail; 20 pass; 20 rows with one duplicate give at most 19 hours; 24 missing rows give zero. Counts do not repair missing source/time/instrument evidence.
 
-1. 定义网络、日期、站点、污染物和平均时段，区分站点/城市/网格及观测/均一化产品。
-2. 阅读[来源与格式](pm25_stations_sources.md)，列出来源、版本、权限和库存证据缺口；文档任务不打开原始表。
-3. 获取与整理分别制定计划。下载先限定小批次；整理先明确字段、时间、元数据和输出契约，不能因下载完成就默认获准聚合。
-4. 在后续明确授权的任务中核验实际数据，并按[人工适配及质量清单](pm25_stations_preparation.md)处理重复、缺失、坐标更新与有效时次。
-5. 交接来源清单、原始/派生标记、时间/单位、元数据版本及质量摘要；科学适用性与文件下载/格式验证分开。
+Retain `n_valid_hours`, `n_expected_hours`, `coverage_fraction`, `daily_valid`, `exclusion_reason`, `quality_policy_id`, `source_qc_status` and `imputed_hours`. Monthly/annual summaries need their own valid-day/month coverage; pooling available hours does not establish a compliant annual mean.
 
-## 状态与复用限制
+## Processing and model comparisons
 
-既有本地和远程证据支持宽表整理、日值汇总与坐标关联的方法总结，未确认可直接接入的下载器。尚需人工核对早期历史来源、台湾获取入口、实际时区/单位与元数据版本；固定目录、交互式依赖、隐式连接键和行数计数也需要适配。
+Flag negatives, out-of-range, constant and abrupt records separately; review evidence before removing pollution extremes. Imputation, relocation merging and homogenization produce separate products. Reconstructed values cannot independently validate their own reconstruction.
 
-2026-10-26 已取得 2024-01-01 单日 CSV 并核对小时 PM2.5 长表。时区/小时起止及历史站点元数据待核实，未做日均汇总或坐标关联。没有读取成员既有原始数据、复制旧代码或私人连接信息，也未增加 catalog/tools 或 datasets.yaml。未来执行适配器先做合成接口与失败路径测试，再按独立任务审查和注册。工作区、个人设置、认证分别遵守 [统一存储约定](../../harness/storage-and-credentials.md)。
-
-复核日期：2026-10-26。本文定义整理规则与选用依据，不执行新下载、日均计算、异常剔除或插补。
-
-## 数据从哪里来
-
-本例来源链为：**国控空气质量站点测量 → 中国环境监测总站公开发布 → Quotsoft 采集与历史归档 → 本项目指定日期下载 → 派生站号长表**。[维护者说明](https://quotsoft.net/air/)明确其全国数据来自总站实时发布平台，单日站点 CSV 是第三方保存的发布记录，不是仪器原始信号、带全套运维记录的审核数据库或总站官方历史 API。
-
-`china_sites` 以站点为列，`PM2.5` 为小时质量浓度，单位 µg/m³；`PM2.5_24h` 和 AQI 分别管理。日期跨度、实际提供者和格式见[来源说明](pm25_stations_sources.md)，已验证小样例见[获取示例](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/references/single-day-example.md)。公开归档没有逐条提供完整的仪器状态、校准和质量审核信息，不能给所有行标记为“已通过官方质控”。
-
-## 观测与使用中可能出现的误差
-
-| 环节 | 潜在问题 | 规范处理 |
-|---|---|---|
-| 采样与仪器 | 采样流量、切割器/管路状态、温湿度调理、温压检测及校准异常；不同测量方法和仪器更换可能造成差异 | 尽量关联仪器、运维与源质量标记；仅凭小时 CSV 不能恢复分钟有效采样或实施仪器校正 |
-| 站点与代表性 | 迁站、更名、周边环境变化、城市点与背景点差异；站点不代表整个网格或城市人口暴露 | 站号结合有效期，保留历史坐标；明确点位类型、空间匹配与距离，不自动合并迁站序列 |
-| 发布与采集 | 断电、网络/采集失败、平台延迟、发布修订或重复抓取 | 区分缺文件、缺小时、单站缺测与源剔除；记录取得时间、版本及冲突，不能把采集失败视为浓度为零 |
-| 时间抽样 | 只有白天/夜间或某类天气有值时，即使能算均值也可能有抽样偏差 | 报告有效小时和缺失时段/季节；按完整性规则筛选，并比较筛选前后站点/时段构成 |
-| 统计加工 | 重复小时抬高计数、滑动均值重复汇总、插补压低变异、过度异常剔除改变污染峰值 | 用唯一小时计数，严格区分观测/插补/均一化；高值不等于错误，研究筛选与源质控分开 |
-
-仪器和运维检查的依据为 [HJ 817—2018](https://www.mee.gov.cn/ywgz/fgbz/bz/bzwb/jcffbz/201808/t20180815_451405.shtml)。校准、更换与长序列不连续问题可参考 [Bai 等（2020）第 2–3 节](https://essd.copernicus.org/articles/12/3067/2020/)；该文的研究处理不等于所有站点的通用校正。上述是风险来源，不据此推断某站实际误差大小或方向。
-
-### 单位相同也要核对浓度状态
-
-2018 年 GB 3095 修改单调整了监测状态，2019-01-01 起实施：颗粒物按实际监测温度和压力表达，气态污染物按参比状态表达。跨此节点研究长期变化时，核对发布记录是否已经回算，不能仅凭年份自动转换，或把新旧口径差异全解释为减排效果。参见[修改单](https://www.mee.gov.cn/xxgk2018/xxgk/xxgk01/201808/t20180815_629602.html)及[生态环境部关于实施时间和可比性的答复](https://www.mee.gov.cn/xxgk2018/xxgk/xxgk13/202012/t20201201_810844_wh.html)。转换需要相应温压与明确公式；缺这些信息就保留未知状态。
-
-## 日均值：怎样处理小时数不足
-
-### 标准与文献分开选择
-
-| 依据 | 核实到的规则 | 使用范围 |
-|---|---|---|
-| [GB 3095—2012 第 6.4 条、表 4](https://www.mee.gov.cn/ywgz/fgbz/bz/bzwb/dqhjbh/dqhjzlbz/201203/W020250407403788086276.pdf) | PM2.5 的 24 小时平均每日至少有 20 个小时平均浓度值或采样时间 | 历史评价或明确采用该版本的研究；使用时同时核对当时适用的修改单和评价规范 |
-| [GB 3095—2026 第 6 章、表 4](https://www.mee.gov.cn/ywgz/fgbz/bz/bzwb/dqhjbh/dqhjzlbz/202602/W020260225340726552289.pdf)、[HJ 663—2026 第 6.1.1 条](https://www.mee.gov.cn/ywgz/fgbz/bz/bzwb/jcffbz/202602/W020260225383639187925.pdf) | GB 的日均最低要求仍为 20 小时；HJ 要求评价项目统计有效性符合 GB 3095 | 2026-03-01 起新版标准体系；新版 GB/HJ 不写成 2024 年当时有效版本 |
-| [Bai 等（2020）第 2 节](https://essd.copernicus.org/articles/12/3067/2020/) | 独立的美国驻华使领馆验证样本，日均要求多于 12 个有效小时样本，即至少 13 个 | 仅该文这一验证数据处理，不能替代国控站 20 小时规则，也不能误写成其所有数据的统一门槛 |
-
-新版替代时间见[发布公告](https://www.mee.gov.cn/xxgk2018/xxgk/xxgk01/202602/t20260224_1144401.html)。监管评价按适用规则执行；论文复现按论文精确规则并标明用途；跨年研究预先固定统一统计方案并报告其与监管规则的差别，不随结果好坏切换门槛。
-
-### 建议的研究整理顺序
-
-1. **先确认自然日**：明确时区、小时标签代表区间起点还是终点、0/24 如何归日。当前 Quotsoft 小样例这些语义尚未全部核实，实际日均计算仍暂停；24 行本身不能证明自然日已正确对齐。
-2. **确定有效观测**：精确筛选小时 PM2.5，按所选源标记/质控规则排除无效值，空值或非有限值不计入；缺少源标记要如实保留来源质量状态，小时文件无法证明分钟采样合规。
-3. **处理重复和冲突**：按来源、站点、自然日与小时区间唯一化。完全相同的重复可按预定规则折叠；不同值冲突先报告并按版本/审核规则处理，不能任意平均后当成实测。保留原记录。
-4. **统计有效唯一小时**：记为 `n_valid_hours`；常规自然日的覆盖率为 `n_valid_hours / 24`。只统计观测，不用插补值凑足门槛；其他时区若存在夏令时，另定实际日长和规则。
-5. **采用明确门槛**：例如历史国控站研究选用表 4 的 20 小时要求时，`n_valid_hours >= 20` 才输出有效日均，用有效小时浓度算术平均，不除以固定 24；不足时令 `daily_mean = NA`、`daily_valid = false`、原因 `insufficient_valid_hours`。
-6. **保留被筛掉的日期**：保留站点—日期、计数、覆盖、原因和可追溯记录；“去除该日”指不纳入有效日均分析，不删除 raw 或悄悄丢失缺测日。
-7. **汇总覆盖与敏感性**：报告各站/月份有效日数、连续缺口、缺失集中时段。需要更严格完整样本时，可比较 20 小时与完整 24 小时样本结果，说明选择，不把敏感性分支冒充另一项标准。
-
-合成边界例子：19 个有效唯一小时不通过 20 小时门槛，20 个通过；20 行中有一行重复则最多 19 个唯一小时，不通过；24 行全缺失则有效小时为 0。满足小时数只是统计条件，不能补足缺失的时区、仪器与来源审核证据。
-
-日表建议额外保留 `n_valid_hours`、`n_expected_hours`、`coverage_fraction`、`daily_valid`、`exclusion_reason`、`quality_policy_id`、`source_qc_status`、`imputed_hours`。月/年汇总再检查相应有效日和月份覆盖，不将所有可用小时直接混合成“合规年均”。
-
-## 异常、插补和模型使用
-
-异常检测只在派生层标记并保存依据；负值、超量程、长时间恒值、突跳分别审查，不按统一上下限或局地离群规则自动删除真实污染事件。文献异常阈值是其研究设计，需评估污染分布和用途后采用。插补、迁站合并或均一化另存产品与标记，原观测路径保留；不将重建值用于证明自身插补或模型的独立准确性。
-
-与 ERA5/CAMS 配准前，分别核对小时/自然日、UTC/当地时间、浓度状态、地表定义与空间代表性。气象或模式值不能无标记地填成站点观测；训练/验证按站点与时间划分，标准化、插补和偏差订正只在训练范围拟合。
-
-处理顺序和输出约定见[质量与交接](pm25_stations_preparation.md)。本页阈值是有依据的说明规则，尚无自动日均处理工具；保留的单日样例未据此重新计算。
+Before ERA5/CAMS comparison, align UTC/local days, averaging, concentration state, surface definition and spatial support. Model values do not become station observations. Choose station/time validation splits and fit normalization, imputation and bias correction on training data only. See [preparation](pm25_stations_preparation.md).

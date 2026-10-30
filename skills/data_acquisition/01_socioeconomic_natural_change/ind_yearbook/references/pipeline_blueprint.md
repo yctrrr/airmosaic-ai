@@ -46,12 +46,12 @@ Yearbook Excel Sources (by year)
 ### Steps
 
 1. **Locate source files**: For each yearbook year (2013–2026), find the 2分行业数据/ Excel with pattern 规模以上工业企业主要经济指标*.xlsx
-2. **Read Excel as text**: 
+2. **Read Excel as text**:
 `read_excel_as_text()` — no type inference, all columns as character
 3. **Locate header**: Find 行业 cell in the text matrix
 4. **Identify data rows**: First row with 总计 or 采矿业 in the industry column
 5. **Merge headers**: make_new_cat2_header_names() collects cells from header rows above data start, concatenates unique non-empty parts
-6. **Clean industry names**: 
+6. **Clean industry names**:
 `normalize_industry_name()` — standardize separators, fix known typos (e.g., 煤矿采选 → 煤炭开采和洗选业)
 7. **Numeric conversion**: 	`to_numeric()` with missing-marker handling
 8. **Write yearly CSV**: per yearbook year directory

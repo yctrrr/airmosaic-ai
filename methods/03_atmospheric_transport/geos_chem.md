@@ -1,20 +1,23 @@
-# GEOS-Chem：从排放接口到浓度
+# GEOS-Chem transport and concentration scenarios
 
-**步骤**：03 大气输送与化学。**状态**：参考说明，未注册编译、下载、模拟或调度适配器；没有可执行 tool_id。
+**English** | [中文](geos_chem_ZH.md)
 
-## 使用顺序
+GEOS-Chem represents atmospheric transport, chemistry and removal to translate source and meteorological assumptions into concentrations and deposition. Define the research contrast before selecting a simulation: baseline/intervention, source sensitivity or process diagnosis answer different questions. Model scenario differences are conditional responses, not automatically observed policy effects.
 
-1. 选择 Classic/GCHP 与源码版本，固定模拟、网格和比较设计。
-2. 明确排放、气象、初始/边界及诊断的接口需求；只列方法，不提供排放清单具体数据和实现。
-3. 核对工具链、依赖、独立运行目录和配置；根据所选版本构建，在任务环境验证，不能直接运行历史笔记命令。
-4. 明确模型 dry-run、日志与后续下载的副作用；不等同于 run-tool 无执行预检。
-5. 在后续授权任务中做短时验证，再检查终点、restart、诊断及浓度口径；浓度校正只能消费既有结果。
-6. 向 04 交接时间平均、单位、网格、地表定义、有效范围及验证摘要。
+## Design the comparison
 
-对应[GEOS-Chem skill](../../skills/model/03_atmospheric_transport/geos-chem/SKILL.md)和[输入准备 skill](../../skills/data_acquisition/03_atmospheric_transport/atmospheric-inputs/SKILL.md)。编译/链接、资源、restart 和版本陷阱统一维护在 skill 的引用中，不重复复制命令。
+Select Classic or GCHP, a pinned model version, chemical mechanism, horizontal/vertical grid, domain and simulation period. Match meteorology, initial and boundary conditions, chemical species definitions and diagnostics to that design. Emission interfaces remain conceptual here: specify temporal/spatial support, species and unit compatibility without inventory data or implementation.
 
-本地笔记与官方资料已做文档核对；未读取数据、重现编译问题或运行模型。来源见该 skill 的 SOURCES.md。
+Use a justified initialization and spin-up assessment. Nested regions require adequate boundary coverage; a restart file must match the declared grid, species and initialization purpose. Different versions, transport configurations and mechanisms can change the scientific comparison and must not be silently pooled.
 
-## 阶段与 Skill 映射
+## Validate concentrations
 
-主目录：03_atmospheric_transport；适用阶段：03_atmospheric_transport。对应 [atmospheric-inputs](../../skills/data_acquisition/03_atmospheric_transport/atmospheric-inputs/SKILL.md)、[geos-chem](../../skills/model/03_atmospheric_transport/geos-chem/SKILL.md)。执行状态以本文及真实工具 manifest 为准；没有 tool_id 的方法只供指导。
+Separate technical completion from scientific adequacy. Process success and an end marker do not prove the intended period, species or domain was simulated. Check time coverage, units, surface/vertical definition, missingness, diagnostics and restart consistency. Compare observations with matched time and spatial support, state measurement/model representativeness and report remaining bias.
+
+When concentration calibration is used, preserve the original field, calibration design and independent evaluation. Avoid validation leakage, and justify whether the same correction can be applied to intervention scenarios. A corrected exposure field is distinct from a new chemistry simulation.
+
+## Handoff to impacts
+
+Supply scenario identifiers, model/source versions, averaging period, coordinate/grid information, species, units and surface definition. Fix common valid population support for [health comparisons](../04_integrated_impacts/health_impacts.md), documenting excluded grid cells and periods. Sensitivity, adjoint and forward scenario contrasts have different interpretations; the availability of a forward binary does not establish adjoint capability.
+
+The [GEOS-Chem skill](../../skills/model/03_atmospheric_transport/geos-chem/SKILL.md) owns version-specific setup and retained compilation tricks. Its [sources](../../skills/model/03_atmospheric_transport/geos-chem/SOURCES.md) link official Classic/GCHP documents and date the historical review. There is no reviewed build, download, scheduler or simulation adapter; operational success and scientific validation require separate evidence.

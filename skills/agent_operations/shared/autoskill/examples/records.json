@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "records": [
+    {"id": "synthetic-check-1", "status": "observed", "outcome": "success", "summary": "A synthetic example-check operation completed its bounded metadata checks.", "skills": ["example-check"]},
+    {"id": "synthetic-check-2", "status": "stale", "outcome": "success", "summary": "An earlier example-format claim has not been verified for this task.", "skills": ["example-format"]}
+  ]
+}

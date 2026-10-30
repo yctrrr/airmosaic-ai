@@ -14,21 +14,11 @@ description: Guide authorized CSMAR browser downloads and process an existing li
 
 > Invocation status: `csmar_browser_download` is a non-executable browser-workflow reference. Only `csmar_process_company_info` is enabled in `run-tool` for an existing company-info ZIP.
 
-## Local paths and authentication
+## Setup
 
-Follow the [shared storage contract](../../../../harness/storage-and-credentials.md) and [execution guide](../../../../harness/usage/run-tool.md). Use separate, existing roots outside Git: `AIRMOSAIC_ASSETS_DIR` for data/results, `AIRMOSAIC_CONFIG_DIR` for non-secret settings and explicit task JSON, and `AIRMOSAIC_AUTH_DIR` for browser state; passwords/tokens stay in a credential manager. Do not read or share credential/profile contents. Run repository commands from the repository root with the installed project interpreter. Enabled adapters allocate `results/<project_id>/<run_id>/01_socioeconomic_natural_change/<tool_id>/` automatically; omit output parameters unless a task-specific override is needed. No personal configuration is auto-loaded. Raw scripts bypass runner checks, and the runner is not an OS sandbox.
+Use Python 3.10+ with the project installed, `pandas` and `openpyxl` for local processing. Browser retrieval requires the member's institutional access and an actually available browser tool; Node.js/Playwright is optional for a selected JavaScript workflow. Keep data/results, non-secret settings and browser state in separate external `AIRMOSAIC_ASSETS_DIR`, `AIRMOSAIC_CONFIG_DIR` and `AIRMOSAIC_AUTH_DIR` roots. No personal configuration is auto-loaded.
 
 Download CSMAR (China Stock Market & Accounting Research) data tables from `https://data.csmar.com/` for socioeconomic driver analysis (workflow Layer 1).
-
-## Workflow Layer
-
-01_socioeconomic_natural_change — provides listed-company activity data for industrial output, energy consumption, and end-of-pipe technology analysis.
-
-## Prerequisites
-
-- An authorized browser tool; Node.js/Playwright is needed only when using a JavaScript browser workflow
-- CSMAR account with institutional access
-- Python 3.10+ with pandas, openpyxl
 
 ## Browser download reference: csmar_browser_download
 
@@ -74,9 +64,9 @@ Use the existing downloaded ZIP; this step needs pandas/openpyxl and no browser 
 Map that filename to the authorized input, then run from the repository root:
 
 ```powershell
-python -m airmosaic.cli describe-tool csmar_process_company_info
-python -m airmosaic.cli run-tool csmar_process_company_info --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/csmar.json --dry-run
-python -m airmosaic.cli run-tool csmar_process_company_info --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/csmar.json
+python -m runtime.cli describe-tool csmar_process_company_info
+python -m runtime.cli run-tool csmar_process_company_info --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/csmar.json --dry-run
+python -m runtime.cli run-tool csmar_process_company_info --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/csmar.json
 ```
 
 The runner supplies `out_dir`. The script reads the workbook directly inside the ZIP, without extracting next to or modifying the input. Results go under `results/<project_id>/<run_id>/01_socioeconomic_natural_change/csmar_process_company_info/`:
@@ -87,18 +77,11 @@ The runner supplies `out_dir`. The script reads the workbook directly inside the
 
 The fixed keyword groups cover thermal power, district heating, iron/steel, nonferrous metals, cement, lime, brick/tile, glass and chemicals. The current implementation uses English, case-sensitive keywords and selects the latest record per company; review language, panel period and empty matches. Its 15-column contract is listed in the first-download guide. Unsupported tables and formats need adaptation. Company identity alone establishes neither cost payer nor physical production boundary. This is not a general financial-statement processor.
 
-## Troubleshooting
+## Verify outputs
 
-| Issue | Solution |
-|-------|----------|
-| Excel export missing fields | Review browser-export alternatives; the local ZIP/XLSX processor needs adaptation for CSV/TXT |
-| Download canceled by browser | Check `chrome://downloads/`; retry the final page click |
-| Wrong account logged in | Use user menu logout, ask user to re-login |
-| Field count mismatch | Re-select the task-required fields and verify the final export |
+After `can_execute=true` and an empty `blockers` list, inspect the actual runner status and the three files above. Open both workbook sheets, compare candidate counts and unique companies, check dates and repeated symbols, and review language-dependent/empty matches. `match_keywords` lists each sector's configured vocabulary; it is not a record of the exact words observed in a company. Preserve the input ZIP and field description with the validation record. A completed process does not establish sector coverage or legal/physical eligibility.
 
 ## References
 
-- [Browser-flow implementation notes](references/csmar-api.md): historical endpoint names and current interface boundaries
-- `examples/csmar_company_query.json`: Example query parameters
-
-Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.
+- [Browser-flow implementation notes](references/csmar-api.md): historical endpoint names and interface boundaries.
+- [Query example](examples/csmar_company_query.json): a query declaration, not a download API or executable wrapper.

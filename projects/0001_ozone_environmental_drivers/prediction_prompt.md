@@ -1,0 +1,14 @@
+# Independent prediction and evaluation attempt from the paper
+
+**English** | [中文](prediction_prompt_ZH.md)
+
+Use external AQ-Bench v1 assets and the project's regression and mlr3 skills to attempt the prediction experiment in Section 2 and Figure 3 of the final published article, DOI `10.1016/j.atmosres.2026.108869`. The article supplies the research method; the skills supply operational guidance and reusable computing functions. Do not inspect the original case's complete code, fitted objects, predictions or reference scores. Prior source audits exist, so describe this as an independent implementation attempt, not a blinded experiment.
+
+1. Check both external input hashes in `prediction.json`, the dictionary, station keys, released splits and target units. Read only declared inputs and preserve source bytes.
+2. First retain countries/regions with strictly more than 50 observations, then map terminal climate labels to dry, moist or wet and exclude unmapped records. Use a common complete-case cohort for both feature sets. Combine released train and val labels for development, preserving test. Require 4077 development and 1009 test stations; stop on disagreement and never adjust exclusion rules using target values.
+3. Freeze the nine predictors from Table 1 and the three-predictor climate, altitude and population-density model. Do not select features from importance or test performance or include other ozone responses, identities or split labels.
+4. Run the prespecified forest search and ten-fold CV. Share station folds across models, fit only on development data and freeze seeds, search space, budget, metric and the one-thread limit. Do not use test targets for model selection.
+5. Save both selected configurations and all development scores before refitting on the full development cohort and assessing the common test cohort. Report the mean baseline, RMSE, MAE and out-of-sample R². Label squared correlation separately if computed. Retain station predictions, model reload checks, observed/predicted plots and impurity importance.
+6. Preserve the prompt, protocol, actual executable sources, skill helpers, input hashes, software versions and timestamps. Write a fresh batch inside external `assets/results/ozone_environmental_drivers/`; do not overwrite, promote data or commit results.
+7. Separate published methods from this attempt's additional choices. The generic `ml_regression_workflow` does not implement this ten-fold tuning orchestration. This study uses reviewed project scripts and shared functions without registering a new tool. Its launcher reuses path checks, the minimal process environment and R launch mechanisms; these are not an OS sandbox.
+8. Evaluate prediction only. Do not estimate causal effects or infer causality from model differences. Freeze the outputs afterward and await the user's complete original code and final results for a separate implementation and numerical comparison.

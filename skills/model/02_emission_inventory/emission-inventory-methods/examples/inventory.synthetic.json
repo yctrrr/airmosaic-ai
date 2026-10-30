@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "dataset_kind": "synthetic",
+  "inventory_id": "synthetic_industrial_heat",
+  "pollutants": ["SO2", "NOx"],
+  "activities": [
+    {"activity_id": "heat_a_2024", "region": "toy_region", "year": 2024, "sector": "industrial_heat", "process": "fuel_combustion", "amount": 10000, "unit": "tonne", "activity_basis": "toy_coal_as_received", "source_ref": "synthetic_activity_definition_v1"}
+  ],
+  "technologies": [
+    {"activity_id": "heat_a_2024", "technology_id": "boiler_a", "activity_share": 0.6, "source_ref": "synthetic_throughput_weighted_technology_shares_v1"},
+    {"activity_id": "heat_a_2024", "technology_id": "boiler_b", "activity_share": 0.4, "source_ref": "synthetic_throughput_weighted_technology_shares_v1"}
+  ],
+  "factors": [
+    {"activity_id": "heat_a_2024", "technology_id": "boiler_a", "pollutant": "SO2", "value": 10, "mass_unit": "kg", "activity_unit": "tonne", "activity_basis": "toy_coal_as_received", "control_basis": "uncontrolled", "source_ref": "synthetic_factor_not_an_empirical_coal_factor_v1"},
+    {"activity_id": "heat_a_2024", "technology_id": "boiler_b", "pollutant": "SO2", "value": 8, "mass_unit": "kg", "activity_unit": "tonne", "activity_basis": "toy_coal_as_received", "control_basis": "uncontrolled", "source_ref": "synthetic_factor_not_an_empirical_coal_factor_v1"},
+    {"activity_id": "heat_a_2024", "technology_id": "boiler_a", "pollutant": "NOx", "value": 4, "mass_unit": "kg", "activity_unit": "tonne", "activity_basis": "toy_coal_as_received", "control_basis": "uncontrolled", "source_ref": "synthetic_factor_not_an_empirical_coal_factor_v1"},
+    {"activity_id": "heat_a_2024", "technology_id": "boiler_b", "pollutant": "NOx", "value": 3, "mass_unit": "kg", "activity_unit": "tonne", "activity_basis": "toy_coal_as_received", "control_basis": "uncontrolled", "source_ref": "synthetic_factor_not_an_empirical_coal_factor_v1"}
+  ],
+  "control_routes": [
+    {"activity_id": "heat_a_2024", "technology_id": "boiler_a", "pollutant": "SO2", "route_id": "no_fgd", "route_share": 0.2, "operating_fraction": 0, "capture_fraction": 0, "removal_efficiency": 0, "source_ref": "synthetic_control_assumptions_v1"},
+    {"activity_id": "heat_a_2024", "technology_id": "boiler_a", "pollutant": "SO2", "route_id": "fgd", "route_share": 0.8, "operating_fraction": 0.9, "capture_fraction": 0.95, "removal_efficiency": 0.9, "source_ref": "synthetic_control_assumptions_v1"},
+    {"activity_id": "heat_a_2024", "technology_id": "boiler_b", "pollutant": "SO2", "route_id": "fgd", "route_share": 1, "operating_fraction": 1, "capture_fraction": 1, "removal_efficiency": 0.95, "source_ref": "synthetic_control_assumptions_v1"},
+    {"activity_id": "heat_a_2024", "technology_id": "boiler_a", "pollutant": "NOx", "route_id": "no_scr", "route_share": 1, "operating_fraction": 0, "capture_fraction": 0, "removal_efficiency": 0, "source_ref": "synthetic_control_assumptions_v1"},
+    {"activity_id": "heat_a_2024", "technology_id": "boiler_b", "pollutant": "NOx", "route_id": "no_scr", "route_share": 0.3, "operating_fraction": 0, "capture_fraction": 0, "removal_efficiency": 0, "source_ref": "synthetic_control_assumptions_v1"},
+    {"activity_id": "heat_a_2024", "technology_id": "boiler_b", "pollutant": "NOx", "route_id": "scr", "route_share": 0.7, "operating_fraction": 0.8, "capture_fraction": 1, "removal_efficiency": 0.75, "source_ref": "synthetic_control_assumptions_v1"}
+  ]
+}

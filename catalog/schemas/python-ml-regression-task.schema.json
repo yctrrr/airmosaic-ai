@@ -1,0 +1,351 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "backend": {
+      "const": "python"
+    },
+    "task_type": {
+      "const": "regression"
+    },
+    "analysis": {
+      "const": "prediction"
+    },
+    "target": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[^\\u0000-\\u001f]+$"
+    },
+    "target_unit": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[^\\u0000-\\u001f]+$"
+    },
+    "target_definition": {
+      "type": "object",
+      "properties": {
+        "sample_unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u001f]+$"
+        },
+        "averaging_period": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u001f]+$"
+        },
+        "prediction_time": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u001f]+$"
+        }
+      },
+      "required": [
+        "sample_unit",
+        "averaging_period",
+        "prediction_time"
+      ],
+      "additionalProperties": false
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "pattern": "^[^\\u0000-\\u001f]+$"
+      },
+      "uniqueItems": true,
+      "maxItems": 64,
+      "minItems": 1
+    },
+    "categorical_features": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "pattern": "^[^\\u0000-\\u001f]+$"
+      },
+      "uniqueItems": true,
+      "maxItems": 64
+    },
+    "id_column": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[^\\u0000-\\u001f]+$"
+    },
+    "split": {
+      "type": "object",
+      "properties": {
+        "column": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u001f]+$"
+        },
+        "train": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u001f]+$"
+        },
+        "val": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u001f]+$"
+        },
+        "test": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u001f]+$"
+        }
+      },
+      "required": [
+        "column",
+        "train",
+        "val",
+        "test"
+      ],
+      "additionalProperties": false
+    },
+    "missing": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "enum": [
+            "error",
+            "drop",
+            "impute"
+          ]
+        },
+        "sentinels": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "policy",
+        "sentinels"
+      ],
+      "additionalProperties": false
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,31}$"
+          },
+          "learner": {
+            "enum": [
+              "baseline_mean",
+              "linear_regression",
+              "decision_tree",
+              "random_forest"
+            ]
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "max_depth": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 64
+              },
+              "min_samples_leaf": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10000
+              },
+              "n_estimators": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 512
+              },
+              "max_features": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "learner",
+          "parameters"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 8
+    },
+    "selection_metric": {
+      "const": "rmse"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "row_limits": {
+      "type": "object",
+      "properties": {
+        "train": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 100000
+        },
+        "val": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 100000
+        },
+        "test": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 100000
+        }
+      },
+      "required": [
+        "train",
+        "val",
+        "test"
+      ],
+      "additionalProperties": false
+    },
+    "explanation": {
+      "type": "object",
+      "properties": {
+        "methods": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "permutation",
+              "pdp",
+              "ice",
+              "shap"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[^\\u0000-\\u001f]+$"
+          },
+          "uniqueItems": true,
+          "maxItems": 64
+        },
+        "validation_rows": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "background_rows": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "permutation_repeats": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "pdp_points": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 20
+        },
+        "shap_algorithm": {
+          "const": "permutation"
+        },
+        "shap_output": {
+          "const": "raw_prediction"
+        },
+        "shap_background": {
+          "const": "training_first_rows"
+        },
+        "shap_max_evals": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 10000
+        }
+      },
+      "required": [
+        "methods",
+        "features",
+        "validation_rows",
+        "background_rows",
+        "permutation_repeats",
+        "pdp_points"
+      ],
+      "additionalProperties": false
+    },
+    "output_files": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "execution": {
+      "type": "object",
+      "properties": {
+        "purpose": {
+          "enum": [
+            "engineering_replay",
+            "new_study"
+          ]
+        }
+      },
+      "required": [
+        "purpose"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "backend",
+    "task_type",
+    "analysis",
+    "target",
+    "target_unit",
+    "target_definition",
+    "features",
+    "categorical_features",
+    "id_column",
+    "split",
+    "missing",
+    "models",
+    "selection_metric",
+    "seed",
+    "row_limits",
+    "explanation",
+    "execution"
+  ],
+  "additionalProperties": false
+}

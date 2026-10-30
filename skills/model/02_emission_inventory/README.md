@@ -7,7 +7,7 @@
 <!-- README-I18N:END -->
 
 
-Methods for converting activity and technology into emissions. Methods only: no concrete data, parameter values, implementation code, script names, source fingerprints or commands. No execution tool.
+Methods and operations for converting activity and technology into emissions. The accounting entry now provides an explicit activity/technology/control calculator with synthetic examples and checks. It is a direct local script, not a registered run-tool/MCP adapter. Other conceptual entries, real-source preparation and spatial/time/species allocation retain their separately declared status.
 
 ## Entry points
 

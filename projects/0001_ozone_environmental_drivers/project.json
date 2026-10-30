@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "display_number": "0001",
+  "directory_name": "0001_ozone_environmental_drivers",
+  "project_id": "ozone_environmental_drivers",
+  "title": "Environmental features and long-term ozone: predictive association and stability",
+  "research_question": "How well do environmental and human-activity proxy features predict station-level long-term mean ozone, and how stable are these predictive associations?",
+  "status": "initial_experiments_executed",
+  "project_experiments_status": "E01_E02_E04_executed_human_review_pending_E03_planned",
+  "scientific_review": "pending",
+  "primary_stage": "03_atmospheric_transport",
+  "inputs": {
+    "station_metrics": {
+      "asset_id": "aq_bench",
+      "version": "v1",
+      "path": "data/03_atmospheric_transport/AQ-Bench/v1/AQbench_dataset.csv",
+      "used_in_stages": [
+        "03_atmospheric_transport"
+      ],
+      "repository_path": "assets/data/03_atmospheric_transport/AQ-Bench/v1/AQbench_dataset.csv"
+    },
+    "variable_dictionary": {
+      "asset_id": "aq_bench",
+      "version": "v1",
+      "path": "data/03_atmospheric_transport/AQ-Bench/v1/AQbench_variables.csv",
+      "used_in_stages": [
+        "03_atmospheric_transport"
+      ],
+      "repository_path": "assets/data/03_atmospheric_transport/AQ-Bench/v1/AQbench_variables.csv"
+    }
+  },
+  "workflow": {
+    "workflow_id": "ml_regression",
+    "version": "1.2.0",
+    "definition": "workflows/ml_regression/workflow.yaml",
+    "tool_id": "ml_regression_workflow",
+    "task_schema": "catalog/schemas/ml-regression-task.schema.json",
+    "task_config_template": "config/examples/ml-regression/aq-bench-prediction.json"
+  },
+  "experiments": [
+    {
+      "experiment_id": "E01",
+      "purpose": "Compare predictive models against the mean baseline on a common cohort.",
+      "status": "first_attempt_executed_review_pending",
+      "protocol": "prediction.json"
+    },
+    {
+      "experiment_id": "E02",
+      "purpose": "Compare scientifically defined feature groups with matched stations and validation design.",
+      "status": "first_attempt_executed_review_pending",
+      "protocol": "prediction.json"
+    },
+    {
+      "experiment_id": "E03",
+      "purpose": "Assess robustness of predictive performance and interpretation to development choices.",
+      "status": "planned",
+      "manual_adaptations": [
+        "alternative spatial splits",
+        "predictive resampling",
+        "cross-run aggregation"
+      ]
+    },
+    {
+      "experiment_id": "E04",
+      "purpose": "Audit original source/model provenance and compare recovered reference predictions with the frozen independent attempt.",
+      "status": "comparison_executed_provenance_gaps_review_pending",
+      "workflow_id": "model_reproduction",
+      "mode": "compare_existing"
+    }
+  ],
+  "acceptance_conditions": [
+    "Verify input versions, station keys, target units and predictor roles.",
+    "Use matched cohorts and explicit development/test boundaries.",
+    "Retain baseline comparisons, predictions, model reload checks and explanation provenance.",
+    "Obtain human review of scientific claims and exact files proposed for reuse."
+  ],
+  "automatic_loading": false,
+  "automatic_execution": false,
+  "result_layout": "user_defined_within_project_root",
+  "capability": {
+    "skill_id": "ml-regression",
+    "capability_version": "2.0.0",
+    "tool_id": "ml_regression_workflow"
+  },
+  "reference_documents": [
+    "references/air_quality_o3_reference.md",
+    "references/air_quality_o3_reference_ZH.md"
+  ],
+  "public_input_copy_policy": "byte_identical_repository_snapshot_and_external_assets_copy",
+  "prediction_experiment": {
+    "protocol": "prediction.json",
+    "agent_prompt": "prediction_prompt.md",
+    "agent_prompt_zh": "prediction_prompt_ZH.md",
+    "launcher": "run_prediction.py",
+    "execution_kind": "study_script_not_registered_tool",
+    "status": "completed_independently_verified",
+    "scope": [
+      "E01",
+      "E02"
+    ],
+    "original_reference_comparison": "completed_with_historical_provenance_gaps",
+    "reference_comparison": "completed_with_historical_provenance_gaps",
+    "human_review": "pending",
+    "executed_on": "2026-10-28"
+  },
+  "reference_comparison": {
+    "workflow_id": "model_reproduction",
+    "workflow_definition": "workflows/model_reproduction/workflow.yaml",
+    "mode": "compare_existing",
+    "skill_id": "model-reproduction",
+    "task_schema": "catalog/schemas/model-reproduction-task.schema.json",
+    "task_example": "projects/0001_ozone_environmental_drivers/experiments/reference_comparison/task.example.json",
+    "experiment_guide": "experiments/reference_comparison/README.md",
+    "status": "comparison_completed",
+    "historical_training_provenance": "incomplete",
+    "scientific_review": "pending",
+    "source_and_candidate_retained": true,
+    "automatic_remote_access": false
+  }
+}

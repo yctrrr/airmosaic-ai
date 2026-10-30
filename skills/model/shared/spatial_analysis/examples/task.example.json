@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "kind": "illustrative_spatial_task_not_a_runtime_config",
+  "language": null,
+  "operation": "point_polygon_matching",
+  "inputs": {
+    "points_asset": "<authorized-dataset/version>",
+    "polygons_asset": "<authorized-boundary/version>",
+    "point_id": "sample_id",
+    "polygon_id": "area_id",
+    "source_crs_evidence": "<verified source metadata>",
+    "working_crs": null
+  },
+  "matching": {
+    "predicate": "intersects",
+    "ambiguous": "retain_for_review",
+    "unmatched": "retain",
+    "nearest_fallback": false,
+    "max_distance_m": null
+  },
+  "mapping": {
+    "value_field": "value",
+    "value_unit": "<declared unit>",
+    "display_crs": null,
+    "cell_width": null,
+    "cell_height": null,
+    "shared_limits": null,
+    "export_units": "cm",
+    "export_width": 14,
+    "export_height": 10,
+    "export_dpi": 300
+  },
+  "raster": {
+    "enabled": false,
+    "quantity_kind": null,
+    "resampling_method": null,
+    "target_grid": null
+  },
+  "geocoding": {
+    "enabled": false,
+    "provider": null,
+    "endpoint": null,
+    "privacy_classification": null,
+    "terms_reviewed": false
+  },
+  "outputs": {
+    "project_id": "<public-project-id>",
+    "fresh_task_directory": "<external project result directory>"
+  }
+}

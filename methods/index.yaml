@@ -1,19 +1,20 @@
 schema_version: 2
-reviewed_on: '2026-10-27'
-purpose: Four-step documentation inventory and skill mapping; not a tool registry
-  or workflow executor.
-execution_performed_this_review: true
-execution_scope: Three authorized API requests for ERA5 single levels, CAMS EAC4
-  surface PM2.5 and CAMS global PM2.5 forecasts, plus one public PM2.5 station daily CSV and hourly long-table check, and one PANGAEA homogenized release archive with a seven-day sample, and one WorldPop Global2 official GeoTIFF with metadata and raster checks. GBD and CSMAR each have one bounded browser export and content check. These acquisitions used newly downloaded files only. The model-building source audit did not read original data or run models.
+reviewed_on: '2026-10-29'
+purpose: Four-step documentation inventory and skill mapping; not a tool registry or workflow executor.
+execution_performed_this_review: false
+execution_scope: Documentation and interface review with synthetic checks only; no acquisition, existing research-data
+  reads, credential access or real-model computation. Dated live evidence remains in SOURCES.md and source-specific
+  references.
 status_definitions:
   local_source: Source exists in a separate local project; no AirMosaic adapter.
-  mixed: Some related AirMosaic tools exist; the whole workflow is not executable
-    here.
-  registered_tools: Listed executable adapters exist; individual reference IDs remain
-    disabled and task readiness requires separate checks.
+  mixed: Some related AirMosaic tools exist; the whole workflow is not executable here.
+  registered_tools: Listed executable adapters exist; individual reference IDs remain disabled and task readiness
+    requires separate checks.
+  reviewed_direct_script: Reviewed bounded skill scripts are available; no run-tool or MCP execution adapter is
+    registered for this method.
   reference: Method guidance only; no executable adapter for the described workflow.
-  methods_only: Conceptual methods only; no concrete data, implementation code, source-script
-    references or executable adapter.
+  methods_only: Conceptual methods only; no concrete data, implementation code, source-script references or executable
+    adapter.
 methods:
 - method_id: literature_collection
   category: data_acquisition
@@ -32,6 +33,8 @@ methods:
   - 04_integrated_impacts
   skills:
   - skills/data_acquisition/shared/literature-workflow/SKILL.md
+  supporting_documents:
+  - shared/literature_ZH.md
 - method_id: statistical_yearbooks
   category: data_acquisition
   title: 统计年鉴与表格来源
@@ -49,6 +52,8 @@ methods:
   - 01_socioeconomic_natural_change
   skills:
   - skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook/SKILL.md
+  supporting_documents:
+  - 01_socioeconomic_natural_change/statistical_yearbooks_ZH.md
 - method_id: enterprise_sources
   category: data_acquisition
   title: 企业财务、年报与环境披露
@@ -68,6 +73,8 @@ methods:
   skills:
   - skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md
   - skills/data_acquisition/01_socioeconomic_natural_change/enterprise-disclosure/SKILL.md
+  supporting_documents:
+  - 01_socioeconomic_natural_change/enterprise_sources_ZH.md
 - method_id: population_health_data
   category: data_acquisition
   title: 人口与健康基础数据
@@ -79,6 +86,9 @@ methods:
   - 04_integrated_impacts/ihme_gbd_availability.md
   - 04_integrated_impacts/ihme_gbd_availability_ZH.md
   - shared/data_quality.md
+  - shared/population_health_ZH.md
+  - 01_socioeconomic_natural_change/worldpop_ZH.md
+  - shared/data_quality_ZH.md
   status: registered_tools
   evidence: current_manifest_and_skill_guides
   source_projects:
@@ -107,6 +117,8 @@ methods:
   - 01_socioeconomic_natural_change
   skills:
   - skills/data_acquisition/01_socioeconomic_natural_change/energy-balance/SKILL.md
+  supporting_documents:
+  - 01_socioeconomic_natural_change/energy_balance_ZH.md
 - method_id: enterprise_panel_processing
   category: data_processing
   title: 企业主体、面板与统计约束
@@ -120,8 +132,90 @@ methods:
   applies_to:
   - 01_socioeconomic_natural_change
   skills:
-  - skills/model/01_socioeconomic_natural_change/socioeconomic-drivers/SKILL.md
   - skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md
+  supporting_documents:
+  - 01_socioeconomic_natural_change/enterprise_panels_ZH.md
+- method_id: input_output_analysis
+  category: model_use
+  title: 投入产出分析与环境扩展
+  document: 01_socioeconomic_natural_change/economic_model/io/README.md
+  status: reviewed_direct_script
+  evidence: official_methodology_pymrio_and_synthetic_closure_checks
+  source_projects: []
+  tool_ids: []
+  primary_stage: 01_socioeconomic_natural_change
+  applies_to:
+  - 01_socioeconomic_natural_change
+  - 04_integrated_impacts
+  skills:
+  - skills/model/01_socioeconomic_natural_change/input-output-analysis/SKILL.md
+  supporting_documents:
+  - 01_socioeconomic_natural_change/economic_model/io/README_ZH.md
+- method_id: computable_general_equilibrium
+  category: model_use
+  title: 可计算一般均衡与环境经济情景
+  document: 01_socioeconomic_natural_change/economic_model/cge/README.md
+  status: reference
+  evidence: official_documentation_and_demo_source_review
+  source_projects: []
+  tool_ids: []
+  primary_stage: 01_socioeconomic_natural_change
+  applies_to:
+  - 01_socioeconomic_natural_change
+  - 04_integrated_impacts
+  skills:
+  - skills/model/01_socioeconomic_natural_change/cge/SKILL.md
+  supporting_documents:
+  - 01_socioeconomic_natural_change/economic_model/cge/README_ZH.md
+- method_id: econometric_analysis
+  category: model_use
+  title: 计量经济学与识别设计
+  document: 01_socioeconomic_natural_change/economic_model/econometrics/README.md
+  status: reviewed_direct_script
+  evidence: public_econometrics_skills_official_methods_and_synthetic_OLS_checks
+  source_projects: []
+  tool_ids: []
+  primary_stage: 01_socioeconomic_natural_change
+  applies_to:
+  - 01_socioeconomic_natural_change
+  - 04_integrated_impacts
+  skills:
+  - skills/model/01_socioeconomic_natural_change/econometric-analysis/SKILL.md
+  supporting_documents:
+  - 01_socioeconomic_natural_change/economic_model/econometrics/README_ZH.md
+
+- method_id: material_flow_analysis
+  category: data_processing
+  title: 物质流分析与实物平衡
+  document: 01_socioeconomic_natural_change/economic_model/material_flow_analysis.md
+  status: reviewed_direct_script
+  evidence: official_SEEA_Eurostat_OECD_and_synthetic_balance_checks
+  source_projects: []
+  tool_ids: []
+  primary_stage: 01_socioeconomic_natural_change
+  applies_to:
+  - 01_socioeconomic_natural_change
+  - 04_integrated_impacts
+  skills:
+  - skills/model/01_socioeconomic_natural_change/material-flow-analysis/SKILL.md
+  supporting_documents:
+  - 01_socioeconomic_natural_change/economic_model/material_flow_analysis_ZH.md
+- method_id: life_cycle_assessment
+  category: model_use
+  title: 生命周期清单与环境影响评价
+  document: 01_socioeconomic_natural_change/economic_model/life_cycle_assessment.md
+  status: reviewed_direct_script
+  evidence: ISO_UNEP_Brightway_and_synthetic_linear_LCIA_checks
+  source_projects: []
+  tool_ids: []
+  primary_stage: 01_socioeconomic_natural_change
+  applies_to:
+  - 01_socioeconomic_natural_change
+  - 04_integrated_impacts
+  skills:
+  - skills/model/01_socioeconomic_natural_change/life-cycle-assessment/SKILL.md
+  supporting_documents:
+  - 01_socioeconomic_natural_change/economic_model/life_cycle_assessment_ZH.md
 - method_id: spatial_inventory_processing
   category: data_processing
   title: 空间清单重建与对齐
@@ -136,12 +230,33 @@ methods:
   skills:
   - skills/data_acquisition/02_emission_inventory/inventory-input-methods/SKILL.md
   - skills/model/02_emission_inventory/emission-inventory-methods/SKILL.md
+  supporting_documents:
+  - 02_emission_inventory/spatial_inventory_ZH.md
 - method_id: emission_accounting
+  version: 1.0.0
+  research_question: Estimate primary emissions from explicit activity, technology shares and mutually exclusive
+    control routes.
+  disciplinary_basis: Activity-based mass accounting with pollutant-specific uncontrolled emission factors
+    and remaining fractions.
+  assumptions:
+  - Activity and factor denominators share a declared physical basis.
+  - Technology and control-route shares cover the activity without overlap.
+  - Operating, capture and removal fractions represent the same activity-weighted conditions; factors do
+    not already include these controls.
+  applicability: Reviewed synthetic stationary/process accounting; real-data preparation, spatial allocation
+    and uncertainty propagation need separate review.
+  implementation:
+    route: reviewed_direct_script
+    runner_registered: false
+    validation_scope: synthetic_numeric_unit_share_control_and_path_checks
+  scientific_evidence:
+  - methods/02_emission_inventory/emission_accounting.md
+  - skills/model/02_emission_inventory/emission-inventory-methods/references/sources.md
   category: model_use
   title: 排放核算与治理效率
   document: 02_emission_inventory/emission_accounting.md
-  status: methods_only
-  evidence: conceptual_methods_only
+  status: reviewed_direct_script
+  evidence: synthetic_numeric_unit_control_and_path_checks_2026_10_30
   source_projects: []
   tool_ids: []
   primary_stage: 02_emission_inventory
@@ -149,28 +264,31 @@ methods:
   - 02_emission_inventory
   skills:
   - skills/model/02_emission_inventory/emission-inventory-methods/SKILL.md
+  supporting_documents:
+  - 02_emission_inventory/emission_accounting_ZH.md
 - method_id: cost_scenarios
   category: model_use
   title: 治理成本与分配情景
-  document: shared/cost_scenarios.md
+  document: 04_integrated_impacts/cost_scenarios.md
   status: local_source
   evidence: current_project_guide_and_operating_boundaries
   source_projects:
   - cost_burden
   tool_ids: []
-  primary_stage: shared
+  primary_stage: 04_integrated_impacts
   applies_to:
   - 01_socioeconomic_natural_change
   - 02_emission_inventory
   - 04_integrated_impacts
-  skills:
-  - skills/model/shared/cost-scenarios/SKILL.md
+  skills: []
+  supporting_documents:
+  - 04_integrated_impacts/cost_scenarios_ZH.md
 - method_id: concentration_health_model
   category: model_use
   title: 健康影响与情景配对
   document: 04_integrated_impacts/health_impacts.md
   status: mixed
-  evidence: health_method_guidance_and_existing_repository_templates
+  evidence: health_method_response_data_contract_and_existing_disabled_templates
   source_projects:
   - cost_burden
   - airmosaic
@@ -182,10 +300,12 @@ methods:
   - 04_integrated_impacts
   skills:
   - skills/model/04_integrated_impacts/health_impact_analysis/SKILL.md
+  supporting_documents:
+  - 04_integrated_impacts/health_impacts_ZH.md
 - method_id: gcam_output_analysis
   category: model_use
   title: GCAM 输出分析
-  document: shared/gcam.md
+  document: 04_integrated_impacts/gcam.md
   status: registered_tools
   evidence: current_manifest_and_skill_guides
   source_projects:
@@ -197,19 +317,24 @@ methods:
   - gcam_aggregate_provinces
   - gcam_plot_sector_change
   - gcam_configuration_reference
-  primary_stage: shared
+  primary_stage: 04_integrated_impacts
   applies_to:
   - 01_socioeconomic_natural_change
   - 02_emission_inventory
   - 04_integrated_impacts
   skills:
-  - skills/model/IAM/gcam/SKILL.md
+  - skills/model/04_integrated_impacts/gcam/SKILL.md
+  - skills/model/04_integrated_impacts/gcam/01_output_structure/SKILL.md
+  - skills/model/04_integrated_impacts/gcam/02_configuration/SKILL.md
+  - skills/model/04_integrated_impacts/gcam/03_data_extraction/SKILL.md
+  supporting_documents:
+  - 04_integrated_impacts/gcam_ZH.md
 - method_id: machine_learning
   category: model_use
   title: mlr3 与 TimeXer
   document: shared/machine_learning.md
-  status: reference
-  evidence: current_reference_skills_and_prior_static_checks
+  status: mixed
+  evidence: framework_references_and_reviewed_configurable_regression_adapter
   source_projects:
   - airmosaic
   tool_ids:
@@ -222,23 +347,24 @@ methods:
   - 03_atmospheric_transport
   - 04_integrated_impacts
   skills:
-  - skills/model/machine_learning/mlr3/SKILL.md
-  - skills/model/machine_learning/timexer/SKILL.md
+  - skills/model/shared/machine_learning_model/frameworks/r/mlr3/SKILL.md
+  - skills/model/shared/machine_learning_model/models/time_series/timexer/SKILL.md
+  supporting_documents:
+  - shared/machine_learning_ZH.md
 - method_id: requirements_driven_model_building
   category: model_use
   title: 从研究要求构建模型与复现验证
-  document: pathways/requirements_driven_model_building.md
+  document: shared/requirements_driven_model_building.md
   supporting_documents:
-  - pathways/requirements_driven_model_building_ZH.md
-  - pathways/references/air_quality_o3_reference.md
-  - pathways/references/air_quality_o3_reference_ZH.md
-  status: reference
+  - shared/requirements_driven_model_building_ZH.md
+  status: mixed
   evidence: user_requirements_and_read_only_remote_source_audit_2026_10_27
   source_projects:
   - airmosaic
   - interpretable_air_quality
   tool_ids:
   - mlr3_workflow_reference
+  - ml_regression_workflow
   - timexer_workflow_reference
   primary_stage: shared
   applies_to:
@@ -246,8 +372,9 @@ methods:
   - 03_atmospheric_transport
   - 04_integrated_impacts
   skills:
-  - skills/model/machine_learning/mlr3/SKILL.md
-  - skills/model/machine_learning/timexer/SKILL.md
+  - skills/model/shared/machine_learning_model/frameworks/r/mlr3/SKILL.md
+  - skills/model/shared/machine_learning_model/models/time_series/timexer/SKILL.md
+  - skills/model/shared/machine_learning_model/SKILL.md
 - method_id: geos_chem_workflow
   category: model_use
   title: GEOS-Chem 输入、编译与浓度交接
@@ -263,12 +390,32 @@ methods:
   skills:
   - skills/data_acquisition/03_atmospheric_transport/atmospheric-inputs/SKILL.md
   - skills/model/03_atmospheric_transport/geos-chem/SKILL.md
+  supporting_documents:
+  - 03_atmospheric_transport/geos_chem_ZH.md
 - method_id: era5_acquisition
+  version: 1.0.0
+  research_question: Obtain meteorological covariates with known physical variables, levels, times and grids.
+  disciplinary_basis: Atmospheric reanalysis combines a numerical model and observations; grid values are
+    not station observations.
+  assumptions:
+  - Dataset, variable identity, layer, units and time support match the intended covariate.
+  - Local-day aggregation follows verified temporal semantics and product-specific completeness.
+  applicability: Declared ERA5 meteorology through the official CDS client or browser; AOD requires a separately
+    identified product.
+  implementation:
+    route: official_client_guidance
+    runner_registered: false
+    validation_scope: historical_single_temperature_field_and_current_public_metadata
+  scientific_evidence:
+  - methods/01_socioeconomic_natural_change/era5.md
+  - skills/data_acquisition/01_socioeconomic_natural_change/era5/references/api-download-example.md
   category: data_acquisition
   title: ERA5 气象数据获取
   document: 01_socioeconomic_natural_change/era5.md
   supporting_documents:
   - shared/data_quality.md
+  - 01_socioeconomic_natural_change/era5_ZH.md
+  - shared/data_quality_ZH.md
   status: reference
   evidence: official_documentation_public_form_review_and_scoped_API_smoke_test
   source_projects: []
@@ -281,11 +428,30 @@ methods:
   skills:
   - skills/data_acquisition/01_socioeconomic_natural_change/era5/SKILL.md
 - method_id: cams_acquisition
+  version: 1.0.0
+  research_question: Obtain atmospheric-composition backgrounds while preserving product, species, grid
+    and sampling identity.
+  disciplinary_basis: Composition modelling and observation assimilation; column AOD and surface mass concentration
+    are different quantities.
+  assumptions:
+  - Reanalysis and forecasts retain separate time/version contracts.
+  - Product lineage and observation reuse are reviewed before an independence claim.
+  applicability: EAC4 or the declared forecast route; EAC4 AOD form metadata checked, actual AOD retrieval
+    and daily matching pending.
+  implementation:
+    route: official_client_guidance
+    runner_registered: false
+    validation_scope: historical_PM25_fields_and_current_AOD_catalogue_metadata
+  scientific_evidence:
+  - methods/01_socioeconomic_natural_change/cams.md
+  - skills/data_acquisition/01_socioeconomic_natural_change/cams/references/eac4-aod.md
   category: data_acquisition
   title: CAMS 大气成分再分析与预报获取
   document: 01_socioeconomic_natural_change/cams.md
   supporting_documents:
   - shared/data_quality.md
+  - 01_socioeconomic_natural_change/cams_ZH.md
+  - shared/data_quality_ZH.md
   status: reference
   evidence: official_documentation_public_form_review_and_scoped_EAC4_and_forecast_API_tests
   source_projects: []
@@ -306,6 +472,11 @@ methods:
   - 03_atmospheric_transport/pm25_stations_sources.md
   - 03_atmospheric_transport/pm25_stations_preparation.md
   - 03_atmospheric_transport/pm25_homogenized.md
+  - 03_atmospheric_transport/pm25_stations_ZH.md
+  - shared/data_quality_ZH.md
+  - 03_atmospheric_transport/pm25_stations_sources_ZH.md
+  - 03_atmospheric_transport/pm25_stations_preparation_ZH.md
+  - 03_atmospheric_transport/pm25_homogenized_ZH.md
   status: reference
   evidence: public_sources_scoped_hourly_archive_and_homogenized_release_sample_checks
   source_projects: []
@@ -316,6 +487,218 @@ methods:
   - 04_integrated_impacts
   skills:
   - skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md
+- method_id: ml_regression
+  category: model_use
+  title: 机器学习模型、预测贡献与因果分析
+  document: shared/machine_learning_model/README.md
+  supporting_documents:
+  - shared/machine_learning_model/README_ZH.md
+  - shared/model_planning.md
+  - shared/model_planning_ZH.md
+  - shared/machine_learning_model/common.md
+  - shared/machine_learning_model/common_ZH.md
+  - shared/machine_learning_model/models/README.md
+  - shared/machine_learning_model/models/README_ZH.md
+  - shared/machine_learning_model/evaluation.md
+  - shared/machine_learning_model/evaluation_ZH.md
+  - shared/machine_learning_model/contribution.md
+  - shared/machine_learning_model/contribution_ZH.md
+  - shared/machine_learning_model/causal.md
+  - shared/machine_learning_model/causal_ZH.md
+  status: registered_tools
+  evidence: preserved_r_modules_and_synthetic_r_python_runtime_review_2026_10_29
+  source_projects:
+  - airmosaic
+  tool_ids:
+  - ml_regression_workflow
+  - ml_python_regression_workflow
+  primary_stage: shared
+  applies_to:
+  - 01_socioeconomic_natural_change
+  - 03_atmospheric_transport
+  - 04_integrated_impacts
+  skills:
+  - skills/model/shared/machine_learning_model/SKILL.md
+- method_id: transformer_architecture
+  category: model_use
+  title: Transformer 通用架构与不同数据类型处理
+  document: shared/machine_learning_model/models/transformer/README.md
+  supporting_documents:
+  - shared/machine_learning_model/models/transformer/README_ZH.md
+  - shared/machine_learning_model/models/transformer/data.md
+  - shared/machine_learning_model/models/transformer/data_ZH.md
+  status: reference
+  evidence: primary_literature_and_documentation_review_2026_10_30
+  source_projects: []
+  tool_ids: []
+  primary_stage: shared
+  applies_to:
+  - 01_socioeconomic_natural_change
+  - 03_atmospheric_transport
+  - 04_integrated_impacts
+  skills:
+  - skills/model/shared/machine_learning_model/SKILL.md
+- method_id: air_pollution_regression
+  category: model_use
+  title: 空气污染过程与影响的回归设计
+  document: shared/air_pollution_regression.md
+  supporting_documents:
+  - shared/air_pollution_regression_ZH.md
+  status: reference
+  evidence: primary_methods_official_interfaces_and_current_script_review
+  source_projects:
+  - airmosaic
+  tool_ids:
+  - ml_regression_workflow
+  primary_stage: shared
+  applies_to:
+  - 01_socioeconomic_natural_change
+  - 03_atmospheric_transport
+  - 04_integrated_impacts
+  skills:
+  - skills/model/shared/machine_learning_model/SKILL.md
+- method_id: model_reproduction
+  category: model_use
+  title: 模型复现、预测对照与可靠性评估
+  document: shared/model_reproduction.md
+  supporting_documents:
+  - shared/model_reproduction_ZH.md
+  status: reviewed_direct_script
+  evidence: synthetic_keyed_comparison_tests_and_scoped_saved_forest_comparison_2026_10_28
+  source_projects:
+  - airmosaic
+  tool_ids: []
+  primary_stage: shared
+  applies_to:
+  - 01_socioeconomic_natural_change
+  - 03_atmospheric_transport
+  - 04_integrated_impacts
+  skills:
+  - skills/model/shared/model_reproduction/SKILL.md
+- method_id: worldpop_acquisition
+  category: data_acquisition
+  title: WorldPop 人口栅格的选择与质量检查
+  document: 01_socioeconomic_natural_change/worldpop.md
+  status: registered_tools
+  evidence: existing_catalog_and_source_specific_documentation
+  source_projects: []
+  tool_ids:
+  - worldpop_download
+  primary_stage: 01_socioeconomic_natural_change
+  applies_to:
+  - 01_socioeconomic_natural_change
+  - 04_integrated_impacts
+  skills:
+  - skills/data_acquisition/01_socioeconomic_natural_change/worldpop/SKILL.md
+  supporting_documents:
+  - 01_socioeconomic_natural_change/worldpop_ZH.md
+- method_id: ihme_gbd_acquisition
+  category: data_acquisition
+  title: GBD 健康估计的选择与比较
+  document: 04_integrated_impacts/ihme_gbd.md
+  supporting_documents:
+  - 04_integrated_impacts/ihme_gbd_availability.md
+  - 04_integrated_impacts/ihme_gbd_ZH.md
+  - 04_integrated_impacts/ihme_gbd_availability_ZH.md
+  status: registered_tools
+  evidence: existing_catalog_and_source_specific_documentation
+  source_projects: []
+  tool_ids:
+  - ihme_gbd_fetch_results
+  primary_stage: 04_integrated_impacts
+  applies_to:
+  - 01_socioeconomic_natural_change
+  - 04_integrated_impacts
+  skills:
+  - skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/SKILL.md
+- method_id: time_series_forecasting
+  category: model_use
+  title: 目标历史与外部变量的序列预测
+  document: shared/time_series_forecasting.md
+  status: reference
+  evidence: tracked_source_and_primary_paper_guidance
+  source_projects: []
+  tool_ids:
+  - timexer_workflow_reference
+  primary_stage: shared
+  applies_to:
+  - 01_socioeconomic_natural_change
+  - 03_atmospheric_transport
+  - 04_integrated_impacts
+  skills:
+  - skills/model/shared/machine_learning_model/models/time_series/timexer/SKILL.md
+  supporting_documents:
+  - shared/time_series_forecasting_ZH.md
+- method_id: spatial_analysis
+  version: 1.0.0
+  research_question: Match spatial entities, transform verified coordinates and present spatial fields without
+    changing their support.
+  disciplinary_basis: Geometry predicates, coordinate-reference transformations and explicit spatial support.
+  assumptions:
+  - Source CRS, geometry identity, keys and units have been verified.
+  - Boundary ambiguity and unmatched entities remain explicit rather than silently resolved.
+  applicability: Implemented projected point-polygon, CRS and plotting helpers; bilinear/raster extraction,
+    nearest-neighbor and geocoding routes are not all implemented.
+  implementation:
+    route: direct_R_and_Python_helpers
+    runner_registered: false
+    validation_scope: in_memory_synthetic_geometry_CRS_and_plot_checks
+  scientific_evidence:
+  - methods/shared/spatial_analysis.md
+  - skills/model/shared/spatial_analysis/examples/checks.json
+  category: model_use
+  title: 空间匹配、坐标转换与制图
+  document: shared/spatial_analysis.md
+  supporting_documents:
+  - shared/spatial_analysis_ZH.md
+  status: reviewed_direct_script
+  evidence: primary_library_guidance_local_helper_reuse_and_synthetic_r_python_checks_2026_10_29
+  source_projects:
+  - airmosaic
+  tool_ids: []
+  primary_stage: shared
+  applies_to:
+  - 01_socioeconomic_natural_change
+  - 03_atmospheric_transport
+  - 04_integrated_impacts
+  skills:
+  - skills/model/shared/spatial_analysis/SKILL.md
+- method_id: automatic_parameter_selection
+  version: 1.0.0
+  research_question: Choose bounded regression hyperparameters on development data while preserving an independent
+    spatial test.
+  disciplinary_basis: Resampling-based model selection and separation of parameter tuning from final evaluation.
+  assumptions:
+  - Final-test labels do not enter tuning or preprocessing.
+  - Caller-supplied groups and folds reflect the prediction use case; the helper checks membership, not
+    scientific independence.
+  applicability: Complete numeric development frames and bounded tree/forest random search; no automatic
+    fold generation or national-grid production.
+  implementation:
+    route: direct_R_helper
+    runner_registered: false
+    validation_scope: base_R_contract_checks_only
+    full_tuning_runtime: pending_dependencies
+  scientific_evidence:
+  - methods/shared/machine_learning_model/tuning.md
+  - https://mlr3tuning.mlr-org.com/reference/auto_tuner.html
+  category: model_use
+  title: 开发期自动参数选择与测试隔离
+  document: shared/machine_learning_model/tuning.md
+  supporting_documents:
+  - shared/machine_learning_model/tuning_ZH.md
+  status: reference
+  evidence: official_api_review_and_base_r_contract_checks_full_tuning_pending_dependencies
+  source_projects:
+  - airmosaic
+  tool_ids: []
+  primary_stage: shared
+  applies_to:
+  - 01_socioeconomic_natural_change
+  - 03_atmospheric_transport
+  - 04_integrated_impacts
+  skills:
+  - skills/model/shared/machine_learning_model/SKILL.md
 stages:
   01_socioeconomic_natural_change: 01_socioeconomic_natural_change
   02_emission_inventory: 02_emission_inventory

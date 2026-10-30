@@ -1,42 +1,25 @@
-# 企业财务、年报与环境披露
+# Enterprise financial and environmental sources
 
-**状态**：CSMAR 年度表的单条网页获取与文件验收已验证，见下文。其他来源有历史采集、处理或试点记录，省级披露进度仍以所属任务的当前验收为准。
+**English** | [中文](enterprise_sources_ZH.md)
 
-| 来源 | 数据与入口边界 | 登录/依赖 |
-|---|---|---|
-| CSMAR / RESSET | 授权数据库表；基础信息、财务、子公司关系按表区分 | 本人机构权限；本地处理需要相应 Python/R 依赖 |
-| 上市公司公告 | 年报、半年报、ESG 等正文与附件；与数据库财务表分别留来源 | 公开页面或任务授权会话；按具体站点核对 |
-| 省级环境披露平台 | 企业年度/临时报告、结构化正文及附件 | requests 或浏览器；各省接口、权限和限流独立 |
+## Research question
 
-## 操作步骤
+Use these sources to identify which enterprises report an activity, financial quantity or environmental action in a defined period. Define the population first: listed-company reports, industrial-enterprise statistics and provincial environmental disclosure systems cover different entities.
 
-1. 固定省份、年份、企业范围与所需报告类型。主体 ID、企业年、报告版本分别标识。
-2. 先取得列表，再取详情/正文/附件；只有列表或附件链接时保留对应状态，不计为完整报告。
-3. 网络采集保留可恢复队列和每次尝试记录，区分未发现、权限限制、暂时错误、已取得和已验证。出现访问挑战时停在该状态，交由已授权的人工或现有支持流程处理，不规避访问限制。
-4. 验证报告中的企业、期间、正文和附件一致；保存原件摘要/哈希，避免重复版本覆盖。
-5. 只对有证据的结果更新中心索引。已有队列由所属流程维护，不手工批量改数据库或重新入队全部企业。
+## Sources and definitions
 
-## AirMosaic 与本地项目的区别
+Database tables such as CSMAR/RESSET provide structured fields; annual/ESG reports and provincial disclosures provide original narratives and attachments. Keep each table's definitions, original source, reporting boundary, statistical date, publication date and revision separately. Database curation does not make every field a direct transcription of the same original report.
 
-- `csmar_browser_download` 是参考流程；`csmar_process_company_info` 可通过 run-tool 处理已下载的企业基础信息 ZIP，不能替代所有财务表读取或省级披露爬虫。见 [CSMAR skill](../../skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md)。
-- 本次检查了省级项目说明、`fetch_nonlisted_env_disclosure_hainan_public_api.py` 的局部入口，以及其他省份/上市报告脚本的存在性。没有把某省样本成功推广为其他省可用。
-- 当前省份进度应以所属任务的队列和最近验收为准；旧 README 和历史聊天中的数量不作为本库当前进度。
-- 企业名称、地址、识别证据、原始报告及签名下载 URL 留在工作区，不进入共享方法卡。采集权限不等于把内容发往外部模型服务的权限。
+For CSMAR, field documentation reviewed on 2026-10-27 indicated that `IndustryName`/`IndustryCode` use the listed-company association classification from 2023 and the applicable CSRC classification earlier. `IndustryNameC`/`IndustryCodeC` refer to the 2012 CSRC scheme and become blank after updates cease in 2023; `IndustryNameD`/`IndustryCodeD` use the association scheme. Recheck the selected export's dictionary rather than treating this historical observation as a permanent rule. Main-business and listing-status fields can reflect nearby/latest available information rather than the intended historical year-end.
 
-身份合并、生产量提取和财务校准见[企业面板方法](enterprise_panels.md)。
+## Organization and comparison
 
-## CSMAR 来源、误差与规范化
+Keep securities codes as text, entity identifiers separate from securities, and parent/subsidiary/facility boundaries explicit. Use entity–period–report-type–version keys. Compare a listing with the saved full report and attachments; retain source references and revision evidence. A missing report, inaccessible report and observed zero are different observations.
 
-CSMAR 是数据库提供者，不将其整理后的每个字段直接当作企业原始公告。按具体数据表的说明保留原始来源、字段定义、统计截止日期、版本及单位；缺少来源释义时标为待核对，不推断所有字段采用相同公告或统计口径。获取操作见[首次下载向导](../../skills/data_acquisition/01_socioeconomic_natural_change/csmar/references/first-download-guide_ZH.md)。
+## Error and quality
 
-- 上市公司不是全体工业企业。只选择当前在市企业会造成存续选择偏差；分支机构、母子公司与生产设施也不能自动视为同一单位。先定义样本和身份键，再评估覆盖。
-- 证券代码按文本保留前导零；公司与证券、统计截止日与发布日期分别维护。行业分类须带标准和版本，跨年变更通过映射保留，不能仅凭名称合并。
-- 对公司与日期键、重复版本、无效日期、缺失字段、单位和币种逐项核对。缺失不直接补零，财务金额不代替实物产量；修订与历史版本保留来源证据。
-- 现有企业候选处理器先取每家公司最新记录，再按区分大小写的英文关键词匹配。它不生成完整历史面板，中文文本和空匹配需审核；空输出不能证明来源中没有相关企业，也不证明全部待选行业已覆盖。
-- 源表、原始字段说明和检查明细留在授权工作区；公开文档只维护通用方法与字段契约。对外共享还需核对来源许可，下载权限不等于再分发权限。
+Evaluate population coverage, survivor selection, repeated reports, revisions, key validity, units and structural missingness. Listed companies cannot stand for all industrial firms without a sampling argument. A keyword-based candidate list needs review against full report evidence; empty matches can reflect language or classification mismatch. Source disagreement is a review item rather than a reason to overwrite one source automatically.
 
-2026-10-27 核对的年度表字段说明表明：`IndustryName` / `IndustryCode` 在 2023 年及以后采用中国上市公司协会分类，此前按相应年份的证监会版本；`IndustryNameC` / `IndustryCodeC` 对应 2012 版证监会分类，2023 年起停更而为空；`IndustryNameD` / `IndustryCodeD` 为协会分类。跨年面板应保留分类版本，停更导致的结构性缺失不当作零。其他字段也须逐项核对时点：当前说明中的主营业务可能取最接近年度的信息，上市状态可能反映已出年报的最新状态，不能未经审核当作历史年末状态。后续版本以对应字段说明重新核对。
+## Interpretation
 
-## 阶段与 Skill 映射
-
-主目录：01_socioeconomic_natural_change；适用阶段：01_socioeconomic_natural_change。对应 [csmar](../../skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md)、[enterprise-disclosure](../../skills/data_acquisition/01_socioeconomic_natural_change/enterprise-disclosure/SKILL.md)。执行状态以本文及真实工具 manifest 为准；没有 tool_id 的方法只供指导。
+A report supports only its stated entity, period and boundary. Financial amounts do not establish physical output, and legal identity alone does not establish a cost payer. Preserve quoted evidence and mark unresolved classifications before constructing [enterprise panels](enterprise_panels.md). Retrieval and file checks are described in the [disclosure skill](../../skills/data_acquisition/01_socioeconomic_natural_change/enterprise-disclosure/SKILL.md) and [CSMAR skill](../../skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md).

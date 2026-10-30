@@ -1,29 +1,26 @@
 ---
 name: literature-workflow-methods
-description: Guide cross-stage literature discovery, attachment review and import planning without executing collectors or modifying a library.
+description: Find, deduplicate and verify research papers and supplements, then prepare an archive or reference-manager import handoff without a bundled collector.
 ---
 
-# Cross-stage literature workflow
-
-<!-- README-I18N:START -->
+# Literature discovery and handoff
 
 **English** | [中文](SKILL_ZH.md)
 
-<!-- README-I18N:END -->
+Use for a bounded topic search or supplied DOI/title/link. This repository provides a manual workflow, with no collector or library-import adapter.
 
+## Prepare and retrieve
 
-**Status:** documentation only; no execution adapter or tool ID for run-tool.
+1. Define the research question, sources, time/language limits and candidate cap. Use an authorized browser, PDF reader and a CSV/worksheet index. Choose a local library destination outside Git and a separate pending-review folder.
+2. Search the existing index by DOI and normalized title before retrieving. Open the publisher/repository landing page; record title, authors, year, DOI or stable URL and document version.
+3. Retrieve authorized main text and supplements separately. Keep dataset/code links as separate records. Open each saved file to confirm its actual type, title and readability; record failed retrievals without inventing attachments.
+4. Review scope and relevance before moving files into the selected topic folder. A summary must cite page/section evidence and distinguish author claims from your assessment.
+5. Prepare a reference-manager handoff listing bibliographic identity, local file, attachment role, target collection and duplicate decision. If library modification is requested, use the installed reference manager's reviewed import/link-file operation and verify the resulting item and attachments.
 
-## Workflow
+## Checks and optional external software
 
-Define the topic → deduplicate DOI/title → check full-text and attachment sources → separate archiving, summaries and import plans → review evidence.
+Deliver the search log, inclusion/exclusion decisions, verified file index, gaps and actual import status. A plan is not a completed import. Do not forward full texts to an external summarizer unless that use is authorized.
 
-See the [method and handoff guidance](../../../../methods/shared/literature.md).
+If an external literature project is selected, inspect its real CLI and configuration first. Historical names `run_weekly.py`, `run_summary.py` and `prepare_zotero_import.py` do not refer to scripts bundled here. In the previously reviewed external project, `run_weekly.py --dry-run` still used discovery/browser access and wrote archive/log files; `prepare_zotero_import.py` produced a plan without importing. Recheck the selected version before use.
 
-## Boundaries
-
-An external collector's dry-run may access the network and write files. An import plan is not an actual library import. No run-tool adapter is provided.
-
-Documentation maintenance and routine validation use only documents, interfaces and synthetic inputs. Real-data work requires an explicit scope. Keep personal paths and non-secret settings in CONFIG_DIR, credentials in a credential manager, and sessions in AUTH_DIR; data, configuration and authentication roots must be separate and outside Git. Reference skills do not automatically enforce paths or create sanitized run receipts.
-
-Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.
+For evidence synthesis and research limitations, read [literature methods](../../../../methods/shared/literature.md).

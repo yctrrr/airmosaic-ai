@@ -24,8 +24,10 @@ description: Guide version-specific GEOS-Chem Classic and GCHP setup, compilatio
 
 ## Paths and evidence
 
-Keep source and releases outside Git. Explicitly configure task build/run directories in personal non-secret settings; write results to a fresh workspace task directory. `GC_SOURCE_DIR` and `GC_RUN_DIR` are documentation variables, not automatically loaded AirMosaic settings. Raw logs may expose paths and filenames; do not publish them. Unadapted workflows do not inherit run-tool isolation or sanitized receipts.
+Keep source and releases outside Git. Explicitly configure task build/run directories in personal non-secret settings; write results to a fresh external assets `results/<project_id>/` task directory. `GC_SOURCE_DIR` and `GC_RUN_DIR` are documentation variables, not automatically loaded AirMosaic settings. Raw logs may expose paths and filenames; do not publish them. Unadapted workflows do not inherit run-tool isolation or sanitized receipts.
 
 This guide distills local technical notes cross-checked against official documents. See [sources and version differences](SOURCES.md). Historical machine-specific patches are not universal fixes; forward, GCHP and version-specific adjoint capabilities are not interchangeable.
 
 Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.
+
+Scientific design and concentration interpretation: [method](../../../../methods/03_atmospheric_transport/geos_chem.md).

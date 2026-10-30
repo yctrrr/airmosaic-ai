@@ -1,19 +1,25 @@
-# 空间清单重建与对齐：方法目录
+# Designing a spatial emission inventory
 
-**步骤**：02 排放清单。**状态**：仅方法说明；无具体数据、代码或执行入口。
+**English** | [中文](spatial_inventory_ZH.md)
 
-## 方法选择顺序
+Spatial allocation decides how an emission total is represented across locations. The aim is a spatial account consistent with its source total and appropriate for the downstream research scale.
 
-1. 确定点源、面源、行政区与网格之间的空间映射方法。
-2. 讨论投影、网格方向、边界、空间分辨率与变量单位的一致性要求。
-3. 选择空间权重、缺失/零权重和回退策略，说明适用条件。
-4. 设计分配前后总量守恒、重复源、有效范围及跨尺度比较检查。
-5. 为下一步讨论时间分配、垂直分配和化学物种映射；总量与浓度采用不同聚合方法。
+## Choose the spatial representation
 
-## Skill 与交接
+Distinguish individually located sources, area sources and regional totals. Decide which representation is justified by source knowledge and how boundaries relate across maps. State the intended scale of interpretation.
 
-对应[排放方法 skill](../../skills/model/02_emission_inventory/emission-inventory-methods/SKILL.md)及[输入方法 skill](../../skills/data_acquisition/02_emission_inventory/inventory-input-methods/SKILL.md)。与[排放核算](emission_accounting.md)共用边界和单位约定；交接方法选择、守恒和映射契约，不附本地数据、脚本名称、实现参数或源码指纹。
+## Decide how information will be allocated
 
-## 阶段与 Skill 映射
+Select allocation indicators for their relationship to the sources represented. Explain their coverage and what happens where an indicator is absent or has no allocation support. A fallback rule changes the interpretation and belongs in the method rationale.
 
-主目录：02_emission_inventory；适用阶段：02_emission_inventory。对应 [inventory-input-methods](../../skills/data_acquisition/02_emission_inventory/inventory-input-methods/SKILL.md)、[emission-inventory-methods](../../skills/model/02_emission_inventory/emission-inventory-methods/SKILL.md)。执行状态以本文及真实工具 manifest 为准；没有 tool_id 的方法只供指导。
+Keep projection, grid orientation, area coverage and reporting units consistent. A visually aligned map can still represent a different area or quantity.
+
+## Check conservation and comparability
+
+Plan checks that allocation preserves the intended total, excludes unintended duplication and respects the valid domain. When changing resolution, match aggregation to the physical quantity; an extensive total and a concentration need different treatment.
+
+Explain uncertainty from source locations, allocation indicators and boundary changes. A finer grid does not by itself supply finer source knowledge.
+
+## Hand off to atmospheric analysis
+
+Describe required temporal, vertical and chemical-species correspondence at the conceptual level. The [accounting method](emission_accounting.md) supplies the shared source boundary. The [input planning entry](../../skills/data_acquisition/02_emission_inventory/inventory-input-methods/SKILL.md) records method choices; this page contains no concrete data, settings or implementation.

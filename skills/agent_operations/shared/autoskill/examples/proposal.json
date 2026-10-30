@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "sanitized": true,
+  "authorship": "current-agent",
+  "route": "revise",
+  "skill_names": ["example-check"],
+  "evidence_ids": ["input-1-record-1"],
+  "draft": {
+    "name": "example-check",
+    "description": "Review synthetic metadata and preserve uncertain outcomes for follow-up.",
+    "description_zh": "审查合成元数据，并保留不确定结果供后续核对。",
+    "version": "1.0.0",
+    "compatibility": "Python 3.10+; synthetic inputs only",
+    "instructions": "Review only the explicitly chosen synthetic inputs. Check declared metadata and report unresolved compatibility. Preserve existing files and stop when inputs are missing. This draft requires operational review and has no registered executable tool.",
+    "instructions_zh": "仅审查明确选择的合成输入。检查声明的元数据并报告未解决的兼容性问题。保留既有文件，缺少输入时停止。本草稿需要操作审查，没有注册可执行工具。"
+  }
+}

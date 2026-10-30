@@ -1,0 +1,63 @@
+schema_version: 1
+workflow_id: ml_regression
+version: 1.3.0
+implementation: agent_guided_generation_with_tested_example
+direct_yaml_execution: false
+skill_id: ml-regression
+tool_id: ml_regression_workflow
+task_schema: catalog/schemas/ml-regression-task.schema.json
+agent_prompt: workflows/ml_regression/prompt.md
+agent_prompt_zh: workflows/ml_regression/prompt_ZH.md
+checklist: workflows/ml_regression/checklist.md
+generated_example: workflows/ml_regression/examples/planned_regression.py
+legacy_synthetic_example: workflows/ml_regression/examples/generated_regression.py
+planning_method: methods/shared/model_planning.md
+planning_handoff: workflows/ml_regression/planning.md
+plan_schema: skills/model/shared/machine_learning_model/contracts/model-plan.schema.json
+plan_gate: skills/model/shared/machine_learning_model/scripts/common/review_plan.py
+review_default: human_before_experiment_code_generation
+agent_review: explicit_user_delegation_bound_to_plan_only
+execution_gate: reviewed_plan_data_task_and_checked_code
+approval_authentication: trusted_caller_attestation
+synthetic_task: config/examples/ml-regression/workflow-synthetic.json
+generation: agent_authored_code_with_review_not_runtime_llm_service
+workflow_check_result_scope: workflow
+workflow_check_outputs: workflows/ml_regression/results/<timestamp>_<task>/
+process_record_contract: harness/usage/workflow-handoff.md
+result_naming: compact_yyyymmddhhmm_and_public_task_slug
+generated_materials: gen_script
+generation_basis: declared_design_summary_before_computation_not_historical_generation_trace
+events: observed_controller_boundaries_with_timestamps
+retrospective: explicitly_post_run_bilingual_summary
+new_source_snapshot: false
+dependency_identity: git_base_hashes_and_selected_public_text_patch
+historical_results: preserved_unless_explicit_bounded_cleanup_authorized
+workflow_check_input: manifest_listed_synthetic_repository_csv_only
+applicable_stages:
+- 01_socioeconomic_natural_change
+- 03_atmospheric_transport
+- 04_integrated_impacts
+design_steps:
+- define_input_and_target
+- choose_predictive_or_causal_question
+- design_dag_and_variable_roles
+- write_reasoned_model_plan_and_supported_task
+- present_plan_for_human_or_explicitly_delegated_review
+- generate_and_review_orchestration_code
+- recheck_plan_data_task_and_code_identity
+- preflight_and_synthetic_checks
+- check_handoffs
+- save_and_review
+branches:
+  prediction:
+  - training_only_screening
+  - regression
+  - frozen_evaluation
+  - predictive_interpretation
+  causal_plr:
+  - declared_adjustment_set
+  - cross_fitted_nuisance_models
+  - orthogonal_score_and_inference
+outputs: synthetic_workflow_checks_or_owned_skill_results_or_external_project_layout
+automatic_project_execution: false
+scientific_approval: false

@@ -1,55 +1,50 @@
-# PM2.5 均一化日值：Bai 等（2020）
+# Homogenized daily PM2.5: Bai et al. (2020)
 
-复核日期：2026-10-26。03 阶段的产品说明，04 可引用。获取操作由 [PM2.5 skill](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md)负责；这是现有 PM2.5 方法的产品附页，不新增 tool_id 或执行适配器。
+**English** | [中文](pm25_homogenized_ZH.md)
 
-## 来源、版本与产品身份
+This product appendix explains source identity and scientific suitability. Acquisition is in the [PM2.5 skill](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/SKILL.md). The following release/file evidence was reviewed on 2026-10-26.
 
-| 项目 | 说明 |
+## Source and coverage
+
+| Item | Description |
 |---|---|
-| 数据集 | Bai, K. 等（2020），*A homogenized daily in situ PM2.5 concentration dataset in China during 2015–2019* |
-| 发布与引用 | [PANGAEA DOI：10.1594/PANGAEA.917557](https://doi.pangaea.de/10.1594/PANGAEA.917557)；页面发布日期 2020-05-18 |
-| 方法论文 | [Bai 等，ESSD 12, 3067–3080（2020）](https://essd.copernicus.org/articles/12/3067/2020/)，DOI：10.5194/essd-12-3067-2020 |
-| 许可 | 发布页标注 CC BY 4.0，使用时引用数据 DOI 和方法论文；不是匿名来源的通用站点文件 |
-| 来源链 | 国控站测量 → 中国环境监测总站发布 → 作者采集、质控和加工 → PANGAEA 发布产品 |
-| 覆盖 | 发布说明为 2015-01-01 至 2019-12-31，1,309 条日尺度序列，单位 µg/m³ |
-| 获取 | 发布页的 Download dataset，公开 ZIP，不需账号、API key 或网盘 |
+| Dataset | Bai et al. (2020), *A homogenized daily in situ PM2.5 concentration dataset in China during 2015–2019* |
+| Publication | [PANGAEA DOI 10.1594/PANGAEA.917557](https://doi.pangaea.de/10.1594/PANGAEA.917557), published 2020-05-18 |
+| Method | [ESSD 12, 3067–3080](https://essd.copernicus.org/articles/12/3067/2020/), DOI 10.5194/essd-12-3067-2020 |
+| License | CC BY 4.0; cite both release and method paper |
+| Provenance | National station measurements → CNEMC publication → author collection/QC/processing → PANGAEA |
+| Coverage | 2015-01-01–2019-12-31; 1,309 daily series, µg/m³ |
+| Access | Public ZIP from Download dataset; no account or API key |
 
-产品已经过填补、序列衔接、均一性检验和偏差调整。它与 [Quotsoft 小时发布归档](pm25_stations_sources.md)是不同产品，不能混写成相同的“原始观测”，也不能与后续年份直接拼接后假定处理一致。
+The data include gap-filling, series merging, homogeneity testing and bias adjustment. They are distinct from [published hourly archives](pm25_stations_sources.md). Splicing later years does not establish a consistent processing history.
 
-## 文件结构与字段
+## File identity
 
-已获取发布包中的文件为：
-
-| 包内文件 | 结构与读取方式 |
+| File in release | Structure |
 |---|---|
-| `PM2.5 data in China/Homogenized_PM25_data.txt` | 前 3 行为标题、频率/单位和起止日期，第 4 行为空，第 5 行是 `Date` 与 1,309 个序列列；随后为日期与浓度宽表 |
-| `PM2.5 data in China/Goelocation.txt` | 保留发布方的此拼写；前 2 行为说明、第 3 行为空，第 4 行是 `Site_ID Latitude Longitude`，随后是序列位置表 |
+| `PM2.5 data in China/Homogenized_PM25_data.txt` | First three lines: title, frequency/unit, date range; line 4 blank; line 5: `Date` and 1,309 series columns; daily wide table follows |
+| `PM2.5 data in China/Goelocation.txt` | Preserve provider spelling; two explanatory lines, blank line 3, line 4: `Site_ID Latitude Longitude`; location rows follow |
 
-文本按 UTF-8 读取，字段采用空白分隔，不把 `.txt` 当逗号 CSV。读取时核对标题、列名和字段数，避免跳过固定行数后误读；发布包变更应重新检查。
+UTF-8 whitespace-delimited text is not comma-separated CSV. Inspect headers/field counts rather than assuming fixed skips after a release change. The checked 1,309 location IDs uniquely matched concentration columns. Latitude/longitude directions were stated, but the CRS was not explicitly declared; do not label EPSG:4326 as verified.
 
-位置表的 1,309 个 `Site_ID` 与浓度表的序列列一一匹配，无重复编号。坐标说明为北纬/东经，但没有明确声明坐标参考系统，不能仅由经纬度数值标成已核实 EPSG:4326。
+`S0001` etc. are product-series IDs, not confirmed original national station codes. No mapping to codes such as `1001A` was supplied. Series merging may span relocation; present coordinates do not establish historical identity or position.
 
-`S0001` 等是**本产品序列标识**，不是已确认的原国控站号。包内未提供到 `1001A` 一类原站号的映射；均一化处理可能涉及迁站序列衔接，不能仅凭当前位置反推整个时期的原站身份或历史位置。
+## Processing uncertainty and use
 
-## 加工带来的误差与适用性
+Section 3 of the paper describes outlier/missing-value treatment, diurnal-cycle-constrained EOF reconstruction, reference-series change-point detection/distribution adjustment, series merging and postprocessing. Its parameters are study-specific.
 
-方法论文第 3 节说明，作者先处理异常和缺测，借助日变化约束的 EOF 方法填补，再用参考序列进行变点检测与分布调整；还包括序列衔接和后处理。这里说明产品身份，不将论文参数自动推广为其他数据的默认质控规则。
+Imputation improves continuity without adding independent measurements and may change peaks, variance and temporal dependence. Reference selection affects detected breaks and adjustments; homogenization does not eliminate all measurement/representativeness error. Long-series selection and relocation merging change sample composition. The product cannot independently prove its own reconstruction accuracy; comparisons with national observations must account for shared inputs and station/time overlap.
 
-- **填补误差**：重建值增加连续性，但不增加独立观测；极值、方差和时间相关结构可能受到加工影响。
-- **参考序列和调整**：邻站及参考选择影响变点与偏差调整，不能把均一化理解为消除了全部测量或代表性误差。
-- **站点选择与衔接**：长期序列筛选和迁站衔接会改变空间/时间样本构成；它不是所有年份全部站点的清单。
-- **验证依赖**：不能用该产品本身证明自身插补准确；若与原始国控资料比较，也要核对数据依赖和时空重叠。模型训练、偏差订正和检验应控制站点、时间及处理链泄漏。
+Use daily changes/comparisons only when the processing assumptions suit the question. Regulatory daily-validity review, hourly events and original missingness require their corresponding original records.
 
-适合在明确接受其加工方法的条件下研究日尺度变化及比较；监管日均复核、小时事件和原始缺测研究仍需要相应原记录。不同产品的用途和有效性规则见 [PM2.5 主文](pm25_stations.md)。
+## Normalization and handoff
 
-## 规范化与交接
+1. Retain DOI, acquisition date and ZIP checksum, preserving the original release.
+2. Validate headers, dates, unique series and numeric fields over the intended scope; one seven-day sample does not validate the full period.
+3. Join locations by explicit series ID with uniqueness/unmatched checks. Leave original national station codes unknown.
+4. Retain source/DOI, `series_id`, original date, concentration/unit, coordinates/source and `product_kind=homogenized_daily` in long form.
+5. The package lacks per-value imputation/adjustment flags, valid observed hours and explicit time zone/CRS. Do not mark every value unfilled, set `n_valid_hours=24` or claim daily compliance with an original-observation 20-hour rule.
+6. Do not reapply hourly-to-daily aggregation. Define daily-coverage criteria for monthly/annual analysis; resolve date semantics and spatial/physical support before matching other products.
+7. Obtain original evidence if the question needs hourly completeness, original station IDs or per-value processing flags; otherwise respect the product's limitations.
 
-1. 固定数据 DOI、取得时间、ZIP 校验摘要和产品身份；保留原 ZIP，不覆盖同类原始观测。
-2. 解析标题与字段，验证日期、唯一序列列、数值可解析性，再按明确的序列和日期范围整理；现有小样例不替代全时段检查。
-3. 位置表按 `series_id` 显式连接，检查唯一性和未匹配项；原国控站号字段保留未知，不猜映射。
-4. 长表保留来源、DOI、`series_id`、原日期、浓度、µg/m³、`product_kind = homogenized_daily`、坐标及其来源。与原始发布值分开保存。
-5. **未知项保持未知**：本包没有逐值插补/调整标记、逐日有效观测小时数或明确时区/坐标参考系统。不能全部标成“非插补”、填入 `n_valid_hours = 24`，或声称逐日满足 20 小时原观测门槛。
-6. 不再对现成日值应用“小时转日均”过程；月/年统计另定日尺度覆盖规则。与小时资料、ERA5/CAMS 或网格暴露匹配前，先解决日期语义、物理量和空间支持差异。
-7. 若研究需要原始小时完整性、原站号或逐值处理标记，向原发布资料或作者补齐证据；无法补齐时，按产品适用范围使用，不伪造字段。
-
-取得与小样例检查步骤、实际操作时间见[下载验证示例](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/references/homogenized-download-example.md)。原包、位置表和派生样例在成员工作区，methods 只保存通用说明。
+The [download example](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/references/homogenized-download-example.md) records release and small-sample content checks.

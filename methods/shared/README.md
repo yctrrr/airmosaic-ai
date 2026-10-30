@@ -1,14 +1,21 @@
-# 跨阶段共享方法
+# Shared methods
 
-共享只表示方法可用于多个阶段，不表示跨层自动执行或已完成科学适用性验证。排放清单阶段只列方法，不从共享目录引入具体数据或实现。
+**English** | [中文](README_ZH.md)
 
-| 方法 | 适用阶段 | 入口 |
+Shared means applicable across stages; it does not establish automatic execution or scientific validity. Stage 02 contains conceptual methods only and does not inherit concrete data or implementation from shared entries.
+
+| Method | Applicable scope | Entry |
 |---|---|---|
-| 数据来源、误差与规范化原则 | 获取/整理及下游使用阶段；02 仍仅列方法 | [共同规范](data_quality.md)，领域细则由各阶段方法主文维护 |
-| 文献 | 全阶段 | [文献方法](literature.md) |
-| 人口与健康数据 | 01、04 | [人口健康方法](population_health.md)；WorldPop/GBD skill 保持原位 |
-| GCAM | 01、02、04 | [GCAM 方法](gcam.md)；已有输出分析及编译排错 |
-| 机器学习 | 按任务评审，可服务各阶段 | [mlr3/TimeXer](machine_learning.md)，均为参考流程 |
-| 成本与分配 | 01、02、04 | [成本方法](cost_scenarios.md)，无整套执行适配器 |
+| Provenance, errors and normalization | Acquisition/preparation and downstream use; stage 02 remains conceptual | [Common guidance](data_quality.md); stage methods own specialist quality rules |
+| Literature | All stages | [Literature methods](literature.md) |
+| Population and health data | 01 and 04 | [Population/health](population_health.md); acquisition skills retain their homes |
+| Spatial analysis | Matching, coordinate conversion and mapping across 01, 03 and 04 | [Spatial relationships, precision and support](spatial_analysis.md); choose the R or Python path in the skill |
+| Requirements-driven model design | Defined by the question; stage 02 remains conceptual | [Target, validation and reproduction design](requirements_driven_model_building.md), [pre-experiment planning and review](model_planning.md); operational recipes live in workflows |
+| Model reproduction and assessment | Reviewed tasks across stages | [Comparison and reliability](model_reproduction.md), combined by the [model_reproduction workflow](../../workflows/model_reproduction/README.md) |
+| Machine learning | Reviewed tasks across stages | [Method selection](machine_learning.md) and [regression/interpretation](machine_learning_model/README.md); execution belongs to skills |
+| Time-series forecasting | Time-ordered prediction with historical external variables | [Forecast origin, windows and evaluation](time_series_forecasting.md); code configuration belongs to the selected forecasting skill |
+| Air-pollution regression design | Concentration in 03 and impacts in 04; reference drivers from 01 | [Variable roles, validation, causal interpretation and parameter design](air_pollution_regression.md); operational cases belong to the regression skill |
 
-每张卡的阶段与 SKILL.md 链接以[index.yaml](../index.yaml)为准。
+Stage and SKILL mappings are maintained in [index.yaml](../index.yaml).
+
+Output analysis, control costs and distributional scenarios are maintained in [stage 04 methods](../04_integrated_impacts/README.md); other stages reference the same entries.

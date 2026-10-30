@@ -1,30 +1,29 @@
-# 人口与健康基础数据
+# Aligning population and baseline health data
 
-**状态**：AirMosaic 已登记 WorldPop 和 IHME GBD 的受控适配器。WorldPop 官方目录和 Global2 小文件直接获取已验证，run-tool 本机实际目录调用尚未通过；GBD 2023 全球全因死亡数量的单条网页查询、下载与 CSV 内容检查已通过，未执行 run-tool 真实调用。不检查或复制私人会话。
+**English** | [中文](population_health_ZH.md)
 
-WorldPop 的产品来源、误差和规范化见 [01 人口栅格方法](../01_socioeconomic_natural_change/worldpop.md)，获取与时间记录见[小文件示例](../../skills/data_acquisition/01_socioeconomic_natural_change/worldpop/references/first-download-example.md)。已验证的是人数/像元的单个 Global2 文件，区域汇总和健康计算另行适配。
+Health-impact estimates require population, baseline outcomes, exposure and a risk function referring to compatible populations. Acquiring each file does not establish compatibility. Use [WorldPop](../01_socioeconomic_natural_change/worldpop.md) for spatial population estimates and [GBD](../04_integrated_impacts/ihme_gbd.md) for baseline health estimates.
 
-GBD 的来源、估计误差、数量/率、年龄与不确定区间见 [04 GBD 方法](../04_integrated_impacts/ihme_gbd.md)，网页首次操作见[最小查询向导](../../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/references/first-download-guide.md)。人口分母产品需单独核对，不能从病因结果适配器推断已实现人口导出。
+Obtain exposure-response coefficients or curves separately from their published source using the [health-impact method and skill](../04_integrated_impacts/health_impacts.md). A baseline mortality export is not a risk curve. Match pollutant, exposure statistic/window, units, endpoint and eligible population before linking an upstream prediction; a PM2.5 response cannot be applied to an ozone prediction by renaming its column.
 
-| 数据 | 真实 tool_id | 输入与前置条件 |
-|---|---|---|
-| WorldPop | worldpop_download | 产品、国家、年份、下载范围；requests，联网授权 |
-| IHME GBD | ihme_gbd_fetch_results | 版本、年份、地区、病因、年龄、性别、measure/metric；授权的本机浏览器会话 |
+## Define a common study population
 
-## 操作步骤
+Specify geography/boundary vintage, year/reference date, age boundaries, sex and cause definitions. WorldPop and GBD may use different total benchmarks and age structures; justify a chosen reference rather than assuming interchangeable denominators. Prefer compatible products from one release across the period and treat revisions separately from observed change.
 
-1. 将研究需求拆成产品/维度清单，明确人数、率、比例及不确定区间。
-2. 阅读 [WorldPop skill](../../skills/data_acquisition/01_socioeconomic_natural_change/worldpop/SKILL.md)或 [GBD skill](../../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/SKILL.md)，查询 tool_id 和依赖。
-3. 核对当次产品和页面维度 ID；历史参数示例不是当前业务含义的证明。本人会话由调用方准备，不能复制他人认证状态。
-4. 按[数据获取指南](../../harness/usage/data-acquisition.md)准备非秘密 JSON，通过 run-tool dry-run 检查 blockers，再按授权执行。
-5. 验证实际文件、请求维度、年份、空间范围、缺失和单位后，才纳入缓存和下游模型。
+| Quantity | Alignment needed |
+|---|---|
+| Population counts | Count/density units, reference date, grid/boundaries, age/sex coverage |
+| Baseline deaths | Cause hierarchy, count versus rate, age/sex and location definitions |
+| Baseline rate | Correct denominator and unit scale; age-standardized rates cannot reconstruct actual counts |
+| Concentration | Exposure period, spatial support and population distribution |
+| Risk function | Applicable causes/ages, concentration units, exposure window and counterfactual |
 
-## 边界与验收
+For an age-specific baseline rate `r` per 100,000 and compatible population `P`, expected baseline deaths are `P × r / 100000`. This conversion requires a crude or matching age-specific rate; it is not valid for an age-standardized rate applied to actual population. Aggregate deaths and population first when constructing a combined rate, rather than averaging subgroup rates.
 
-WorldPop 的 download=false 仍会联网发现并写元数据；人口重采样/分区统计没有独立已登记入口。GBD 的会话声明不是登录验证，check-tool 可继续显示认证 unverified。run-tool 的成功状态不验证科学口径。
+## Check coverage and uncertainty
 
-健康计算还需要匹配的人口结构、死亡率、风险函数与浓度；数据获取不等同于完成健康模型。详见[浓度与健康方法](../04_integrated_impacts/health_impacts.md)。
+Use nonoverlapping ages, sexes and regions; never add totals to their components. Preserve missing combinations and distinguish absent information from zero. Check subgroup totals, population conservation across spatial processing and consistency of concentration/population grids.
 
-## 阶段与 Skill 映射
+Retain baseline uncertainty and exposure/risk uncertainty separately. Derived totals and differences require a justified dependence structure or compatible joint draws; adding uncertainty bounds does not create a valid combined interval. Document population downscaling, age disaggregation and gap-filling as additional assumptions.
 
-主目录：shared；适用阶段：01_socioeconomic_natural_change, 04_integrated_impacts。对应 [worldpop](../../skills/data_acquisition/01_socioeconomic_natural_change/worldpop/SKILL.md)、[ihme-gbd-results](../../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/SKILL.md)。执行状态以本文及真实工具 manifest 为准；没有 tool_id 的方法只供指导。
+Acquisition steps are in the [WorldPop skill](../../skills/data_acquisition/01_socioeconomic_natural_change/worldpop/SKILL.md) and [GBD skill](../../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/SKILL.md). Apply the [health-impact method](../04_integrated_impacts/health_impacts.md) after alignment.

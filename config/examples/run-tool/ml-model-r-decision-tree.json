@@ -1,0 +1,4 @@
+{
+  "input_csv": "assets/data/03_atmospheric_transport/SyntheticCausal/v1/rows.csv",
+  "task_config": "config/examples/machine-learning-model/r/decision_tree.synthetic.json"
+}

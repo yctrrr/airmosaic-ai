@@ -24,6 +24,7 @@ coverage/
 docs/
 
 # Local data and outputs
+/projects/*/results/
 assets/data/
 assets/results/
 data/
@@ -54,6 +55,14 @@ temp/
 *.zip
 
 # Public assets are an explicit allowlist; arbitrary local files remain ignored.
+# Local capability demonstrations may contain actual data and models.
+# Preserve prior ignored demonstration results without moving them.
+/skills/model/machine_learning/regression/results/
+# Current shared regression skill output boundary.
+/skills/model/shared/machine_learning_model/results/
+# Local synthetic workflow executions; reusable reviewed examples live outside results/.
+/workflows/ml_regression/results/
+/workflows/ml_regression/generated/
 /assets/**
 !/assets/data/
 !/assets/results/
@@ -74,9 +83,51 @@ temp/
 !/assets/results/toy_example/reference/01_socioeconomic_natural_change/gcam_aggregate_provinces/province_aggregate.csv
 !/assets/data/01_socioeconomic_natural_change/README.md
 !/assets/data/01_socioeconomic_natural_change/README_ZH.md
+!/assets/data/01_socioeconomic_natural_change/SyntheticIO/
+!/assets/data/01_socioeconomic_natural_change/SyntheticIO/v1/
+!/assets/data/01_socioeconomic_natural_change/SyntheticIO/v1/sectors.csv
+!/assets/data/01_socioeconomic_natural_change/SyntheticIO/v1/transactions.csv
+!/assets/data/01_socioeconomic_natural_change/SyntheticMFA/
+!/assets/data/01_socioeconomic_natural_change/SyntheticMFA/v1/
+!/assets/data/01_socioeconomic_natural_change/SyntheticMFA/v1/flows.csv
+!/assets/data/01_socioeconomic_natural_change/SyntheticLCA/
+!/assets/data/01_socioeconomic_natural_change/SyntheticLCA/v1/
+!/assets/data/01_socioeconomic_natural_change/SyntheticLCA/v1/processes.csv
+!/assets/data/01_socioeconomic_natural_change/SyntheticLCA/v1/technosphere.csv
+!/assets/data/01_socioeconomic_natural_change/SyntheticLCA/v1/demand.csv
+!/assets/data/01_socioeconomic_natural_change/SyntheticLCA/v1/biosphere.csv
+!/assets/data/01_socioeconomic_natural_change/SyntheticLCA/v1/characterization.csv
+!/assets/data/01_socioeconomic_natural_change/SyntheticEconometrics/
+!/assets/data/01_socioeconomic_natural_change/SyntheticEconometrics/v1/
+!/assets/data/01_socioeconomic_natural_change/SyntheticEconometrics/v1/rows.csv
+!/assets/data/01_socioeconomic_natural_change/SyntheticCGE/
+!/assets/data/01_socioeconomic_natural_change/SyntheticCGE/v1/
+!/assets/data/01_socioeconomic_natural_change/SyntheticCGE/v1/sam.csv
+!/assets/data/01_socioeconomic_natural_change/SyntheticCGE/v1/scenarios.csv
+!/assets/data/01_socioeconomic_natural_change/SyntheticCGE/v1/satellite.csv
 !/assets/data/02_emission_inventory/README.md
 !/assets/data/02_emission_inventory/README_ZH.md
 !/assets/data/03_atmospheric_transport/README.md
 !/assets/data/03_atmospheric_transport/README_ZH.md
 !/assets/data/04_integrated_impacts/README.md
 !/assets/data/04_integrated_impacts/README_ZH.md
+
+# Explicit synthetic regression/causal demonstration.
+!/assets/data/03_atmospheric_transport/SyntheticCausal/
+!/assets/data/03_atmospheric_transport/SyntheticCausal/v1/
+!/assets/data/03_atmospheric_transport/SyntheticCausal/v1/rows.csv
+!/assets/data/03_atmospheric_transport/SyntheticCausal/v1/README.md
+!/assets/data/03_atmospheric_transport/SyntheticCausal/v1/README_ZH.md
+
+# Authorized published AQ-Bench snapshot, kept separate from synthetic fixtures.
+!/assets/public-data-manifest.json
+!/assets/data/03_atmospheric_transport/AQ-Bench/
+!/assets/data/03_atmospheric_transport/AQ-Bench/v1/
+!/assets/data/03_atmospheric_transport/AQ-Bench/v1/AQbench_dataset.csv
+!/assets/data/03_atmospheric_transport/AQ-Bench/v1/AQbench_variables.csv
+!/assets/data/03_atmospheric_transport/AQ-Bench/v1/asset.json
+!/assets/data/03_atmospheric_transport/AQ-Bench/v1/README.md
+!/assets/data/03_atmospheric_transport/AQ-Bench/v1/README_ZH.md
+
+# Retained local results from the previous skill location.
+/skills/model/shared/ml_regression/results/

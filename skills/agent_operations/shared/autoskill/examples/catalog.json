@@ -1,0 +1,6 @@
+{
+  "skills": [
+    {"name": "example-check", "description": "Validate synthetic metadata and references."},
+    {"name": "example-format", "description": "Format reviewed public prose."}
+  ]
+}

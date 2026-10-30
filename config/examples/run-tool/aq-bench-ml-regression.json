@@ -1,0 +1,4 @@
+{
+  "input_csv": "${AIRMOSAIC_ASSETS_DIR}/data/03_atmospheric_transport/AQ-Bench/v1/AQbench_dataset.csv",
+  "task_config": "config/examples/ml-regression/aq-bench-prediction.json"
+}

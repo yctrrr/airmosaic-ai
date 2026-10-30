@@ -1,29 +1,26 @@
 ---
 name: enterprise-disclosure-methods
-description: 指导企业财务、年报及省级环境披露的来源选择和证据核对；没有采集适配器。
+description: Collect and verify scoped enterprise reports through authorized source websites and prepare a source-index handoff; no collection adapter is bundled.
 ---
 
-# 企业来源与披露方法
-
-<!-- README-I18N:START -->
+# 企业报告与环境披露
 
 [English](SKILL.md) | **中文**
 
-<!-- README-I18N:END -->
+用于财务报告、年报、ESG 或省级环境披露。先明确来源类别：省级披露、上市公告与数据库表的覆盖范围不同。
 
+## 准备
 
-**状态**：文档指导，未注册执行适配器；没有可供 `run-tool` 调用的工具 ID。
+记录企业名单或筛选规则、报告年份、类型、允许来源和报告数量上限。使用已授权浏览器及 PDF/Office 阅读器；索引用电子表格即可。在外部 `AIRMOSAIC_ASSETS_DIR/results/<project_id>/<run_id>/01_socioeconomic_natural_change/enterprise_disclosure/` 新建任务目录保存原件。非秘密查询设置放在 `AIRMOSAIC_CONFIG_DIR`；沿用已授权浏览器会话，不导出登录状态。
 
-## 使用顺序
+## 获取与记录
 
-明确企业、期间和报告类型 → 区分列表、正文与附件 → 设计可恢复队列和版本标识 → 检查来源证据与覆盖。
+1. 在来源网站按准确企业与年份查询，区分法人、母子公司和设施。
+2. 依次打开列表、报告正文与附件；保存可取得原件，不覆盖旧版本。只有列表或附件链接时不能算完整报告。
+3. 建立 CSV/工作表：`entity_key`、`report_year`、`report_type`、`source`、`retrieved_at`、`local_file`、`version`、`status`、`notes`。认证链接仅留本地；区分无法访问、仅元数据、附件缺失与完整。
+4. 打开已保存文件，对照网页核对主体、报告期、标题和附件。记录校验和，以及提取结论的页码/章节。
+5. 交付索引、已验证原件和约定范围的覆盖/缺口表。遇到访问限制或未解决挑战，停止受影响来源并保留状态，交由已授权后续流程处理。
 
-具体方法与交接见[对应说明](../../../../methods/01_socioeconomic_natural_change/enterprise_sources.md)。
+这里没有采集器或 `run-tool` ID。已有外部队列应遵照其所属任务操作说明。[CSMAR](../csmar/SKILL_ZH.md) 提供独立的企业基础信息 ZIP 处理器，不能用作披露爬虫。
 
-## 行为边界
-
-共享库不保存企业明细、认证链接或私人会话。仅基础信息 ZIP 处理可引用已有 csmar_process_company_info；它不能替代披露采集。
-
-方法维护和常规验证只使用文档、接口与合成输入。真实数据任务须另有明确范围。个人路径与非秘密参数在 CONFIG_DIR，凭据在凭据管理器，会话在 AUTH_DIR；三类根独立且位于 Git 外。参考型技能 不提供自动路径检查或脱敏记录。
-
-数据与结果按[资产目录与复核入库规范](../../../../harness/assets_ZH.md)管理：数据按阶段、实际名称和版本共享；结果按项目及运行归集。跨阶段引用同一数据，复用入库需人工批准。
+来源可比性和解释见[企业来源方法](../../../../methods/01_socioeconomic_natural_change/enterprise_sources_ZH.md)。

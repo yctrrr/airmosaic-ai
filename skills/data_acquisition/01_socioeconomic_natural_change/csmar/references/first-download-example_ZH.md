@@ -56,4 +56,4 @@
 
 `csmar_browser_download` 仍为不可执行参考。八列样例不交给固定需要十五列的 `csmar_process_company_info` 筛选；该处理器可通过 run-tool/MCP 单独调用，本例没有执行真实行业筛选。
 
-分类变更及规范化统一见[企业来源方法](../../../../../methods/01_socioeconomic_natural_change/enterprise_sources.md)。注册地区或行业标签不能直接确定生产设施及其排放。
+分类变更及规范化统一见[企业来源方法](../../../../../methods/01_socioeconomic_natural_change/enterprise_sources_ZH.md)。注册地区或行业标签不能直接确定生产设施及其排放。

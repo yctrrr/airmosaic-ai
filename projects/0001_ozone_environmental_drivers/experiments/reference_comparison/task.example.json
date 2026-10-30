@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "mode": "compare_existing",
+  "project_id": "ozone_environmental_drivers",
+  "target": {
+    "name": "o3_average_values",
+    "unit": "ppb"
+  },
+  "candidate": {
+    "root": "${AIRMOSAIC_ASSETS_DIR}/results/ozone_environmental_drivers/candidate_run",
+    "manifest": "delivery-sha256.json",
+    "prediction_origin": "independent_run",
+    "models": [
+      {
+        "id": "model_1",
+        "predictions": "test_predictions.csv",
+        "id_column": "sample_id",
+        "truth_column": "truth",
+        "prediction_column": "model_1",
+        "reported_metrics": {
+          "file": "metrics.json",
+          "pointers": {
+            "rmse": "/metrics/model_1/test/rmse",
+            "mae": "/metrics/model_1/test/mae",
+            "r_squared": "/metrics/model_1/test/r_squared"
+          }
+        }
+      },
+      {
+        "id": "model_2",
+        "predictions": "test_predictions.csv",
+        "id_column": "sample_id",
+        "truth_column": "truth",
+        "prediction_column": "model_2",
+        "reported_metrics": {
+          "file": "metrics.json",
+          "pointers": {
+            "rmse": "/metrics/model_2/test/rmse",
+            "mae": "/metrics/model_2/test/mae",
+            "r_squared": "/metrics/model_2/test/r_squared"
+          }
+        }
+      }
+    ]
+  },
+  "reference": {
+    "root": "${AIRMOSAIC_ASSETS_DIR}/results/ozone_environmental_drivers/reference_snapshot",
+    "manifest": "snapshot-sha256.json",
+    "prediction_origin": "recovered_from_saved_model",
+    "models": [
+      {
+        "id": "model_1",
+        "predictions": "reference_predictions.csv",
+        "id_column": "sample_id",
+        "truth_column": "truth",
+        "prediction_column": "model_1",
+        "reported_metrics": {
+          "file": "reference_metrics.json",
+          "pointers": {
+            "rmse": "/model_1/rmse",
+            "mae": "/model_1/mae",
+            "r_squared": "/model_1/r_squared"
+          }
+        }
+      },
+      {
+        "id": "model_2",
+        "predictions": "reference_predictions.csv",
+        "id_column": "sample_id",
+        "truth_column": "truth",
+        "prediction_column": "model_2",
+        "reported_metrics": {
+          "file": "reference_metrics.json",
+          "pointers": {
+            "rmse": "/model_2/rmse",
+            "mae": "/model_2/mae",
+            "r_squared": "/model_2/r_squared"
+          }
+        }
+      }
+    ]
+  },
+  "tolerances": {
+    "truth_abs": 1e-10,
+    "metric_abs": 1e-09,
+    "metric_relative": 1e-09
+  },
+  "audit_matrix": {
+    "path": "${AIRMOSAIC_ASSETS_DIR}/results/ozone_environmental_drivers/reference_snapshot/audit-matrix.json"
+  }
+}

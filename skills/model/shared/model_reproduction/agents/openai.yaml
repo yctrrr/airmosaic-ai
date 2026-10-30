@@ -1,0 +1,4 @@
+interface:
+  display_name: Model reproduction and comparison
+  short_description: Compare frozen predictions, metrics and provenance without overwriting either result.
+  default_prompt: Use $model-reproduction with the model_reproduction workflow to audit authorized sources, compare frozen keyed predictions and report numerical agreement, gaps and scientific scope.

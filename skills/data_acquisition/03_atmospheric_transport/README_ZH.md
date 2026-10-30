@@ -20,7 +20,7 @@ ERA5/CAMS 先选择产品，再按 [Copernicus 下载指南](../../../harness/us
 
 ## 使用流程与交接
 
-按[四步使用流程](../../../harness/four-step-workflow.md)的本步顺序确认范围、选择方法、核对前置条件并交接。方法目录见[本步方法卡](../../../methods/03_atmospheric_transport/README.md)；跨阶段方法见[共享目录](../../../methods/shared/README.md)。
+按[四步使用流程](../../../harness/four-step-workflow.md)的本步顺序确认范围、选择方法、核对前置条件并交接。方法目录见[本步方法卡](../../../methods/03_atmospheric_transport/README_ZH.md)；跨阶段方法见[共享目录](../../../methods/shared/README_ZH.md)。
 
 本轮维护只查看说明与接口，不使用原始数据。能否执行以真实工具 工具声明 为准；文档目录和 SKILL.md 都不自动注册工具。
 

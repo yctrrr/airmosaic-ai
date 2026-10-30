@@ -1,0 +1,5 @@
+scenario,sector,tfp_multiplier
+baseline,food,1
+baseline,manufacturing,1
+food_productivity_reduction,food,0.9
+food_productivity_reduction,manufacturing,1

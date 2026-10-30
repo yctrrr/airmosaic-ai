@@ -1,0 +1,15 @@
+{
+  "dataset": "cheer_clean_electricity_example",
+  "version": "v1",
+  "source_page": "https://cheer.org.cn/downloads/",
+  "source_release": "CHEER demo / CHEER-Clean",
+  "source_workbook": "Data/Data.xlsx",
+  "benchmark_year_from_model_source": 2012,
+  "extraction": {
+    "IO": "Electricity input column, the electricity output control total, and the SUM_INPUT control total",
+    "ELEC": "Nine technology columns from T_D through Biomass; commodity, labor, capital, and tax rows"
+  },
+  "format": "Values-only teaching excerpt, with no formulas or other source sheets",
+  "scope": "Benchmark monetary accounting and technology-share demonstration; not a complete SAM or executable CHEER model",
+  "redistribution_license": "Not stated in the reviewed upstream release metadata; the repository software license does not assign a license to this dataset"
+}

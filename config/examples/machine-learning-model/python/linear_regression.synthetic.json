@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "backend": "python",
+  "task_type": "regression",
+  "analysis": "prediction",
+  "target": "outcome",
+  "target_unit": "synthetic_unit",
+  "target_definition": {
+    "sample_unit": "independent synthetic row",
+    "averaging_period": "not applicable",
+    "prediction_time": "features available before prediction"
+  },
+  "features": [
+    "x1",
+    "x2",
+    "treatment"
+  ],
+  "categorical_features": [],
+  "id_column": "id",
+  "split": {
+    "column": "dataset",
+    "train": "train",
+    "val": "val",
+    "test": "test"
+  },
+  "missing": {
+    "policy": "error",
+    "sentinels": [
+      -999
+    ]
+  },
+  "models": [
+    {
+      "id": "baseline",
+      "learner": "baseline_mean",
+      "parameters": {}
+    },
+    {
+      "id": "linear",
+      "learner": "linear_regression",
+      "parameters": {}
+    }
+  ],
+  "selection_metric": "rmse",
+  "seed": 20261029,
+  "row_limits": {
+    "train": 1000,
+    "val": 1000,
+    "test": 1000
+  },
+  "explanation": {
+    "methods": [],
+    "features": [
+      "x1",
+      "treatment"
+    ],
+    "validation_rows": 8,
+    "background_rows": 8,
+    "permutation_repeats": 2,
+    "pdp_points": 4
+  },
+  "execution": {
+    "purpose": "engineering_replay"
+  }
+}

@@ -1,0 +1,8 @@
+year,material,flow_type,amount_t
+2020,toy_metal,extraction,10
+2020,toy_metal,import,2
+2020,toy_metal,export,3
+2020,toy_metal,environment_output,4
+2020,toy_metal,stock_addition,5
+2020,toy_metal,balancing_input,0
+2020,toy_metal,balancing_output,0

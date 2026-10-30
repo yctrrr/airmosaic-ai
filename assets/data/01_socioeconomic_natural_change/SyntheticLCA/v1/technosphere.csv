@@ -1,0 +1,5 @@
+product,process,amount
+material_kg,material_process,1
+material_kg,product_process,-0.5
+product_unit,material_process,0
+product_unit,product_process,1

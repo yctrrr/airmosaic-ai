@@ -6,7 +6,7 @@
 
 <!-- README-I18N:END -->
 
-复核日期：2026-10-26。主阶段 04，人口/健康资料由[共享方法](../shared/population_health.md)关联；执行步骤见 [GBD 技能](../../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/SKILL_ZH.md)。本页是数据方法说明，不增加工具或获取权限。
+GBD 支持基线健康结局与疾病负担比较；结合暴露前，先明确估计对象、发布轮次和研究人群。人口对齐见[共享方法](../shared/population_health_ZH.md)，获取见 [GBD 技能](../../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/SKILL_ZH.md)。来源复核日期：2026-10-26。
 
 ## 来源与产品身份
 
@@ -47,7 +47,7 @@ GBD 由 IHME 与 全球疾病负担研究协作网络 汇集死亡登记、调�
 ## 规范化与检查顺序
 
 1. **固定查询契约**：记录轮次、上下文、研究年份、地区、病因/风险、年龄、性别、`measure` 和 `metric` 的 ID 与标签；选少量维度先验证。历史 ID 样例只作语法参考。
-2. **确认是新结果**：更改条件后等待本次查询完成，核对返回维度。加载期间保留的旧表、报错后的残留行或先前下载文件不能作为本次成功证据。
+2. **核对估计对象**：返回的轮次与全部维度须对应研究契约，不能把旧查询或不同口径的记录混入同一分析。
 3. **保留原导出**：在新任务原文件目录保存文件与非秘密请求记录、取得时间和校验摘要；派生表另存，不覆盖已下载数据。不得把账户/邮件或临时下载链接放入共享记录。
 4. **明确字段和唯一键**：常见字段包括 `measure`、`location`、`sex`、`age`、`cause`、`metric` 的编号与名称，以及 `year`、`val/lower/upper`；实际字段结构以导出文件为准。唯一键包含轮次、上下文与全部适用维度，不依赖列顺序或中文译名推断 ID。
 5. **内容核验**：比较请求与实际标签/ID、记录数和缺失组合；检查数值可解析及有限、`lower ≤ val ≤ upper`。缺行不等于零，合法单位和非负范围依指标确认；仅作结构检查不能证明模型准确。
@@ -55,4 +55,4 @@ GBD 由 IHME 与 全球疾病负担研究协作网络 汇集死亡登记、调�
 7. **下游使用**：风险函数所需年龄别基线率与相应人口、浓度和病因口径对齐。WorldPop 与 GBD 人口不是自动一致的分母，需解释总量、年龄结构和参考时点差异。
 8. **跨期与缺失**：优先同轮次取完整研究期。确需补充、插值或跨轮次衔接时，另写方法与标记，不按旧项目的某个年份切点通用拼接。
 
-结果进入健康影响计算前，还需按[健康情景方法](health_impacts.md)核对风险函数和情景设计。步骤、当前网页验证状态与人工操作见[首次获取向导](../../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/references/first-download-guide_ZH.md)。
+结果进入健康影响计算前，还需按[健康情景方法](health_impacts_ZH.md)核对风险函数和情景设计。步骤、当前网页验证状态与人工操作见[首次获取向导](../../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/references/first-download-guide_ZH.md)。

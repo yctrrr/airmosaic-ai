@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-29T16:16:57+08:00",
+  "scope": "Authorized public dictionary, training predictors and sample/split/geographic metadata only; no outcome values used.",
+  "asset_id": "aq_bench",
+  "version": "v1",
+  "input_sha256": "34bc7d888264ea0d8a37ede2c84d1aab686cc8517e1f77d1c619717a329b1f56",
+  "dictionary_sha256": "04825047ba63b8d43e574a2a4c5a7637dbf47edfe93e20f674f40c99edc4b59a",
+  "row_count": 5577,
+  "unique_ids": 5577,
+  "split_counts": {
+    "train": 3348,
+    "test": 1115,
+    "val": 1114
+  },
+  "development_region_counts": {
+    "EUR": 1749,
+    "NAM": 1306,
+    "EAS": 1240,
+    "PAN": 50,
+    "SAM": 32,
+    "MCA": 27,
+    "MDE": 18,
+    "SAF": 11,
+    "OCN": 7,
+    "SEA": 6,
+    "SPO": 5,
+    "NPO": 5,
+    "SAS": 2,
+    "NAF": 2,
+    "RBU": 2
+  },
+  "training_predictors": {
+    "alt": {
+      "missing": 0,
+      "unique": 883,
+      "minimum": -4,
+      "median": 86,
+      "maximum": 5500
+    },
+    "relative_alt": {
+      "missing": 0,
+      "unique": 326,
+      "minimum": -41,
+      "median": 20,
+      "maximum": 1826
+    },
+    "water_25km": {
+      "missing": 0,
+      "unique": 557,
+      "minimum": 0,
+      "median": 0,
+      "maximum": 100
+    },
+    "forest_25km": {
+      "missing": 0,
+      "unique": 990,
+      "minimum": 0,
+      "median": 19.2,
+      "maximum": 99.5
+    },
+    "grasslands_25km": {
+      "missing": 0,
+      "unique": 353,
+      "minimum": 0,
+      "median": 0,
+      "maximum": 100
+    },
+    "croplands_25km": {
+      "missing": 0,
+      "unique": 741,
+      "minimum": 0,
+      "median": 13.3,
+      "maximum": 99.7
+    },
+    "urban_and_built-up_25km": {
+      "missing": 0,
+      "unique": 542,
+      "minimum": 0,
+      "median": 5.5,
+      "maximum": 91.8
+    },
+    "nox_emissions": {
+      "missing": 0,
+      "unique": 2579,
+      "minimum": 0,
+      "median": 4.62871,
+      "maximum": 436.033
+    },
+    "lat": {
+      "missing": 0,
+      "unique": 3307,
+      "minimum": -75.57,
+      "median": 39.6436,
+      "maximum": 81.6
+    },
+    "lon": {
+      "missing": 0,
+      "unique": 3314,
+      "minimum": -155.57616,
+      "median": 8.582421,
+      "maximum": 174.87
+    }
+  },
+  "coordinates_are_metadata_in_both_arms": true,
+  "target_values_inspected": false,
+  "models_fitted": 0,
+  "published_split_distance_to_training_km": {
+    "val": {
+      "n": 1114,
+      "minimum": 10.13772969568946,
+      "median": 55.71950557637224,
+      "q95": 286.6967353265615,
+      "below_50km": 475
+    },
+    "test": {
+      "n": 1115,
+      "minimum": 10.344254616134165,
+      "median": 60.46043372143297,
+      "q95": 226.27755844331668,
+      "below_50km": 424
+    }
+  },
+  "proposed_region_transfer_metadata": {
+    "NAM": {
+      "outer_test_rows": 1306,
+      "outer_training_before_buffer": 3156,
+      "outer_training_removed_by_50km_buffer": 13,
+      "outer_training_after_buffer": 3143
+    },
+    "EUR": {
+      "outer_test_rows": 1749,
+      "outer_training_before_buffer": 2713,
+      "outer_training_removed_by_50km_buffer": 2,
+      "outer_training_after_buffer": 2711
+    },
+    "EAS": {
+      "outer_test_rows": 1240,
+      "outer_training_before_buffer": 3222,
+      "outer_training_removed_by_50km_buffer": 1,
+      "outer_training_after_buffer": 3221
+    }
+  },
+  "max_absolute_training_pearson_coordinates_environment": 0.35141899608692856
+}

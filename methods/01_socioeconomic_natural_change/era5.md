@@ -1,57 +1,38 @@
-# ERA5：气象协变量与输入资料获取
+# ERA5: choosing and interpreting meteorological reanalysis
 
-**主阶段：01_socioeconomic_natural_change。适用阶段：01、03、04。状态：reference；tool_ids 为空。**
+**English** | [中文](era5_ZH.md)
 
-ERA5 可作为气象背景、暴露研究协变量或模型输入适配的资料来源。操作入口是 [era5-acquisition skill](../../skills/data_acquisition/01_socioeconomic_natural_change/era5/SKILL.md)，账号、目录、请求示例、下载与验收统一见 [Copernicus 下载指南](../../harness/usage/copernicus-downloads.md)。这里只登记一张方法卡，04 引用它，不复制实现。
+ERA5 supports meteorological background, research covariates and large-scale input fields. Choose variables by physical meaning, spatial/time support and uncertainty before aggregation or matching. Acquisition steps belong in the [ERA5 skill](../../skills/data_acquisition/01_socioeconomic_natural_change/era5/SKILL.md).
 
-首次注册、登录恢复、API token 获取和分阶段时间记录见[逐步向导](../../harness/usage/era5-first-api.md)。账户页面和 token 由本人操作；任务进度留在 Git 外，不把一次环境检查或网页登录当作 API 下载成功。
+## Source and product identity
 
-获取可选网页表单或 Python API；后者可使用本人隐藏输入，或由官方客户端按明确授权内部复用本人已配置的默认秘密文件。示例只公开通用文件名和模式，不公开成员路径或凭据，具体步骤与边界统一在下载指南维护。
+ERA5 is produced by ECMWF for the Copernicus Climate Change Service. The IFS model and data assimilation combine historical observations; CDS is the distribution channel. It is neither raw station data nor simple interpolation of ground observations. Individual fields may originate from analysis or forecast steps. See the [official data documentation](https://confluence.ecmwf.int/pages/viewpage.action?pageId=414588701).
 
-## 选择与使用步骤
+Retain dataset ID, single/pressure/other levels, parameter identity, grid, times and release. ERA5, ERA5-Land and daily-statistics products are distinct. A finer export grid does not create independent information or establish effective resolving power.
 
-1. 地表或近地表气象先核对单层产品；垂直气象场另选气压层或模式层。ERA5-Land 是独立产品，不能替代全部大气变量。
-2. 固定变量定义、时间范围、UTC 时次和区域。日统计需求要先确定统计量、时区及完整采样，不能把每日下载文件当作日平均。
-3. 在 CDS 表单选择参数并生成 API 请求，与公开示例对照；先做参数审查，真实下载属于后续有范围的任务。
-4. 小批次下载验收后再按日/月、变量和层次拆分。保留原文件，转换、重采样和时间汇总写入新产物。
-5. 向下游交接数据集、变量/层次、UTC/当地时间处理、单位、网格、缺失和产品版本。使用近期数据需记录是否为初步发布版本。
+## Uncertainty
 
-## 方法限制
-
-来源、同化/模式误差及变量规范化在下文说明。日统计按瞬时/累计量和实际时次定义，不套用 PM2.5 观测的 20 小时门槛。
-
-- 温度、降水、通量不能统一套用同一种单位转换或时间汇总；累计量先查累计时段。
-- ERA5 不能直接替换任一 GEOS-Chem 版本所需的驱动文件，另行审查模式输入结构和预处理链。
-- 与 [PM2.5 站点方法](../03_atmospheric_transport/pm25_stations.md)配合时，气象协变量、站点观测和派生匹配结果分开保存；不能直接继承站点或气象产品的时间/单位假设。
-- 单层 API 下载的请求、运行步骤和验收结果见[实测示例](../../skills/data_acquisition/01_socioeconomic_natural_change/era5/references/api-download-example.md)。
-
-复核日期：2026-10-26。获取步骤见 [SKILL.md](../../skills/data_acquisition/01_socioeconomic_natural_change/era5/SKILL.md)，本页用于选择变量、解释误差和制定后续处理规则，不执行转换或汇总。
-
-## 来源与产品身份
-
-ERA5 是 Copernicus Climate Change Service（C3S）提供、ECMWF 生产的全球气象再分析，通过 IFS 数值模式和资料同化结合多源历史观测，CDS 是获取渠道。它不是逐站原始观测，也不是对地面站数据简单插值。变量可能来自分析或预报步骤，应逐变量核对。[官方数据说明](https://confluence.ecmwf.int/pages/viewpage.action?pageId=414588701)
-
-保留 CDS dataset ID、单层/气压层/其他产品、变量和垂直坐标、请求网格、时间与版本。ERA5、ERA5-Land 和日统计产品分别管理；变量名相近不表示可交换。CDS 输出网格不等于实际可解析尺度，细化导出网格不能创造独立观测信息。
-
-## 误差从哪里来
-
-| 误差来源 | 使用时的处理 |
+| Source | Implication for research |
 |---|---|
-| 原观测误差与覆盖变化 | 不同地区、年代和变量的同化约束不同；长序列分析检查变化点和官方 known issues，不能假定历史误差恒定 |
-| 模式物理与同化 | 再分析仍可能有系统偏差；适用变量应与任务地区的独立观测比较，不以下载成功或全球验证代替本地验证 |
-| 网格代表性 | 地形、海陆差异和局地过程与站点尺度不同；保留匹配距离/地形条件、插值方案及陆海掩膜选择 |
-| 采样和后处理 | UTC/当地日、累计时段、重网格与缺测可能改变统计结果；按变量物理含义逐步转换，记录方法 |
+| Observation errors and changing coverage | Assimilation constraints differ by region, period and variable; examine discontinuities and known issues in long records |
+| Model physics and assimilation | Systematic biases remain; compare suitable variables with independent observations in the study region |
+| Grid representativeness | Terrain, coastlines and local processes differ from station support; record interpolation, distance, elevation and mask choices |
+| Sampling and processing | UTC/local days, accumulation windows, regridding and missing steps can change statistics; convert according to each variable's meaning |
 
-[官方不确定度说明](https://confluence.ecmwf.int/pages/viewpage.action?pageId=111158485)将 EDA 集合离散度用于相对不确定性判断，并说明它不能覆盖全部系统误差。集合离散度不作为每个格点的已校准误差条，也不为所有变量设同一误差比例。
+The [official uncertainty guidance](https://confluence.ecmwf.int/pages/viewpage.action?pageId=111158485) describes EDA spread as relative uncertainty information with incomplete representation of systematic errors. Do not treat it as a calibrated error bar for every field or assume one error percentage for all variables.
 
-## 规范化顺序
+## Constructing comparable variables
 
-1. **保留原件和元数据**：数据集、变量/参数身份、层次、UTC 时间、单位、网格/坐标、缺失及初步/最终发布状态。结合官方产品说明识别 ERA5T 等初步产品；版本更新另存，不无声覆盖。
-2. **按物理量转换**：温度可在保留原 K 值后转为 °C；降水先分清深度、累计量或速率，再转换单位。不能对所有字段套同一公式。
-3. **核对时间支持**：瞬时量、时间平均量、累计量分别处理；累计起点、重置和预报步长以该产品文档为准，不无条件对所有累计变量差分。
-4. **检查时间和空间键**：按变量、层次、UTC 时次与网格唯一化；检查重复、缺时次、经度表达、纬度方向及掩膜，避免坐标排序造成错配。
-5. **设计日统计**：先声明 UTC 日或当地日及预期时次，按变量选择均值、总量、极值或时段加权。小时采样不完整时标记缺口；PM2.5 的 20 小时规则不用于气象产品。若研究选择允许部分时次，须写出依据、门槛和敏感性结果。
-6. **与站点/模型衔接**：指定空间抽取/插值与时间配准；不把地表变量替代所有垂直层，也不直接将 ERA5 文件作为 GEOS-Chem 已适配驱动。
-7. **交付派生说明**：单位公式、时间窗口、有效样本、网格变换、源版本和缺失摘要。偏差订正或特征标准化只在训练数据拟合，验证集独立使用。
+1. Preserve original units, levels, UTC times, coordinates, missing flags and preliminary/final release status. Record updates such as ERA5T explicitly.
+2. Convert by quantity: temperature can change from K to °C; precipitation requires distinguishing depth, accumulation and rate first. Retain originals and formulas.
+3. Identify instantaneous, averaged and accumulated time support. Check accumulation start/reset and forecast steps; do not difference every accumulation field automatically.
+4. Form unique variable/level/time/grid keys; inspect duplicates, missing times, longitude conventions, latitude order and masks.
+5. Define UTC or local-day windows and expected sampling. Choose means, totals, extremes or time weights by quantity. State incomplete-sampling rules and sensitivity; the PM2.5 station 20-hour rule is not a meteorological-product rule.
+6. For station or model comparisons, specify spatial extraction and time alignment. Surface fields do not replace vertical profiles; ERA5 files require separate model-input adaptation.
+7. Report transformations, valid samples, grid changes, missingness and release versions. Fit bias correction or feature scaling only on training periods when used in prediction.
 
-现有[API 小样例](../../skills/data_acquisition/01_socioeconomic_natural_change/era5/references/api-download-example.md)只含一个 UTC 时次，不是日均气温样本。新的日统计、观测比较与模型转换须按任务另定输入；本页不增加执行器。路径和凭据沿用 SKILL.md。
+A single UTC field cannot establish a daily statistic. Independent observation comparison is needed to assess local scientific suitability.
+
+## AOD is a separate product choice
+
+The ERA5 single-level catalogue form checked on 2026-10-30 had no aerosol optical-depth option. Use ERA5 for the declared meteorological variables; an AOD covariate requires its actual separate product identity, for example [CAMS EAC4](cams.md). Access through a related provider does not make the products interchangeable. See the [AOD operation](../../skills/data_acquisition/01_socioeconomic_natural_change/cams/references/eac4-aod.md); only public catalogue metadata was checked, not a new data download.

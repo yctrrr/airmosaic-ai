@@ -1,0 +1,73 @@
+{
+  "schema_version": 2,
+  "date": "2026-10-28",
+  "synthetic_only": true,
+  "runs": [
+    {
+      "result_name": "202610281948_synthetic_regression",
+      "status": "succeeded",
+      "utc_offset": "+08:00",
+      "started_at": "2026-10-28T19:48:00.164453+08:00",
+      "finished_at": "2026-10-28T19:48:08.903466+08:00",
+      "event_count": 11,
+      "sealed_files": 35,
+      "independent_metrics": {
+        "val": {
+          "n": 100,
+          "rmse": 1.4096490967700073,
+          "mae": 1.0269596099467457,
+          "r_squared": 0.8622920173607511
+        },
+        "test": {
+          "n": 100,
+          "rmse": 1.3146584703862008,
+          "mae": 0.9916670195192064,
+          "r_squared": 0.8615238681100172
+        }
+      },
+      "baseline": {
+        "val": {
+          "rmse": 3.7987902163294054,
+          "mae": 3.0044955588232822,
+          "r_squared": -6.379042604920393e-05
+        },
+        "test": {
+          "rmse": 3.5374308097119247,
+          "mae": 2.7560807177322437,
+          "r_squared": -0.002593636794261167
+        }
+      },
+      "llm_generation_in_this_run": false,
+      "source_snapshot_created": false,
+      "generation_record_type": "declared_design_basis_before_computation",
+      "trace_coverage": "observed_controller_boundaries_not_full_agent_or_R_trace"
+    }
+  ],
+  "directory_time_precision": "minute",
+  "directory_format": "YYYYMMDDHHmm_task",
+  "same_minute_same_task": "reject_without_overwrite",
+  "checks": {
+    "status": "passed",
+    "passed_tests": 29,
+    "synthetic_task": "passed",
+    "public_files_checked": 15,
+    "language_pairs_checked": 6,
+    "issues": [],
+    "delivery_hashes": "passed",
+    "directory_format": "YYYYMMDDHHmm_task",
+    "cleanup": "blocked_by_automatic_approval_policy"
+  },
+  "cleanup": {
+    "status": "blocked_by_automatic_approval_policy",
+    "reason_returned": "blocked by policy",
+    "more_specific_reason_available": false,
+    "deleted_directories": 0,
+    "retained_result": "202610281948_synthetic_regression",
+    "verified_target_directories": 12,
+    "active_process_matches": 0,
+    "target_file_count": 281,
+    "scope": "only_previous_synthetic_workflow_batches_and_their_receipts",
+    "scientific_project_results": "not_touched"
+  },
+  "scientific_validation": "not_applicable_to_synthetic_check"
+}

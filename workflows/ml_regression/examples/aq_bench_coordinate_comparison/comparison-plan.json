@@ -1,0 +1,764 @@
+{
+  "schema_version": 1,
+  "kind": "aq_bench_coordinate_comparison_design",
+  "plan_id": "aq_bench_coordinate_comparison_v1",
+  "created_at": "2026-10-29T16:16:57+08:00",
+  "status": "draft_pending_human_review_and_adapter_design",
+  "scope": "Scientific plan and code-generation audit specification only",
+  "permissions": {
+    "generate_experiment_code": false,
+    "execute_models": false,
+    "read_credentials": false,
+    "publish": false
+  },
+  "machine_handoff": "This comparison design is not a model-plan.schema.json record. After review, bind each actual prepared input/fold/task with a fresh skill plan and real authorization; do not pass this envelope to run-tool.",
+  "question": "Does adding geographic proxies to an identical environmental predictor set improve reproducible long-term ozone prediction under matched benchmark and spatial-transfer conditions?",
+  "data": {
+    "asset_id": "aq_bench",
+    "version": "v1",
+    "source_csv_sha256": "34bc7d888264ea0d8a37ede2c84d1aab686cc8517e1f77d1c619717a329b1f56",
+    "dictionary_sha256": "04825047ba63b8d43e574a2a4c5a7637dbf47edfe93e20f674f40c99edc4b59a",
+    "development_profile": "development-profile.json",
+    "source_modified": false,
+    "target": "o3_average_values",
+    "target_unit": "ppb",
+    "period": "2010-2014",
+    "sample_unit": "monitoring station",
+    "sources": [
+      "S3"
+    ]
+  },
+  "estimands": [
+    {
+      "id": "E1",
+      "name": "paired fixed-setting contrast",
+      "definition": "Compare both arms for every identical parameter/seed/fold specification; do not select the best setting from outer results.",
+      "interpretation": "An algorithmic feature-set contrast, not a causal effect."
+    },
+    {
+      "id": "E2",
+      "name": "equal-budget tuned-pipeline contrast",
+      "definition": "Select each arm independently using the same inner folds, candidates and selection rule; evaluate frozen pipelines on matched outer samples.",
+      "interpretation": "Difference includes the selected hyperparameters; do not attribute it solely to coordinates."
+    }
+  ],
+  "arms": [
+    {
+      "id": "environment",
+      "features": [
+        "alt",
+        "relative_alt",
+        "water_25km",
+        "forest_25km",
+        "grasslands_25km",
+        "croplands_25km",
+        "urban_and_built-up_25km",
+        "nox_emissions"
+      ],
+      "feature_count": 8,
+      "task_draft": "task-no-coordinates.draft.json"
+    },
+    {
+      "id": "environment_coordinates",
+      "features": [
+        "alt",
+        "relative_alt",
+        "water_25km",
+        "forest_25km",
+        "grasslands_25km",
+        "croplands_25km",
+        "urban_and_built-up_25km",
+        "nox_emissions",
+        "lat",
+        "lon_sin",
+        "lon_cos"
+      ],
+      "feature_count": 11,
+      "task_draft": "task-with-coordinates.draft.json"
+    }
+  ],
+  "variables": [
+    {
+      "id": "V01",
+      "column": "alt",
+      "unit": "m",
+      "physical_meaning": "Station altitude",
+      "role": "predictor",
+      "arms": [
+        "environment",
+        "environment_coordinates"
+      ],
+      "reason": "Represent elevation-associated exposure and transport/background differences.",
+      "evidence": [
+        "S3",
+        "S4"
+      ],
+      "uncertainty": "Elevation is a proxy, not a direct measurement of mixing or chemistry.",
+      "evidence_kind": "study_hypothesis_informed_by_source_definition_and_literature",
+      "implementation_status": "existing_input_column",
+      "alternative": "Remove altitude as an ablation or add validated meteorological fields in a separately reviewed expansion."
+    },
+    {
+      "id": "V02",
+      "column": "relative_alt",
+      "unit": "m",
+      "physical_meaning": "Source-defined relative altitude",
+      "role": "predictor",
+      "arms": [
+        "environment",
+        "environment_coordinates"
+      ],
+      "reason": "Distinguish local topographic position from absolute elevation.",
+      "evidence": [
+        "S3",
+        "S4"
+      ],
+      "uncertainty": "Retain the source definition; it is not boundary-layer height or an intervention.",
+      "evidence_kind": "study_hypothesis_informed_by_source_definition_and_literature",
+      "implementation_status": "existing_input_column",
+      "alternative": "Compare altitude alone with both elevation fields inside development validation."
+    },
+    {
+      "id": "V03",
+      "column": "water_25km",
+      "unit": "%",
+      "physical_meaning": "Water-cover fraction in the source 25 km neighbourhood",
+      "role": "predictor",
+      "arms": [
+        "environment",
+        "environment_coordinates"
+      ],
+      "reason": "Represent coastal/water-surface context that can differ from land-dominated sites.",
+      "evidence": [
+        "S3",
+        "S4"
+      ],
+      "uncertainty": "Does not measure sea-breeze circulation; 25 km is the source support, not a validation distance.",
+      "evidence_kind": "study_hypothesis_informed_by_source_definition_and_literature",
+      "implementation_status": "existing_input_column",
+      "alternative": "Test removing this context proxy after the main prespecified comparison."
+    },
+    {
+      "id": "V04",
+      "column": "forest_25km",
+      "unit": "%",
+      "physical_meaning": "Sum of five mutually exclusive forest-cover fractions",
+      "role": "predictor",
+      "arms": [
+        "environment",
+        "environment_coordinates"
+      ],
+      "reason": "Retain broad vegetation/surface context without treating five forest subclasses as separate search choices.",
+      "evidence": [
+        "S4"
+      ],
+      "uncertainty": "Aggregation loses species-dependent emissions and deposition; the sum is not a VOC flux.",
+      "evidence_kind": "study_hypothesis_informed_by_source_definition_and_literature",
+      "implementation_status": "requires_reviewed_preparation_adapter",
+      "alternative": "Keep five forest types separately or use another source-defined aggregation in a separate feature-design comparison."
+    },
+    {
+      "id": "V05",
+      "column": "grasslands_25km",
+      "unit": "%",
+      "physical_meaning": "Grassland-cover fraction in the source neighbourhood",
+      "role": "predictor",
+      "arms": [
+        "environment",
+        "environment_coordinates"
+      ],
+      "reason": "Represent a land-cover setting different from forest, crops and built-up land.",
+      "evidence": [
+        "S3"
+      ],
+      "uncertainty": "Cover alone does not determine vegetation emissions or uptake rates.",
+      "evidence_kind": "study_hypothesis_informed_by_source_definition_and_literature",
+      "implementation_status": "existing_input_column",
+      "alternative": "Assess removal of this land-cover context within development data."
+    },
+    {
+      "id": "V06",
+      "column": "croplands_25km",
+      "unit": "%",
+      "physical_meaning": "Cropland-cover fraction in the source neighbourhood",
+      "role": "predictor",
+      "arms": [
+        "environment",
+        "environment_coordinates"
+      ],
+      "reason": "Represent agricultural land-cover context within the available metadata.",
+      "evidence": [
+        "S3"
+      ],
+      "uncertainty": "Not a fertilizer input, crop calendar or causal agricultural effect.",
+      "evidence_kind": "study_hypothesis_informed_by_source_definition_and_literature",
+      "implementation_status": "existing_input_column",
+      "alternative": "Assess removal or a reviewed agricultural-process input when available."
+    },
+    {
+      "id": "V07",
+      "column": "urban_and_built-up_25km",
+      "unit": "%",
+      "physical_meaning": "Built-up-cover fraction in the source neighbourhood",
+      "role": "predictor",
+      "arms": [
+        "environment",
+        "environment_coordinates"
+      ],
+      "reason": "Include a prespecified human-activity setting alongside the precursor inventory.",
+      "evidence": [
+        "S3",
+        "S4"
+      ],
+      "uncertainty": "Can overlap NOx information and encode location; its retention is a hypothesis, not a published universal selection.",
+      "evidence_kind": "study_hypothesis_informed_by_source_definition_and_literature",
+      "implementation_status": "existing_input_column",
+      "alternative": "Test a no-built-up ablation because it may overlap precursor information."
+    },
+    {
+      "id": "V08",
+      "column": "nox_emissions",
+      "unit": "g m-2 y-1",
+      "physical_meaning": "Source-provided NOx emission inventory field",
+      "role": "predictor",
+      "arms": [
+        "environment",
+        "environment_coordinates"
+      ],
+      "reason": "Include an available ozone-precursor measure instead of relying entirely on location or activity proxies.",
+      "evidence": [
+        "S3",
+        "S4"
+      ],
+      "uncertainty": "Not ambient NOx concentration; response may be non-monotone and depends on VOCs, radiation and transport.",
+      "evidence_kind": "study_hypothesis_informed_by_source_definition_and_literature",
+      "implementation_status": "existing_input_column",
+      "alternative": "Add independently justified chemistry/meteorology or defer the inventory if source reconciliation fails."
+    },
+    {
+      "id": "V09",
+      "column": "lat",
+      "unit": "deg",
+      "physical_meaning": "Signed station latitude",
+      "role": "predictor",
+      "arms": [
+        "environment_coordinates"
+      ],
+      "reason": "Test added geographic proxy information in the coordinate arm only.",
+      "evidence": [
+        "S1",
+        "S2"
+      ],
+      "uncertainty": "Not temperature, radiation or a causal geographic effect.",
+      "evidence_kind": "study_hypothesis_informed_by_source_definition_and_literature",
+      "implementation_status": "existing_input_column",
+      "alternative": "Exclude location entirely as in arm A; an absolute-latitude model is a different optional hypothesis."
+    },
+    {
+      "id": "V10",
+      "column": "lon_sin",
+      "unit": "1",
+      "physical_meaning": "Sine of longitude in radians",
+      "role": "predictor",
+      "arms": [
+        "environment_coordinates"
+      ],
+      "reason": "Encode longitude without a numeric jump at the date line.",
+      "evidence": [
+        "S3"
+      ],
+      "uncertainty": "Circular encoding does not prevent spatial memorization; interpret together with lon_cos.",
+      "evidence_kind": "study_hypothesis_informed_by_source_definition_and_literature",
+      "implementation_status": "requires_reviewed_preparation_adapter",
+      "alternative": "Use raw longitude only as an explicitly separate date-line sensitivity, not as a silent replacement."
+    },
+    {
+      "id": "V11",
+      "column": "lon_cos",
+      "unit": "1",
+      "physical_meaning": "Cosine of longitude in radians",
+      "role": "predictor",
+      "arms": [
+        "environment_coordinates"
+      ],
+      "reason": "Complete the circular longitude representation.",
+      "evidence": [
+        "S3"
+      ],
+      "uncertainty": "Do not vary this independently of lon_sin for geographic response interpretation.",
+      "evidence_kind": "study_hypothesis_informed_by_source_definition_and_literature",
+      "implementation_status": "requires_reviewed_preparation_adapter",
+      "alternative": "Use a reviewed joint geographic representation rather than dropping one member of the circular pair."
+    }
+  ],
+  "exclusions": [
+    {
+      "columns": [
+        "id",
+        "country",
+        "htap_region",
+        "dataset",
+        "type",
+        "type_of_area"
+      ],
+      "reason": "Keep keys/group labels as metadata; avoid introducing additional geographic or siting-category predictors in this controlled first comparison."
+    },
+    {
+      "columns": "all other ozone metrics",
+      "reason": "Outcome-derived information; not eligible predictors."
+    },
+    {
+      "columns": [
+        "population_density",
+        "max_population_density_5km",
+        "max_population_density_25km"
+      ],
+      "reason": "Defer until source units/support and extreme values are reconciled; do not silently rescale, clip or declare the source invalid."
+    },
+    {
+      "columns": [
+        "no2_column",
+        "nightlight_1km",
+        "nightlight_5km",
+        "max_nightlight_25km",
+        "climatic_zone"
+      ],
+      "reason": "Deferred to a separate expansion after product scale/version or categorical-boundary review; exclusion is not evidence of irrelevance."
+    },
+    {
+      "columns": "remaining land-cover subclasses, production and other metadata",
+      "reason": "Bound the first hypothesis set; do not treat this deliberately limited environmental set as complete atmospheric information."
+    },
+    {
+      "columns": "new temperature/radiation or other external products",
+      "reason": "Not present in the selected input contract; needs separate temporal/support and lineage checks before acquisition."
+    }
+  ],
+  "preprocessing": [
+    {
+      "id": "P01",
+      "choice": "Preserve source and stable id; materialize a fresh versioned prepared input after approval.",
+      "reason": "Paired arms must reference identical samples and provenance."
+    },
+    {
+      "id": "P02",
+      "choice": "Convert declared missing markers to missing; never impute the target.",
+      "reason": "Missing outcome values are not observations."
+    },
+    {
+      "id": "P03",
+      "choice": "forest_25km = sum of the five forest fields only when all five are non-missing.",
+      "inputs": [
+        "evergreen_needleleaf_forest_25km",
+        "evergreen_broadleaf_forest_25km",
+        "deciduous_needleleaf_forest_25km",
+        "deciduous_broadleaf_forest_25km",
+        "mixed_forest_25km"
+      ],
+      "reason": "Transparent deterministic aggregation; no missing component is replaced by zero."
+    },
+    {
+      "id": "P04",
+      "choice": "lon_sin = sin(lon*pi/180); lon_cos = cos(lon*pi/180); keep signed lat.",
+      "reason": "Respect circular longitude; this does not ensure spatial generalization."
+    },
+    {
+      "id": "P05",
+      "choice": "No scaling, clipping, winsorization or outcome transformation; retain valid negative elevations and zero fractions.",
+      "reason": "Tree splits do not require standardization; changing physical support needs separate evidence."
+    },
+    {
+      "id": "P06",
+      "choice": "Review out-of-range fractions/coordinates or negative emissions; do not silently correct them. Pair row exclusions by stable id.",
+      "reason": "Both arms must retain the same valid target cohort and documented quality rules."
+    },
+    {
+      "id": "P07",
+      "choice": "Fit any needed numeric median on each fit-training subset only; manual declared features, no outcome-driven or VIF-only deletion.",
+      "reason": "Avoid preprocessing leakage and an order-dependent feature-filter confound."
+    }
+  ],
+  "parameter_design": {
+    "learner": "regr.ranger",
+    "selection_order": [
+      "baseline",
+      "rf_m3_n5",
+      "rf_m3_n25",
+      "rf_m6_n5",
+      "rf_m6_n25"
+    ],
+    "candidate_order": [
+      "rf_m3_n5",
+      "rf_m3_n25",
+      "rf_m6_n5",
+      "rf_m6_n25"
+    ],
+    "candidate_grid": {
+      "mtry": [
+        3,
+        6
+      ],
+      "min.node.size": [
+        5,
+        25
+      ]
+    },
+    "fixed": {
+      "num.trees": 500,
+      "sample.fraction": 0.632,
+      "replace": false
+    },
+    "omitted_and_implementation_defaults": {
+      "max.depth": "Omitted: ranger's unrestricted depth, not an implicit validated depth optimum.",
+      "splitrule": "Variance regression default under the reviewed mlr3/ranger versions.",
+      "num.threads": "Runner forces 1."
+    },
+    "reasons": [
+      {
+        "id": "H01",
+        "parameter": "mtry",
+        "choice": [
+          3,
+          6
+        ],
+        "evidence": [
+          "S5"
+        ],
+        "reason": "3 is near sqrt(p) for p=8 or 11; 6 tests stronger feature competition. Match absolute values across arms to keep the explicit parameter contrast controlled.",
+        "uncertainty": "Fractions differ across p; this is not equal split-inclusion probability or a proven optimum.",
+        "alternative": "Use p-relative mtry values in a separate equal-fraction sensitivity; do not mix that with the fixed-count contrast."
+      },
+      {
+        "id": "H02",
+        "parameter": "min.node.size",
+        "choice": [
+          5,
+          25
+        ],
+        "evidence": [
+          "S5",
+          "S8"
+        ],
+        "reason": "5 is a conventional regression reference; 25 is a deliberately five-times-coarser splitting threshold for noisy, clustered station labels and a small search budget.",
+        "uncertainty": "25 is a study proposal, not a literature optimum; ranger can create leaves smaller than this value.",
+        "alternative": "Try an intermediate or stronger threshold only after a bounded design revision, not outer-score-driven tuning."
+      },
+      {
+        "id": "H03",
+        "parameter": "num.trees",
+        "choice": 500,
+        "evidence": [
+          "S6",
+          "S8"
+        ],
+        "reason": "Conventional feasible starting forest size, explicitly set to avoid the runner's omitted-value fallback of 100.",
+        "uncertainty": "Stability is not established. Development-only comparisons at 250/500/1000 trees are proposed diagnostics, not completed tuning.",
+        "alternative": "Use a separately approved development-only stability extension at 250 and 1000 trees."
+      },
+      {
+        "id": "H04",
+        "parameter": "sample.fraction and replace",
+        "choice": {
+          "fraction": 0.632,
+          "replace": false
+        },
+        "evidence": [
+          "S5",
+          "S8"
+        ],
+        "reason": "Use ranger's conventional without-replacement fraction, make distinct-row sampling explicit and hold it fixed to keep only two primary search axes.",
+        "uncertainty": "Not calibrated to this dataset and not a group-aware sampling method; rare conditions may lose support.",
+        "alternative": "Compare other fractions or replacement schemes in a separate declared search rather than expanding this grid silently."
+      },
+      {
+        "id": "H05",
+        "parameter": "max.depth",
+        "choice": "omitted",
+        "evidence": [
+          "S8"
+        ],
+        "reason": "Avoid introducing an unsupported fixed depth inherited from history; node size is the declared primary complexity axis.",
+        "uncertainty": "Unrestricted depth is not proof against overfitting; investigate development diagnostics before expanding the design.",
+        "alternative": "Compare depth constraints in development if the node-size axis fails to control fit."
+      },
+      {
+        "id": "H06",
+        "parameter": "seeds and candidate order",
+        "choice": {
+          "sampling": 8101,
+          "model_repeats": [
+            4101,
+            4201,
+            4301
+          ],
+          "explanation": 9101
+        },
+        "evidence": [
+          "I1"
+        ],
+        "reason": "Use identical task seeds, model order and fold identities across arms; isolate model-seed variation from cohort sampling.",
+        "uncertainty": "These are reproducibility constants, not scientific tuning parameters. Record effective candidate seeds, not only the base seed. Equal initial/effective seeds do not ensure identical per-tree draws when different feature sets consume random numbers.",
+        "alternative": "Different reproducibility seeds may be declared before fitting; never retain only favorable repeats."
+      },
+      {
+        "id": "H07",
+        "parameter": "selection and reporting",
+        "choice": {
+          "selection": "inner pooled RMSE",
+          "report": [
+            "RMSE",
+            "MAE",
+            "1-SSE/SST"
+          ]
+        },
+        "evidence": [
+          "S3"
+        ],
+        "reason": "Ozone errors in ppb; RMSE penalizes large errors, with MAE and region-specific bias also reported.",
+        "uncertainty": "Choosing by MAE would not alter the variance-based forest fitting loss.",
+        "alternative": "Select by MAE under a revised objective and still report RMSE."
+      },
+      {
+        "id": "H08",
+        "parameter": "explanation budget",
+        "choice": {
+          "features": [
+            "alt",
+            "nox_emissions"
+          ],
+          "background_rows": 100,
+          "validation_rows": 100,
+          "permutation_repeats": 5,
+          "pdp_points": 9,
+          "reason": "Secondary bounded response diagnostics; not evidence of scientific convergence or causal identification."
+        },
+        "evidence": [
+          "I2",
+          "I3"
+        ],
+        "reason": "Keep secondary shared-variable diagnostics bounded and reproducible; do not request invalid independent longitude-component response plots.",
+        "uncertainty": "This budget is an engineering starting point. Joint coordinate importance and explanation convergence are not implemented or established.",
+        "alternative": "Increase explanation budgets or request joint coordinate permutation only with reviewed implementation and support checks."
+      }
+    ],
+    "stability_diagnostic": {
+      "tree_counts": [
+        250,
+        500,
+        1000
+      ],
+      "data": "development or inner-training/validation only",
+      "comparisons": "Common specified settings and seeds across both arms.",
+      "decision": "Report prediction/loss variation. Revise an unstable design before outer evaluation; do not choose settings from outer scores."
+    },
+    "grid_size_per_arm": 4,
+    "model_seed_repeats": [
+      4101,
+      4201,
+      4301
+    ],
+    "baseline": "Training mean, identical cohort in each paired comparison.",
+    "explanation_budget": {
+      "features": [
+        "alt",
+        "nox_emissions"
+      ],
+      "background_rows": 100,
+      "validation_rows": 100,
+      "permutation_repeats": 5,
+      "pdp_points": 9,
+      "reason": "Secondary bounded response diagnostics; not evidence of scientific convergence or causal identification."
+    }
+  },
+  "validation": {
+    "benchmark": {
+      "purpose": "Compatibility and paired algorithmic comparison, not new independent scientific acceptance.",
+      "split": "Preserve supplied dataset labels and all usable rows; row caps equal source counts before exclusions.",
+      "source_counts": {
+        "train": 3348,
+        "test": 1115,
+        "val": 1114
+      },
+      "warning": "The published split uses spatial clustering, but nearest training distances are not universally at least 50 km. Prior test results have been seen."
+    },
+    "spatial_transfer": {
+      "purpose": "New-region transfer sensitivity on the 4462 source train+val stations; not deployment-matched interpolation accuracy.",
+      "development_labels": [
+        "train",
+        "val"
+      ],
+      "excluded_labels": [
+        "test"
+      ],
+      "outer_holdout_regions": [
+        "NAM",
+        "EUR",
+        "EAS"
+      ],
+      "outer_evaluated_rows": 4295,
+      "other_region_rows_training_only": 167,
+      "outer_buffer_km": 50,
+      "metadata_counts": {
+        "NAM": {
+          "outer_test_rows": 1306,
+          "outer_training_before_buffer": 3156,
+          "outer_training_removed_by_50km_buffer": 13,
+          "outer_training_after_buffer": 3143
+        },
+        "EUR": {
+          "outer_test_rows": 1749,
+          "outer_training_before_buffer": 2713,
+          "outer_training_removed_by_50km_buffer": 2,
+          "outer_training_after_buffer": 2711
+        },
+        "EAS": {
+          "outer_test_rows": 1240,
+          "outer_training_before_buffer": 3222,
+          "outer_training_removed_by_50km_buffer": 1,
+          "outer_training_after_buffer": 3221
+        }
+      },
+      "inner": {
+        "folds": 3,
+        "grouping": "Equal-area EPSG:6933 cells of 250000 m, origin (0,0); never split a cell across validation folds.",
+        "assignment": "Sort cell groups deterministically by descending station count; tie-break by public cell key and assign to the currently smallest fold; no outcome-based balancing.",
+        "buffer_km": 50,
+        "distance": "Spherical great-circle distance with radius 6371.0088 km; remove training sites <50 km from validation sites.",
+        "guard": "Generate and inspect fold/block counts and closest cross-fold distances before fitting. If coverage/folds are infeasible, return for plan revision; do not lower distances after seeing model scores."
+      },
+      "distance_reason": "250 km cells plus a 50 km buffer are explicit study-design starting choices, not literature-proven independence scales. Whole-region outer holdouts define transfer; sensitivity to scale needs a separate bounded extension.",
+      "selection": "For each outer holdout and arm, pool inner out-of-fold squared errors over the same observations and all three declared model seeds; select minimum pooled RMSE; exact ties use declared candidate order. Freeze the choice before any outer scoring.",
+      "refit": "After inner selection is frozen, refit all four prespecified fixed settings for E1 on all eligible buffered outer-training data; the matching selected fit supplies E2. Never retain an inner-fold model as final refit. Outer outcomes do not select any setting.",
+      "outer_reporting": "Report each region, paired fixed-setting contrasts and equal-budget tuned-pipeline contrasts separately; pool station-level errors only with a declared site-weighted estimand. Do not average RMSE values and call that pooled RMSE.",
+      "independence": "A reanalysis of a previously explored benchmark is not a newly untouched external validation. Only three region holdouts do not establish a global uncertainty interval.",
+      "implementation": "Not implemented by the current single-task controller; requires reviewed reusable preparation/resampling/development-only fit/refit helpers in skills before experiment-code generation."
+    },
+    "interpolation_extension": {
+      "status": "deferred",
+      "reason": "No target grid or deployment prediction-to-sample distance distribution is supplied. Do not call region-holdout scores map accuracy or claim kNNDM/AOA validation.",
+      "evidence": [
+        "S2",
+        "S7"
+      ]
+    }
+  },
+  "code_generation_audit": {
+    "status": "specification_only_no_generated_experiment_code",
+    "required_materials": [
+      "approved comparison plan and hash",
+      "fresh per-input/fold skill plans and real reviews",
+      "variable-to-field-to-code map",
+      "parameter-to-config-to-effective-value map",
+      "frozen sample/fold manifests",
+      "actual generated caller and task hashes",
+      "observed events and post-run retrospective"
+    ],
+    "required_design_fields": [
+      "decision_id",
+      "source_id",
+      "study_reason",
+      "alternative",
+      "uncertainty",
+      "config_field",
+      "code_location",
+      "effective_value",
+      "check_evidence"
+    ],
+    "existing_controller": "workflows/ml_regression/examples/planned_regression.py",
+    "current_behavior": "Copies a reviewed caller and plan.task; it neither selects variables scientifically nor implements nested spatial validation.",
+    "proposed_skills_work": "Deterministic feature preparation, paired cohort and fold construction, development-only fitting, outer refit/evaluation, and optional joint coordinate permutation belong in reusable skill helpers, not numerical code added to workflows.",
+    "stop_conditions": [
+      "Missing or stale plan review",
+      "Derived input/fold hashes or code binding missing",
+      "Outer labels or metrics reach inner selection",
+      "Different paired cohort/folds or unexplained effective seeds",
+      "Unverified data correction, private-path leakage or overwritten historical artifacts"
+    ],
+    "storage": "After review, real-data outputs use an external assets/results/<project_id>/ fresh task directory; per-run gen_script belongs with those results. The local workflow result tree remains synthetic-only.",
+    "implementation_inventory": {
+      "I1": {
+        "path": "skills/model/shared/machine_learning_model/scripts/r/models/fit.R",
+        "sha256": "578e2687a2e8e3a3f75f7a86319a32197cf25901baff09daed8566dc6e64f20b"
+      },
+      "I2": {
+        "path": "catalog/schemas/ml-regression-task.schema.json",
+        "sha256": "6eecc6a785b262fde967ddfd892215fec9b98e698d27137a907f968ff1b529ab"
+      },
+      "I3": {
+        "path": "skills/model/shared/machine_learning_model/scripts/r/contribution/explain.R",
+        "sha256": "e9eb34515cd3c97846cd755c1806522fdf1f3d450df12f409fc0a9fccf40f94e"
+      }
+    }
+  },
+  "unresolved": [
+    {
+      "id": "U1",
+      "blocking_for": "scientific_acceptance",
+      "issue": "No new independent external labels or complete regional predictor grid."
+    },
+    {
+      "id": "U2",
+      "blocking_for": "spatial_execution",
+      "issue": "Reusable nested spatial orchestration and development-only/refit interfaces are not yet implemented or tested."
+    },
+    {
+      "id": "U3",
+      "blocking_for": "preparation_execution",
+      "issue": "Derived inputs and paired masks have not been materialized or bound to a reviewed input hash."
+    },
+    {
+      "id": "U4",
+      "blocking_for": "scientific_claims",
+      "issue": "Static environmental metadata do not fully represent meteorology/VOC chemistry or source-period uncertainty."
+    }
+  ],
+  "source_inventory": {
+    "S1": {
+      "authors": "Meyer et al.",
+      "year": 2019,
+      "title": "Importance of spatial predictor variable selection in machine learning applications – Moving from data reproduction to spatial prediction",
+      "url": "https://arxiv.org/abs/1908.07805"
+    },
+    "S2": {
+      "authors": "Milà et al.",
+      "year": 2024,
+      "title": "Random forests with spatial proxies for environmental modelling: opportunities and pitfalls",
+      "url": "https://gmd.copernicus.org/articles/17/6007/2024/"
+    },
+    "S3": {
+      "authors": "Betancourt et al.",
+      "year": 2021,
+      "title": "AQ-Bench: a benchmark dataset for machine learning on global air quality metrics",
+      "url": "https://essd.copernicus.org/articles/13/3013/2021/"
+    },
+    "S4": {
+      "authors": "Betancourt et al.",
+      "year": 2022,
+      "title": "Global, high-resolution mapping of tropospheric ozone – explainable machine learning and impact of uncertainties",
+      "url": "https://gmd.copernicus.org/articles/15/4331/2022/"
+    },
+    "S5": {
+      "authors": "Probst, Wright and Boulesteix",
+      "year": 2019,
+      "title": "Hyperparameters and tuning strategies for random forest",
+      "url": "https://arxiv.org/abs/1804.03515"
+    },
+    "S6": {
+      "authors": "Probst and Boulesteix",
+      "year": 2018,
+      "title": "To Tune or Not to Tune the Number of Trees in Random Forest",
+      "url": "https://jmlr.org/papers/v18/17-269.html"
+    },
+    "S7": {
+      "authors": "Roberts et al.",
+      "year": 2017,
+      "title": "Cross-validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure",
+      "url": "https://doi.org/10.1111/ecog.02881"
+    },
+    "S8": {
+      "authors": "ranger maintainers",
+      "title": "ranger reference",
+      "url": "https://imbs-hl.github.io/ranger/reference/ranger.html"
+    }
+  }
+}

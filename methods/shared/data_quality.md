@@ -1,43 +1,33 @@
-# 数据来源、误差与规范化说明
+# Understanding and preparing research data
 
-复核日期：2026-10-26。维护数据获取能力时，同时维护数据说明；API 能下载只是获取环节，数据进入研究前还需核对以下内容。说明维护不读取既有原始数据、不触发下载或计算。
+**English** | [中文](data_quality_ZH.md)
 
-本文是跨阶段共用原则；领域来源、误差与处理规则放在对应阶段的方法主文或附页，SKILL.md 负责执行步骤并链接它们。技能 references 保留接口参数和操作/验证示例，不重复保存这里的数据知识正文。
+Before using a dataset, establish what its values represent, how they were produced and which comparisons they support. A successful transfer establishes file access; scientific use requires the checks below.
 
-## 每个来源需要写清什么
+## Understand the source
 
-| 内容 | 应记录的信息 |
-|---|---|
-| 来源链 | 原始监测/生产机构、实际下载提供者、数据集 ID/DOI、版本、公开说明与引用、许可；第三方镜像不能写成官方 API |
-| 产品身份 | 原始发布观测、质控发布值、再分析、预报或填补/均一化产品；同化产品不能称为直接实测 |
-| 时空与量纲 | 空间支持范围、分辨率/站点历史、变量/层次、单位、浓度温压状态、时区、时间标签、平均或累计时段 |
-| 误差与缺口 | 仪器/采样、代表性、缺测/采集失败、模型与同化、版本变化、转换与匹配误差；有无源质量标记或不确定度 |
-| 规范化 | 字段映射、唯一键、去重/冲突、缺失编码、单位转换、时间对齐、网格/站点匹配；保留原字段和源标记 |
-| 统计口径 | 有效样本定义、分母、日/月/年完整性、依据与适用范围、异常处理、插补及敏感性分析 |
-| 输出与追溯 | 原文件只读、派生版本、参数/规则、处理原因、覆盖与排除摘要、文件校验摘要；共享记录脱敏 |
+Record the original producer and actual distributor, product/version, coverage, access conditions and citation. Distinguish observations, quality-controlled releases, reanalysis, forecasts and filled or homogenized estimates. A third-party archive remains a distributor even if it preserves official observations.
 
-未知字段明确标记待核实；不要从文件名、下载成功或没有质量标记推断“无误差”。没有仪器、地区和时段证据时，不给统一误差百分比。
+Describe spatial support, time zone and timestamp meaning, instantaneous versus accumulated quantities, averaging periods and units. Identify revision histories, station changes and source quality flags.
 
-## 统一处理顺序
+## Describe uncertainty in context
 
-1. **限定产品与任务**：选择来源、时间、地区、变量及输出，区分获取与后续计算。
-2. **保留原件并验文件**：状态、格式、日期/变量、完整性与校验摘要；缺文件单列，不伪造全零观测。
-3. **规范化接口**：显式字段/单位/时间映射和唯一键；原值与规范化值分开，未知时区不自动设为 UTC。
-4. **应用有依据的质量规则**：区分提供者标记、结构问题、研究筛选及插补；异常先标记，不因值高就删除。每条排除可追溯。
-5. **检查覆盖后汇总**：先排除重复和无效观测，再统计有效唯一时次；未达门槛的统计值保留缺失和原因，原记录不删。
-6. **配准与比较**：确认相同物理量、时间支持和空间代表性，再做匹配；偏差订正或机器学习的参数只在训练集拟合。
-7. **交接说明**：覆盖、质量状态、已实施与未实施步骤、所用标准/文献版本、剩余限制。
+Consider measurement and sampling error, spatial representativeness, missing acquisition, model/assimilation error, revisions and matching/conversion error. Their importance depends on the instrument, product, region and period. Missing quality flags do not demonstrate an error-free measurement, and one generic percentage rarely represents all sources.
 
-raw、processed、quality 分开放在工作区 `results/<project_id>/<run_id>/<stage>/<source>/`；非秘密处理策略放 CONFIG_DIR，认证仍遵守[存储边界](../../harness/storage-and-credentials.md)。说明中的规则不是已经注册的处理工具或自动生效配置。
+## Prepare comparable observations
 
-## 按数据类型进入
+Preserve the source release and form a traceable derived version. Define unique keys and field mappings, resolve duplicates/conflicts, distinguish missing values from zeroes and convert units explicitly. Establish the time reference before aligning records.
 
-- [PM2.5 站点观测](../03_atmospheric_transport/pm25_stations.md)：来源链、观测误差、日均有效小时、站点历史及文献门槛。
-- [ERA5](../01_socioeconomic_natural_change/era5.md)：再分析来源、同化与代表性误差、瞬时/累计量及时间汇总。
-- [CAMS EAC4 与全球预报](../01_socioeconomic_natural_change/cams.md)：分别说明产品、误差、时间键、系统版本和浓度匹配。
-- [WorldPop 人口栅格](../01_socioeconomic_natural_change/worldpop.md)：人口估计来源、发布版、人数/密度、NoData、网格守恒和人口口径。
-- [IHME GBD](../04_integrated_impacts/ihme_gbd.md)：综合估计来源、轮次、数量/率/比例、年龄标化、病因层级和不确定区间；与人口分母分别配准。
+Separate provider flags, structural checks, research exclusions and imputation. Mark unusual values before deciding to exclude them; high concentration alone is not proof of error. Retain the reason for each affected observation.
 
-后续健康、企业及年鉴来源同样按此结构维护，采用各自的质量规则；PM2.5 的有效小时门槛不套用于其他产品。
+## Assess coverage before averaging
 
-数据目录与人工复核入库遵循[资产规范](../../harness/assets_ZH.md)。每份数据只有一处主要归属，其他阶段引用固定版本；项目验收条件与通用质量规则分别维护。
+Remove duplicate or invalid observations before counting valid unique periods. Select completeness rules appropriate to the product and intended statistic, with their source and version. Where coverage is inadequate, retain a missing statistic and its reason rather than inventing a complete observation.
+
+For cross-source comparisons, align the physical quantity, temporal support and spatial representation. Fit bias corrections and other learned transformations within the appropriate training data.
+
+## Report a usable handoff
+
+Include source/version, mapping and transformation rules, coverage/exclusion summaries, quality status and unresolved limitations. The project selects its internal result layout under the [asset contract](../../harness/assets.md); a reviewed data version can later be referenced by other studies.
+
+Source-specific explanations: [stations](../03_atmospheric_transport/pm25_stations.md), [ERA5](../01_socioeconomic_natural_change/era5.md), [CAMS](../01_socioeconomic_natural_change/cams.md), [WorldPop](../01_socioeconomic_natural_change/worldpop.md), [GBD](../04_integrated_impacts/ihme_gbd.md). Their completeness and interpretation rules are not interchangeable.

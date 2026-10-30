@@ -1,29 +1,21 @@
 ---
 name: inventory-input-methods
-description: List conceptual source and input-contract methods for emission inventories. Do not expose concrete data, implementation code or local script references.
+description: Select conceptual source, coverage and input-contract methods for an emission inventory.
 ---
 
-# Emission-inventory input methods
-
-<!-- README-I18N:START -->
+# Plan inventory inputs
 
 **English** | [中文](SKILL_ZH.md)
 
-<!-- README-I18N:END -->
+This entry supports method planning only. It has no executable tool, script, configuration file or dataset example.
 
+## Use
 
-**Status:** documentation only; no execution adapter or tool ID for run-tool.
+1. Define the source categories, period, region, pollutants and accounting boundary.
+2. Select source types and ways to assess coverage, consistency and missingness.
+3. Specify units, category correspondence and treatment of overlapping sources.
+4. Plan checks for completeness, double counting and uncertainty.
 
-## Workflow
+Hand off a short method-choice record: selected source types, intended statistical coverage, mapping principles, unresolved gaps and quality checks. The next stage uses this record to design accounting; no data acquisition or calculation is supplied here.
 
-Define source categories and accounting scope → choose methods for reviewing activity, technology and factor sources → agree unit, species and mapping semantics → list gaps and handoff contracts.
-
-See the [method and handoff guidance](../../../../methods/02_emission_inventory/README.md).
-
-## Boundaries
-
-List conceptual methods only. Do not add concrete data, parameter values, project fields, script names, source fingerprints, commands or implementation code.
-
-Documentation maintenance and routine validation use only documents, interfaces and synthetic inputs. Real-data work requires an explicit scope. Keep personal paths and non-secret settings in CONFIG_DIR, credentials in a credential manager, and sessions in AUTH_DIR; data, configuration and authentication roots must be separate and outside Git. Reference skills do not automatically enforce paths or create sanitized run receipts.
-
-Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.
+Read [accounting design](../../../../methods/02_emission_inventory/emission_accounting.md) and [spatial allocation](../../../../methods/02_emission_inventory/spatial_inventory.md). Stage 02 retains conceptual methods without concrete data, parameters or code.

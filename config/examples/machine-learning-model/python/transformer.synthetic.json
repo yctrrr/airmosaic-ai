@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "purpose": "synthetic_software_demo",
+  "seed": 17,
+  "samples": {"train": 64, "val": 24, "test": 24},
+  "d_model": 16,
+  "heads": 2,
+  "layers": 1,
+  "epochs": 4,
+  "batch_size": 16,
+  "learning_rate": 0.005,
+  "weight_decay": 0.001,
+  "dropout": 0.0
+}
