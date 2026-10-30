@@ -8,6 +8,8 @@ ADAPTERS = {
     "ihme_gbd_fetch_results": "gbd", "gcam_extract_market_sector": "gcam_extract",
     "gcam_extract_technology_components": "gcam_extract", "gcam_aggregate_provinces": "gcam_aggregate",
     "gcam_inspect_output_structure": "gcam_inspect", "gcam_plot_sector_change": "gcam_plot",
+    "ml_regression_workflow": "mlr3_regression",
+    "ml_python_regression_workflow": "ml_python_regression",
 }
 PATH_PARAMETERS = {
     "core_cli": {}, "worldpop": {"root": "output_directory"},
@@ -16,4 +18,8 @@ PATH_PARAMETERS = {
     "gcam_aggregate": {"input_csv": "input_file", "out_dir": "output_directory"},
     "gcam_inspect": {"output_dir": "output_directory"},
     "gcam_plot": {"input_csv": "input_file", "out_dir": "output_directory"},
+    "mlr3_regression": {"input_csv": "input_file", "task_config": "configuration_file",
+                        "out_dir": "output_directory"},
+    "ml_python_regression": {"input_csv": "input_file", "task_config": "configuration_file",
+                             "review_bundle": "configuration_file", "out_dir": "output_directory"},
 }

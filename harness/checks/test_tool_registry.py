@@ -12,10 +12,10 @@ import sys
 import pytest
 import yaml
 
-from airmosaic.services import ToolRegistryError, ToolRegistryService
-from airmosaic.services import tool_readiness
-from airmosaic.services import tool_paths
-from airmosaic.services.tool_registry import format_tool_table
+from runtime.services import ToolRegistryError, ToolRegistryService
+from runtime.services import tool_readiness
+from runtime.services import tool_paths
+from runtime.services.tool_registry import format_tool_table
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -67,7 +67,45 @@ def test_real_registry_covers_existing_entries_and_filters(separate_roots):
     tools = registry.list_tools()
     assert {tool["category"] for tool in tools} == {"core", "data_acquisition", "model"}
     entries = {tool["entrypoint"]["path"] for tool in tools}
-    assert {path.relative_to(ROOT).as_posix() for path in (ROOT / "skills").rglob("*.py")} <= entries
+    # Workflows may explicitly document reviewed direct helpers without exposing
+    # them as registered tools. Undeclared scripts are still caught here.
+    recipe = yaml.safe_load((ROOT / "workflows/model_reproduction/workflow.yaml").read_text(encoding="utf-8"))
+    comparison = recipe["modes"]["compare_existing"]
+    assert comparison["status"] == "reviewed_direct_script"
+    assert comparison["registered_runner_or_mcp_adapter"] is False
+    direct_helpers = {comparison["entry_script"], recipe["synthetic_example_helper"]}
+    assert all(path.startswith("skills/model/shared/model_reproduction/scripts/")
+               and (ROOT / path).is_file() for path in direct_helpers)
+    direct_helpers |= {
+        "skills/agent_operations/shared/skill_authoring/scripts/validate_skill.py",
+        "skills/agent_operations/shared/autoskill/scripts/maintain.py",
+        "skills/model/04_integrated_impacts/health_impact_analysis/scripts/validate_loglinear_er.py",
+        "skills/model/shared/spatial_analysis/scripts/python/spatial_helpers.py",
+        "skills/model/shared/spatial_analysis/examples/python/synthetic_spatial.py",
+        "skills/model/shared/machine_learning_model/scripts/common/review_plan.py",
+        "skills/model/shared/machine_learning_model/scripts/python/common/artifacts.py",
+        "skills/model/shared/machine_learning_model/scripts/python/models/regression.py",
+        "skills/model/shared/machine_learning_model/scripts/python/contribution/prediction.py",
+        "skills/model/shared/machine_learning_model/scripts/python/run_transformer_demo.py",
+        "skills/model/shared/machine_learning_model/scripts/python/models/transformer_demo.py",
+        "skills/model/01_socioeconomic_natural_change/input-output-analysis/scripts/run_io.py",
+        "skills/model/01_socioeconomic_natural_change/material-flow-analysis/scripts/run_mfa.py",
+        "skills/model/01_socioeconomic_natural_change/life-cycle-assessment/scripts/run_lca.py",
+        "skills/model/01_socioeconomic_natural_change/econometric-analysis/scripts/run_ols.py",
+        "skills/model/01_socioeconomic_natural_change/cge/scripts/run_toy_cge.py",
+        "skills/model/02_emission_inventory/emission-inventory-methods/scripts/calculate_inventory.py",
+    }
+    # Read-only discovery accepts explicitly documented helpers, not arbitrary
+    # newly added scripts. This set does not grant execution registration.
+    from runtime.services.capability_catalog import CapabilityCatalogService
+    declared_helpers = {script["path"] for skill in CapabilityCatalogService(registry).skills
+                        for script in skill["documented_scripts"]
+                        if script["exists"] and script["path"].endswith(".py")
+                        and not script["execution_tool_ids"]}
+    direct_helpers |= declared_helpers - entries
+    assert direct_helpers.isdisjoint(entries)
+    assert {path.relative_to(ROOT).as_posix() for path in (ROOT / "skills").rglob("*.py")
+            if not {"results", ".airmosaic", "__pycache__"} & set(path.relative_to(ROOT).parts)} <= entries | direct_helpers
     for category in ("core", "data_acquisition", "model"):
         selected = registry.list_tools(category=category)
         assert selected and all(item["category"] == category for item in selected)
@@ -202,7 +240,7 @@ def test_nested_roots_are_rejected(separate_roots, installed_dependencies, monke
 
 def test_output_cannot_target_data_cache(separate_roots, installed_dependencies, monkeypatch):
     monkeypatch.setenv("PM25_HIA_OUTPUT_DIR", str(separate_roots["AIRMOSAIC_ASSETS_DIR"] / "data"))
-    from airmosaic.services.tool_readiness import _configuration
+    from runtime.services.tool_readiness import _configuration
     result = _configuration({"name": "PM25_HIA_OUTPUT_DIR", "role": "output", "kind": "directory"}, ROOT)
     assert result["status"] == "invalid_configuration"
     assert result["reason"] == "output_outside_task_root"
@@ -214,7 +252,7 @@ def test_output_ancestor_must_be_directory(separate_roots, installed_dependencie
     marker = output / "file"
     marker.write_text("synthetic", encoding="utf-8")
     monkeypatch.setenv("PM25_HIA_OUTPUT_DIR", str(marker / "nested"))
-    from airmosaic.services.tool_readiness import _configuration
+    from runtime.services.tool_readiness import _configuration
     result = _configuration({"name": "PM25_HIA_OUTPUT_DIR", "role": "output", "kind": "directory"}, ROOT)
     assert result["status"] == "invalid_configuration"
 
@@ -263,7 +301,7 @@ def test_parent_component_is_rejected_before_any_filesystem_probe(tmp_path, monk
 
 
 def test_registered_cli_arguments_match_actual_parser():
-    from airmosaic.cli import build_parser
+    from runtime.cli import build_parser
     parser = build_parser()
     commands = next(action for action in parser._actions if hasattr(action, "choices") and isinstance(action.choices, dict)).choices
     registry = ToolRegistryService()
@@ -337,7 +375,7 @@ def test_templates_never_appear_callable(separate_roots, installed_dependencies)
 def test_table_includes_categories_entrypoints_dependencies_and_login(separate_roots):
     text = format_tool_table(ToolRegistryService().list_tools())
     assert "data_acquisition" in text and "model" in text and "core" in text
-    assert "python -m airmosaic.cli" in text
+    assert "python -m runtime.cli" in text
     assert "dependencies:" in text and "login: browser_session (unverified)" in text
     assert format_tool_table([]) == "No matching tools."
 
@@ -351,7 +389,7 @@ def test_table_includes_categories_entrypoints_dependencies_and_login(separate_r
 def test_cli_json_interfaces_and_old_catalog_compatibility(arguments, separate_roots):
     env = os.environ.copy()
     env["PYTHONUTF8"] = "1"
-    result = subprocess.run([sys.executable, "-B", "-m", "airmosaic.cli", *arguments],
+    result = subprocess.run([sys.executable, "-B", "-m", "runtime.cli", *arguments],
                             capture_output=True, text=True, encoding="utf-8", env=env, timeout=30)
     assert result.returncode == 0, result.stderr
     data = json.loads(result.stdout)
@@ -360,7 +398,7 @@ def test_cli_json_interfaces_and_old_catalog_compatibility(arguments, separate_r
 
 
 def test_cli_error_does_not_echo_unknown_identifier():
-    result = subprocess.run([sys.executable, "-B", "-m", "airmosaic.cli", "describe-tool", "synthetic-private-value"],
+    result = subprocess.run([sys.executable, "-B", "-m", "runtime.cli", "describe-tool", "synthetic-private-value"],
                             capture_output=True, text=True, timeout=30)
     assert result.returncode == 2
     assert result.stdout == ""

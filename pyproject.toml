@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "airmosaic-core"
 version = "0.1.0"
-description = "Core services and data acquisition skills for AirMosaic AI."
+description = "Shared runtime services, CLI and MCP for AirMosaic AI."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -21,12 +21,12 @@ dev = [
 ]
 
 [project.scripts]
-airmosaic = "airmosaic.cli:main"
-airmosaic-mcp = "airmosaic.mcp_server:main"
+airmosaic = "runtime.cli:main"
+airmosaic-mcp = "runtime.mcp_server:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["airmosaic*"]
+include = ["runtime", "runtime.*"]
 namespaces = false
 
 [tool.pytest.ini_options]

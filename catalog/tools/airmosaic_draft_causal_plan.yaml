@@ -9,13 +9,13 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: cli
-  path: airmosaic/cli.py
+  path: runtime/cli.py
   argument_bindings:
     question: --question
     treatment: --treatment
     outcome: --outcome
     unit: --unit
-  module: airmosaic.cli
+  module: runtime.cli
   subcommand: draft-causal-plan
 input_schema:
   type: object

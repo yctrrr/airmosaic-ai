@@ -1,4 +1,4 @@
-"""Core services for AirMosaic AI."""
+"""Shared runtime services for AirMosaic AI's CLI and MCP interfaces."""
 
 from .services.causal_design import CausalDesignService
 from .services.data_access import DataAccessService

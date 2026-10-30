@@ -64,7 +64,7 @@
           "minLength": 1
         },
         "module": {
-          "const": "airmosaic.cli"
+          "const": "runtime.cli"
         },
         "subcommand": {
           "enum": [
@@ -115,7 +115,7 @@
             ],
             "properties": {
               "path": {
-                "const": "airmosaic/cli.py"
+                "const": "runtime/cli.py"
               }
             }
           },
@@ -173,7 +173,8 @@
       "type": "object",
       "properties": {
         "python": {
-          "const": ">=3.10"
+          "type": "string",
+          "pattern": "^>=3\\.[0-9]{1,2}(?:\\.[0-9]{1,2})?$"
         },
         "python_packages": {
           "type": "array",
@@ -598,7 +599,9 @@
                 "gcam_extract",
                 "gcam_aggregate",
                 "gcam_inspect",
-                "gcam_plot"
+                "gcam_plot",
+                "mlr3_regression",
+                "ml_python_regression"
               ]
             },
             "path_parameters": {
@@ -606,6 +609,7 @@
               "additionalProperties": {
                 "enum": [
                   "input_file",
+                  "configuration_file",
                   "output_directory",
                   "output_file"
                 ]

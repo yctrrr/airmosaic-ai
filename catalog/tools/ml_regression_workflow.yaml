@@ -1,0 +1,75 @@
+schema_version: 1
+tool_id: ml_regression_workflow
+title: Configurable regression and interpretation with mlr3
+description: 'Reusable regression capability: target and training-only feature checks,
+  prediction interpretation, or DAG-constrained cross-fitted PLR estimation under
+  declared assumptions.'
+category: model
+skill_id: machine-learning-model
+owner_role: model-maintainer
+implementation_status: implemented
+registration_status: registered
+entrypoint:
+  kind: r_script
+  path: skills/model/shared/machine_learning_model/scripts/r/run_regression.R
+  argument_bindings:
+    input_csv: --input-csv
+    task_config: --task-config
+    out_dir: --out-dir
+input_schema:
+  type: object
+  properties:
+    input_csv:
+      type: string
+      description: Explicit local CSV under the authorized asset data/results roots.
+    task_config:
+      type: string
+      description: Explicit JSON task settings under personal configuration, asset
+        data/results or repository configuration examples.
+    out_dir:
+      type: string
+      description: Optional chosen output folder under local ignored skill results
+        or the selected external project root.
+  required:
+  - input_csv
+  - task_config
+  - out_dir
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.10'
+  python_packages: []
+  executables:
+  - Rscript
+  r_packages:
+  - mlr3
+  - mlr3learners
+  - ranger
+  - rpart
+  - jsonlite
+  configuration:
+  - name: AIRMOSAIC_ASSETS_DIR
+    role: workspace
+    kind: directory
+  resources: []
+  manual_checks:
+  - Choose prediction or a separately identified causal target.
+  - Use an explicit trusted R dependency library; causal graph assumptions require
+    scientific review.
+authentication:
+  method: none
+effects:
+  reads:
+  - task_output
+  writes:
+  - task_output
+  network: false
+documentation: skills/model/shared/machine_learning_model/SKILL.md
+execution:
+  enabled: true
+  adapter: mlr3_regression
+  path_parameters:
+    input_csv: input_file
+    task_config: configuration_file
+    out_dir: output_directory

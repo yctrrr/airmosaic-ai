@@ -160,7 +160,7 @@ class ToolRegistryService:
                                          "r_script" if adapter in R_ADAPTERS else "python_script")
                     or not set(policy["path_parameters"]).issubset(properties)):
                 raise ToolRegistryError("Execution policy does not match a reviewed adapter.")
-            if adapter == "core_cli" and (entry.get("module") != "airmosaic.cli"
+            if adapter == "core_cli" and (entry.get("module") != "runtime.cli"
                     or entry.get("subcommand") != data["tool_id"].removeprefix("airmosaic_").replace("_", "-")):
                 raise ToolRegistryError("CLI execution must match its reviewed subcommand.")
         if "env:UNIT_PRICE_OUT_DIR" in entry["argument_bindings"].values() and (
@@ -207,7 +207,7 @@ class ToolRegistryService:
             raise ToolRegistryError("Tool not found.") from None
         entry = result["entrypoint"]
         prefixes = {
-            "cli": ["python", "-m", "airmosaic.cli", entry.get("subcommand", "")],
+            "cli": ["python", "-m", "runtime.cli", entry.get("subcommand", "")],
             "python_script": ["python", entry["path"]],
             "r_script": ["Rscript", entry["path"]],
         }
@@ -221,7 +221,7 @@ class ToolRegistryService:
             "argument_bindings": entry["argument_bindings"],
             "default_arguments": entry.get("default_arguments", {}),
             "execution_supported": result.get("execution", {}).get("enabled", False),
-            "runner_tokens": (["python", "-m", "airmosaic.cli", "run-tool", tool_id]
+            "runner_tokens": (["python", "-m", "runtime.cli", "run-tool", tool_id]
                               if result.get("execution", {}).get("enabled") else []),
         }
         result["availability"] = self.check_tool(tool_id)

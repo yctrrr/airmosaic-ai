@@ -11,6 +11,7 @@ from .services.tool_registry import CATEGORIES, STATUSES, ToolRegistryError, Too
 from .services.tool_runner import ToolRunnerService
 from .services.tool_execution_paths import ToolExecutionError, parse_parameters
 from .services.asset_layout import STAGES
+from .services.capability_catalog import CapabilityCatalogService, CapabilityCatalogError
 
 
 class _PrivateArgumentParser(argparse.ArgumentParser):
@@ -22,6 +23,13 @@ class _PrivateArgumentParser(argparse.ArgumentParser):
 def build_parser() -> argparse.ArgumentParser:
     parser = _PrivateArgumentParser(prog="airmosaic")
     subparsers = parser.add_subparsers(dest="command", required=True)
+
+    capabilities = subparsers.add_parser("list-capabilities", help="Read declared methods, skills and tool mappings")
+    capabilities.add_argument("--kind", choices=("method", "skill"))
+    capability = subparsers.add_parser("describe-capability", help="Read a declared method or skill; no execution")
+    capability.add_argument("kind", choices=("method", "skill"))
+    capability.add_argument("identifier")
+    subparsers.add_parser("validate-capabilities", help="Validate public metadata consistency, not scientific readiness")
 
     list_datasets = subparsers.add_parser("list-datasets")
     list_datasets.add_argument("--layer")
@@ -65,8 +73,10 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--confirm-browser-session", action="store_true")
     run.add_argument("--timeout", type=int, default=300)
     run.add_argument("--run-id", help="Optional fresh 32-character lowercase hex ID")
-    run.add_argument("--project-id", required=True, help="Lowercase non-identifying project slug")
-    run.add_argument("--stage", required=True, choices=STAGES, help="Research stage for this run")
+    run.add_argument("--project-id", help="Stable project slug; required by legacy adapters")
+    run.add_argument("--stage", choices=STAGES, help="Research-stage metadata; required by legacy adapters")
+    run.add_argument("--result-scope", choices=("auto", "skill", "workflow", "project"), default="auto",
+                     help="ML: ignored skill results, synthetic workflow checks, or external project results")
     return parser
 
 
@@ -74,13 +84,29 @@ def main() -> None:
     parser = build_parser()
 
     args = parser.parse_args()
+    if args.command in {"list-capabilities", "describe-capability", "validate-capabilities"}:
+        try:
+            catalog = CapabilityCatalogService()
+            if args.command == "validate-capabilities":
+                payload = catalog.validate()
+            elif args.command == "describe-capability":
+                payload = catalog.describe(args.kind, args.identifier)
+            else:
+                snapshot = catalog.snapshot()
+                payload = snapshot if args.kind is None else snapshot["methods" if args.kind == "method" else "skills"]
+        except CapabilityCatalogError as error:
+            parser.exit(2, json.dumps({"error": "capability_catalog_invalid", "reason": str(error)}) + "\n")
+        except ToolRegistryError:
+            parser.exit(2, '{"error":"capability_catalog_invalid","reason":"tool_registry_invalid"}\n')
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
+        return
     if args.command == "run-tool":
         try:
             payload = ToolRunnerService().run(
                 args.tool_id, parse_parameters(args.params) if args.params is not None else None,
                 params_file=args.params_file, dry_run=args.dry_run, allow_network=args.allow_network,
                 confirm_browser_session=args.confirm_browser_session, timeout=args.timeout, run_id=args.run_id,
-                project_id=args.project_id, stage=args.stage,
+                project_id=args.project_id, stage=args.stage, result_scope=args.result_scope,
             )
         except (ToolExecutionError, ToolRegistryError) as error:
             parser.exit(2, json.dumps({"error": "tool_execution_error", "reason": str(error)}) + "\n")

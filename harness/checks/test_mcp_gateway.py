@@ -7,11 +7,11 @@ import threading
 import pytest
 from jsonschema import Draft202012Validator
 
-from airmosaic.services.mcp_gateway import (
+from runtime.services.mcp_gateway import (
     MCPGateway, MCPGatewayError, MCPPolicy, METADATA_TOOLS,
 )
-from airmosaic.services.tool_registry import ToolRegistryService
-from airmosaic.services import tool_process
+from runtime.services.tool_registry import ToolRegistryService
+from runtime.services import tool_process
 
 
 @pytest.fixture
@@ -33,8 +33,8 @@ def test_discovery_is_catalog_derived_and_does_not_execute(monkeypatch):
     gateway = MCPGateway()
     expected = {n for n, t in gateway.registry._tools.items() if t["execution"]["enabled"]}
     assert {item["name"] for item in gateway.tools()} == expected
-    assert len(expected) == 16
-    assert len(gateway.skills) == 23
+    assert {"ml_regression_workflow", "ml_python_regression_workflow"} <= expected
+    assert {"machine-learning-model", "skill-authoring", "autoskill"} <= {x["name"] for x in gateway.skills}
     assert all(item["name"] != "airmosaic_run_tool" for item in gateway.tools())
     for item in gateway.tools():
         Draft202012Validator.check_schema(item["input_schema"])
@@ -62,7 +62,7 @@ def test_metadata_queries_work_without_personal_roots(monkeypatch, name, args):
 def test_metadata_default_arguments_and_reference_visibility():
     gateway = MCPGateway()
     result, error = gateway.call("airmosaic_list_tools", None)
-    assert not error and len(result["result"]) == 25
+    assert not error and len(result["result"]) == len(gateway.registry._tools)
     assert any(not t["invocation"]["execution_supported"] for t in result["result"])
 
 
@@ -152,7 +152,8 @@ def test_input_path_boundaries_apply_through_gateway(local_roots):
 def test_resources_expose_only_indexed_public_documents(local_roots):
     gateway = MCPGateway()
     uris = {resource["uri"] for resource in gateway.resources()}
-    assert len(uris) == 49
+    assert uris == {"airmosaic://catalog/tools", "airmosaic://catalog/datasets", "airmosaic://catalog/skills",
+                    "airmosaic://catalog/methods", "airmosaic://catalog/capabilities"} | set(gateway.documents)
     for resource in gateway.resources():
         body, mime = gateway.read_resource(resource["uri"])
         assert body and mime in {"application/json", "text/markdown"}

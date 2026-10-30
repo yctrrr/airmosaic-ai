@@ -9,7 +9,7 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: python_script
-  path: skills/model/IAM/gcam/03_data_extraction/scripts/xquery_technology_components.py
+  path: skills/model/04_integrated_impacts/gcam/03_data_extraction/scripts/xquery_technology_components.py
   argument_bindings:
     scenarios: --scenarios
     regions: --regions

@@ -1,7 +1,7 @@
 schema_version: 1
 tool_id: mlr3_workflow_reference
 title: mlr3 模型使用与项目跟踪
-description: 表格数据建模和预测方法说明，跟踪参考项目；尚无受控训练或预测适配器。
+description: 表格数据建模和预测方法参考；本条目不可执行，受限回归另用 ml_regression_workflow。
 category: model
 skill_id: mlr3-modeling
 owner_role: model-maintainer
@@ -9,7 +9,7 @@ implementation_status: reference
 registration_status: catalogued
 entrypoint:
   kind: reference
-  path: skills/model/machine_learning/mlr3/SKILL.md
+  path: skills/model/shared/machine_learning_model/frameworks/r/mlr3/SKILL.md
   argument_bindings: {}
 input_schema:
   type: object

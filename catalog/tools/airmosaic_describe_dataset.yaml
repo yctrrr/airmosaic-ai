@@ -9,10 +9,10 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: cli
-  path: airmosaic/cli.py
+  path: runtime/cli.py
   argument_bindings:
     dataset_id: positional:0
-  module: airmosaic.cli
+  module: runtime.cli
   subcommand: describe-dataset
 input_schema:
   type: object

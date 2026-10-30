@@ -26,6 +26,9 @@ from .tool_readiness import _configuration, _inside_git, _overlaps
 from .tool_registry import ToolRegistryService, repository_path
 from .tool_policies import ADAPTERS
 from . import tool_r
+from . import mlr3_workflow
+from . import python_ml_workflow
+from .ml_execution_paths import MLExecutionPaths
 
 
 def _now() -> str:
@@ -44,7 +47,7 @@ def _validate_values(parameters: dict, schema: dict) -> None:
 def _argv(entry: dict, parameters: dict, script: Path) -> list[str]:
     argv = [sys.executable, "-I", "-B", "-X", "utf8"]
     if entry["kind"] == "cli":
-        argv += ["-m", "airmosaic.cli", entry["subcommand"]]
+        argv += ["-m", "runtime.cli", entry["subcommand"]]
     else:
         argv += [str(script)]
     positional = {}
@@ -88,6 +91,7 @@ class ToolRunnerService:
             dry_run: bool = False, allow_network: bool = False, confirm_browser_session: bool = False,
             timeout: int = 300, run_id: str | None = None,
             project_id: str | None = None, stage: str | None = None,
+            result_scope: str = "auto",
             cancel_event: threading.Event | None = None) -> dict[str, Any]:
         if tool_id not in self.registry._tools:
             raise ToolExecutionError("unknown_tool")
@@ -104,7 +108,12 @@ class ToolRunnerService:
         run_id = run_id if run_id is not None else uuid4().hex
         if not isinstance(run_id, str) or not re.fullmatch("[a-f0-9]{32}", run_id):
             raise ToolExecutionError("invalid_run_id")
-        paths = ExecutionPaths(self.registry.repo_root, run_id, tool_id, project_id, stage)
+        if policy["adapter"] in {"mlr3_regression", "ml_python_regression"}:
+            paths = MLExecutionPaths(self.registry.repo_root, run_id, tool_id, project_id, stage, result_scope)
+        else:
+            if result_scope != "auto":
+                raise ToolExecutionError("result_scope_not_supported_by_adapter")
+            paths = ExecutionPaths(self.registry.repo_root, run_id, tool_id, project_id, stage)
         if params_file is not None:
             if parameters is not None:
                 raise ToolExecutionError("conflicting_parameter_sources")
@@ -120,6 +129,35 @@ class ToolRunnerService:
         for name, role in policy["path_parameters"].items():
             if name in params:
                 params[name] = str(paths.parameter(params[name], role))
+        workflow_task, r_library = None, None
+        if policy["adapter"] == "mlr3_regression":
+            workflow_task = mlr3_workflow.validate_configuration(
+                paths.read_parameters(params["task_config"], self.registry.repo_root), self.registry.repo_root)
+            for role in mlr3_workflow.required_roles(workflow_task) | {"artifacts"}:
+                mlr3_workflow.output_path(Path(params["out_dir"]), workflow_task["output_files"][role])
+            r_library = mlr3_workflow.selected_library(paths)
+            if Path(params["input_csv"]).stat().st_size > 64 * 1024 * 1024:
+                raise ToolExecutionError("workflow_input_too_large")
+        if policy["adapter"] == "ml_python_regression":
+            try:
+                workflow_task = python_ml_workflow.validate_configuration(
+                    paths.read_parameters(params["task_config"], self.registry.repo_root), self.registry.repo_root)
+            except (ValueError, TypeError, KeyError):
+                raise ToolExecutionError("invalid_python_ml_configuration") from None
+            for relative in python_ml_workflow.supported_outputs(workflow_task).values():
+                mlr3_workflow.output_path(Path(params["out_dir"]), relative)
+            mlr3_workflow.output_path(Path(params["out_dir"]), "artifacts.json")
+            if Path(params["input_csv"]).stat().st_size > 64 * 1024 * 1024:
+                raise ToolExecutionError("workflow_input_too_large")
+            if workflow_task["execution"]["purpose"] == "engineering_replay":
+                from .toy_assets import is_public_toy
+                if not is_public_toy(Path(params["input_csv"]), self.registry.repo_root):
+                    raise ToolExecutionError("engineering_replay_requires_manifest_synthetic_input")
+                if "review_bundle" in params:
+                    raise ToolExecutionError("review_bundle_conflicts_with_engineering_replay")
+            else:
+                from .model_plan_gate import inspect_python_review
+                inspect_python_review(workflow_task, self.registry.repo_root, params.get("review_bundle"))
         blockers: list[str] = []
         if tool["effects"]["network"] and not allow_network:
             blockers.append("network_permission_required")
@@ -150,6 +188,13 @@ class ToolRunnerService:
             "research_stage": stage,
             "scientific_validation": "not_run",
         }
+        if policy["adapter"] in {"mlr3_regression", "ml_python_regression"}:
+            record.update(layout="ml-flex-v1", result_scope=paths.scope)
+        if policy["adapter"] == "ml_python_regression":
+            record["python_ml_dependencies"] = {"status": "unverified", "optional_shap":
+                "requested" if "shap" in workflow_task["explanation"]["methods"] else "not_requested"}
+            record["model_plan"] = ("engineering_replay_only" if workflow_task["execution"]["purpose"] ==
+                                    "engineering_replay" else "control_records_checked_data_binding_pending")
         if is_r:
             record["r_dependencies"] = {"packages": tool["requirements"]["r_packages"],
                                         "status": "unverified"}
@@ -175,10 +220,30 @@ class ToolRunnerService:
                     target = checked_path(params[name])
                     (target.parent if role == "output_file" else target).mkdir(parents=True, exist_ok=True)
             env = child_environment(paths, model_root)
+            if workflow_task is not None and policy["adapter"] == "mlr3_regression":
+                params["task_config"] = str(mlr3_workflow.snapshot(
+                    workflow_task, paths, params, self.registry.repo_root))
+            if workflow_task is not None and policy["adapter"] == "ml_python_regression":
+                for relative in [*python_ml_workflow.supported_outputs(workflow_task).values(), "artifacts.json"]:
+                    if mlr3_workflow.output_path(Path(params["out_dir"]), relative).exists():
+                        raise ToolExecutionError("artifact_already_exists")
+                if workflow_task["execution"]["purpose"] == "new_study":
+                    from .model_plan_gate import require_python_plan
+                    record["model_review"] = require_python_plan(workflow_task, Path(params["input_csv"]),
+                        entry_path, review_bundle=params.get("review_bundle"))
+                    for name in ("AIRMOSAIC_CONFIG_DIR", "AIRMOSAIC_AUTH_DIR"):
+                        env[name] = str(paths.roots[name])
+                frozen = paths.temp / "python-workflow-task.json"
+                with frozen.open("x", encoding="utf-8", newline="\n") as handle:
+                    json.dump(workflow_task, handle, ensure_ascii=False, indent=2, allow_nan=False)
+                params["task_config"] = str(frozen)
+                for name in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+                    env[name] = "1"
             if is_r:
                 argv = tool_r.command(tool["entrypoint"], params, rscript)
+                options = {"library": r_library} if r_library is not None else {}
                 env = tool_r.environment(env, entry_path, tool["requirements"]["r_packages"],
-                                         paths.temp, params.get("out_dir"))
+                                         paths.temp, params.get("out_dir"), **options)
             else:
                 argv = _argv(tool["entrypoint"], params, entry_path)
             cancellation = {"cancel_event": cancel_event} if cancel_event is not None else {}
@@ -191,6 +256,13 @@ class ToolRunnerService:
                 record["process_tree_cleanup_confirmed"] = cleanup
             if record["status"] == "succeeded" and policy["adapter"] == "core_cli":
                 record["result_summary"] = _core_summary(tool_id, raw)
+            if policy["adapter"] == "ml_python_regression":
+                if code == 0 and reason is None:
+                    record["python_ml_dependencies"]["status"] = "available"
+                    if not python_ml_workflow.validate_outputs(Path(params["out_dir"])):
+                        record.update(status="failed", reason="workflow_output_contract_failed")
+                elif code == 71 and reason is None:
+                    record["reason"] = "python_regression_failed"
             if is_r and reason is None:
                 if code == 70:
                     record["r_dependencies"]["status"] = "unavailable"
@@ -202,6 +274,10 @@ class ToolRunnerService:
                 if code == 0 and not tool_r.outputs_complete(
                         policy["adapter"], Path(params.get("output_dir", params.get("out_dir")))):
                     record.update(status="failed", reason="expected_outputs_missing")
+                if code == 0 and workflow_task is not None and not mlr3_workflow.validate_outputs(Path(params["out_dir"])):
+                    record.update(status="failed", reason="workflow_output_contract_failed")
+        except ToolExecutionError as error:
+            record.update(status="failed", reason=str(error))
         except (OSError, ValueError):
             record.update(status="failed", reason="execution_or_result_error")
         except KeyboardInterrupt:

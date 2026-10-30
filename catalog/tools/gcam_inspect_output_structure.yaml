@@ -9,7 +9,7 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: r_script
-  path: skills/model/IAM/gcam/01_output_structure/scripts/inspect_gcam_xml_structure.R
+  path: skills/model/04_integrated_impacts/gcam/01_output_structure/scripts/inspect_gcam_xml_structure.R
   argument_bindings:
     output_dir: --output-dir=
     max_memory: --max-memory=

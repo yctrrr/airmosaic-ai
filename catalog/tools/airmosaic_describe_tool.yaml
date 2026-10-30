@@ -9,11 +9,11 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: cli
-  path: airmosaic/cli.py
+  path: runtime/cli.py
   argument_bindings:
     tool_id: positional:0
     format: --format
-  module: airmosaic.cli
+  module: runtime.cli
   subcommand: describe-tool
   default_arguments:
     format: json

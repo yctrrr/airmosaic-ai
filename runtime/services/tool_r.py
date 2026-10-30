@@ -1,4 +1,4 @@
-"""Fixed R launch protocol for the two reviewed GCAM adapters."""
+"""Fixed R launch protocol for reviewed model-analysis adapters."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ import platform
 from .tool_execution_paths import checked_path, ToolExecutionError
 
 
-R_ADAPTERS = {"gcam_inspect", "gcam_plot"}
+R_ADAPTERS = {"gcam_inspect", "gcam_plot", "mlr3_regression"}
 # No task value is interpolated into R source. Rscript forwards trailing values
 # to commandArgs(TRUE) itself. Namespace checks precede source.
 R_GUARD = (
@@ -55,7 +55,7 @@ def command(entry: dict, parameters: dict, executable: Path) -> list[str]:
 
 
 def environment(env: dict, entry: Path, packages: list[str], temp: Path,
-                output: str | None) -> dict:
+                output: str | None, library: Path | None = None) -> dict:
     env.update(AIRMOSAIC_R_ENTRYPOINT=str(entry), AIRMOSAIC_R_PACKAGES=",".join(packages))
     if os.name == "nt":
         # R native libraries need this OS metadata during teardown on Windows.
@@ -66,13 +66,18 @@ def environment(env: dict, entry: Path, packages: list[str], temp: Path,
     # --vanilla skips profiles/Renviron. Explicit overrides also prevent R's
     # default personal and site library paths from reaching unrelated state.
     for key in ("R_LIBS", "R_LIBS_USER", "R_LIBS_SITE"):
-        env[key] = str(temp / "r-library")
+        env[key] = str(library if library is not None else temp / "r-library")
+    for key in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "R_RANGER_NUM_THREADS"):
+        env[key] = "1"
     if output is not None:
         env["UNIT_PRICE_OUT_DIR"] = output
     return env
 
 
 def outputs_complete(adapter: str, output: Path) -> bool:
+    if adapter == "mlr3_regression":
+        from .mlr3_workflow import validate_outputs
+        return validate_outputs(output)
     try:
         return all((path := checked_path(str(output / name))).is_file() and path.stat().st_size > 0
                    for name in OUTPUTS[adapter])

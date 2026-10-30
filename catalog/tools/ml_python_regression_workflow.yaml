@@ -1,0 +1,76 @@
+schema_version: 1
+tool_id: ml_python_regression_workflow
+title: Bounded Python regression and descriptive contributions
+description: Explicit train/validation/test sklearn regression candidates, validation
+  selection, frozen test evaluation and fresh model reload verification.
+category: model
+skill_id: machine-learning-model
+owner_role: model-maintainer
+implementation_status: implemented
+registration_status: registered
+entrypoint:
+  kind: python_script
+  path: skills/model/shared/machine_learning_model/scripts/python/run_regression.py
+  argument_bindings:
+    input_csv: --input-csv
+    task_config: --task-config
+    out_dir: --out-dir
+    review_bundle: --review-bundle
+input_schema:
+  type: object
+  properties:
+    input_csv:
+      type: string
+      description: Explicit local CSV under the authorized asset data/results roots.
+    task_config:
+      type: string
+      description: Explicit JSON task settings under personal configuration, asset
+        data/results or repository configuration examples.
+    review_bundle:
+      type: string
+      description: Reviewed new-study plan bundle; required for new_study execution.
+    out_dir:
+      type: string
+      description: Optional chosen output folder under local ignored skill results
+        or the selected external project root.
+  required:
+  - input_csv
+  - task_config
+  - out_dir
+  additionalProperties: false
+output_schema:
+  type: object
+requirements:
+  python: '>=3.11'
+  python_packages:
+  - numpy
+  - scikit-learn
+  - joblib
+  r_packages: []
+  executables: []
+  configuration:
+  - name: AIRMOSAIC_ASSETS_DIR
+    role: workspace
+    kind: directory
+  resources: []
+  manual_checks:
+  - Prepared explicit row keys and split labels; source lineage is caller supplied.
+  - Review new-study plan before running; examples are engineering replays only.
+  - SHAP is optional and separately selected; missing requested dependencies fail.
+authentication:
+  method: none
+effects:
+  reads:
+  - task_output
+  writes:
+  - task_output
+  network: false
+documentation: skills/model/shared/machine_learning_model/SKILL.md
+execution:
+  enabled: true
+  adapter: ml_python_regression
+  path_parameters:
+    input_csv: input_file
+    task_config: configuration_file
+    out_dir: output_directory
+    review_bundle: configuration_file

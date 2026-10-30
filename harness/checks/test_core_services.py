@@ -1,6 +1,6 @@
 import pytest
 
-from airmosaic.services import CausalDesignService, DataAccessService, DataCatalogService
+from runtime.services import CausalDesignService, DataAccessService, DataCatalogService
 
 
 def test_catalog_loads_initial_datasets():

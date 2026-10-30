@@ -8,10 +8,10 @@ import shutil
 
 import pytest
 
-from airmosaic.services import ToolRunnerService, ToolExecutionError, ToolRegistryService
-from airmosaic.services import tool_r, tool_runner
-from airmosaic.services.tool_execution_paths import ExecutionPaths
-from airmosaic.services.tool_process import child_environment, execute
+from runtime.services import ToolRunnerService, ToolExecutionError, ToolRegistryService
+from runtime.services import tool_r, tool_runner
+from runtime.services.tool_execution_paths import ExecutionPaths
+from runtime.services.tool_process import child_environment, execute
 from test_tool_runner import synthetic_runner
 
 

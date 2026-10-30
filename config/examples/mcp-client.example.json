@@ -2,7 +2,7 @@
   "mcpServers": {
     "airmosaic": {
       "command": "<PROJECT_PYTHON>",
-      "args": ["-I", "-B", "-X", "utf8", "-m", "airmosaic.mcp_server"],
+      "args": ["-I", "-B", "-X", "utf8", "-m", "runtime.mcp_server"],
       "env": {
         "AIRMOSAIC_ASSETS_DIR": "<PRIVATE_ASSETS_ROOT_OUTSIDE_GIT>",
         "AIRMOSAIC_CONFIG_DIR": "<EXISTING_CONFIG_DIR>",

@@ -9,7 +9,7 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: r_script
-  path: skills/model/IAM/gcam/03_data_extraction/scripts/plot_sector_change.R
+  path: skills/model/04_integrated_impacts/gcam/03_data_extraction/scripts/plot_sector_change.R
   argument_bindings:
     sectors: --sectors
     scenarios: --scenarios

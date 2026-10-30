@@ -14,9 +14,9 @@ import zipfile
 import pytest
 import yaml
 
-from airmosaic.services import ToolExecutionError, ToolRegistryError, ToolRegistryService, ToolRunnerService
-from airmosaic.services import tool_process, tool_runner
-from airmosaic.services.tool_execution_paths import parse_parameters
+from runtime.services import ToolExecutionError, ToolRegistryError, ToolRegistryService, ToolRunnerService
+from runtime.services import tool_process, tool_runner
+from runtime.services.tool_execution_paths import parse_parameters
 
 
 ROOT = Path(__file__).absolute().parents[2]
@@ -182,7 +182,7 @@ def test_only_explicit_nonsecret_parameter_file_is_read(tmp_path, roots, monkeyp
 
 def test_missing_dependencies_and_browser_attestation(roots, monkeypatch):
     from importlib.metadata import PackageNotFoundError
-    from airmosaic.services import tool_readiness
+    from runtime.services import tool_readiness
     monkeypatch.setattr(tool_readiness.metadata, "version", lambda _: (_ for _ in ()).throw(PackageNotFoundError()))
     params = {key: "1" for key in ("years", "locations", "causes", "ages", "sexes", "measures", "metrics")}
     runner = ToolRunnerService()
@@ -207,7 +207,7 @@ def test_nonzero_stderr_does_not_leak(tmp_path, roots):
 
 
 def test_bounded_capture_of_owned_process(tmp_path, roots):
-    from airmosaic.services.tool_execution_paths import ExecutionPaths
+    from runtime.services.tool_execution_paths import ExecutionPaths
     paths = ExecutionPaths(ROOT, "b" * 32, "airmosaic_list_datasets", project_id="example_project", stage="01_socioeconomic_natural_change")
     paths.create()
     result = tool_process.execute([sys.executable, "-I", "-c", "print('x'*2000000)"], paths.temp,
@@ -216,7 +216,7 @@ def test_bounded_capture_of_owned_process(tmp_path, roots):
 
 
 def test_descendant_holding_stdout_cannot_hang_runner(roots):
-    from airmosaic.services.tool_execution_paths import ExecutionPaths
+    from runtime.services.tool_execution_paths import ExecutionPaths
     paths = ExecutionPaths(ROOT, "c" * 32, "airmosaic_list_datasets", project_id="example_project", stage="01_socioeconomic_natural_change")
     paths.create()
     code = "import subprocess,sys; subprocess.Popen([sys.executable,'-c','import time;time.sleep(30)'])"
@@ -228,7 +228,7 @@ def test_descendant_holding_stdout_cannot_hang_runner(roots):
 
 
 def test_interruption_cleans_owned_process(roots, monkeypatch):
-    from airmosaic.services.tool_execution_paths import ExecutionPaths
+    from runtime.services.tool_execution_paths import ExecutionPaths
     paths = ExecutionPaths(ROOT, "d" * 32, "airmosaic_list_datasets", project_id="example_project", stage="01_socioeconomic_natural_change")
     paths.create()
     owned = []
@@ -359,7 +359,7 @@ def test_real_gcam_aggregate_synthetic_rows(roots):
 
 
 def test_gcam_preflight_checks_selected_database_and_jar(roots, tmp_path, monkeypatch):
-    from airmosaic.services import tool_readiness
+    from runtime.services import tool_readiness
     model = tmp_path / "model"
     (model / "libs/jars").mkdir(parents=True)
     monkeypatch.setenv("GCAM_RELEASE_DIR", str(model))
@@ -393,7 +393,7 @@ def test_reparse_input_is_rejected_before_target_access(roots, monkeypatch):
 
 
 def test_cache_query_redacts_filenames_and_rejects_traversal(roots):
-    from airmosaic.services import DataCatalogService
+    from runtime.services import DataCatalogService
     workspace = roots["AIRMOSAIC_ASSETS_DIR"]
     meta = DataCatalogService().describe_dataset("worldpop_population_grid")
     root = Path((meta.get("cache_root") or meta["default_cache_root"]).replace("${AIRMOSAIC_ASSETS_DIR}", str(workspace)))
@@ -409,13 +409,13 @@ def test_cache_query_redacts_filenames_and_rejects_traversal(roots):
 
 @pytest.mark.parametrize("arguments", [["--timeout", "synthetic-private"], ["--synthetic-private"], ["--params", "synthetic-private"]])
 def test_cli_parser_errors_do_not_echo_values(roots, arguments):
-    result = subprocess.run([sys.executable, "-B", "-m", "airmosaic.cli", "run-tool", "--project-id", "example_project", "--stage", "01_socioeconomic_natural_change",
+    result = subprocess.run([sys.executable, "-B", "-m", "runtime.cli", "run-tool", "--project-id", "example_project", "--stage", "01_socioeconomic_natural_change",
                              "worldpop_download", *arguments], capture_output=True, text=True, timeout=30)
     assert result.returncode == 2 and "synthetic-private" not in result.stderr
 
 
 def test_cli_errors_are_value_free(roots):
-    result = subprocess.run([sys.executable, "-B", "-m", "airmosaic.cli", "run-tool", "--project-id", "example_project", "--stage", "01_socioeconomic_natural_change",
+    result = subprocess.run([sys.executable, "-B", "-m", "runtime.cli", "run-tool", "--project-id", "example_project", "--stage", "01_socioeconomic_natural_change",
                              "worldpop_download", "--params", '{"project":"synthetic-private/../"}'],
                             capture_output=True, text=True, timeout=30)
     assert result.returncode == 2 and "synthetic-private" not in result.stderr
@@ -425,7 +425,7 @@ def test_cli_errors_are_value_free(roots):
 @pytest.mark.parametrize("command", ["describe-dataset", "check-availability"])
 def test_dataset_cli_errors_do_not_echo_values_or_tracebacks(roots, command):
     marker = "synthetic_private_missing_dataset"
-    result = subprocess.run([sys.executable, "-I", "-B", "-m", "airmosaic.cli", command, marker],
+    result = subprocess.run([sys.executable, "-I", "-B", "-m", "runtime.cli", command, marker],
                             capture_output=True, text=True, timeout=30)
     assert result.returncode == 2
     output = result.stdout + result.stderr

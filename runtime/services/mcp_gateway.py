@@ -9,19 +9,17 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import dataclass
 import json
-from pathlib import PurePosixPath
-import re
 import threading
 from typing import Any
 
 from jsonschema import Draft202012Validator
-import yaml
 
 from .data_catalog import DataCatalogService
 from .tool_execution_paths import ToolExecutionError
-from .tool_registry import ToolRegistryError, ToolRegistryService, repository_path
+from .tool_registry import ToolRegistryError, ToolRegistryService
 from .tool_runner import ToolRunnerService, _validate_values
 from .asset_layout import STAGES
+from .capability_catalog import CapabilityCatalogService
 
 
 METADATA_TOOLS = frozenset({
@@ -65,8 +63,9 @@ class MCPGateway:
         self.entries = {name: deepcopy(tool) for name, tool in self.registry._tools.items()
                         if tool.get("execution", {}).get("enabled")}
         self._validate_policy()
-        self.documents: dict[str, str] = {}
-        self.skills = self._skill_index()
+        self.capabilities = CapabilityCatalogService(self.registry)
+        self.documents = self.capabilities.documents
+        self.skills = self.capabilities.skills
 
     def _validate_policy(self) -> None:
         p = self.policy
@@ -105,7 +104,7 @@ class MCPGateway:
         parameters = self.parameter_schema(tool_id)
         if tool_id in METADATA_TOOLS:
             return parameters
-        return {
+        schema = {
             "type": "object", "properties": {
                 "parameters": parameters,
                 "dry_run": {"type": "boolean", "default": True},
@@ -117,6 +116,10 @@ class MCPGateway:
                 "stage": {"type": "string", "enum": list(STAGES)},
             }, "required": ["parameters", "project_id", "stage"], "additionalProperties": False,
         }
+        if tool_id in {"ml_regression_workflow", "ml_python_regression_workflow"}:
+            schema["required"] = ["parameters"]
+            schema["properties"]["result_scope"] = {"enum": ["auto", "skill", "workflow", "project"], "default": "auto"}
+        return schema
 
     def tools(self) -> list[dict]:
         result = []
@@ -167,6 +170,7 @@ class MCPGateway:
                     timeout=arguments.get("timeout", min(300, self.policy.max_timeout)),
                     run_id=arguments.get("run_id"), cancel_event=cancel_event,
                     project_id=arguments.get("project_id"), stage=arguments.get("stage"),
+                    result_scope=arguments.get("result_scope", "auto"),
                 )
                 mode = "preview" if dry_run else "execution"
                 error = result["status"] in {"blocked", "failed"}
@@ -212,57 +216,13 @@ class MCPGateway:
                 for item in self.catalog.search_datasets(args["query"])]
         raise MCPGatewayError("tool_not_exposed")
 
-    def _skill_index(self) -> list[dict]:
-        # Follow finite public method/entrypoint references, never rglob personal
-        # directories or accept a client-supplied filesystem path.
-        index_path = repository_path(self.registry.repo_root, "methods/index.yaml")
-        methods = yaml.safe_load(index_path.read_text(encoding="utf-8"))
-        candidates = {p for method in methods["methods"] for p in method.get("skills", [])}
-        for entry in self.registry._tools.values():
-            path = PurePosixPath(entry["entrypoint"]["path"])
-            if path.parts[0] != "skills":
-                continue
-            for parent in path.parents:
-                if parent == PurePosixPath("skills"):
-                    break
-                candidate = (parent / "SKILL.md").as_posix()
-                if repository_path(self.registry.repo_root, candidate).is_file():
-                    candidates.add(candidate)
-                    break
-        result, seen = [], set()
-        for relative in sorted(candidates):
-            if not relative.startswith("skills/") or not relative.endswith("/SKILL.md"):
-                raise MCPGatewayError("invalid_skill_reference")
-            body = self._public_text(relative)
-            if not body.startswith("---"):
-                raise MCPGatewayError("invalid_skill_reference")
-            front = yaml.safe_load(body.split("---", 2)[1])
-            name = front.get("name")
-            if not isinstance(name, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", name) or name in seen:
-                raise MCPGatewayError("invalid_skill_reference")
-            if not isinstance(front.get("description"), str):
-                raise MCPGatewayError("invalid_skill_reference")
-            seen.add(name)
-            locations = {}
-            for language, path in (("en", relative), ("zh", relative.replace("SKILL.md", "SKILL_ZH.md"))):
-                if repository_path(self.registry.repo_root, path).is_file():
-                    uri = f"airmosaic://skills/{name}/{language}"
-                    self.documents[uri] = path
-                    locations[language] = uri
-            result.append({"name": name, "description": front["description"],
-                           "path": relative, "resources": locations})
-        return result
-
     def _public_text(self, relative: str) -> str:
-        path = repository_path(self.registry.repo_root, relative)
-        if path.stat().st_size > MAX_MESSAGE_BYTES:
-            raise MCPGatewayError("mcp_payload_too_large")
-        return path.read_text(encoding="utf-8")
+        return self.capabilities.public_text(relative)
 
     def resources(self) -> list[dict]:
         return [
             {"uri": f"airmosaic://catalog/{name}", "name": name, "mime_type": "application/json"}
-            for name in ("tools", "datasets", "skills")
+            for name in ("tools", "datasets", "skills", "methods", "capabilities")
         ] + [{"uri": uri, "name": uri.removeprefix("airmosaic://"), "mime_type": "text/markdown"}
              for uri in sorted(self.documents)]
 
@@ -273,6 +233,10 @@ class MCPGateway:
             return self.serialize(self._metadata("airmosaic_list_datasets", {})), "application/json"
         if uri == "airmosaic://catalog/skills":
             return self.serialize(self.skills), "application/json"
+        if uri == "airmosaic://catalog/methods":
+            return self.serialize(self.capabilities.methods), "application/json"
+        if uri == "airmosaic://catalog/capabilities":
+            return self.serialize(self.capabilities.snapshot()), "application/json"
         if uri in self.documents:
             return self._public_text(self.documents[uri]), "text/markdown"
         raise MCPGatewayError("resource_not_exposed")

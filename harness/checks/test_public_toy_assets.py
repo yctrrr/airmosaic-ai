@@ -7,10 +7,10 @@ import shutil
 
 import pytest
 
-from airmosaic.services import DataAccessService, ToolExecutionError, ToolRunnerService
-from airmosaic.services.asset_layout import STAGES
-from airmosaic.services.toy_assets import is_public_toy
-from airmosaic.services.tool_execution_paths import ExecutionPaths
+from runtime.services import DataAccessService, ToolExecutionError, ToolRunnerService
+from runtime.services.asset_layout import STAGES
+from runtime.services.toy_assets import is_public_toy
+from runtime.services.tool_execution_paths import ExecutionPaths
 
 
 ROOT = Path(__file__).absolute().parents[2]

@@ -5,10 +5,10 @@ from pathlib import Path
 
 import pytest
 
-from airmosaic.services import DataAccessService, ToolExecutionError, ToolRunnerService
-from airmosaic.services.asset_layout import STAGES
-from airmosaic.services.tool_execution_paths import ExecutionPaths
-from airmosaic.services.mcp_gateway import MCPGateway
+from runtime.services import DataAccessService, ToolExecutionError, ToolRunnerService
+from runtime.services.asset_layout import STAGES
+from runtime.services.tool_execution_paths import ExecutionPaths
+from runtime.services.mcp_gateway import MCPGateway
 
 
 REPO = Path(__file__).absolute().parents[2]

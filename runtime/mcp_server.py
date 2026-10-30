@@ -12,6 +12,7 @@ import threading
 
 from .services.mcp_gateway import MCPGateway, MCPGatewayError, MCPPolicy
 from .services.tool_registry import ToolRegistryError
+from .services.capability_catalog import CapabilityCatalogError
 
 
 def create_server(gateway: MCPGateway | None = None):
@@ -154,7 +155,7 @@ def main():
         print(json.dumps({"error": "mcp_dependency_unavailable", "next_step": "Install the mcp optional extra."}),
               file=sys.stderr)
         raise SystemExit(2) from None
-    except (MCPGatewayError, ToolRegistryError):
+    except (MCPGatewayError, ToolRegistryError, CapabilityCatalogError):
         print('{"error":"invalid_mcp_server_configuration"}', file=sys.stderr)
         raise SystemExit(2) from None
     except KeyboardInterrupt:

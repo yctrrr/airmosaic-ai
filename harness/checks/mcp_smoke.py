@@ -11,7 +11,7 @@ async def check():
 
     parameters = StdioServerParameters(
         command=sys.executable,
-        args=["-I", "-B", "-X", "utf8", "-m", "airmosaic.mcp_server"],
+        args=["-I", "-B", "-X", "utf8", "-m", "runtime.mcp_server"],
     )
     async with Client(parameters, read_timeout_seconds=15) as client:
         tools = await client.list_tools()

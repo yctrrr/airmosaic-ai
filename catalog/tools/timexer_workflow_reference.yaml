@@ -9,7 +9,7 @@ implementation_status: reference
 registration_status: catalogued
 entrypoint:
   kind: reference
-  path: skills/model/machine_learning/timexer/SKILL.md
+  path: skills/model/shared/machine_learning_model/models/time_series/timexer/SKILL.md
   argument_bindings: {}
 input_schema:
   type: object

@@ -5,6 +5,7 @@ from __future__ import annotations
 from importlib import metadata
 import os
 from pathlib import Path
+import re
 import sys
 from typing import Any
 
@@ -81,8 +82,11 @@ def check_readiness(tool: dict[str, Any], repo_root: Path) -> dict[str, Any]:
         entry_exists = False
     checks.append({"kind": "entrypoint", "name": entry["path"],
                    "status": "available" if entry_exists else "missing_entrypoint"})
+    minimum = re.fullmatch(r">=(3)\.(\d{1,2})(?:\.(\d{1,2}))?", tool["requirements"]["python"])
+    required = tuple(int(value or 0) for value in minimum.groups()) if minimum else None
     checks.append({"kind": "python", "name": tool["requirements"]["python"],
-                   "status": "available" if sys.version_info >= (3, 10) else "missing_dependency"})
+                   "status": ("unverified" if required is None else
+                              "available" if sys.version_info >= required else "missing_dependency")})
     requirements = tool["requirements"]
     for name in requirements["python_packages"]:
         try:

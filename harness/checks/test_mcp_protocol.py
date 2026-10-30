@@ -14,10 +14,10 @@ pytest.importorskip("mcp", reason="Install the mcp optional extra for protocol c
 from mcp import Client
 from mcp.client.stdio import StdioServerParameters
 
-from airmosaic.mcp_server import create_server
-from airmosaic.services.mcp_gateway import MCPGateway, MCPPolicy
-from airmosaic.services.tool_process import child_environment, execute
-from airmosaic.services.tool_execution_paths import ExecutionPaths
+from runtime.mcp_server import create_server
+from runtime.services.mcp_gateway import MCPGateway, MCPPolicy
+from runtime.services.tool_process import child_environment, execute
+from runtime.services.tool_execution_paths import ExecutionPaths
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -40,9 +40,10 @@ def test_official_client_metadata_and_public_resources(local_roots):
     async def check():
         async with Client(create_server(), read_timeout_seconds=10) as client:
             tools = await client.list_tools()
-            assert len(tools.tools) == 16
+            gateway = MCPGateway()
+            assert {t.name for t in tools.tools} == set(gateway.entries)
             resources = await client.list_resources()
-            assert len(resources.resources) == 49
+            assert {r.uri for r in resources.resources} == {r["uri"] for r in gateway.resources()}
             result = await client.call_tool("airmosaic_list_datasets")
             assert not result.is_error and len(result.structured_content["result"]) == 9
             result = await client.call_tool("synthetic-private-marker", {})
@@ -51,7 +52,17 @@ def test_official_client_metadata_and_public_resources(local_roots):
             assert result.is_error and "synthetic-private-marker" not in result.model_dump_json()
             resource = await client.read_resource("airmosaic://catalog/skills")
             skills = json.loads(resource.contents[0].text)
-            assert len(skills) == 23
+            assert {s["name"] for s in skills} == {s["name"] for s in gateway.skills}
+            resource = await client.read_resource("airmosaic://catalog/capabilities")
+            capabilities = json.loads(resource.contents[0].text)
+            assert capabilities["validation_scope"] == "metadata_consistency_only"
+            assert capabilities["scientific_acceptance"] == "not_assessed"
+            assert {s["name"] for s in capabilities["skills"]} == {s["name"] for s in skills}
+            methods = await client.read_resource("airmosaic://catalog/methods")
+            methods = json.loads(methods.contents[0].text)
+            assert methods == capabilities["methods"]
+            method_doc = await client.read_resource(methods[0]["resources"]["en"])
+            assert "#" in method_doc.contents[0].text
             resource = await client.read_resource(skills[0]["resources"]["en"])
             assert "#" in resource.contents[0].text
         assert not list(local_roots["AIRMOSAIC_ASSETS_DIR"].iterdir())
@@ -63,11 +74,11 @@ def test_official_stdio_subprocess_from_external_directory(tmp_path, local_roots
     env.update({k: str(v) for k, v in local_roots.items()})
     async def check():
         params = StdioServerParameters(command=sys.executable,
-            args=["-I", "-B", "-X", "utf8", "-m", "airmosaic.mcp_server"],
+            args=["-I", "-B", "-X", "utf8", "-m", "runtime.mcp_server"],
             cwd=tmp_path, env=env)
         async with Client(params, read_timeout_seconds=15) as client:
             tools = await client.list_tools()
-            assert len(tools.tools) == 16
+            assert {t.name for t in tools.tools} == set(MCPGateway().entries)
             result = await client.call_tool("airmosaic_list_tools", {"category": "model"})
             assert not result.is_error and result.structured_content["result"]
             result = await client.call_tool("worldpop_download", {"parameters": {"project": "wpgp"}, "project_id": "example_project", "stage": "01_socioeconomic_natural_change"})
@@ -148,7 +159,7 @@ def test_malformed_wire_requests_do_not_echo_values(tmp_path):
     async def check():
         env = {key: os.environ[key] for key in ("SystemRoot", "WINDIR", "PATH") if key in os.environ}
         process = await asyncio.create_subprocess_exec(
-            sys.executable, "-I", "-B", "-X", "utf8", "-m", "airmosaic.mcp_server",
+            sys.executable, "-I", "-B", "-X", "utf8", "-m", "runtime.mcp_server",
             cwd=tmp_path, env=env, stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
         )
@@ -197,11 +208,13 @@ def _synthetic_process_gateway(tmp_path):
     """A catalog-bound fixture starts a parent and descendant, without network."""
     import shutil
     import yaml
-    from airmosaic.services.tool_registry import ToolRegistryService
+    from runtime.services.tool_registry import ToolRegistryService
     repo = tmp_path / 'synthetic-repository'
     for directory in ['catalog/tools', 'catalog/schemas', 'methods']:
         (repo / directory).mkdir(parents=True)
-    (repo / 'methods/index.yaml').write_text('methods: []\n', encoding='utf-8')
+    (repo / 'methods/index.yaml').write_text('schema_version: 2\nmethods: []\n', encoding='utf-8')
+    (repo / 'catalog/skills.yaml').write_text(
+        'schema_version: 1\npurpose: Synthetic process fixture\nskills: []\n', encoding='utf-8')
     shutil.copyfile(ROOT / 'catalog/schemas/tool.schema.json', repo / 'catalog/schemas/tool.schema.json')
     manifest = yaml.safe_load((ROOT / 'catalog/tools/worldpop_download.yaml').read_text(encoding='utf-8'))
     manifest['requirements']['python_packages'] = []

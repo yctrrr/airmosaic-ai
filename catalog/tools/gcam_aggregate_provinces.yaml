@@ -9,7 +9,7 @@ implementation_status: implemented
 registration_status: registered
 entrypoint:
   kind: python_script
-  path: skills/model/IAM/gcam/03_data_extraction/scripts/xquery_province_aggregator.py
+  path: skills/model/04_integrated_impacts/gcam/03_data_extraction/scripts/xquery_province_aggregator.py
   argument_bindings:
     input_csv: --input-csv
     out_dir: --out-dir

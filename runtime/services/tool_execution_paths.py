@@ -11,6 +11,7 @@ from .tool_paths import local_path
 from .tool_readiness import ROOT_NAMES, _inside_git, _overlaps
 from .asset_layout import execution_context
 from .toy_assets import is_public_toy
+from .public_data_assets import is_public_dataset
 
 
 class ToolExecutionError(ValueError):
@@ -31,6 +32,21 @@ def checked_path(value: str) -> Path:
         raise ToolExecutionError("invalid_local_path") from None
 
 
+def separated_roots(repo_root: Path) -> dict[str, Path]:
+    roots: dict[str, Path] = {}
+    for name in ROOT_NAMES:
+        value = os.environ.get(name, "")
+        if not value.strip():
+            raise ToolExecutionError("missing_separated_roots")
+        root = checked_path(value)
+        if not root.is_dir() or _inside_git(root) or _overlaps(root, repo_root):
+            raise ToolExecutionError("invalid_separated_roots")
+        if any(_overlaps(root, other) for other in roots.values()):
+            raise ToolExecutionError("overlapping_roots")
+        roots[name] = root
+    return roots
+
+
 class ExecutionPaths:
     def __init__(self, repo_root: Path, run_id: str, tool_id: str,
                  project_id: str | None = None, stage: str | None = None):
@@ -38,18 +54,8 @@ class ExecutionPaths:
             project_id, stage = execution_context(project_id, stage)
         except ValueError as error:
             raise ToolExecutionError(str(error)) from None
-        self.roots: dict[str, Path] = {}
         self.repo_root = repo_root
-        for name in ROOT_NAMES:
-            value = os.environ.get(name, "")
-            if not value.strip():
-                raise ToolExecutionError("missing_separated_roots")
-            root = checked_path(value)
-            if not root.is_dir() or _inside_git(root) or _overlaps(root, repo_root):
-                raise ToolExecutionError("invalid_separated_roots")
-            if any(_overlaps(root, other) for other in self.roots.values()):
-                raise ToolExecutionError("overlapping_roots")
-            self.roots[name] = root
+        self.roots = separated_roots(repo_root)
         self.assets = self.roots[ROOT_NAMES[0]]
         self.run_root = checked_path(str(self.assets / "results" / project_id / run_id))
         self.output = checked_path(str(self.run_root / stage / tool_id))
@@ -79,12 +85,14 @@ class ExecutionPaths:
         return checked_path(value)
 
     def parameter(self, value: str, role: str) -> Path:
+        if role == "configuration_file":
+            return self.parameter_file(value, self.repo_root)
         path = self.expand(value)
         if role == "input_file":
             if path.is_relative_to(self.repo_root / "assets"):
-                if is_public_toy(path, self.repo_root):
+                if is_public_toy(path, self.repo_root) or is_public_dataset(path, self.repo_root):
                     return path
-                raise ToolExecutionError("unlisted_or_changed_toy_asset")
+                raise ToolExecutionError("unlisted_or_changed_public_asset")
             allowed = any(path.is_relative_to(self.assets / base) for base in ("data", "results"))
             relative = path.relative_to(self.assets) if allowed else Path()
             reserved = {"auth", "secrets", "browser_profiles", ".git", ".env", "credentials", "records", "temp"}
@@ -110,6 +118,17 @@ class ExecutionPaths:
             path.mkdir(parents=True, exist_ok=False)
 
     def read_parameters(self, value: str, repo_root: Path) -> dict:
+        path = self.parameter_file(value, repo_root)
+        try:
+            if path.stat().st_size > 1024 * 1024:
+                raise ToolExecutionError("parameters_too_large")
+            with path.open(encoding="utf-8-sig") as handle:
+                return parse_parameters(handle.read(1024 * 1024 + 1))
+        except (OSError, UnicodeError):
+            raise ToolExecutionError("parameter_file_unavailable") from None
+
+    def parameter_file(self, value: str, repo_root: Path) -> Path:
+        """Validate an explicitly selected JSON settings file without reading it."""
         if not Path(value).is_absolute() and "${" not in value:
             if not value.replace("\\", "/").startswith("config/examples/"):
                 raise ToolExecutionError("relative_parameter_file_requires_examples")
@@ -123,13 +142,9 @@ class ExecutionPaths:
         if any(part.casefold() in {"auth", "secrets", "credentials", "browser_profiles", ".git", "records", "temp"}
                for part in path.relative_to(next(root for root in allowed if path.is_relative_to(root))).parts):
             raise ToolExecutionError("private_parameter_file")
-        try:
-            if path.stat().st_size > 1024 * 1024:
-                raise ToolExecutionError("parameters_too_large")
-            with path.open(encoding="utf-8-sig") as handle:
-                return parse_parameters(handle.read(1024 * 1024 + 1))
-        except (OSError, UnicodeError):
-            raise ToolExecutionError("parameter_file_unavailable") from None
+        if not path.is_file():
+            raise ToolExecutionError("parameter_file_unavailable")
+        return path
 
 
 def parse_parameters(value: str) -> dict:

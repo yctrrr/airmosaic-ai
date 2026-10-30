@@ -9,7 +9,7 @@ implementation_status: reference
 registration_status: catalogued
 entrypoint:
   kind: reference
-  path: skills/model/IAM/gcam/02_configuration/SKILL.md
+  path: skills/model/04_integrated_impacts/gcam/02_configuration/SKILL.md
   argument_bindings: {}
 input_schema:
   type: object
