@@ -6,12 +6,12 @@
 
 <!-- README-I18N:END -->
 
-`airmosaic/` 程序包提供公共 CLI、MCP 和执行服务，安装信息位于仓库顶层。工具编号及专业计算逻辑不变。
+`runtime/` 程序包提供公共 CLI、MCP 和执行服务，安装信息位于仓库顶层。工具编号及专业计算逻辑不变。
 
 ```sh
 python -m pip install -e '.[dev]'
-python -m airmosaic.cli list-tools
-python -m airmosaic.cli list-datasets
+python -m runtime.cli list-tools
+python -m runtime.cli list-datasets
 python -m pytest -q -p no:cacheprovider
 ```
 

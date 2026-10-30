@@ -6,12 +6,12 @@
 
 <!-- README-I18N:END -->
 
-The `airmosaic/` package implements the common CLI, MCP and execution services. Installation metadata is at the repository root. Tool IDs and specialist calculations are unchanged.
+The `runtime/` package implements the common CLI, MCP and execution services. Installation metadata is at the repository root. Tool IDs and specialist calculations are unchanged.
 
 ```sh
 python -m pip install -e '.[dev]'
-python -m airmosaic.cli list-tools
-python -m airmosaic.cli list-datasets
+python -m runtime.cli list-tools
+python -m runtime.cli list-datasets
 python -m pytest -q -p no:cacheprovider
 ```
 

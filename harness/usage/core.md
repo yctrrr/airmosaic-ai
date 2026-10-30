@@ -22,7 +22,7 @@ $amLocalRoot = Split-Path -Parent (Get-Location).Path
 foreach ($amDir in @($env:AIRMOSAIC_ASSETS_DIR, $env:AIRMOSAIC_CONFIG_DIR, $env:AIRMOSAIC_AUTH_DIR)) {
     New-Item -ItemType Directory -Force -Path $amDir | Out-Null
 }
-& $amPython -m airmosaic.cli --help
+& $amPython -m runtime.cli --help
 ```
 
 Linux/macOS，核心 Python 服务可按以下形式配置；领域脚本的跨平台支持需各自核验：
@@ -35,7 +35,7 @@ export AIRMOSAIC_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/airmosaic-ai"
 export AIRMOSAIC_AUTH_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/airmosaic-ai/auth"
 mkdir -p "$AIRMOSAIC_ASSETS_DIR" "$AIRMOSAIC_CONFIG_DIR" "$AIRMOSAIC_AUTH_DIR"
 chmod 700 "$AIRMOSAIC_AUTH_DIR"
-.venv/bin/python -m airmosaic.cli --help
+.venv/bin/python -m runtime.cli --help
 ```
 
 安装会访问包仓库并写入本地环境。`AIRMOSAIC_ASSETS_DIR` 也可由成员在自己的会话中设置为其他授权目录，须放在代码仓库外。新 shell 需要重新配置变量；复制 `.env.example` 不会自动加载配置。个人持久路径映射按[配置示例](../../config/examples/README.md)复制到仓库外，审查后显式加载。三类根的用途和各 skill 映射见[工作区与凭据](../storage-and-credentials.md)。
@@ -49,12 +49,12 @@ chmod 700 "$AIRMOSAIC_AUTH_DIR"
 以下 PowerShell 示例沿用上一步的 `$amPython`：
 
 ```powershell
-& $amPython -m airmosaic.cli list-datasets
-& $amPython -m airmosaic.cli list-datasets --layer 01_socioeconomic_natural_change
-& $amPython -m airmosaic.cli list-datasets --skill csmar
-& $amPython -m airmosaic.cli list-datasets --domain health
-& $amPython -m airmosaic.cli describe-dataset worldpop_population_grid
-& $amPython -m airmosaic.cli search-datasets "population grid"
+& $amPython -m runtime.cli list-datasets
+& $amPython -m runtime.cli list-datasets --layer 01_socioeconomic_natural_change
+& $amPython -m runtime.cli list-datasets --skill csmar
+& $amPython -m runtime.cli list-datasets --domain health
+& $amPython -m runtime.cli describe-dataset worldpop_population_grid
+& $amPython -m runtime.cli search-datasets "population grid"
 ```
 
 `list-datasets` 返回数据集 ID、名称、领域、层级、负责技能和仓库相对路径。它不包含所有模型技能，也不表示数据已下载。
@@ -64,7 +64,7 @@ chmod 700 "$AIRMOSAIC_AUTH_DIR"
 ## 3. 检查本地缓存
 
 ```powershell
-& $amPython -m airmosaic.cli check-availability worldpop_population_grid --pattern "v1/**/*.tif"
+& $amPython -m runtime.cli check-availability worldpop_population_grid --pattern "v1/**/*.tif"
 ```
 
 默认 `--pattern "*"` 只匹配缓存根的文件。共享数据按实际名称和固定版本保存，示例显式选择 `v1`；旧缓存仍可保留 `raw/` 子目录。需选择与实际版本目录一致的递归模式；不要把默认查询无结果解释为所有子目录都没有数据。
@@ -76,7 +76,7 @@ chmod 700 "$AIRMOSAIC_AUTH_DIR"
 ## 4. 生成因果设计草案
 
 ```powershell
-& $amPython -m airmosaic.cli draft-causal-plan --question "政策是否改变了研究区污染暴露？" --treatment "目标政策" --outcome "污染暴露" --unit "county-year"
+& $amPython -m runtime.cli draft-causal-plan --question "政策是否改变了研究区污染暴露？" --treatment "目标政策" --outcome "污染暴露" --unit "county-year"
 ```
 
 返回研究问题、处理/结果变量、分析单元，以及候选混杂因素、识别策略、估计方法、反驳检验和说明。当前实现为固定结构的本地模板；不调用外部 LLM，不构造实际 DAG，也不验证识别假设。领域成员据实际数据完善设计。
@@ -86,7 +86,7 @@ chmod 700 "$AIRMOSAIC_AUTH_DIR"
 在上面安装并配置好的 Python 环境中运行：
 
 ```python
-from airmosaic.services import (
+from runtime.services import (
     CausalDesignService,
     DataAccessService,
     DataCatalogService,
@@ -120,7 +120,7 @@ plan = CausalDesignService().draft_plan(
 
 | 情况 | 检查顺序 |
 |---|---|
-| 找不到 `airmosaic` | 使用安装时同一个解释器执行 `-m airmosaic.cli`，检查安装是否成功 |
+| 找不到 `airmosaic` | 使用安装时同一个解释器执行 `-m runtime.cli`，检查安装是否成功 |
 | 找不到 Python 包 | 核对虚拟环境；不要把另一个 Python 的包目录写死到脚本 |
 | 目录为空 | 核对真实 dataset ID、缓存根和递归模式；再检查实际文件 |
 | 新声明未出现 | 核对 acquisition `datasets.yaml` 所在位置与字段 |

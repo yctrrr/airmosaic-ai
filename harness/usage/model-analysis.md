@@ -1,19 +1,19 @@
 # 模型分析与人工适配
 
-按[四步流程](../four-step-workflow.md)定位模型与交接。GEOS-Chem 的[使用与编译排错](../../skills/model/03_atmospheric_transport/geos-chem/SKILL.md)为参考；GCAM [构建排错](../../skills/model/IAM/gcam/references/build-troubleshooting.md)与已有输出分析分开。两者均无编译或模拟 run-tool 适配器。
+按[四步流程](../four-step-workflow.md)定位模型与交接。GEOS-Chem 的[使用与编译排错](../../skills/model/03_atmospheric_transport/geos-chem/SKILL.md)为参考；GCAM [构建排错](../../skills/model/04_integrated_impacts/gcam/references/build-troubleshooting.md)与已有输出分析分开。两者均无编译或模拟 run-tool 适配器。
 
 近期本地排放、成本、浓度健康、GCAM 与机器学习方法另见[方法库](../../methods/README.md)，其中本地项目源码与已接入适配器分别标记。
 
 先区分“分析已有结果”“修改配置”“启动模拟”。当前支持 GCAM 已有数据库的结构检查、Python 提取、CSV 汇总和 R 绘图，没有统一模型模拟启动器、跨层编排或科学自动验收服务。
 
-机器学习方法另见[机器学习分类说明](machine-learning.md)、[mlr3 skill](../../skills/model/machine_learning/mlr3/SKILL.md)和 [TimeXer skill](../../skills/model/machine_learning/timexer/SKILL.md)，当前按参考流程登记，尚无训练/预测适配器。
+机器学习方法另见[机器学习分类说明](machine-learning.md)、[mlr3 skill](../../skills/model/shared/machine_learning_model/frameworks/r/mlr3/SKILL.md)和 [TimeXer skill](../../skills/model/shared/machine_learning_model/models/time_series/timexer/SKILL.md)，框架参考条目本身不可执行；已实现回归、预测解释及声明 DAG 的 PLR 请使用[回归技能](../../skills/model/shared/machine_learning_model/SKILL_ZH.md)与 `ml_regression_workflow`。
 
 ## 1. 真实入口
 
 ```powershell
-python -m airmosaic.cli list-tools --category model
-python -m airmosaic.cli describe-tool gcam_extract_market_sector
-python -m airmosaic.cli check-tool gcam_extract_technology_components
+python -m runtime.cli list-tools --category model
+python -m runtime.cli describe-tool gcam_extract_market_sector
+python -m runtime.cli check-tool gcam_extract_technology_components
 ```
 
 | 工具 ID | 调用方式 | 范围 |
@@ -30,7 +30,7 @@ python -m airmosaic.cli check-tool gcam_extract_technology_components
 
 ## 2. 提取：资源与参数
 
-阅读 [GCAM 导航](../../skills/model/IAM/gcam/SKILL.md)及[提取 skill](../../skills/model/IAM/gcam/03_data_extraction/SKILL.md)。显式设置 GCAM_RELEASE_DIR，位于 Git 和数据/config/auth 根之外。模型发行包不随核心安装；提取需要 pandas、local Java、兼容 BaseX JAR。执行器检查：
+阅读 [GCAM 导航](../../skills/model/04_integrated_impacts/gcam/SKILL.md)及[提取 skill](../../skills/model/04_integrated_impacts/gcam/03_data_extraction/SKILL.md)。显式设置 GCAM_RELEASE_DIR，位于 Git 和数据/config/auth 根之外。模型发行包不随核心安装；提取需要 pandas、local Java、兼容 BaseX JAR。执行器检查：
 
 ```text
 ${GCAM_RELEASE_DIR}/libs/jars/BaseX-*.jar
@@ -56,8 +56,8 @@ ${GCAM_RELEASE_DIR}/output/<scenario>/database_basexdb/
 把 example_scenario 换成已有情景；实际范围放在 CONFIG_DIR 中明确指定的非秘密 JSON。AH/BJ 是两省样例，不能称为完整全国汇总。
 
 ```powershell
-python -m airmosaic.cli run-tool gcam_extract_market_sector --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/gcam-market.json --dry-run
-python -m airmosaic.cli run-tool gcam_extract_technology_components --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/gcam-technology.json --dry-run
+python -m runtime.cli run-tool gcam_extract_market_sector --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/gcam-market.json --dry-run
+python -m runtime.cli run-tool gcam_extract_technology_components --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/gcam-technology.json --dry-run
 # 条件与授权满足后，去掉 --dry-run 执行选定工具
 ```
 
@@ -83,8 +83,8 @@ python -m airmosaic.cli run-tool gcam_extract_technology_components --project-id
 
 ```powershell
 $aggregateParams = Join-Path $env:AIRMOSAIC_CONFIG_DIR "gcam-aggregate.json"
-python -m airmosaic.cli run-tool gcam_aggregate_provinces --project-id example_project --stage 01_socioeconomic_natural_change --params-file $aggregateParams --dry-run
-python -m airmosaic.cli run-tool gcam_aggregate_provinces --project-id example_project --stage 01_socioeconomic_natural_change --params-file $aggregateParams
+python -m runtime.cli run-tool gcam_aggregate_provinces --project-id example_project --stage 01_socioeconomic_natural_change --params-file $aggregateParams --dry-run
+python -m runtime.cli run-tool gcam_aggregate_provinces --project-id example_project --stage 01_socioeconomic_natural_change --params-file $aggregateParams
 ```
 
 输入须在 workspace 的 data 或显式引用的 results 下。JSON 仅展开 `${AIRMOSAIC_ASSETS_DIR}`；source_run_id 要手工替换，其他环境变量、工具 envelope、运行记录 JSON 不可当作参数。
@@ -107,9 +107,9 @@ check-tool 和 dry-run 不启动 R，包状态保留为 unverified；实际执�
 固定读取 `${GCAM_RELEASE_DIR}/output/database_basexdb` 和 `${GCAM_RELEASE_DIR}/database_R/Prov_code_china.csv`。这与 Python 的按情景布局不同；Java classpath 来自 rgcam，不使用 Python 提取器的 libs/jars 选择规则。包和 BaseX/数据库版本兼容性要在实际执行中核验。
 
 ```powershell
-python -m airmosaic.cli describe-tool gcam_inspect_output_structure
-python -m airmosaic.cli run-tool gcam_inspect_output_structure --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/gcam-inspect.json --dry-run
-python -m airmosaic.cli run-tool gcam_inspect_output_structure --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/gcam-inspect.json --timeout 600
+python -m runtime.cli describe-tool gcam_inspect_output_structure
+python -m runtime.cli run-tool gcam_inspect_output_structure --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/gcam-inspect.json --dry-run
+python -m runtime.cli run-tool gcam_inspect_output_structure --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/gcam-inspect.json --timeout 600
 ```
 
 [参数示例](../../config/examples/run-tool/gcam-inspect.json)：`{"max_memory":"1g"}`。执行器固定传入 max_memory，不继承调用方的 GCAM_BASEX_MAX_MEMORY；输出限制在本次任务目录，不回写原默认 derived 位置。生成 inspect_scenarios.csv、inspect_province_top_level.csv、inspect_industrial_sector_tree.csv、inspect_industrial_cost_nodes.csv。原脚本会继续处理后续查询，因此执行器检查全部四个文件存在且非空；缺少任一文件返回 failed、expected_outputs_missing，保留部分输出。文件存在不表示内容或科学口径已验收。
@@ -128,8 +128,8 @@ python -m airmosaic.cli run-tool gcam_inspect_output_structure --project-id exam
 
 ```powershell
 $plotParams = Join-Path $env:AIRMOSAIC_CONFIG_DIR "gcam-plot.json"
-python -m airmosaic.cli run-tool gcam_plot_sector_change --project-id example_project --stage 01_socioeconomic_natural_change --params-file $plotParams --dry-run
-python -m airmosaic.cli run-tool gcam_plot_sector_change --project-id example_project --stage 01_socioeconomic_natural_change --params-file $plotParams --timeout 300
+python -m runtime.cli run-tool gcam_plot_sector_change --project-id example_project --stage 01_socioeconomic_natural_change --params-file $plotParams --dry-run
+python -m runtime.cli run-tool gcam_plot_sector_change --project-id example_project --stage 01_socioeconomic_natural_change --params-file $plotParams --timeout 300
 ```
 
 input_csv 必须是 workspace data 或显式引用的 results 内的文件；旧 R 参数解析器会按逗号拆分输入，因此路径含逗号时拒绝执行。显式提供 sectors/scenarios 可限定任务范围；省略 sectors 时仍采用原默认 cement、coke、iron and steel，省略 scenarios 时仍使用全部情景。比较年份固定为 2021/2035。
@@ -138,7 +138,7 @@ input_csv 必须是 workspace data 或显式引用的 results 内的文件；旧
 
 ## 5. 配置与健康影响：人工适配
 
-`gcam_configuration_reference` 只提供[配置参考](../../skills/model/IAM/gcam/02_configuration/SKILL.md)。解释时只读核对所需组件、顺序和引用。获授权的修改先复制配置及必要依赖到新任务目录，检查 XML、顺序、引用及差异。示例 JSON 是人工计划，不是 --params-file 或 API；修改配置不自动授权运行模型。
+`gcam_configuration_reference` 只提供[配置参考](../../skills/model/04_integrated_impacts/gcam/02_configuration/SKILL.md)。解释时只读核对所需组件、顺序和引用。获授权的修改先复制配置及必要依赖到新任务目录，检查 XML、顺序、引用及差异。示例 JSON 是人工计划，不是 --params-file 或 API；修改配置不自动授权运行模型。
 
 [健康计算和绘图](../../skills/model/04_integrated_impacts/health_impact_analysis/SKILL.md)是待适配模板。计算读取 PM25_HIA_CONC_DIR、PM25_HIA_POP_DIR、PM25_HIA_MORT_FILE、PM25_HIA_RR_FILE、PM25_HIA_OUTPUT_DIR、PM25_HIA_YEARS、PM25_HIA_CURVE；绘图另用 PM25_HIA_POP_FILE、PM25_HIA_SHP_DIR，没有自动配置加载器。
 

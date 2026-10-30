@@ -6,7 +6,7 @@
 
 <!-- README-I18N:END -->
 
-目录职责见[项目布局](project-layout_ZH.md)：人类方法、电脑操作技能、声明和公共执行分开维护。[路径叙述](../methods/pathways/README_ZH.md)属于参考，[核心工作流](../workflows/README_ZH.md)说明引擎未实现。
+目录职责见[项目布局](project-layout_ZH.md)：人类方法、计算机操作技能、声明和公共执行分开维护。[科学设计](../methods/shared/requirements_driven_model_building_ZH.md)说明研究选择，[核心工作流](../workflows/README_ZH.md)说明通用数据与技能组合；技能负责可执行操作。
 
 
 
@@ -19,6 +19,7 @@
 
 | 需要 | 说明 |
 |---|---|
+| 围绕具体科学问题组织实验 | [编号研究项目](../projects/README_ZH.md) |
 | 安装、查看目录及本地文件 | [基础工具](usage/core.md) |
 | 分离数据、配置与认证 | [存储约定](storage-and-credentials_ZH.md) |
 | 共享数据、项目结果与人工复核入库 | [资产规范](assets_ZH.md) |
@@ -32,6 +33,8 @@
 | 已测与未执行事项 | [验证记录](verification.md) |
 
 个人任务记录放在仓库外。共享规范规定协作，具体领域流程由技能说明。
+
+指定任务证据的技能改进遵循[改进规范](skill-improvement_ZH.md)，操作入口见[代理维护](../skills/agent_operations/README_ZH.md)。
 
 ## 2. 各层职责
 
@@ -69,7 +72,7 @@
 
 ## 5. 路径与数据
 
-仓库仅存可复用代码、文档、结构定义和已声明演示资产。私人 `AIRMOSAIC_ASSETS_DIR` 保存共享的 `data/<stage>/<dataset-name>/<version>/`、新的 `results/<project_id>/<run_id>/<stage>/<tool_id>/`，记录与临时文件位于同次运行的 `records/<tool_id>/`、`temp/<tool_id>/`；个人配置与认证分别保存在仓库外独立根目录。
+仓库仅存可复用代码、文档、结构定义和已声明合成资产及明确授权且附许可的公开数据副本。外部 AIRMOSAIC_ASSETS_DIR 保存按阶段、名称和版本组织的共享数据及项目结果；项目内部布局依适配器契约由任务自选。通用演示可使用经过审查且被 Git 忽略的技能结果子树，个人配置与认证继续分离，详见资产规范。
 
 新任务显式覆盖旧输出默认值，不迁移旧文件。外部发行包单独配置为只读输入，修改配置使用任务副本。共享说明使用逻辑根和编号，变量字符串仅在调用方实现解析时展开。
 
@@ -90,7 +93,3 @@
 限定变更范围，检查已有工作，按需使用独立分支或副本；维护双语说明，遵守[编写](skill-authoring_ZH.md)和[注册](tool-registration_ZH.md)规范。相关检查及隐私审查通过后执行已授权的提交、推送或发布。
 
 区分已授权前置改动与无关工作。不强制推送、改写历史，也不因角色或计划而启动后续工程或改变仓库权限。后续分发和接口只有实现并按任务验证后才能称为可用。
-
-## 数据与项目结果
-
-数据和项目结果按[资产规范](assets_ZH.md)管理。Git 外共享 `assets/data/<stage>/<dataset-name>/<version>/`，数据目录使用实际名称；项目按配置引用固定版本，跨阶段不复制。新结果保存到 `assets/results/<project_id>/<run_id>/<stage>/<tool_id>/`，运行记录和临时文件留在该批次内。新调用同时提供项目和阶段。计算与检查 → 人工复核 → 将选定数据登记到新版本；不覆盖原始数据或既有版本。个人配置、认证及凭据继续独立管理。旧文件不迁移，自动审批和入库服务尚未实现。

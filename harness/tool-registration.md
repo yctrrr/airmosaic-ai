@@ -13,7 +13,7 @@ This specification describes registration boundaries and implemented behavior. C
 
 | Object | Authoritative source | Effect |
 |---|---|---|
-| Skill | `SKILL.md` frontmatter | Workflow guidance discoverable by a compatible host |
+| Skill | Canonical `SKILL.md` frontmatter and body | Computer operations: inputs/outputs, dependencies, steps, scripts and validation |
 | Host display | Skill `agents/openai.yaml` | Optional presentation, not executable functions or login |
 | Dataset | Acquisition `datasets.yaml` | Catalog metadata, not download or content verification |
 | Tool | `catalog/tools/*.yaml` | Validated metadata and declared execution support |
@@ -79,7 +79,7 @@ Keep `skills/` as source. Read entries by path or install/link selected director
 
 Verify names and invocation in the actual host. Optional interface metadata may specify display name, short description and default prompt; it does not create functions, authenticate accounts or launch services. Include resources when packaging and track versions.
 
-Additional service adapters remain unimplemented. A future interface must implement actual listing/calling, input/result checks, error reporting and authorization before exposing a callable tool. Metadata and behavioral hints do not enforce permissions. Never expose reference documents or unadapted templates as executable functions.
+Only the documented CLI/MCP discovery and reviewed execution routes are implemented; other service transports or adapters require their own implementation. A future interface must implement actual listing/calling, input/result checks, error reporting and authorization before exposing a callable tool. Metadata and behavioral hints do not enforce permissions. Never expose reference documents or unadapted templates as executable functions.
 
 ## 7. Display and readiness
 
@@ -88,3 +88,27 @@ Use categories and actual manifest data to display purpose, entry type, implemen
 Implementation, evidence and current readiness are separate dimensions. Use the loader's actual response values; do not invent status enums or equate registration with readiness. Source review, synthetic smoke checks, integration and scientific validation need separate dated evidence.
 
 Details include invocation, schema, units, dependencies, authentication requirements, read/write/network scope, failure behavior and verification. Public displays use logical paths; full local paths stay in authorized local views. Current CLI/JSON/Markdown navigation does not imply that a visual tool panel, installer or external service adapter exists.
+
+## Explicit task settings
+
+Reviewed adapters may bind nested task settings as `configuration_file`. This uses the parameter-file boundary: an explicitly chosen non-secret JSON under configuration, data/results or public configuration examples, without authentication-store access or automatic personal configuration loading. Validate the task schema and freeze a snapshot before execution; reject unknown fields and duplicate keys. Public receipts exclude configuration values. New path roles still require matching schema, allowlist, executor and tests; a manifest alone cannot enable them.
+
+
+## 8. Unified read-only discovery and validation
+
+`CapabilityCatalogService` derives one public projection from `methods/index.yaml`, `catalog/skills.yaml`, canonical `SKILL.md` entries and `catalog/tools/*.yaml`; do not maintain a second capability inventory. Add a scientific method once in the method index and map its existing canonical skill paths and real tool IDs. An operational skill with no scientific method can join the finite public references in `catalog/skills.yaml`. An unreferenced directory is not automatically discovered. Workflows compose operations, projects define specific studies, and assets become selected data products only after human review; these are not executable registrations.
+
+```sh
+python -m runtime.cli validate-capabilities
+python -m runtime.cli list-capabilities
+python -m runtime.cli describe-capability method statistical_yearbooks
+python -m runtime.cli describe-capability skill machine-learning-model
+```
+
+The CLI and MCP `airmosaic://catalog/capabilities` resource share this service. `airmosaic://catalog/methods` and `airmosaic://catalog/skills` are separate views with exact indexed document URIs. Skill entries also project their explicitly linked in-directory Markdown guides as bounded one-hop `supporting_documents`; no unlinked tree is scanned. A server snapshot refreshes on restart; CLI queries refresh per invocation. A document SHA256 fingerprint identifies the current public content, while a missing declared version remains `not_declared`.
+
+Optional structured method fields are `research_question`, `disciplinary_basis`, `assumptions`, `applicability`, `implementation` and `scientific_evidence`; skills may declare the same fields under frontmatter `metadata`, along with `version`. Existing prose remains authoritative reading material and is linked rather than copied. Missing structured fields are `not_declared`, even if relevant prose appears in a document section. The service reports section titles to help locate it. Evidence levels such as `declared`, `source_checked`, `synthetic_verified`, `real_integration` and `scientific_review` describe different claims; a declaration of any level is not independent verification by discovery. Existing `evidence` text is returned as an unverified `evidence_claim`.
+
+The projection reports actual tool entrypoints and their implementation/registration declarations. `registered_tools_present` means the skill has at least one enabled tool, not that all its branches execute. `documented_scripts` contains only script paths explicitly referenced in the owning canonical document, file presence and exact matching enabled tool IDs. Direct helpers with no matching tool remain unregistered. No script is opened, imported or run to register it, and missing optional dependencies do not prevent documentation discovery or become a scientific readiness claim. Readiness remains `not_checked`, scientific acceptance `not_assessed`; metadata validation proves only consistency. Use `check-tool` and authorized `run-tool` for the specific reviewed adapter. Stage-02 execution restrictions are unchanged.
+
+Validation fails closed on duplicate method/skill IDs, duplicate YAML keys/aliases, unknown mapped tool IDs, missing public documents, unsafe repository-relative paths, links/reparse locations, nested Git repositories and oversized files. Reads are limited to indexed public namespaces and exact resource URIs; no real-data scan, personal configuration or credential read occurs. Registration grants no execution authority and changes no startup/network/browser authorization.

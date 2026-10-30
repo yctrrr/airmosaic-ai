@@ -13,11 +13,11 @@
 
 | 对象 | 权威来源 | 实际效果 |
 |---|---|---|
-| 技能 | `SKILL.md` 文件头 | 供兼容宿主发现的流程指导 |
+| 技能 | 默认 `SKILL.md` 文件头及正文 | 计算机操作：输入输出、依赖、步骤、脚本与验证 |
 | 宿主展示 | 技能中的 `agents/openai.yaml` | 可选展示，不创建函数或登录 |
 | 数据集 | 获取技能中的 `datasets.yaml` | 数据目录信息，不下载或验内容 |
 | 工具 | `catalog/tools/*.yaml` | 已校验元数据及声明的执行支持 |
-| 方法映射 | `methods/index.yaml` | 步骤、技能及真实工具编号的文档关联 |
+| 方法映射 | `methods/index.yaml` 及其方法正文 | 研究问题、学科依据、假设/范围，以及技能和真实工具映射 |
 
 流程和请求文件不替代实现。方法中的技能路径须指向默认真实入口，工具编号必须存在。参考技能可以没有工具编号。
 
@@ -79,7 +79,7 @@
 
 在真实宿主核对名称和调用。展示信息可设置名称、简述和默认提示，不创建函数、不登录、不启动服务。分发携带资源并跟踪版本。
 
-额外服务适配器尚未实现。未来接口须先实现真实列表与调用、输入结果检查、错误和授权，再展示可调用工具。元数据和行为提示不强制落实权限；参考文件和未适配模板不得作为执行函数。
+目前仅实现文档声明的 CLI/MCP 发现与经审查执行路径，其他服务传输或适配器需单独实现。未来接口须先实现真实列表与调用、输入结果检查、错误和授权，再展示可调用工具。元数据和行为提示不强制落实权限；参考文件和未适配模板不得作为执行函数。
 
 ## 7. 展示与就绪状态
 
@@ -88,3 +88,27 @@
 实现状态、证据与当前就绪分别管理。状态值以加载器真实响应为准，不虚构枚举，不将登记等同就绪。源码审查、合成小样、集成和科学验证分别记录日期与证据。
 
 详情包括调用、字段、单位、依赖、认证、读写联网范围、失败和验证。公开展示使用逻辑路径，完整路径只留在授权本地界面。现有命令、结构化结果与文档导航不表示工具面板、安装器或额外服务已经实现。
+
+## 显式任务配置
+
+适配器需要嵌套任务设置时，可将已审查参数绑定为 `configuration_file`。它沿用参数文件边界：仅允许明确选择的非秘密配置、数据/结果目录或公共配置示例下的 JSON，不读取认证目录或自动加载个人配置。执行前按专项结构校验并固定快照，未知字段与重复键拒绝，公共回执不包含配置值。新增路径角色仍须同时更新结构、允许清单、执行器及测试，不能只靠清单启用。
+
+
+## 8. 统一只读发现与校验
+
+`CapabilityCatalogService` 从 `methods/index.yaml`、`catalog/skills.yaml`、默认 `SKILL.md` 和 `catalog/tools/*.yaml` 派生一个公共视图，不维护第二套能力清单。科学方法在方法索引中登记一次，明确映射默认技能路径与真实工具编号；没有科学方法的操作技能可加入 `catalog/skills.yaml` 的有限公共引用。未引用的目录不会自动发现。workflows 组合操作，projects 定义具体研究，assets 经人审后才成为选定数据产品；这些都不是执行注册。
+
+```sh
+python -m runtime.cli validate-capabilities
+python -m runtime.cli list-capabilities
+python -m runtime.cli describe-capability method statistical_yearbooks
+python -m runtime.cli describe-capability skill machine-learning-model
+```
+
+CLI 与 MCP 的 `airmosaic://catalog/capabilities` 共用该服务；`airmosaic://catalog/methods` 和 `airmosaic://catalog/skills` 分别展示方法、技能和精确文档资源地址。技能入口明确链接的本目录 Markdown 指南另列为有数量限制的一层 `supporting_documents`，不扫描未声明目录树。服务重启时刷新快照，CLI 每次查询刷新。SHA256 指纹标识当前公共正文，未声明版本仍为 `not_declared`。
+
+方法可选结构化字段为 `research_question`、`disciplinary_basis`、`assumptions`、`applicability`、`implementation`、`scientific_evidence`；技能在文件头 `metadata` 中可声明相同字段及 `version`。既有正文通过链接提供，不复制成另一套声明。结构化字段缺失时标 `not_declared`，即使正文已有相关说明；服务提供章节标题帮助定位。`declared`、`source_checked`、`synthetic_verified`、`real_integration`、`scientific_review` 表示不同证据主张，任何级别的声明都不等于发现服务独立核验；原有 `evidence` 作为未验证的 `evidence_claim` 返回。
+
+视图列出真实工具入口及其实现、注册声明。`registered_tools_present` 仅表示技能至少关联一个已启用工具，不能推断全部分支可执行。`documented_scripts` 仅列默认正文明确引用的脚本路径、文件是否存在及精确匹配的已启用工具编号；无匹配工具的直接脚本仍未注册。登记时不打开、导入或执行脚本；缺少可选依赖不阻止文档发现，也不构成科学就绪声明。执行就绪保持 `not_checked`，科学验收保持 `not_assessed`，元数据校验只证明一致性。具体适配器仍使用 `check-tool` 和已授权 `run-tool`；阶段 02 执行限制不变。
+
+校验拒绝方法/技能重复编号、重复 YAML 键或别名、不存在的工具映射、缺失公共文档、不安全仓库相对路径、链接/重解析位置、嵌套 Git 仓库及超大文件。读取只限索引明确列出的公共命名空间和精确资源地址，不扫描真实数据、个人配置或凭据。发现注册不授予执行权限，不改变启动、网络或浏览器授权。

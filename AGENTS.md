@@ -6,7 +6,7 @@
 
 <!-- README-I18N:END -->
 
-Directory responsibilities and migration instructions are in the [layout guide](harness/project-layout.md). Methods address scientific reasoning; skills address computer operations; core owns shared execution. Path narratives and non-executable stage proposals live in `methods/pathways/`; future executable definitions belong in `workflows/`. Local stdio MCP uses the existing catalog and runner; workflow orchestration remains unimplemented. See the [MCP guide](harness/usage/mcp.md).
+See the [layout guide](harness/project-layout.md). Methods explain scientific reasoning, skills describe computer operations, workflows provide reusable data/skill combinations, and `projects/` organizes specific scientific questions and experiments with four-digit numbering. Core services own common execution. Shared scientific design lives in `methods/shared/`, combinations in `workflows/`, and studies in the [project index](projects/README.md). MCP reuses the catalog and runner; general cross-tool orchestration remains planned. See the [MCP guide](harness/usage/mcp.md).
 
 
 
@@ -15,12 +15,12 @@ Work from the repository root and read the relevant skill before changing or usi
 
 ## Required boundaries
 
-- Documentation and routine engineering checks use relevant descriptions, interfaces and synthetic inputs, not original data. Real-data acquisition, inspection or computation requires a bounded task. Stage 02 remains conceptual methods only, without concrete data, parameter values, implementation code, project script names or source fingerprints.
+- Documentation and routine engineering checks use relevant descriptions, interfaces and synthetic inputs, not original data. Real-data acquisition, inspection or computation requires a bounded task. Stage 02 permits bounded synthetic calculations only in the explicitly declared and reviewed inventory skill; other conceptual entries do not imply computation. Real-data processing still requires a bounded task, and direct examples do not enable a stage-02 runner adapter.
 - Respect requested objects, years, regions and operations. Continue necessary authorized reversible work without repeated permission requests; ask only for essential missing information or authorization.
 - Inspect branch and working-tree changes first. Preserve originals, results and other contributors' work. A workflow description does not authorize bulk downloads, extra runs, installation, publication or messages.
 - Never put private identities, passwords, keys, cookies, profiles, private hosts, signed URLs or machine-specific paths in shared artifacts. Report suspected secrets by location/category without repeating values.
-- Keep data/results in `AIRMOSAIC_ASSETS_DIR`, non-secret settings in `AIRMOSAIC_CONFIG_DIR` and browser state in `AIRMOSAIC_AUTH_DIR`. Roots must exist separately outside Git. Credentials belong in a secret manager or an explicitly authorized official client's protected existing mechanism; do not inspect or export them.
-- Keep external releases outside Git. New artifacts use `results/<project_id>/<run_id>/<stage>/<tool>/`. Do not migrate old outputs or copy sessions without specific authorization.
+- Separate project experimental results from reviewed assets. `AIRMOSAIC_ASSETS_DIR` remains an existing runtime compatibility setting, not evidence of asset approval. Keep non-secret settings in `AIRMOSAIC_CONFIG_DIR` and browser state in `AIRMOSAIC_AUTH_DIR`, with separate existing private roots outside Git. Credentials stay in a secret manager or an explicitly authorized official client's protected mechanism; do not inspect or export them.
+- Keep external releases outside Git. Project results follow the project ownership convention and the selected adapter's currently supported output boundary. Local ignore rules do not grant write support. Generic demonstrations retain their reviewed exceptions. Do not migrate old outputs or copy sessions without specific authorization.
 - Distinguish source review, synthetic/smoke checks, real-data integration and scientific validation. Do not report planned or skipped work as completed.
 - Follow [agent boundaries](harness/agent-boundaries.md) and the [storage contract](harness/storage-and-credentials.md). These instructions do not establish OS isolation.
 
@@ -30,6 +30,7 @@ Use the [four-step guide](harness/four-step-workflow.md), [skill navigation](ski
 
 | Task | Guide |
 |---|---|
+| Organize experiments around a scientific question | [Numbered projects](projects/README.md) |
 | Team workflow and handoff | [Harness](harness/README.md) |
 | Discover capabilities and readiness | [Catalog](harness/tool-catalog.md), [queries](harness/usage/tool-registry.md) |
 | Execute a reviewed adapter | [run-tool](harness/usage/run-tool.md) |
@@ -47,11 +48,11 @@ General rules, skill entries and category navigation have English and Chinese ve
 Use Python 3.10+ in a project environment, installed with `python -m pip install -e '.[dev]'`. Session roots are explicit; `.env` is not automatically loaded. Cache checks require a workspace variable or explicit SDK argument. CONFIG_DIR and AUTH_DIR are caller conventions, not automatic loaders.
 
 ```sh
-python -m airmosaic.cli --help
-python -m airmosaic.cli list-tools --format json
-python -m airmosaic.cli describe-tool airmosaic_list_datasets
-python -m airmosaic.cli check-tool airmosaic_list_datasets
-python -m airmosaic.cli list-datasets
+python -m runtime.cli --help
+python -m runtime.cli list-tools --format json
+python -m runtime.cli describe-tool airmosaic_list_datasets
+python -m runtime.cli check-tool airmosaic_list_datasets
+python -m runtime.cli list-datasets
 ```
 
 `list-datasets` reads acquisition declarations, not downloaded files. `check-availability` checks file presence, not contents or scientific validity; local paths in its output must be sanitized. Planning commands produce templates, not completed analysis. SDK services include `DataCatalogService`, `DataAccessService`, `CausalDesignService`, `ToolRegistryService` and `ToolRunnerService`.
@@ -74,6 +75,7 @@ Enabled adapters provide parameter/path preflight, fresh outputs, a minimal chil
 ## Contribution checks
 
 - Follow the [authoring checklist](harness/skill-authoring.md) and keep skill discovery, host display, datasets, method mappings and executable tools distinct.
+- Organize skills as `skills/<category>/<stage>/<capability>/`, using the same four stages and `shared` as methods. Maintain one home per capability and explicit method mappings.
 - Keep general rules free of specific model/framework/category examples. Put concrete names, dependencies, identifiers and usage in the corresponding skills and classified navigation.
 - Write English in the canonical filename and Chinese in an `_ZH.md` sibling, with one reciprocal selector. Update both together; preserve technical identifiers and executable commands. Do not claim untouched references were translated.
 - Keep interface examples, metadata and actual implementations consistent. Documentation additions do not create executable tools.
@@ -84,6 +86,16 @@ Enabled adapters provide parameter/path preflight, fresh outputs, a minimal chil
 
 ## Data and project results
 
-Follow the [asset contract](harness/assets.md). Shared data outside Git uses `assets/data/<stage>/<dataset-name>/<version>/` with actual dataset names. Projects reference fixed versions in configuration without cross-stage duplication. New results use `assets/results/<project_id>/<run_id>/<stage>/<tool_id>/`, with records and temporary files inside that run. New calls provide project and stage together. Compute/check, obtain human review, then register selected data in a fresh version; never overwrite originals or existing versions. Personal settings, authentication and credentials remain separate. Existing files are not migrated; automatic approval and registration services are not implemented.
+Experimental results belong to their [project](projects/README.md), which retains code, settings, evaluation and review records. Only a human scientific decision can admit selected outputs to `assets/`; internal asset organization is deferred. Current runners retain their existing external output contracts until project-directory support is implemented. Generic demonstration exceptions remain adapter-specific. Do not move historical outputs, bypass checks or infer approval from file presence. Configuration, authentication and credentials remain separate. See the [result and review contract](harness/assets.md).
 
-Repository `assets/` permits only manifest-listed, hash-verified toy inputs. All generated outputs must use Git-external AIRMOSAIC_ASSETS_DIR. Reference private locations in personal configuration, never filesystem links. Every recorded execution requires project/stage context; the old workspace mode is removed.
+Repository `assets/` permits manifest-listed, hash-verified synthetic inputs and explicitly publication-authorized, licensed public data snapshots. Keep published data in the separate public-data manifest with source and attribution; private data are not authorized by this exception. Current project-output compatibility locations remain outside Git and do not establish asset approval. A reviewed adapter may explicitly support local, Git-ignored skill results for generic demonstrations; never put private data there for publication. Supply project/stage context as required by the selected adapter. Reference private locations in personal configuration, never filesystem links; the old workspace mode is removed.
+
+Project folders use four-digit display numbers; execution retains a stable `project_id` without that prefix. Project manifests provide explicit references, not runner parameters or new permissions. Keep scientific experiment records distinct from generic workflow demonstration checks.
+
+
+## Synthetic workflow checks
+
+An explicitly reviewed adapter additionally supports explicit `result_scope=workflow` (`--result-scope workflow` in the CLI). Only hash-verified manifest-listed repository synthetic CSVs are accepted. Outputs stay in Git-ignored `workflows/ml_regression/results/<timestamp>_<task>/`, with receipts/temp under `.airmosaic/<run_id>/` in that result root. Project IDs, real/external data, paths outside this fixed tree and nested repositories are rejected. The `auto` default is unchanged; scientific studies retain external project results. Reviewed workflow orchestration examples are reusable source; per-run generated code and design basis stay in the result's `gen_script/`, following the common handoff rules. This check provides neither scientific approval nor OS isolation.
+
+
+Agent objectives/actions/observations, stop conditions and generation/event/retrospective records follow the [common execution and process-record contract](harness/usage/workflow-handoff.md). Each adapter must declare actual capture coverage; retrospective summaries do not replace observed events.

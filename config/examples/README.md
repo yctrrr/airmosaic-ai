@@ -39,6 +39,17 @@ The runner requires three existing, separate roots. It reads only the explicitly
 
 `mcp-client.example.json` is a generic client template. Adapt its interpreter and existing roots in a personal copy. It does not grant execution, network or browser access, contain credentials, or load itself. See [MCP setup](../../harness/usage/mcp.md).
 
-New tasks supply both `--project-id` and `--stage` under the [asset contract](../../harness/assets.md). The environment example selects roots, not a project. [Asset/project/review templates](assets/README.md) describe the manual process. Actual project settings stay in CONFIG_DIR; results and review records stay in assets/results.
+Project/stage requirements, result scopes and review/registration follow the [asset contract](../../harness/assets.md) and [execution guide](../../harness/usage/run-tool.md). The environment example selects roots only. [Asset/project/review templates](assets/README.md) describe manual records; [asset-paths.example.json](asset-paths.example.json) documents non-secret path fields and is not loaded automatically.
 
-The public repository assets directory is distinct from the private root selected outside Git by this helper. Public fixtures are read-only. Actual data and every generated result use AIRMOSAIC_ASSETS_DIR; customize its location only in the personal configuration copy. The [path mapping template](asset-paths.example.json) documents the fields; JSON is not automatically loaded.
+Regression task settings in `ml-regression/` include prediction and synthetic causal examples. Omit the project ID for a generic demonstration; supply it for a study and choose the supported layout within its project root. See the machine-learning classified guide for dependencies and operations.
+
+The [direct synthetic regression parameters](run-tool/synthetic-regression.json) call the skill without workflow code. The [air-pollution prediction template](ml-regression/air-pollution-prediction.template.json) is schema-valid but has no associated dataset: adapt fields, units, coverage, split design, missingness and sample caps before use. Its settings are small computation examples, not validated scientific recommendations. Follow the skill's [operation contract](../../skills/model/shared/machine_learning_model/references/operations.md) and [domain cases](../../skills/model/shared/machine_learning_model/references/air-pollution.md).
+
+[local-sources.example.yaml](local-sources.example.yaml) is an optional non-secret external-source mapping template, formerly kept in methods. Root fields are empty; the user completes and reviews a personal copy in CONFIG_DIR. The project does not automatically load it, scan source directories or read authentication. It is not run-tool parameters.
+
+`run-tool/aq-bench-repository.json` reads the registered public repository snapshot. The existing AQ-Bench parameter file reads the byte-identical external copy. Published data and synthetic fixtures use separate input manifests; both remain read-only.
+
+[model-reproduction/](model-reproduction/README.md) provides a sealed five-row synthetic comparison task and explicit fixture-generation instructions. Real comparisons select a personal CONFIG task and frozen external result snapshots; the reviewed direct script is not a registered execution tool.
+
+
+The [synthetic workflow prediction task](ml-regression/workflow-synthetic.json) supports the [prompt-to-code check](../../workflows/ml_regression/examples/README.md), using only registered synthetic inputs and the explicit workflow result scope.

@@ -14,15 +14,17 @@ Share code and rules; keep each member's data, actual paths and authentication s
 | Location | Contents | Boundary |
 |---|---|---|
 | Repository | Reusable code, documentation, schemas and public examples | No actual data, secrets or personal mappings |
-| `AIRMOSAIC_ASSETS_DIR` | Private data, generated results, receipts and temporary files | Outside Git; no authentication or credentials |
-| Repository `assets/` | Declared synthetic inputs and reference results | Read-only examples; never a real-output destination |
+| Private project directory | Experimental code, settings, results, evaluation and review evidence belonging to a project | Outside Git; no automatic publication or asset registration |
+| `AIRMOSAIC_ASSETS_DIR` | Existing runtime compatibility root for declared inputs and outputs | Outside Git; location does not establish human approval |
+| Repository `assets/` | Declared synthetic inputs, authorized licensed public data and reference results | Read-only examples; never a real-output destination |
+| Reviewed skill-owned `results/` | Local generic demonstration artifacts, only for an explicitly supporting adapter | Git-ignored; no public data promotion or arbitrary checkout writes |
 | `AIRMOSAIC_CONFIG_DIR` | Non-secret mappings and preferences | Explicitly reviewed/loaded, no secrets |
 | `AIRMOSAIC_AUTH_DIR` | Necessary member-owned browser state | Restricted access; no data or shared outputs |
 | External resource root | Authorized releases and existing external resources | Separate configured read-only input; no implied edit permission |
 
 All personal roots must exist separately outside Git. A shared input root may be read-only, but writable tasks remain member-specific. Repository `config/examples/` is different from personal configuration. Setting a variable does not launch a browser, authenticate, load configuration or authorize modification. `.env` is not automatically loaded.
 
-Repository `assets/` contains only manifest-declared read-only toy fixtures. AIRMOSAIC_ASSETS_DIR maps actual data and generated outputs to a private root outside Git: data by stage/name/version, results by project/run/stage. Project and stage context is required. The old workspace layout and automatic old-cache fallback are removed. Browser profiles still use browser_profiles/<service>/ in AUTH_DIR. See the [asset contract](assets.md) for references and human review.
+Experimental results belong to the corresponding [project](../projects/README.md). Human review determines whether selected outputs may enter `assets/`; internal asset organization is deferred. Current runners retain their existing external output contracts, and direct project-directory output support is not implemented. Local ignore rules do not bypass these checks. Existing public fixtures retain their read-only declarations; generic demonstrations use only reviewed result subtrees explicitly supported by the adapter. Source mappings, private results and credentials stay outside Git. Browser profiles still use browser_profiles/<service>/ in AUTH_DIR. See the [result and review contract](assets.md).
 
 ## 2. Setup and routine use
 
@@ -64,3 +66,6 @@ Do not assume a template is harmless to load: it may reset settings or write int
 - Data backups include only authorized data/results. Authentication stays out of archives, issues, reviews, shared drives and cross-member synchronization. Secret backups need a separate encrypted scheme.
 - Ignore rules reduce accidental commits; they do not encrypt files, restrict access or protect already tracked content. Report suspected leakage by location/category; revocation and history changes require specific authority.
 - Read-only queries check declared path metadata, not secret contents. Supported runner adapters apply path preflight, minimal environments and sanitized receipts. Personal configuration/authentication roots are not passed wholesale to child processes. Existing-session tools need task-owned session verification. A credential broker and OS sandbox remain unimplemented.
+
+
+Synthetic workflow checks may explicitly select `result_scope=workflow`, limited by the [asset contract](assets.md) to a fixed Git-ignored workflow result tree and manifest-listed synthetic inputs. Scientific projects retain external results; the default scope is unchanged.

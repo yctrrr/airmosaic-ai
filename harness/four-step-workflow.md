@@ -9,7 +9,7 @@
 | 步骤 | 数据获取 | 模型使用 | 当前可执行范围 |
 |---|---|---|---|
 | 01 社会经济与自然变化 | [01_socioeconomic_natural_change](../skills/data_acquisition/01_socioeconomic_natural_change/README.md) | [01_socioeconomic_natural_change](../skills/model/01_socioeconomic_natural_change/README.md) | WorldPop、企业基础 ZIP 处理支持 run-tool；ERA5、EAC4、CAMS 预报有已验证 API 示例，未接入 run-tool；其他方法需适配 |
-| 02 排放清单 | [02_emission_inventory](../skills/data_acquisition/02_emission_inventory/README.md) | [02_emission_inventory](../skills/model/02_emission_inventory/README.md) | 只列方法，无具体数据、实现代码或执行适配器 |
+| 02 排放清单 | [02_emission_inventory](../skills/data_acquisition/02_emission_inventory/README.md) | [02_emission_inventory](../skills/model/02_emission_inventory/README.md) | 方法及已声明的有界合成清单计算；无该阶段的 run-tool 适配器 |
 | 03 大气输送与化学 | [03_atmospheric_transport](../skills/data_acquisition/03_atmospheric_transport/README.md) | [03_atmospheric_transport](../skills/model/03_atmospheric_transport/README.md) | PM2.5 站点获取/整理及 GEOS-Chem 输入、编译、配置与排错参考；引用 01 气象和成分资料；没有下载、编译、调度或模拟适配器 |
 | 04 综合影响评估 | [04_integrated_impacts](../skills/data_acquisition/04_integrated_impacts/README.md) | [04_integrated_impacts](../skills/model/04_integrated_impacts/README.md) | GBD 获取支持 run-tool；健康模板和完整成本/分配方法需人工适配 |
 
@@ -25,14 +25,14 @@
 4. 预测任务引用共享 mlr3/TimeXer，预先确定时间/实体划分和特征可用性；GCAM 用于已有情景输出分析。
 5. 用合成输入验证接口，交接活动、能源、技术及自然条件的字段说明、覆盖与来源清单。自然资料可直接交接 03/04，不必经过排放核算；真实获取和建模须限定任务范围。
 
-## 02 排放清单：仅方法
+## 02 排放清单：方法与已声明的合成计算
 
 1. 确定核算边界、活动与技术类别、物种和单位。
 2. 选择排放因子、技术份额、治理效率、过程排放和变化分解方法。
 3. 设计缺失处理、避免重复计量、汇总守恒和空间分配检查。
 4. 形成供下一步讨论的排放、时间分配和物种映射契约。
 
-本步只列方法及选择顺序。不提供具体数据、参数值、实现代码、项目脚本名、源码指纹或执行命令；关联共享能力也不引入排放实现。
+本步提供方法选择顺序，并仅在已明确声明且经审查的清单技能内提供有界合成计算。其他概念条目不代表已有实现；真实数据处理需要限定任务。直接脚本示例不启用第二步的 run-tool 适配器，执行器仍拒绝该阶段。
 
 ## 03 大气输送与化学
 
@@ -61,14 +61,14 @@
 
 ## 共享目录与执行边界
 
-文献在 [data_acquisition/shared](../skills/data_acquisition/shared/README.md)；成本在 [model/shared](../skills/model/shared/README.md)。GCAM 保留 [IAM/gcam](../skills/model/IAM/gcam/SKILL.md)，机器学习保留 [machine_learning](../skills/model/machine_learning/README.md)，以免改变现有入口。WorldPop/GBD 保留所属阶段，由共享人口方法卡关联。
+文献在 [data_acquisition/shared](../skills/data_acquisition/shared/README.md)；通用模型任务与框架说明在 [model/shared](../skills/model/shared/README_ZH.md)，GCAM 与治理成本、分配情景归[第四步](../skills/model/04_integrated_impacts/README_ZH.md)。各技能保持唯一位置，由相应方法卡和阶段入口引用。WorldPop/GBD 保留所属阶段，由共享人口方法卡关联。
 
 调用顺序：阶段入口 → SKILL.md → describe-tool/check-tool → 非秘密参数 JSON → run-tool dry-run → 授权执行 → 验收交接。模板、参考和未登记说明不能执行；不因不可执行而绕过运行器。
 
-本轮及常规方法维护只使用说明、接口定义和合成输入，不读取、复制或运行原始数据。真实数据任务须另有明确范围。数据、非秘密个人配置、认证分别位于 Git 外的 LOCAL_WORKSPACE、CONFIG_DIR、AUTH_DIR；模型源码/发行包也在 Git 外。详见[存储约定](storage-and-credentials.md)和 [agent 边界](agent-boundaries.md)。
+本轮及常规方法维护只使用说明、接口定义和合成输入，不读取、复制或运行原始数据。真实数据任务须另有明确范围。数据、非秘密个人配置、认证分别位于 Git 外的 AIRMOSAIC_ASSETS_DIR、CONFIG_DIR、AUTH_DIR；模型源码/发行包也在 Git 外。详见[存储约定](storage-and-credentials.md)和 [agent 边界](agent-boundaries.md)。
 
-布局迁移后，完整路径说明见[方法路径](../methods/pathways/README_ZH.md)，历史阶段 YAML 归入其中参考目录，人工交接见[交接指南](usage/workflow-handoff_ZH.md)。`workflows/` 尚无执行引擎或已实现路径；目录迁移不改变本页的能力边界。
+通用研究设计见[共享方法](../methods/shared/requirements_driven_model_building_ZH.md)，人工交接见[交接指南](usage/workflow-handoff_ZH.md)。`workflows/` 提供数据与技能组合说明，可执行操作由已登记技能承担，尚无通用工作流执行引擎；早期阶段 YAML 不再作为现行说明或执行配置。
 
 ## 数据与结果位置
 
-四步数据统一存放在 Git 外 `assets/data/<stage>/<实际数据名称>/<版本>/`，跨阶段引用同一版本。结果先按项目、运行归集，再按阶段保存到 `assets/results/<project_id>/<run_id>/<stage>/`。计算与检查后由人类复核，选定数据再登记入库，见[资产规范](assets_ZH.md)。第二步仍只列方法，空目录不代表已有数据或计算能力。
+各研究环节引用经核对的输入，项目保存实验结果、实际代码、配置与评价。人类科学审核后决定是否将选定成果纳入 `assets/`，本轮不规定其内部组织。项目目录约定与现有执行器兼容位置的区别见[项目说明](../projects/README_ZH.md)和[结果与审核约定](assets_ZH.md)。不迁移历史结果。排放清单仅在已明确声明的能力内提供有界合成示例，其他条目及空目录不代表已有数据或计算能力。

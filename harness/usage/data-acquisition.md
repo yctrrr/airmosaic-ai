@@ -13,9 +13,9 @@ PM2.5 站点观测见正式 [获取与整理 skill](../../skills/data_acquisitio
 ## 1. 真实入口与调用顺序
 
 ```powershell
-python -m airmosaic.cli list-tools --category data_acquisition
-python -m airmosaic.cli describe-tool worldpop_download
-python -m airmosaic.cli check-tool ihme_gbd_fetch_results
+python -m runtime.cli list-tools --category data_acquisition
+python -m runtime.cli describe-tool worldpop_download
+python -m runtime.cli check-tool ihme_gbd_fetch_results
 ```
 
 | 工具 ID | run-tool 支持 | 边界 |
@@ -51,11 +51,11 @@ python -m airmosaic.cli check-tool ihme_gbd_fetch_results
 
 ```powershell
 # 未给网络标志时返回 permission blocker；不联网、不创建目录
-python -m airmosaic.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --dry-run
+python -m runtime.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --dry-run
 # 显式许可后的预检仍不执行请求
-python -m airmosaic.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --dry-run --allow-network
+python -m runtime.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --dry-run --allow-network
 # 按授权执行元数据发现
-python -m airmosaic.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --allow-network
+python -m runtime.cli run-tool worldpop_download --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/worldpop.json --allow-network
 ```
 
 接口支持在已审查的个人 JSON 中设 `download: true`，但当前须先完成目录连通和产品元数据核对；连通未通过时不执行文件下载。后续仍用同一 ID 调用，不把 `--download` 追加给 run-tool。结果位于 `results/<project_id>/<run_id>/<stage>/worldpop_download/metadata/` 和 `raw/`，不自动发布缓存。核对产品、年份、文件、CRS、分辨率、单位和人口总量后，才按授权发布到 `data/01_socioeconomic_natural_change/WorldPop/<version>/`。重采样和分区统计没有独立执行入口。
@@ -75,8 +75,8 @@ python -m airmosaic.cli run-tool worldpop_download --project-id example_project 
 ```
 
 ```powershell
-python -m airmosaic.cli run-tool csmar_process_company_info --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/csmar.json --dry-run
-python -m airmosaic.cli run-tool csmar_process_company_info --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/csmar.json
+python -m runtime.cli run-tool csmar_process_company_info --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/csmar.json --dry-run
+python -m runtime.cli run-tool csmar_process_company_info --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/csmar.json
 ```
 
 先将示例名映射到实际授权 ZIP；不存在的输入会被拒绝。执行器自动分配 out_dir，脚本直接读 ZIP 中工作簿，不在输入旁解压。输出行业候选表、最新企业列表 CSV/XLSX。核对固定列及关键词匹配；其他表、CSV/TXT 需要人工适配。企业身份不能直接推断成本承担者或物理生产边界。
@@ -102,8 +102,8 @@ python -m airmosaic.cli run-tool csmar_process_company_info --project-id example
 
 ```powershell
 $gbdParams = Join-Path $env:AIRMOSAIC_CONFIG_DIR "gbd-task.json"
-python -m airmosaic.cli run-tool ihme_gbd_fetch_results --project-id example_project --stage 04_integrated_impacts --params-file $gbdParams --dry-run --allow-network --confirm-browser-session
-python -m airmosaic.cli run-tool ihme_gbd_fetch_results --project-id example_project --stage 04_integrated_impacts --params-file $gbdParams --allow-network --confirm-browser-session --timeout 300
+python -m runtime.cli run-tool ihme_gbd_fetch_results --project-id example_project --stage 04_integrated_impacts --params-file $gbdParams --dry-run --allow-network --confirm-browser-session
+python -m runtime.cli run-tool ihme_gbd_fetch_results --project-id example_project --stage 04_integrated_impacts --params-file $gbdParams --allow-network --confirm-browser-session --timeout 300
 ```
 
 两项标志必须符合任务授权；会话声明不是登录验证，认证仍显示 unverified。输出 `results/<project_id>/<run_id>/<stage>/ihme_gbd_fetch_results/results.csv` 与 JSON sidecar。同时核对请求维度、错误、行数和缺失；人数、每十万人率及比例分开，错误时不沿用旧表格，不自动补零。页面内部结构变化需适配，raw-to-processed 对应关系保留在本地。

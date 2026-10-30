@@ -39,6 +39,17 @@ Linux/macOS 可在自己的 shell 配置中显式设置这三个变量，详见[
 
 `mcp-client.example.json` 是兼容客户端的通用连接模板，需在个人副本中替换解释器与三个已存在根目录，并按客户端格式调整。默认只读查询或预检，不授予实际执行、联网或浏览器权限；不放凭据，不会自动加载此配置。安装和授权见[MCP 指南](../../harness/usage/mcp_ZH.md)。
 
-新任务按[资产规范](../../harness/assets_ZH.md)同时提供 `--project-id` 和 `--stage`。环境示例只设置根目录，不选择项目，不迁移旧工作区；项目与复核说明模板见 [assets/](assets/README_ZH.md)。真实项目配置仍在 CONFIG_DIR，结果和审核记录在 assets/results。
+项目与阶段要求、结果范围及复核入库统一见[资产规范](../../harness/assets_ZH.md)和[执行说明](../../harness/usage/run-tool.md)。环境示例只设置根目录。[assets/ 模板](assets/README_ZH.md)提供人工记录；[asset-paths.example.json](asset-paths.example.json)说明非秘密路径字段，不会自动加载。
 
-仓库内公开 `assets/` 与本例在 Git 外选择的私人资产根不同。公开目录只读演示清单；真实数据及全部新结果保存在 `AIRMOSAIC_ASSETS_DIR`。需要不同磁盘位置时，在私人配置副本中设定该变量。可参考[路径映射字段](asset-paths.example.json)，JSON 不自动加载。
+回归任务配置位于 `ml-regression/`，分别提供预测与合成因果示例。通用演示省略项目编号；具体研究提供项目编号，在项目根内自选结果布局。依赖与操作见机器学习分类说明。
+
+[直接合成回归参数](run-tool/synthetic-regression.json)不依赖工作流代码即可调用技能。[空气污染预测模板](ml-regression/air-pollution-prediction.template.json)通过任务结构验证，但没有配套数据；使用前适配字段、单位、完整性、划分、缺失与样本上限。参数是小规模计算示例，不是经过科学验证的推荐值。具体操作见技能的[操作契约](../../skills/model/shared/machine_learning_model/references/operations_ZH.md)与[领域特例](../../skills/model/shared/machine_learning_model/references/air-pollution_ZH.md)。
+
+[local-sources.example.yaml](local-sources.example.yaml) 是可选的非秘密外部来源映射模板，原位于方法库。所有根字段为空，个人副本由用户在 CONFIG_DIR 填写并审查；项目不会自动加载该文件、扫描来源目录或读取认证信息。它不是 run-tool 参数。
+
+`run-tool/aq-bench-repository.json` 读取仓库内已登记的公开副本，原有 AQ-Bench 参数文件读取字节一致的外部副本。公开数据与合成示例分别登记，两者均只读。
+
+[model-reproduction/](model-reproduction/README_ZH.md) 提供两侧各五行的冻结合成比较任务及显式生成步骤。真实比较选择个人 CONFIG 任务和已冻结外部结果；经过审查的直接脚本不等于已注册执行工具。
+
+
+[工作流合成预测任务](ml-regression/workflow-synthetic.json)用于[生成代码与测试示例](../../workflows/ml_regression/examples/README_ZH.md)，仅使用登记的合成输入及显式工作流结果范围。

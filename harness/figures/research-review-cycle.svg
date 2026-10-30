@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1446" viewBox="0 0 1200 1446" role="img" aria-labelledby="title desc">
+<title id="title">Connect research around scientific questions</title>
+<desc id="desc">The scientific chain connects socioeconomic and natural change, emissions, atmospheric transport and chemistry, and integrated impacts. Methods, skills, workflows and shared runtime services support projects. The main sequence is projects retaining experimental results, human scientific review, and selected approved outputs entering a single assets node. Reports and review records stay with projects. Feedback improves projects and workflows. Feedback rails lie outside the content area. Asset internals are not prescribed.</desc>
+<style>text{font-family:"Microsoft YaHei","Noto Sans CJK SC","PingFang SC","Segoe UI",Arial,sans-serif;fill:#183449}.minor{fill:#496578}</style>
+<defs><marker id="main-arrow" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#3f6fad"/></marker><marker id="feedback-arrow" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#147d78"/></marker></defs>
+<rect width="1200" height="1446" rx="20" fill="#fff"/>
+<g transform="translate(60 0)">
+<text x="32" y="39" text-anchor="start" font-size="30" font-weight="600" data-text-role="diagram-title" class="">Connect research around scientific questions</text>
+<rect id="stage-1" data-node="true" x="32" y="65" width="230" height="174" rx="14" fill="#f4f8fe" stroke="#c3d4eb" stroke-width="1.6"/>
+<text x="49" y="105" text-anchor="start" font-size="28" font-weight="600" data-text-role="node-title" class="minor" data-for="stage-1">01</text>
+<text x="147" y="149.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="stage-1">Socioeconomic</text>
+<text x="147" y="185.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="stage-1">and natural</text>
+<text x="147" y="221.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="stage-1">change</text>
+<path d="M262 152.0H294" fill="none" stroke="#3f6fad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#main-arrow)"/>
+<rect id="stage-2" data-node="true" x="294" y="65" width="230" height="174" rx="14" fill="#f4f8fe" stroke="#c3d4eb" stroke-width="1.6"/>
+<text x="311" y="105" text-anchor="start" font-size="28" font-weight="600" data-text-role="node-title" class="minor" data-for="stage-2">02</text>
+<text x="409" y="167.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="stage-2">Emission</text>
+<text x="409" y="203.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="stage-2">inventory</text>
+<path d="M524 152.0H556" fill="none" stroke="#3f6fad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#main-arrow)"/>
+<rect id="stage-3" data-node="true" x="556" y="65" width="230" height="174" rx="14" fill="#f4f8fe" stroke="#c3d4eb" stroke-width="1.6"/>
+<text x="573" y="105" text-anchor="start" font-size="28" font-weight="600" data-text-role="node-title" class="minor" data-for="stage-3">03</text>
+<text x="671" y="149.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="stage-3">Atmospheric</text>
+<text x="671" y="185.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="stage-3">transport and</text>
+<text x="671" y="221.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="stage-3">chemistry</text>
+<path d="M786 152.0H818" fill="none" stroke="#3f6fad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#main-arrow)"/>
+<rect id="stage-4" data-node="true" x="818" y="65" width="230" height="174" rx="14" fill="#f4f8fe" stroke="#c3d4eb" stroke-width="1.6"/>
+<text x="835" y="105" text-anchor="start" font-size="28" font-weight="600" data-text-role="node-title" class="minor" data-for="stage-4">04</text>
+<text x="933" y="167.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="stage-4">Integrated</text>
+<text x="933" y="203.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="stage-4">impacts</text>
+<text x="32" y="293" text-anchor="start" font-size="30" font-weight="600" data-text-role="diagram-title" class="">Methods, skills and reusable workflows</text>
+<rect x="22" y="309" width="1036" height="220" rx="20" fill="#f6f8fb"/>
+<path d="M182 517V543" fill="none" stroke="#3f6fad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M540 517V543" fill="none" stroke="#3f6fad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M898 517V543" fill="none" stroke="#3f6fad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M182 543H898" fill="none" stroke="#3f6fad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M540 543V563" fill="none" stroke="#3f6fad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M540 619V659" fill="none" stroke="#3f6fad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#main-arrow)" data-from="runtime" data-to="project"/>
+<path d="M540 821V905" fill="none" stroke="#3f6fad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#main-arrow)" data-from="project" data-to="review"/>
+<path d="M540 1035V1175" fill="none" stroke="#3f6fad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#main-arrow)" data-from="review" data-to="assets" data-condition="human_approved"/>
+<path d="M390 970.0H182V1089" fill="none" stroke="#3f6fad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#main-arrow)" data-from="review" data-to="reports"/>
+<path d="M690 970.0H898V1089" fill="none" stroke="#3f6fad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#main-arrow)" data-from="review" data-to="improve"/>
+<path d="M540 1303V1349H-36V740.0H390" fill="none" stroke="#147d78" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 7" marker-end="url(#feedback-arrow)" data-from="assets" data-to="project"/>
+<path d="M1048 1188.0H1116V419.0H1048" fill="none" stroke="#147d78" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 7" marker-end="url(#feedback-arrow)" data-from="improve" data-to="workflows"/>
+<rect id="methods" data-node="true" x="32" y="321" width="300" height="196" rx="14" fill="#f4f8fe" stroke="#c3d4eb" stroke-width="1.6"/>
+<text x="182" y="359.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="methods">methods/</text>
+<text x="182" y="431.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="methods">Scientific reasoning</text>
+<text x="182" y="465.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="methods">Scope &amp; assumptions</text>
+<rect id="skills" data-node="true" x="390" y="321" width="300" height="196" rx="14" fill="#f4f8fe" stroke="#c3d4eb" stroke-width="1.6"/>
+<text x="540" y="359.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="skills">skills/</text>
+<text x="540" y="397.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="skills">Operations &amp; result</text>
+<text x="540" y="431.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="skills">checks</text>
+<text x="540" y="465.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="skills">Code · software ·</text>
+<text x="540" y="499.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="skills">settings</text>
+<rect id="workflows" data-node="true" x="748" y="321" width="300" height="196" rx="14" fill="#f4f8fe" stroke="#c3d4eb" stroke-width="1.6"/>
+<text x="898" y="359.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="workflows">workflows/</text>
+<text x="898" y="397.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="workflows">Data and skill</text>
+<text x="898" y="431.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="workflows">combinations</text>
+<text x="898" y="465.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="workflows">Reusable steps &amp;</text>
+<text x="898" y="499.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="workflows">handoffs</text>
+<rect id="runtime" data-node="true" x="238" y="563" width="604" height="56" rx="14" fill="#f4f8fe" stroke="#c3d4eb" stroke-width="1.6"/>
+<text x="540" y="601" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="runtime">catalog/ + runtime/</text>
+<rect id="project" data-node="true" x="390" y="659" width="300" height="162" rx="14" fill="#f4f8fe" stroke="#c3d4eb" stroke-width="1.6"/>
+<text x="540" y="697.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="project">projects/</text>
+<text x="540" y="735.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="project">Save experiment results</text>
+<text x="540" y="769.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="project">Code · settings ·</text>
+<text x="540" y="803.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="project">evaluation</text>
+<rect id="review" data-node="true" x="390" y="905" width="300" height="130" rx="14" fill="#fff5e5" stroke="#dfb971" stroke-width="1.6"/>
+<text x="540" y="943.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="review">Human scientific</text>
+<text x="540" y="979.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="review">review</text>
+<text x="540" y="1017.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="review">Register · revise · retain</text>
+<rect id="assets" data-node="true" x="390" y="1175" width="300" height="128" rx="14" fill="#edf8f4" stroke="#badbcf" stroke-width="1.6"/>
+<text x="540" y="1213.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="assets">assets/</text>
+<text x="540" y="1251.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="assets">Only approved outputs</text>
+<text x="540" y="1285.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="assets">Reuse in later research</text>
+<rect id="reports" data-node="true" x="32" y="1089" width="300" height="198" rx="14" fill="#f4f8fe" stroke="#c3d4eb" stroke-width="1.6"/>
+<text x="182" y="1145.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="reports">Reports &amp; records</text>
+<text x="182" y="1201.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="reports">Kept in projects/</text>
+<text x="182" y="1235.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="reports">Review release</text>
+<text x="182" y="1269.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="reports">separately</text>
+<rect id="improve" data-node="true" x="748" y="1089" width="300" height="198" rx="14" fill="#f4f8fe" stroke="#c3d4eb" stroke-width="1.6"/>
+<text x="898" y="1127.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="improve">Feedback &amp;</text>
+<text x="898" y="1163.0" text-anchor="middle" font-size="28" font-weight="600" data-text-role="node-title" class="" data-for="improve">revision</text>
+<text x="898" y="1201.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="improve">Revise the study design</text>
+<text x="898" y="1235.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="improve">Refine methods and</text>
+<text x="898" y="1269.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor" data-for="improve">skills</text>
+<text x="182" y="722.0" text-anchor="middle" font-size="24" font-weight="400" data-text-role="body" class="minor">Reuse in later research</text>
+<text x="565" y="871" text-anchor="start" font-size="24" font-weight="400" data-text-role="body" class="minor">Submit project results</text>
+<text x="565" y="1113" text-anchor="start" font-size="24" font-weight="400" data-text-role="body" class="minor">Approved</text>
+<path d="M64 1405H100" fill="none" stroke="#3f6fad" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#main-arrow)"/>
+<text x="114" y="1413" text-anchor="start" font-size="24" font-weight="400" data-text-role="body" class="minor">Research and computation</text>
+<path d="M540 1405H576" fill="none" stroke="#147d78" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 7" marker-end="url(#feedback-arrow)"/>
+<text x="590" y="1413" text-anchor="start" font-size="24" font-weight="400" data-text-role="body" class="minor">Reviewed feedback and reuse</text>
+</g></svg>

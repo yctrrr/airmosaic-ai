@@ -5,12 +5,12 @@
 ## 1. 找工具
 
 ```sh
-python -m airmosaic.cli list-tools
-python -m airmosaic.cli list-tools --category data_acquisition
-python -m airmosaic.cli list-tools --skill worldpop
-python -m airmosaic.cli list-tools --query "gcam extract"
-python -m airmosaic.cli list-tools --status ready
-python -m airmosaic.cli list-tools --format json
+python -m runtime.cli list-tools
+python -m runtime.cli list-tools --category data_acquisition
+python -m runtime.cli list-tools --skill worldpop
+python -m runtime.cli list-tools --query "gcam extract"
+python -m runtime.cli list-tools --status ready
+python -m runtime.cli list-tools --format json
 ```
 
 默认按 `core`、`data_acquisition`、`model` 分组，显示稳定 ID、名称、当前检查状态、入口、依赖、登录要求和下一步。`--query` 在 ID、标题、描述和 skill 名称中按空白拆词，全部词均需匹配；不进行网络搜索。
@@ -20,9 +20,9 @@ Agent 使用 `--format json` 获取结构化结果。筛选无结果返回空数
 ## 2. 查详情与检查条件
 
 ```sh
-python -m airmosaic.cli describe-tool worldpop_download
-python -m airmosaic.cli describe-tool gcam_extract_market_sector --format table
-python -m airmosaic.cli check-tool ihme_gbd_fetch_results
+python -m runtime.cli describe-tool worldpop_download
+python -m runtime.cli describe-tool gcam_extract_market_sector --format table
+python -m runtime.cli check-tool ihme_gbd_fetch_results
 ```
 
 详情包括声明源、实现/登记状态、原始入口、参数 schema 与映射、依赖、非秘密配置名、认证方式、副作用和分类说明。`invocation.tokens` 只给原命令前缀，调用者还须提供所需参数；它不是可直接执行的完整命令，也不是一个执行授权。
@@ -63,7 +63,7 @@ python -m airmosaic.cli check-tool ihme_gbd_fetch_results
 ## 5. SDK
 
 ```python
-from airmosaic.services import ToolRegistryService
+from runtime.services import ToolRegistryService
 
 registry = ToolRegistryService()
 tools = registry.list_tools(category="data_acquisition", query="worldpop")

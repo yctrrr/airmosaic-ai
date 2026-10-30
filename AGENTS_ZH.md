@@ -6,7 +6,7 @@
 
 <!-- README-I18N:END -->
 
-目录职责及迁移见[布局说明](harness/project-layout_ZH.md)。方法库解释科学方法，技能负责电脑操作，核心程序负责公共执行。路径叙述和不可执行阶段提案放在 `methods/pathways/`，未来执行定义放在 `workflows/`。本地标准输入输出 MCP 已复用现有目录和执行器，工作流编排仍未实现。参见[MCP 指南](harness/usage/mcp_ZH.md)。
+目录职责见[布局说明](harness/project-layout_ZH.md)。方法库解释科学方法，技能负责计算机操作，工作流提供通用数据与技能组合示范，`projects/` 按四位编号组织具体科学问题与实验，核心程序负责公共执行。通用科学设计见 `methods/shared/`，组合定义见 `workflows/`，专项研究见[项目索引](projects/README_ZH.md)。MCP 复用现有目录和执行器，通用跨工具编排仍未实现，参见[使用说明](harness/usage/mcp_ZH.md)。
 
 
 
@@ -15,12 +15,12 @@
 
 ## 必须遵守的边界
 
-- 说明维护与常规工程检查只用相关文档、接口和合成输入，不读取原始数据。真实获取、检查或计算需要限定任务。第二步仅列概念方法，不含具体数据、参数值、实现代码、项目脚本名或源码指纹。
+- 说明维护与常规工程检查只用相关文档、接口和合成输入，不读取原始数据。真实获取、检查或计算需要限定任务。第二步仅在已明确声明且经审查的清单技能内允许有界合成计算，其他概念条目不代表可执行。真实数据处理仍需限定任务，直接示例不启用第二步执行器适配器。
 - 遵守对象、年份、地区和操作范围。持续完成必要、已授权、可逆的工作，不重复询问；只补充关键缺失信息或授权。
 - 先检查分支和工作区，保留原件、结果及他人修改。流程说明不授权批量下载、额外计算、安装、发布或发消息。
 - 私人身份、密码、密钥、会话、浏览器配置、私人主机、签名链接和机器专用路径不得进入共享内容。疑似秘密只报告位置和类别。
-- 数据结果放 `AIRMOSAIC_ASSETS_DIR`，非秘密设置放 `AIRMOSAIC_CONFIG_DIR`，浏览器状态放 `AIRMOSAIC_AUTH_DIR`。三根已存在、相互独立且在仓库外。凭据留在秘密管理器，或明确授权的官方客户端既有保护机制中，不读取或导出秘密。
-- 外部发行包留在仓库外，新产物使用 `results/<project_id>/<run_id>/<stage>/<tool>/`。没有明确授权不迁移旧结果或复制会话。
+- 区分项目实验结果与经审核资产。`AIRMOSAIC_ASSETS_DIR` 仍是既有运行兼容设置，不表示其中内容已审核入库。非秘密设置放 `AIRMOSAIC_CONFIG_DIR`，浏览器状态放 `AIRMOSAIC_AUTH_DIR`，私人根已存在、相互独立并位于 Git 外。凭据留在秘密管理器或明确授权的官方客户端既有保护机制中，不读取或导出秘密。
+- 外部发行包留在 Git 外。项目结果遵循项目归属约定及所选适配器当前支持的输出边界，本地忽略规则不表示已支持写入。通用演示保留已审查的例外；没有明确授权不迁移旧结果或复制会话。
 - 区分源码审查、合成或小样检查、真实集成与科学验证，不将计划或跳过内容描述为完成。
 - 遵守[行为边界](harness/agent-boundaries_ZH.md)和[存储约定](harness/storage-and-credentials_ZH.md)。行为说明不构成操作系统隔离。
 
@@ -30,6 +30,7 @@
 
 | 任务 | 说明 |
 |---|---|
+| 围绕具体科学问题编排实验 | [编号项目](projects/README_ZH.md) |
 | 协作与交接 | [总体说明](harness/README_ZH.md) |
 | 查找能力与状态 | [目录](harness/tool-catalog.md)、[查询](harness/usage/tool-registry.md) |
 | 执行已审查适配器 | [统一执行](harness/usage/run-tool.md) |
@@ -47,11 +48,11 @@
 使用 Python 3.10+ 的项目环境，通过 `python -m pip install -e '.[dev]'` 安装。会话根显式配置，`.env` 不自动加载。缓存检查需要工作区变量或明确的调用参数；个人配置根与认证根是调用约定，不是自动加载器。
 
 ```sh
-python -m airmosaic.cli --help
-python -m airmosaic.cli list-tools --format json
-python -m airmosaic.cli describe-tool airmosaic_list_datasets
-python -m airmosaic.cli check-tool airmosaic_list_datasets
-python -m airmosaic.cli list-datasets
+python -m runtime.cli --help
+python -m runtime.cli list-tools --format json
+python -m runtime.cli describe-tool airmosaic_list_datasets
+python -m runtime.cli check-tool airmosaic_list_datasets
+python -m runtime.cli list-datasets
 ```
 
 `list-datasets` 读取声明，不列出已下载文件。`check-availability` 只检查文件存在性，不证明内容或科学有效性，输出中的私人路径需脱敏。规划命令只给模板。服务类包括 `DataCatalogService`、`DataAccessService`、`CausalDesignService`、`ToolRegistryService`、`ToolRunnerService`。
@@ -84,6 +85,18 @@ python -m airmosaic.cli list-datasets
 
 ## 数据与项目结果
 
-数据和项目结果按[资产规范](harness/assets_ZH.md)管理。Git 外共享 `assets/data/<stage>/<dataset-name>/<version>/`，数据目录使用实际名称；项目按配置引用固定版本，跨阶段不复制。新结果保存到 `assets/results/<project_id>/<run_id>/<stage>/<tool_id>/`，运行记录和临时文件留在该批次内。新调用同时提供项目和阶段。计算与检查 → 人工复核 → 将选定数据登记到新版本；不覆盖原始数据或既有版本。个人配置、认证及凭据继续独立管理。旧文件不迁移，自动审批和入库服务尚未实现。
+实验结果归属对应[项目](projects/README_ZH.md)，项目保留代码、配置、评价和审核记录。是否将选定成果纳入 `assets/` 由人类科学审核决定，资产内部组织留待后续确定。项目目录写入支持实现前，当前执行器保留既有外部输出契约；通用演示例外依所选适配器而定。不迁移历史结果，不绕过检查，不根据文件已经存在推定通过审核。个人配置、认证与凭据继续分离，见[结果与审核约定](harness/assets_ZH.md)。
 
-仓库内 `assets/` 仅允许读取清单登记且哈希匹配的演示文件；生成结果必须写入 Git 外 `AIRMOSAIC_ASSETS_DIR`。私人路径通过个人配置引用，不建立文件系统链接。每次执行必须明确项目及阶段，不再使用旧工作区模式。
+仓库内 `assets/` 允许清单登记且哈希匹配的合成输入，以及明确授权发布、附许可与署名的公开数据副本；后者单独登记公开数据清单，不据此发布私人数据。当前项目输出兼容位置仍在 Git 外，不据此视为审核入库。经过审查的适配器可显式支持被 Git 忽略的技能本地结果，用于通用演示，不能将私人数据放入其中发布。按所选适配器提供项目及阶段上下文。私人路径通过个人配置引用，不建立文件系统链接；不再使用旧工作区模式。
+
+项目目录采用四位展示编号，运行仍使用不含编号的稳定 `project_id`。项目清单只供明确引用，不作为运行参数或新权限来源；科学实验记录与通用流程演示的验证记录分开。
+
+技能采用 `skills/<category>/<stage>/<capability>/`，与方法库使用相同的四阶段及 `shared`；每项能力只维护一个位置，通过显式映射连接方法。
+
+
+## 工作流合成检查
+
+已审查的适配器额外支持显式 `result_scope=workflow`（CLI 为 `--result-scope workflow`）。仅允许清单登记且哈希一致的仓库合成 CSV，输出固定在被 Git 忽略的 `workflows/ml_regression/results/<timestamp>_<task>/`，记录和临时文件位于该结果根的 `.airmosaic/<run_id>/`。拒绝项目编号、真实或外部数据、越界目录及嵌套仓库；不改变 `auto` 的默认行为。正式研究仍使用外部项目结果根。工作流中经审查的编排示例可供复用；本次生成代码与依据放对应结果的 `gen_script/`，具体过程记录见统一交接规范。该检查不提供科学批准，也不构成操作系统沙箱。
+
+
+代理的目标/行动/观察、停止条件及生成依据、执行事件和回顾性摘要，遵循[统一执行与过程记录规范](harness/usage/workflow-handoff_ZH.md)。具体适配器必须声明实际采集范围，不以事后摘要替代当时事件。

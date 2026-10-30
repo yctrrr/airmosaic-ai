@@ -8,8 +8,8 @@ From the repository root:
 
 ```sh
 python -m pip install -e '.[dev,tools]'
-python -m airmosaic.cli run-tool gcam_aggregate_provinces --project-id toy_example --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/toy-aggregate.json --dry-run
-python -m airmosaic.cli run-tool gcam_aggregate_provinces --project-id toy_example --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/toy-aggregate.json
+python -m runtime.cli run-tool gcam_aggregate_provinces --project-id toy_example --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/toy-aggregate.json --dry-run
+python -m runtime.cli run-tool gcam_aggregate_provinces --project-id toy_example --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/toy-aggregate.json
 ```
 
 The public [input](../../assets/data/01_socioeconomic_natural_change/ExampleMarketRows/v1/rows.csv) contains four synthetic rows. The [reference](../../assets/results/toy_example/reference/01_socioeconomic_natural_change/gcam_aggregate_provinces/province_aggregate.csv) has one row: weighted_price = 40/3, quantity_sum = 3 and province_count = 2. Compare parsed numerical values; CSV encoding and float formatting may differ.

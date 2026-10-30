@@ -6,7 +6,7 @@
 
 <!-- README-I18N:END -->
 
-See the [project layout](project-layout.md): human methods, computer-operation skills, declarations and shared execution have separate responsibilities. [Path narratives](../methods/pathways/README.md) are references; [core workflows](../workflows/README.md) disclose the unimplemented engine.
+See the [project layout](project-layout.md): human methods, computer-operation skills, declarations and shared execution have separate responsibilities. [Scientific design](../methods/shared/requirements_driven_model_building.md) explains research choices; [workflow recipes](../workflows/README.md) describe reusable combinations; skills own executable operations.
 
 
 
@@ -19,6 +19,7 @@ Use the [four-step workflow](four-step-workflow.md) and [methods](../methods/REA
 
 | Need | Guide |
 |---|---|
+| Organize experiments around a scientific question | [Numbered research projects](../projects/README.md) |
 | Install, inspect catalogs and local files | [Core tools](usage/core.md) |
 | Separate data, configuration and authentication | [Storage](storage-and-credentials.md) |
 | Shared data, project results and human review | [Assets](assets.md) |
@@ -29,6 +30,7 @@ Use the [four-step workflow](four-step-workflow.md) and [methods](../methods/REA
 | Modify the project safely | [Agent boundaries](agent-boundaries.md), [AGENTS.md](../AGENTS.md) |
 | Add a capability | [Authoring](skill-authoring.md), [registration](tool-registration.md) |
 | Inspect readiness or execute an adapter | [Queries](usage/tool-registry.md), [run-tool](usage/run-tool.md) |
+| Improve a capability from selected task evidence | [Improvement contract](skill-improvement.md), [maintenance operations](../skills/agent_operations/README.md) |
 | Review evidence and unperformed checks | [Verification](verification.md) |
 
 Keep personal task records outside Git. Shared rules describe collaboration; skills describe concrete domain workflows.
@@ -69,7 +71,7 @@ A task brief should specify the repository entry, bounded question, allowed inpu
 
 ## 5. Paths and data
 
-Keep reusable code, documentation, schemas and declared toy assets in Git. Private `AIRMOSAIC_ASSETS_DIR` stores shared `data/<stage>/<dataset-name>/<version>/`, fresh `results/<project_id>/<run_id>/<stage>/<tool_id>/`, and run-local `records/<tool_id>/` and `temp/<tool_id>/`. Personal settings and authentication use separate roots outside Git.
+Keep reusable code, documentation, schemas and declared synthetic assets and explicitly authorized licensed public data snapshots in Git. External AIRMOSAIC_ASSETS_DIR stores shared data by stage/name/version and project results, with task-selected internal layouts where supported. Generic demonstrations may use reviewed, Git-ignored skill results. Personal settings and authentication remain separate; see the asset contract.
 
 Explicitly override legacy output defaults for new tasks without moving old files. External releases remain separately configured read-only inputs; configuration edits use task copies. Use logical roots and IDs in shared documents. Variable strings are not automatically expanded unless the caller implements it.
 
@@ -90,7 +92,3 @@ Handoffs specify unique keys, units, time/space support, missingness, mappings, 
 Define a bounded change, inspect existing work, use a task branch/check-out when appropriate, maintain both documentation languages, and follow [authoring](skill-authoring.md) and [registration](tool-registration.md). Run relevant checks and privacy review before an authorized commit, push or release.
 
 Separate approved prerequisites and unrelated work. Do not force-push, rewrite history, start later roadmap tasks or change repository permissions merely because a role or plan mentions them. Future distribution/interfaces require implementation and task-specific validation before being described as operational.
-
-## Data and project results
-
-Follow the [asset contract](assets.md). Shared data outside Git uses `assets/data/<stage>/<dataset-name>/<version>/` with actual dataset names. Projects reference fixed versions in configuration without cross-stage duplication. New results use `assets/results/<project_id>/<run_id>/<stage>/<tool_id>/`, with records and temporary files inside that run. New calls provide project and stage together. Compute/check, obtain human review, then register selected data in a fresh version; never overwrite originals or existing versions. Personal settings, authentication and credentials remain separate. Existing files are not migrated; automatic approval and registration services are not implemented.

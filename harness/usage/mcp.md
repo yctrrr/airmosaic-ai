@@ -6,7 +6,7 @@
 
 <!-- README-I18N:END -->
 
-The local stdio server uses the existing catalog and execution services. It exposes 16 enabled tool IDs, six as public metadata queries and ten through the runner. The full catalog still has 25 entries, including non-executable references. No second tool registry, HTTP service, automatic login, workflow engine or scientific validator is introduced.
+The local stdio server uses the existing catalog and execution services. It exposes enabled tool IDs from the validated tool catalog, including public metadata queries and reviewed runner adapters. Disabled references remain visible as catalog metadata. No second tool registry, HTTP service, automatic login, general workflow engine or scientific validator is introduced.
 
 ## 1. Install and check the connection
 
@@ -14,16 +14,16 @@ From the repository root, using the selected project interpreter:
 
 ```sh
 python -m pip install -e '.[dev,mcp]'
-python -m airmosaic.mcp_server --help
+python -m runtime.mcp_server --help
 python harness/checks/mcp_smoke.py
 ```
 
-The optional extra pins the official Python SDK to `mcp==2.3.0`. The smoke client starts a real stdio subprocess, lists tools/resources and queries public dataset metadata. It does not require personal roots or access data, credentials, network services or authenticated browsers. Expected counts for this version are 16 tools, 49 resources and nine datasets.
+The optional extra pins the official Python SDK to `mcp==2.3.0`. The smoke client starts a real stdio subprocess, lists tools/resources and queries public dataset metadata. It does not require personal roots or access data, credentials, network services or authenticated browsers. Counts follow the current authoritative catalogs; adding a method or skill resource does not add an execution tool.
 
 The MCP server is started by a compatible client using the command below. It waits for protocol messages; it does not accept natural-language text directly in a terminal.
 
 ```sh
-python -I -B -X utf8 -m airmosaic.mcp_server
+python -I -B -X utf8 -m runtime.mcp_server
 ```
 
 The installed console entry is `airmosaic-mcp`. Keep stdout exclusively for the protocol. The application reports fixed startup error categories on stderr and suppresses raw SDK diagnostic logs. It does not connect itself to a client or modify client settings.
@@ -36,7 +36,7 @@ Public metadata queries work without roots. Preview and execution through the ru
 
 ## 3. Discover and read
 
-MCP `tools/list` returns the 16 supported interfaces with schemas derived from the existing manifests. Query operations use their existing flat parameter object:
+MCP `tools/list` returns the enabled interfaces with schemas derived from the existing manifests. Query operations use their existing flat parameter object:
 
 ```json
 {"category":"data_acquisition"}
@@ -44,7 +44,26 @@ MCP `tools/list` returns the 16 supported interfaces with schemas derived from t
 
 Pass that object to `airmosaic_list_tools`. Its result includes all matching catalog entries and their actual implementation/availability states. Other metadata operations are `airmosaic_describe_tool`, `airmosaic_check_tool`, `airmosaic_list_datasets`, `airmosaic_describe_dataset` and `airmosaic_search_datasets`. Format defaults are supplied by the interface; output is structured JSON.
 
-MCP resources include `airmosaic://catalog/tools`, `airmosaic://catalog/datasets` and `airmosaic://catalog/skills`. The skill index links the English and Chinese resources for 23 canonical skills. These are reading resources, not executable tools or automatically installed skills. Skill discovery follows public method mappings and tool-associated entries; unreferenced new skills require an explicit public mapping. Resource reads accept only exact indexed URIs, with bounded public document size. There is no arbitrary file, original-data, configuration, authentication or run-log resource reader.
+MCP resources include `airmosaic://catalog/tools`, `airmosaic://catalog/datasets`, `airmosaic://catalog/skills`, `airmosaic://catalog/methods` and the unified `airmosaic://catalog/capabilities`. Read the unified resource for method-to-skill mappings, actual tool IDs, implementation/registration declarations, versions, document SHA256 fingerprints and exact document resource URIs. Method and skill documents remain reading resources; they do not install a host skill or register execution.
+
+An explicitly indexed Chinese method sibling is also available at `airmosaic://methods/<method_id>/zh`; the canonical document uses `/en`. Other supporting documents use the exact resource addresses returned by discovery.
+
+For skills, `supporting_documents` exposes the Markdown guides explicitly linked from either language's entry and located inside that skill directory. It is a bounded one-hop index, not recursive filesystem discovery; unlinked files, scripts, credential directories and external paths are not exposed as document resources.
+
+This is one derived snapshot, built at server startup from `methods/index.yaml`, `catalog/skills.yaml`, canonical skill frontmatter and existing tool manifests. Restart after metadata edits; CLI invocations build a fresh snapshot. Unreferenced new skills need a method mapping or a public reference in `catalog/skills.yaml`. No recursive filesystem discovery or script import occurs. `documented_scripts` lists finite script references found in the skill document and exact matching enabled tool IDs; file presence and a tool elsewhere in the skill do not establish that every branch is executable.
+
+`declarations` reports structured fields as `declared` or `not_declared`; `document_sections` and exact resource URIs let a reader inspect prose that has no structured field. `evidence_claim` preserves existing method evidence as a declaration. None of these establish `source_checked`, `synthetic_verified`, `real_integration` or `scientific_review`. Execution readiness is `not_checked`, and scientific acceptance is `not_assessed`; use the existing tool check/runner for an individual tool's current prerequisites and authorization.
+
+Maintenance queries use the same service:
+
+```sh
+python -m runtime.cli list-capabilities --kind method
+python -m runtime.cli list-capabilities --kind skill
+python -m runtime.cli describe-capability skill machine-learning-model
+python -m runtime.cli validate-capabilities
+```
+
+Validation means metadata consistency only. It rejects duplicate method/skill IDs or YAML keys, unknown mapped tools, missing documents, unsafe relative paths, links/reparse locations, nested repositories and oversized documents. Resource reads accept only exact indexed URIs and recheck the path and size. There is no arbitrary file, original-data, configuration, authentication or run-log reader.
 
 ## 4. Preview a runner-backed operation
 
@@ -63,7 +82,7 @@ Responses contain `tool_id`, `mode` and `result`; errors use fixed categories. A
 The operator grants individual runner-backed tools when starting the server; the model cannot add those grants through tool arguments. Read-only metadata queries need no execution grant.
 
 ```sh
-python -m airmosaic.mcp_server --execute-tool gcam_aggregate_provinces
+python -m runtime.mcp_server --execute-tool gcam_aggregate_provinces
 ```
 
 An authorized call can then request execution:
@@ -77,7 +96,7 @@ Use only task-authorized inputs; the path is illustrative. Output is allocated u
 Network grants are separate, limited to selected execution tools:
 
 ```sh
-python -m airmosaic.mcp_server --execute-tool worldpop_download --network-tool worldpop_download
+python -m runtime.mcp_server --execute-tool worldpop_download --network-tool worldpop_download
 ```
 
 This command authorizes future requests; starting the server does not download anything. Actual requests still require task scope, valid parameters, dependencies and checks. Without a network grant the runner returns a blocker.
@@ -85,7 +104,7 @@ This command authorizes future requests; starting the server does not download a
 For an existing browser session, operator attestation must also bind its selected local CDP port:
 
 ```sh
-python -m airmosaic.mcp_server --execute-tool ihme_gbd_fetch_results --network-tool ihme_gbd_fetch_results --browser-tool ihme_gbd_fetch_results --browser-port 9222
+python -m runtime.mcp_server --execute-tool ihme_gbd_fetch_results --network-tool ihme_gbd_fetch_results --browser-tool ihme_gbd_fetch_results --browser-port 9222
 ```
 
 The port is an example, not a detected session. The user verifies the intended session and current query dimensions first. The port cannot be changed through MCP call parameters; authentication remains unverified in receipts. Do not expose a browser debug port publicly or copy session material.
@@ -100,4 +119,20 @@ The runner's parameter/path checks, minimal child environment and sanitized rece
 
 Validation uses synthetic inputs: official SDK in-process and real stdio clients, protocol error redaction, startup grants, path rejection, public resources, existing aggregation arithmetic and cancellation cleanup. Actual third-party client configuration, authenticated downloads, remote deployment and scientific acceptance are separate checks. SDK protocol/runtime references: [official SDK](https://github.com/modelcontextprotocol/python-sdk), [low-level server](https://py.sdk.modelcontextprotocol.io/advanced/low-level-server/).
 
-Calculation calls supply top-level `project_id` and `stage` following the [asset contract](../assets.md); these fields do not belong in `parameters`. Metadata queries need no project context.
+Calculation context fields belong at the top level, outside `parameters`. Legacy adapters require `project_id` and `stage`. Regression interfaces expose optional project/stage context and `result_scope: auto|skill|workflow|project`; each selected adapter still validates its supported scope and input restrictions. The reviewed workflow scope is for declared synthetic checks, not arbitrary project data. Auto selects project scope when a project ID is supplied and otherwise skill scope. Metadata queries need no context.
+
+## Configured workflow entry
+
+`ml_regression_workflow` exposes the reusable regression skill through the existing runner; see the [skill](../../skills/model/shared/machine_learning_model/SKILL.md). For a separate package library, set `AIRMOSAIC_R_LIBRARY` explicitly in the client's personal `env`. Tool arguments cannot change the dependency library; keep its actual location out of public examples. Add `--execute-tool ml_regression_workflow` at server startup for execution. No network grant is required. An example preview request:
+
+```json
+{"parameters":{"input_csv":"${AIRMOSAIC_ASSETS_DIR}/data/03_atmospheric_transport/AQ-Bench/v1/AQbench_dataset.csv","task_config":"config/examples/ml-regression/aq-bench-prediction.json"},"project_id":"aq_bench_demo","stage":"03_atmospheric_transport","dry_run":true}
+```
+
+After preview, use the same parameters with `dry_run: false`. Omit project/stage for a generic run in the skill’s ignored local results; provide a project ID for external project results. MCP manages output directories and does not expose `out_dir` overrides. For custom project directories and `output_files`, use the CLI and reviewed task settings. Neither route imposes a stage/tool hierarchy for this adapter.
+
+## Maintenance resources and language-specific execution
+
+`catalog/skills.yaml` adds finite public operational references to the read-only skill resource index. Canonical metadata stays in each SKILL entry; these references do not register tools or install host skills. Maintenance drafts outside the repository are not discovered. The tool catalog and reviewed adapter allowlist remain the sole execution sources.
+
+The machine-learning skill exposes R `ml_regression_workflow` and Python `ml_python_regression_workflow` with separate task/dependency contracts. Both use the shared result-scope rules and require their own startup execution grant. Python new-study execution additionally requires the explicit plan bundle; engineering replay accepts only manifest-listed repository synthetic input.

@@ -1,58 +1,38 @@
-# 机器学习模型使用
+# Machine-learning operations
 
-模型层的 [machine_learning 分类](../../skills/model/machine_learning/README.md)目前提供两类参考流程：
+**English** | [中文](machine-learning_ZH.md)
 
-| 方法 | 用途 | 真实目录 ID |
+| Layer | Responsibility | Entry |
 |---|---|---|
-| [mlr3](../../skills/model/machine_learning/mlr3/SKILL.md) | R 表格回归/分类、模型比较、调参与预测 | mlr3_workflow_reference |
-| [TimeXer](../../skills/model/machine_learning/timexer/SKILL.md) | Python/PyTorch 外生变量时间序列预测 | timexer_workflow_reference |
+| Method | Target definition, feature roles, DAG identification, regression and interpretation assumptions | [Regression method](../../methods/shared/machine_learning_model/README.md) |
+| Task skill | Reviewed target/feature preparation, fitting, evaluation, predictive explanation and supported causal estimation | [Regression skill](../../skills/model/shared/machine_learning_model/SKILL.md) |
+| Model families | Linear regression, tree-based models and sequence references | [Model directory](../../skills/model/shared/machine_learning_model/models/README.md) |
+| Common evaluation | Training-mean reference and shared candidate checks | [Evaluation](../../skills/model/shared/machine_learning_model/evaluation/README.md) |
+| Software demonstration | Direct CPU synthetic Transformer input/training/reload cases; not a registered tool | [Software cases](../../skills/model/shared/machine_learning_model/references/transformer-software.md) |
+| Framework skill | mlr3 environment, API and extension guidance | [mlr3](../../skills/model/shared/machine_learning_model/frameworks/r/mlr3/SKILL.md) |
+| Sequence reference | External Python/PyTorch TimeXer instructions; no runner adapter | [TimeXer](../../skills/model/shared/machine_learning_model/models/time_series/timexer/SKILL.md) |
+| Workflow | General data/skill combinations, DAG design step, branches and handoffs | [Regression combination](../../workflows/ml_regression/README.md) |
+| Project | A particular question, experiments, comparisons and review | [Project 0001](../../projects/0001_ozone_environmental_drivers/README.md) |
 
-## 1. 查询入口和执行状态
+The existing R executable ID remains `ml_regression_workflow`, with an mlr3 backend. The separate Python regression entry is `ml_python_regression_workflow`; its [language path](../../skills/model/shared/machine_learning_model/references/python-path.md) specifies the distinct task, dependencies and review bundle. `mlr3_workflow_reference` and `timexer_workflow_reference` remain non-executable guidance. Package APIs are not tool IDs.
 
 ```powershell
-python -m airmosaic.cli list-tools --category model --query mlr3
-python -m airmosaic.cli describe-tool mlr3_workflow_reference
-python -m airmosaic.cli check-tool mlr3_workflow_reference
-python -m airmosaic.cli list-tools --category model --query TimeXer
-python -m airmosaic.cli describe-tool timexer_workflow_reference
-python -m airmosaic.cli check-tool timexer_workflow_reference
+python -m runtime.cli list-tools --category model --query mlr3
+python -m runtime.cli describe-tool ml_regression_workflow
+python -m runtime.cli check-tool ml_regression_workflow
+python -m runtime.cli run-tool ml_regression_workflow --params-file config/examples/run-tool/aq-bench-ml-regression.json --dry-run
+python -m runtime.cli run-tool ml_regression_workflow --params-file config/examples/run-tool/synthetic-causal.json --dry-run
 ```
 
-这两个条目均为 reference / catalogued，状态 not_executable，execution_supported 为 false。查询只展示说明和静态依赖条件，不加载 R/PyTorch、不安装包、不读取个人数据。它们没有 run-tool 训练、预测、调参命令；R 包 API 或上游 run.py 不能当作 AirMosaic 工具 ID。reference 状态也不证明列出的模型依赖版本兼容。
+Use [prediction settings](../../config/examples/ml-regression/aq-bench-prediction.json) to configure target, features, train/validation/test labels, missingness, bounded rpart/ranger candidates, seeds and explanations. The training-only filter records missingness, variation, correlation and VIF diagnostics. Predictive explanations include permutation importance, PDP, ICE and optional empirical-background permutation Shapley estimates. These explain predictions, not causal effects.
 
-## 2. mlr3 使用步骤
+Use [synthetic causal settings](../../config/examples/ml-regression/synthetic-causal.json) for one continuous-treatment, cross-fitted partially linear slope. It requires a declared DAG, total-effect adjustment set, manual covariates, complete cases, one nuisance specification and scientific assumptions. It supports independent-unit or independent-group folds; arbitrary causal estimands, IV/DID and automatic causal discovery need adaptation. The known-effect synthetic example is implementation evidence. Observational causal analysis requires a study-specific design.
 
-1. 确定预测目标、数据许可、样本单位和下游用途，按 [mlr3 skill](../../skills/model/machine_learning/mlr3/SKILL.md)核对边界。
-2. 准备任务 R 环境；基础示例需 mlr3/rpart，其余依赖由选定的 learner、PipeOp 与调参方法决定。当前指南不自动安装或加载个人启动文件。
-3. 先参考[合成模型使用示例](../../skills/model/machine_learning/mlr3/examples/basic-model-use.md)理解 API，再为授权数据实现任务副本；示例本轮仅解析语法，未完成模型实跑。
-4. 按[工作流与验收](../../skills/model/machine_learning/mlr3/references/workflow.md)定义划分、图内预处理、预算、开发比较、最终评估及新数据契约。
-5. 保存本地模型、预测和验证记录，检查失败/缺失和数据泄露；只分享经审查的聚合摘要。
+No project ID selects the regression skill's local, Git-ignored `results/<run_id>/`. A project ID selects external `assets/results/<project_id>/`; `out_dir` and relative `output_files` may choose a useful internal layout. The adapter preserves existing files, creates internal `.airmosaic/<run_id>/` records/temp and writes `artifacts.json` for local discovery. Do not publish generated results. Other adapters retain their documented layouts.
 
-## 3. TimeXer 使用步骤
+Model computation needs no login or network. Set `AIRMOSAIC_R_LIBRARY` explicitly for a reviewed external package directory containing mlr3, mlr3learners, ranger, rpart and jsonlite; otherwise only standard R libraries are used. Personal startup files and implicit personal/site libraries are disabled. Three private roots remain required. MCP uses the same configuration and checks; execution requires the startup grant `--execute-tool ml_regression_workflow`.
 
-1. 阅读[模型方法](../../skills/model/machine_learning/timexer/references/method.md)，确定 MS 单目标或 M 多变量预测、历史窗口、预测步数，以及协变量在预测时点的可用性。
-2. 根据[使用方法](../../skills/model/machine_learning/timexer/references/usage.md)准备独立 Python 环境、固定源码和规则时间 CSV；目录示例不代表依赖已安装。
-3. 在工作区的新任务目录用足量合成数据核对参数和产物；真实任务另适配时间划分、实体内滑窗和缺失处理。上游默认训练每轮查看测试误差，需在正式开发流程移除这部分访问。
-4. 固定方案后评估，核对预测单位、提前量及基线。保存训练期 scaler、输入顺序、配置和权重；带标签测试命令不能代替未知未来的推理入口。
-5. 未来外生变量、指定日期切分、多实体面板和纯推理均需适配并验证；当前没有下载、训练或部署适配器，也没有自动脱敏运行记录。
+Classification, other learners, automatic tuning, predictive cross-validation, new-data inference and general experiment orchestration require additional adaptation. The [published basis](../../skills/model/shared/machine_learning_model/references/published-basis.md) distinguishes source-informed design from numerical paper reproduction. Scientific review and approved data reuse remain separate from execution.
 
-## 4. 路径、个人配置与模型产物
 
-| 内容 | 位置与管理 |
-|---|---|
-| 已授权输入 | `${AIRMOSAIC_ASSETS_DIR}/data/` 或显式引用的 `results/`；原始数据保持不变 |
-| 新模型/预测/本地记录 | 新的 `results/<project_id>/<run_id>/<stage>/mlr3_workflow/` 或 `results/<project_id>/<run_id>/<stage>/timexer_workflow/`；目录标签不是工具 ID，不复用旧结果覆盖 |
-| TimeXer 外部源码 | 仓库外的独立源码目录，以本地 `TIMEXER_SOURCE_DIR` 表示；不是自动加载配置，不在此运行产生结果 |
-| 非秘密个人配置 | `${AIRMOSAIC_CONFIG_DIR}`；显式读取本次需要的路径/参数，不扫描全目录 |
-| 登录状态/凭据 | 本地建模不需要登录；AUTH_DIR 的会话内容不参与建模；密码/token 留在凭据管理器 |
-| 共享仓库 | 可公开的方法、合成示例、来源提交和依赖说明；不包含真实数据、模型 RDS/checkpoint 或私人路径 |
-
-上述三类根须独立且位于 Git 外，详见[存储约定](../storage-and-credentials.md)。这份参考指南不执行路径预检、环境隔离或自动脱敏；实际任务代码应实现相应检查。模型对象与完整 R 会话记录可能携带训练数据、身份字段、后端或路径，不能默认作为可共享附件。
-
-## 5. 跟踪参考项目与后续接入
-
-若用户提供数据和建模要求，先按[需求驱动的工作流说明](../../methods/pathways/requirements_driven_model_building_ZH.md)形成数据、模型、验证与预算契约。既有代码用作版本化复现案例，首个[臭氧回归参考](../../methods/pathways/references/air_quality_o3_reference_ZH.md)列出了源入口、输入、产物和适配风险；该说明不新增训练工具或自动执行任意生成代码。
-
-[mlr3 跟踪记录](../../skills/model/machine_learning/mlr3/UPSTREAM.md)和 [TimeXer 跟踪记录](../../skills/model/machine_learning/timexer/UPSTREAM.md)分别记录参考仓库、核对 SHA/日期、许可核对、采用内容及更新步骤。跟踪是按需复核，没有自动拉取、安装或定时任务。上游版本或验证报告不能替代本机运行证据。
-
-后续若接入 run-tool，应先明确有限的训练/预测参数、数据 schema、模型格式、资源预算与结果契约，提供合成测试、失败处理和隐私检查，再审查允许清单并启用适配器。当前的参考登记不授予任意 R/Python 代码执行权限。
+Synthetic workflow checks may explicitly select `result_scope=workflow`, limited by the [asset contract](../assets.md) to a fixed Git-ignored workflow result tree and manifest-listed synthetic inputs. Scientific projects retain external results; the default scope is unchanged.

@@ -26,7 +26,7 @@ Applies to reading, editing, execution, documentation and sharing. Authorization
 | Email, identities, accounts and internal endpoints | Only when needed and authorized | Roles/placeholders, except specifically authorized disclosure |
 | Signed/private links and authentication headers | Authorized local calls only | Public entry and parameter categories |
 | Browser profiles and sessions | Member-owned local environment | Do not copy to Git, other members or shared attachments |
-| Original data, releases and business outputs | Authorized workspace/read-only roots | Metadata, methods, synthetic cases and approved summaries only |
+| Original data, releases and business outputs | Authorized workspace/read-only roots | Metadata, methods, synthetic cases, approved summaries and explicitly publication-authorized licensed public dataset snapshots |
 
 Public source URLs, paper identifiers and repository addresses may be cited. Report suspected credentials only by file, line and category, never values.
 
@@ -85,4 +85,7 @@ Pattern scans supplement review; they do not prove all secrets absent. Do not pr
 
 ## Data and project results
 
-Follow the [asset contract](assets.md). Shared data outside Git uses `assets/data/<stage>/<dataset-name>/<version>/` with actual dataset names. Projects reference fixed versions in configuration without cross-stage duplication. New results use `assets/results/<project_id>/<run_id>/<stage>/<tool_id>/`, with records and temporary files inside that run. New calls provide project and stage together. Compute/check, obtain human review, then register selected data in a fresh version; never overwrite originals or existing versions. Personal settings, authentication and credentials remain separate. Existing files are not migrated; automatic approval and registration services are not implemented.
+Experimental results belong to their [project](../projects/README.md), which retains code, settings, evaluation and review records. Only a human scientific decision can admit selected outputs to `assets/`; internal asset organization is deferred. Current runners retain their existing external output contracts until project-directory support is implemented. Generic demonstration exceptions remain adapter-specific. Do not move historical outputs, bypass checks or infer approval from file presence. Configuration, authentication and credentials remain separate. See the [result and review contract](assets.md).
+
+
+Agent objectives/actions/observations, stop conditions and generation/event/retrospective records follow the [common execution and process-record contract](usage/workflow-handoff.md). Each adapter must declare actual capture coverage; retrospective summaries do not replace observed events.
