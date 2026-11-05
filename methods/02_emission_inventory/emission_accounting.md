@@ -66,6 +66,12 @@ These are source-preparation options, not implemented downloaders, verified annu
 
 Normalize numerator mass and activity denominator together. The script converts compatible mass/energy units, not fuel mass to energy without heating values. Reconcile dry/as-received fuel, product/precursor mass, sulfur/ash and pollutant mass conventions before use; NOx as NO₂-equivalent mass is not NO mass. Average category factors do not certify individual-source performance.
 
+
+
+The product `o × c × η` requires compatible conditioning: capture refers to operation states and removal to the captured stream. Separate unconditional annual averages need not have the same product as the activity-weighted joint reduction. Resolve load-dependent factors or controls by evidence-backed activity/route subdivision; the calculator cannot infer this dependence. Treat pollutant names and `activity_basis` as caller-defined conventions, not automatic chemical or process validation.
+
+Removed mass is a modeled reduction of the named atmospheric pollutant at the declared boundary. It is not a complete elemental balance, recovered-material quantity, avoided health impact or removal of pollution from all media. Control by-products, transfers to water/solid waste and secondary emissions need separate nonoverlapping accounts.
+
 ## Synthetic example and checks
 
 All quantities here are invented arithmetic examples, not empirical coal factors or actual regional estimates. A synthetic 10,000-tonne activity uses technologies A/B at 60%/40%. SO₂ uncontrolled factors are 10/8 kg per tonne. A has 20% uncontrolled activity and 80% on a route with `o=0.9`, `c=0.95`, `η=0.9`; B has full coverage, operation/capture of one and removal of 0.95:

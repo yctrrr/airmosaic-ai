@@ -11,7 +11,7 @@ import sys
 import threading
 
 from .services.mcp_gateway import MCPGateway, MCPGatewayError, MCPPolicy
-from .services.tool_registry import ToolRegistryError
+from .services.tool_registry import ToolRegistryError, ToolRegistryService
 from .services.capability_catalog import CapabilityCatalogError
 
 
@@ -101,6 +101,7 @@ class _Parser(argparse.ArgumentParser):
 
 def build_parser():
     parser = _Parser(prog="airmosaic-mcp", description="Local stdio MCP server; preview by default.")
+    parser.add_argument("--local-capabilities-config", help="Operator-selected local capability mapping; this instance serves private content.")
     parser.add_argument("--execute-tool", action="append", default=[], metavar="TOOL_ID",
                         help="Authorize a reviewed tool for real execution; repeat per tool.")
     parser.add_argument("--network-tool", action="append", default=[], metavar="TOOL_ID",
@@ -149,7 +150,8 @@ def main():
         policy = MCPPolicy(execution_tools=frozenset(args.execute_tool), network_tools=frozenset(args.network_tool),
                            browser_tools=frozenset(args.browser_tool), max_timeout=args.max_timeout,
                            browser_port=args.browser_port)
-        gateway = MCPGateway(policy=policy)
+        registry = ToolRegistryService(local_config=args.local_capabilities_config)
+        gateway = MCPGateway(registry=registry, policy=policy)
         asyncio.run(_serve(gateway))
     except ImportError:
         print(json.dumps({"error": "mcp_dependency_unavailable", "next_step": "Install the mcp optional extra."}),

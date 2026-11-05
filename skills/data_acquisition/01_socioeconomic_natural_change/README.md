@@ -7,12 +7,12 @@
 <!-- README-I18N:END -->
 
 
-Activity, energy, technology, population and natural conditions. WorldPop and company-basic-information ZIP processing support run-tool. ERA5, CAMS EAC4 and forecasts offer website/API guidance and verified small examples, without runner adapters. Yearbooks, energy and enterprise disclosure need adaptation.
+Activity, energy, technology, population and natural conditions. WorldPop supports run-tool. ERA5, CAMS EAC4 and forecasts offer website/API guidance and verified small examples, without runner adapters. CSMAR and yearbook operations require an explicitly selected local private package; energy and enterprise disclosure need adaptation.
 
 ## Entry points
 
-- [CSMAR](csmar/SKILL.md): [first-download guide](csmar/references/first-download-guide.md), [verified browser example](csmar/references/first-download-example.md); scoped download validated, compatible ZIP processing implemented
-- [Industrial yearbooks](ind_yearbook/SKILL.md)
+- [CSMAR overview](csmar/SKILL.md): dedicated instructions and processing are selected through [local private capabilities](../../../harness/usage/local-capabilities.md).
+- [Industrial yearbook overview](ind_yearbook/SKILL.md): dedicated templates use the same explicit local selection.
 - [WorldPop](worldpop/SKILL.md)
 - [Enterprise disclosure](enterprise-disclosure/SKILL.md)
 - [Energy preparation](energy-balance/SKILL.md)
@@ -27,4 +27,4 @@ Follow the [four-step workflow](../../../harness/four-step-workflow.md): confirm
 
 Documentation maintenance reads descriptions and interfaces only, not original data. Actual execution depends on tool manifests; directories and SKILL.md do not register tools.
 
-Follow the [asset contract](../../../harness/assets.md): share data by stage, actual name and version; group results by project and run, referencing the same data across stages. Registration uses compute/check, human review and a fresh data version.
+Follow the [asset contract](../../../harness/assets.md): experimental results remain with their project. Human scientific review determines whether selected outputs can enter assets; the internal asset layout is deferred.

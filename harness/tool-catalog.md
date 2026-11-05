@@ -29,11 +29,11 @@ See [classified usage](usage/data-acquisition.md).
 | Tool ID | Runner | Scope |
 |---|---|---|
 | `worldpop_download` | yes | Network metadata discovery; file transfer enabled explicitly |
-| `csmar_process_company_info` | yes | Existing basic-company ZIP, pandas/openpyxl |
+| `csmar_process_company_info` | local private | Explicit local selection required; public implementation unavailable |
 | `ihme_gbd_fetch_results` | yes | Existing authorized local browser, network/session flags and reviewed dimensions |
-| `csmar_browser_download` | reference | User's institutional access and an available browser/manual flow |
-| `yearbook_regional_sector_template` | template | Adapt region/industry headers, encoding, years and output |
-| `yearbook_product_output_template` | template | Adapt products, units and missingness; no separate national-sector implementation |
+| `csmar_browser_download` | local private | Explicit local selection required; public implementation unavailable |
+| `yearbook_regional_sector_template` | local private | Explicit local selection required; public implementation unavailable |
+| `yearbook_product_output_template` | local private | Explicit local selection required; public implementation unavailable |
 
 Nine dataset declarations are present in this version. They describe metadata, not successful acquisition:
 
@@ -76,3 +76,5 @@ Executable JSON examples contain declared parameters; the tool ID is supplied to
 New tools need a manifest, reviewed policy/adapter, parameter handling, classified guidance and a skill under the [registration contract](tool-registration.md). A static ready state differs from a task's can_execute result; process success differs from scientific acceptance.
 
 Methods explain research design, skills implement operations, workflows compose data/skills and projects retain concrete study evidence. General automatic orchestration is not implemented.
+
+Local-only capabilities require [explicit configuration](usage/local-capabilities.md); the public listing does not include implementation.

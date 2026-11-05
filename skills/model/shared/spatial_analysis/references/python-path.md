@@ -1,4 +1,4 @@
-# Python path: GeoPandas and pyproj
+# Python path: vector, bilinear and daily-grid helpers
 
 **English** | [中文](python-path_ZH.md)
 
@@ -72,7 +72,57 @@ fig.set_size_inches(14 / 2.54, 10 / 2.54)
 fig.savefig(target_plot, dpi=300)
 ```
 
-Verify the external project boundary before exporting; this direct call does not inherit runner path checks. Persist candidate lists as JSON arrays, and retain source/CRS/QA identities. Nearest matching, raster conservation and online geocoding remain library-guided adaptations, not functions secretly supplied by this module.
+Verify the external project boundary before exporting; this direct call does not inherit runner path checks. Persist candidate lists as JSON arrays, and retain source/CRS/QA identities. Nearest matching, general raster conservation and online geocoding remain library-guided adaptations, not functions secretly supplied by this module.
+
+## Pure bilinear and local-day functions
+
+[Bilinear helpers](../scripts/python/bilinear_helpers.py) and [daily-grid helpers](../scripts/python/grid_daily.py) require only NumPy and pandas; they do not require the vector/map dependencies above. Select an existing environment containing them and record versions. The following standalone example runs from repository root, uses only synthetic arrays and performs no data/configuration reads or exports. `importlib` loads source modules by explicit repository paths; no package installation is implied.
+
+```python
+import importlib.util
+from pathlib import Path
+import numpy as np
+import pandas as pd
+
+def load_helper(name, filename):
+    path = Path("skills/model/shared/spatial_analysis/scripts/python") / filename
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+bilinear = load_helper("bilinear_helpers", "bilinear_helpers.py")
+daily_grid = load_helper("grid_daily", "grid_daily.py")
+x = np.array([100., 102., 104.])
+y = np.array([24., 22., 20.])  # original descending latitude order
+points = np.array([[101., 21.], [104., 24.]])
+weights = bilinear.bilinear_weights(
+    x, y, points, ["site_a", "site_b"], "EPSG:4326", "EPSG:4326"
+)
+field = 2*x[None, :] + 3*y[:, None] + 7
+sampled = bilinear.sample_bilinear(field, weights)
+assert np.allclose(sampled["value"], [272., 287.])
+assert sampled["status"].tolist() == ["ok", "ok"]
+assert np.allclose(weights["source_y"], y[weights["row_index"].to_numpy()-1])
+
+# Eight 3-hourly samples belonging to 2024-01-01 in Asia/Shanghai.
+times = pd.date_range("2023-12-31T18:00:00Z", periods=8, freq="3h")
+cube = np.broadcast_to(field, (8, *field.shape)).copy()
+daily = daily_grid.daily_grid_mean(
+    cube, times, ["2024-01-01", "2024-01-02"],
+    timezone="Asia/Shanghai", sample_interval_hours=3,
+)
+assert daily["expected_samples_per_day"] == 8
+assert daily["source_sample_count"] == [8, 0]
+assert np.all(daily["finite_sample_count"][0] == 8)
+assert np.allclose(daily["values"][0], field)
+assert np.isnan(daily["values"][1]).all()  # absent date retained
+assert daily["outside_expected_period_samples"] == 0
+```
+
+Both bilinear languages follow the [same operational contract](operations.md#bilinear-and-daily-grid-calls): explicit verified `EPSG:4326`, regional regular axes in one longitude convention, no wrapping or extrapolation, four rows per point and **one-based original-axis indices**. `sample_bilinear` consumes those indices directly and returns `point_id,value,status`; positive-weight NaN/Inf support yields `missing_support` without redistributing weights. Zero-weight missing nodes are ignored. Check IDs, four-neighbor weights, statuses and original source coordinates. Scientific choice of support is covered by the [method](../../../../../methods/shared/spatial_analysis.md).
+
+`daily_grid_mean` returns the dictionary documented in [operations](operations.md#bilinear-and-daily-grid-calls). For hourly input, pass `sample_interval_hours=1` and all 24 UTC samples belonging to each local day. For three-hourly input, pass `3` and all eight phase-aligned samples; this is an eight-sample mean. Any absent/nonfinite sample makes that day/cell unavailable. All requested dates remain present, including entirely missing days. Review `source_sample_count`, `finite_sample_count` and outside-period counts rather than treating a returned date as evidence of complete input. This helper preserves instantaneous-value units and does not process accumulations or read weather files.
 
 ## Further library recipes
 

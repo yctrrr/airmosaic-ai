@@ -136,3 +136,5 @@ After preview, use the same parameters with `dry_run: false`. Omit project/stage
 `catalog/skills.yaml` adds finite public operational references to the read-only skill resource index. Canonical metadata stays in each SKILL entry; these references do not register tools or install host skills. Maintenance drafts outside the repository are not discovered. The tool catalog and reviewed adapter allowlist remain the sole execution sources.
 
 The machine-learning skill exposes R `ml_regression_workflow` and Python `ml_python_regression_workflow` with separate task/dependency contracts. Both use the shared result-scope rules and require their own startup execution grant. Python new-study execution additionally requires the explicit plan bundle; engineering replay accepts only manifest-listed repository synthetic input.
+
+Local private capabilities can remain outside Git and use [explicit selection](local-capabilities.md); data and authentication stay separate.

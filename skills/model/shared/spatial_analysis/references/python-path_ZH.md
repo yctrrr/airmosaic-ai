@@ -1,4 +1,4 @@
-# Python 路径：GeoPandas 与 pyproj
+# Python 路径：矢量、双线性与日网格函数
 
 [English](python-path.md) | **中文**
 
@@ -72,7 +72,57 @@ fig.set_size_inches(14 / 2.54, 10 / 2.54)
 fig.savefig(target_plot, dpi=300)
 ```
 
-导出前核对外部项目边界，直接调用不继承 runner 路径检查。候选列表按 JSON 数组保存，同时保留来源/坐标/质量身份。最近邻、栅格守恒及在线地理编码仍需按库方法适配，不是该模块隐式提供的函数。
+导出前核对外部项目边界，直接调用不继承 runner 路径检查。候选列表按 JSON 数组保存，同时保留来源/坐标/质量身份。最近邻、通用栅格守恒及在线地理编码仍需按库方法适配，不是该模块隐式提供的函数。
+
+## 纯函数双线性与本地日均值
+
+[双线性函数](../scripts/python/bilinear_helpers.py)和[日网格函数](../scripts/python/grid_daily.py)仅需 NumPy 与 pandas，不需要上述矢量/制图依赖。选择已有依赖环境并记录版本。以下独立示例在仓库根运行，只使用合成数组，不读数据/配置或导出。`importlib` 按显式仓库路径加载源模块，不代表安装任何包。
+
+```python
+import importlib.util
+from pathlib import Path
+import numpy as np
+import pandas as pd
+
+def load_helper(name, filename):
+    path = Path("skills/model/shared/spatial_analysis/scripts/python") / filename
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+bilinear = load_helper("bilinear_helpers", "bilinear_helpers.py")
+daily_grid = load_helper("grid_daily", "grid_daily.py")
+x = np.array([100., 102., 104.])
+y = np.array([24., 22., 20.])  # 保留原始降序纬度
+points = np.array([[101., 21.], [104., 24.]])
+weights = bilinear.bilinear_weights(
+    x, y, points, ["site_a", "site_b"], "EPSG:4326", "EPSG:4326"
+)
+field = 2*x[None, :] + 3*y[:, None] + 7
+sampled = bilinear.sample_bilinear(field, weights)
+assert np.allclose(sampled["value"], [272., 287.])
+assert sampled["status"].tolist() == ["ok", "ok"]
+assert np.allclose(weights["source_y"], y[weights["row_index"].to_numpy()-1])
+
+# 属于 Asia/Shanghai 2024-01-01 的八个三小时样本。
+times = pd.date_range("2023-12-31T18:00:00Z", periods=8, freq="3h")
+cube = np.broadcast_to(field, (8, *field.shape)).copy()
+daily = daily_grid.daily_grid_mean(
+    cube, times, ["2024-01-01", "2024-01-02"],
+    timezone="Asia/Shanghai", sample_interval_hours=3,
+)
+assert daily["expected_samples_per_day"] == 8
+assert daily["source_sample_count"] == [8, 0]
+assert np.all(daily["finite_sample_count"][0] == 8)
+assert np.allclose(daily["values"][0], field)
+assert np.isnan(daily["values"][1]).all()  # 缺失日期仍保留
+assert daily["outside_expected_period_samples"] == 0
+```
+
+两种语言的双线性遵循[同一操作契约](operations_ZH.md#双线性与日网格调用)：显式核实的 `EPSG:4326`、同一经度约定的区域规则轴、不自动包裹或外推、每点四行、**原始轴序且从 1 开始的索引**。`sample_bilinear` 直接接收此索引，返回 `point_id,value,status`；正权重 NaN/Inf 支撑返回 `missing_support`，不重新分配权重，零权重缺失节点被忽略。核对 ID、四邻居权重、状态与原始来源坐标。支撑的科学选择见[方法](../../../../../methods/shared/spatial_analysis_ZH.md)。
+
+`daily_grid_mean` 返回[操作说明](operations_ZH.md#双线性与日网格调用)列出的字典。小时输入传 `sample_interval_hours=1`，并提供属于各本地日的全部 24 个 UTC 样本；三小时输入传 `3` 和全部八个相位对齐样本，结果是八次采样均值。任一样本缺失/非有限，该日/格点不可用。所有请求日期均保留，包括整日缺失。应检查 `source_sample_count`、`finite_sample_count` 和期外计数，不能将返回日期视为输入完整证据。函数保留瞬时值单位，不处理累积量或读取气象文件。
 
 ## 其他库路径
 

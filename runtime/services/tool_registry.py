@@ -20,7 +20,7 @@ from .tool_r import R_ADAPTERS
 CATEGORIES = {"core": "基础工具", "data_acquisition": "数据获取", "model": "模型分析"}
 STATUSES = (
     "ready", "missing_entrypoint", "missing_dependency", "missing_configuration",
-    "invalid_configuration", "missing_data", "needs_auth", "unknown", "not_executable",
+    "invalid_configuration", "missing_data", "needs_auth", "unknown", "not_executable", "private_extension_required",
 )
 
 
@@ -88,11 +88,18 @@ class ToolRegistryService:
     and authentication stores are never used to discover registrations.
     """
 
-    def __init__(self, repo_root: str | Path | None = None) -> None:
+    def __init__(self, repo_root: str | Path | None = None, *, local_config: str | Path | None = None) -> None:
         try:
             self.repo_root = local_path(str(Path(repo_root or Path(__file__).absolute().parents[2]).absolute()))
         except (OSError, ValueError, RuntimeError):
             raise ToolRegistryError("Tool repository requires an accessible local checkout.") from None
+        self.local_capabilities = None
+        if local_config is not None:
+            from .local_capabilities import LocalCapabilities, LocalCapabilityError
+            try:
+                self.local_capabilities = LocalCapabilities(self.repo_root, local_config)
+            except LocalCapabilityError:
+                raise ToolRegistryError("invalid_local_capabilities_configuration") from None
         schema_path = repository_path(self.repo_root, "catalog/schemas/tool.schema.json")
         try:
             schema = json.loads(schema_path.read_text(encoding="utf-8"))
@@ -112,7 +119,7 @@ class ToolRegistryService:
             if not re.fullmatch(r"[a-z][a-z0-9_]*\.yaml", manifest.name):
                 raise ToolRegistryError("Manifest filenames must use public tool identifiers.")
             source = manifest.relative_to(self.repo_root).as_posix()
-            path = repository_path(self.repo_root, source)
+            path = self.path(source)
             try:
                 data = yaml.load(path.read_text(encoding="utf-8"), Loader=_UniqueKeyLoader)
                 validator.validate(data)
@@ -122,10 +129,22 @@ class ToolRegistryService:
             except Exception:
                 raise ToolRegistryError(f"{source}: Invalid manifest. Check the registry schema.") from None
             tool_id = data["tool_id"]
+            if self.scope(source) == "local_private":
+                if (tool_id not in self.local_capabilities.tool_ids or tool_id != manifest.stem
+                        or data["entrypoint"]["path"] not in self.local_capabilities.files):
+                    raise ToolRegistryError("invalid_local_tool_binding")
             if tool_id in self._tools:
                 raise ToolRegistryError("Tool registry has duplicate tool IDs.")
             data["manifest"] = source
             self._tools[tool_id] = data
+
+    def path(self, relative: str) -> Path:
+        return (self.local_capabilities.path(relative) if self.local_capabilities is not None
+                else repository_path(self.repo_root, relative))
+
+    def scope(self, relative: str) -> str:
+        return ("local_private" if self.local_capabilities is not None
+                and relative in self.local_capabilities.files else "public")
 
     def _validate_interfaces(self, data: dict[str, Any]) -> None:
         for field in ("input_schema", "output_schema"):
@@ -141,8 +160,8 @@ class ToolRegistryService:
             if not data["entrypoint"]["argument_bindings"].get(name, "").startswith("--"):
                 raise ToolRegistryError("Invocation defaults require named options.")
         entry = data["entrypoint"]
-        repository_path(self.repo_root, entry["path"])
-        documentation = repository_path(self.repo_root, data["documentation"])
+        self.path(entry["path"])
+        documentation = self.path(data["documentation"])
         if not documentation.is_file():
             raise ToolRegistryError("Tool documentation is missing.")
         if entry["kind"] in {"python_script", "r_script"}:
@@ -206,6 +225,7 @@ class ToolRegistryService:
         except KeyError:
             raise ToolRegistryError("Tool not found.") from None
         entry = result["entrypoint"]
+        result["source_scope"] = self.scope(result["manifest"])
         prefixes = {
             "cli": ["python", "-m", "runtime.cli", entry.get("subcommand", "")],
             "python_script": ["python", entry["path"]],
@@ -217,11 +237,14 @@ class ToolRegistryService:
             tokens.extend([binding + value] if binding.endswith("=") else [binding, value])
         result["invocation"] = {
             "tokens": tokens,
-            "working_directory": "repository_root",
+            "working_directory": ("selected_local_capability_root"
+                                  if result["source_scope"] == "local_private" else "repository_root"),
             "argument_bindings": entry["argument_bindings"],
             "default_arguments": entry.get("default_arguments", {}),
             "execution_supported": result.get("execution", {}).get("enabled", False),
-            "runner_tokens": (["python", "-m", "runtime.cli", "run-tool", tool_id]
+            "runner_tokens": (["python", "-m", "runtime.cli", *(
+                ["--local-capabilities-config", "<local-capabilities-config.json>"]
+                if self.local_capabilities is not None else []), "run-tool", tool_id]
                               if result.get("execution", {}).get("enabled") else []),
         }
         result["availability"] = self.check_tool(tool_id)
@@ -230,7 +253,13 @@ class ToolRegistryService:
     def check_tool(self, tool_id: str) -> dict[str, Any]:
         if tool_id not in self._tools:
             raise ToolRegistryError("Tool not found.")
-        return check_readiness(self._tools[tool_id], self.repo_root)
+        result = check_readiness(self._tools[tool_id], self.repo_root,
+                                 entry_path=self.path(self._tools[tool_id]["entrypoint"]["path"]))
+        if (self._tools[tool_id].get("access") == "local_private"
+                and self.scope(self._tools[tool_id]["manifest"]) == "public"):
+            result.update(status="private_extension_required",
+                          next_step="Select the authorized local capability configuration at startup.")
+        return result
 
 
 def format_tool_table(tools: list[dict[str, Any]]) -> str:

@@ -74,7 +74,8 @@ def _core_summary(tool_id: str, raw: bytes) -> dict:
             return {"matched_file_count": len(value["existing_files"])}
         if tool_id == "airmosaic_check_tool":
             states = {"ready", "missing_entrypoint", "missing_dependency", "missing_configuration",
-                      "invalid_configuration", "missing_data", "needs_auth", "unknown", "not_executable"}
+                      "invalid_configuration", "missing_data", "needs_auth", "unknown", "not_executable",
+                      "private_extension_required"}
             return {"status": value["status"] if value["status"] in states else "unknown"}
         if tool_id == "airmosaic_draft_causal_plan":
             return {"template_created": True, "scientific_validation": "not_run"}
@@ -96,6 +97,8 @@ class ToolRunnerService:
         if tool_id not in self.registry._tools:
             raise ToolExecutionError("unknown_tool")
         tool = self.registry._tools[tool_id]
+        if tool.get("access") == "local_private" and self.registry.scope(tool["manifest"]) == "public":
+            raise ToolExecutionError("private_extension_required")
         policy = tool.get("execution", {})
         if not policy.get("enabled") or ADAPTERS.get(tool_id) != policy.get("adapter"):
             raise ToolExecutionError("execution_not_supported")
@@ -174,7 +177,11 @@ class ToolRunnerService:
         rscript = tool_r.r_executable() if is_r else None
         if is_r and rscript is None:
             blockers.append("missing_dependency")
-        entry_path = repository_path(self.registry.repo_root, tool["entrypoint"]["path"])
+        entry_path = self.registry.path(tool["entrypoint"]["path"])
+        if self.registry.scope(tool["manifest"]) == "local_private":
+            private_root = self.registry.local_capabilities.root
+            if any(_overlaps(private_root, root) for root in paths.roots.values()):
+                raise ToolExecutionError("private_code_overlaps_personal_roots")
         record = {
             "schema_version": 1, "run_id": run_id, "tool_id": tool_id,
             "status": "dry_run" if dry_run else "blocked", "created_at": _now(),
@@ -200,10 +207,10 @@ class ToolRunnerService:
                                         "status": "unverified"}
         if dry_run:
             return record
-        # These digests are public source, never hashes of private arguments.
+        # Source digests stay in local receipts; never hash private arguments.
         try:
             record["source_sha256"] = hashlib.sha256(entry_path.read_bytes()).hexdigest() if entry_path.is_file() else None
-            manifest = repository_path(self.registry.repo_root, tool["manifest"])
+            manifest = self.registry.path(tool["manifest"])
             record["manifest_sha256"] = hashlib.sha256(manifest.read_bytes()).hexdigest()
             paths.create()
             self._write(paths, record, first=True)
@@ -246,6 +253,12 @@ class ToolRunnerService:
                                          paths.temp, params.get("out_dir"), **options)
             else:
                 argv = _argv(tool["entrypoint"], params, entry_path)
+                if policy["adapter"] == "core_cli" and self.registry.local_capabilities is not None:
+                    # Internal child argument only: never copy this actual path
+                    # into invocation metadata, receipts, stdout or stderr.
+                    offset = argv.index("runtime.cli") + 1
+                    argv[offset:offset] = ["--local-capabilities-config",
+                                          str(self.registry.local_capabilities.config_path)]
             cancellation = {"cancel_event": cancel_event} if cancel_event is not None else {}
             code, reason, cleanup, raw = execute(argv, paths.temp, env, timeout,
                                                 capture=policy["adapter"] == "core_cli", **cancellation)
@@ -343,7 +356,8 @@ class ToolRunnerService:
             if pattern.startswith(("/", "\\")) or ":" in pattern or "\\" in pattern or ".." in pattern.split("/"):
                 raise ToolExecutionError("invalid_cache_pattern")
             catalog = DataCatalogService(catalog_dir=self.registry.repo_root / "catalog/datasets",
-                                         data_acquisition_dir=self.registry.repo_root / "skills/data_acquisition")
+                                         data_acquisition_dir=self.registry.repo_root / "skills/data_acquisition",
+                                         registry=self.registry)
             try:
                 metadata = catalog.describe_dataset(params["dataset_id"])
                 root = paths.expand(metadata.get("cache_root") or metadata["default_cache_root"])

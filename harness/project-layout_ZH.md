@@ -83,3 +83,5 @@ CLI 和 MCP 共用同一注册表与执行器，不新增第二套清单。数�
 ## 维护与语言路径
 
 项目维护归 `skills/agent_operations/shared/`，遵循[编写](skill-authoring_ZH.md)和[改进](skill-improvement_ZH.md)规范，不增加研究步骤或科学方法。机器学习操作统一归 `skills/model/shared/machine_learning_model/`，分别提供 `scripts/r/`、`scripts/python/` 及共享规划助手。既有回归与复现工作流保留名称。历史本地结果保留在原先忽略位置，不自动迁移结果。
+
+本地私有能力可保存在 Git 外的独立目录，通过[显式配置](usage/local-capabilities_ZH.md)加载；数据和认证保持独立。

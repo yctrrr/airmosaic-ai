@@ -21,11 +21,11 @@ python -m runtime.cli check-tool ihme_gbd_fetch_results
 | 工具 ID | run-tool 支持 | 边界 |
 |---|---|---|
 | `worldpop_download` | 是 | 元数据发现、可选下载；发现也联网并写文件 |
-| `csmar_process_company_info` | 是 | 已下载企业基础信息 ZIP；不覆盖所有财务表 |
+| `csmar_process_company_info` | 本地私有 | 通过显式配置启用；公开端不提供实现 |
 | `ihme_gbd_fetch_results` | 是 | 已有的本机授权浏览器会话；不启动浏览器或登录 |
-| `csmar_browser_download` | 否，流程参考 | 使用本人机构权限，由可用浏览器工具或人工完成 |
-| `yearbook_regional_sector_template` | 否，R 模板 | 适配地区行业 Excel 与方法 |
-| `yearbook_product_output_template` | 否，R 模板 | 适配产品表、单位、年份与缺失处理 |
+| `csmar_browser_download` | 本地私有 | 通过显式配置启用；公开端不提供实现 |
+| `yearbook_regional_sector_template` | 本地私有 | 通过显式配置启用；公开端不提供实现 |
+| `yearbook_product_output_template` | 本地私有 | 通过显式配置启用；公开端不提供实现 |
 
 先读对应 skill、核对任务范围，再查询真实 ID、准备非秘密参数 JSON、dry-run、按授权执行并验收。工具 ID 在命令行选择，`--params-file` 只接受扁平参数，不包含 `tool`、`tool_id`、`parameters` 外层字段。未知字段被拒绝，schema 通过不代表产品或 ID 的业务含义正确。
 
@@ -60,26 +60,9 @@ python -m runtime.cli run-tool worldpop_download --project-id example_project --
 
 接口支持在已审查的个人 JSON 中设 `download: true`，但当前须先完成目录连通和产品元数据核对；连通未通过时不执行文件下载。后续仍用同一 ID 调用，不把 `--download` 追加给 run-tool。结果位于 `results/<project_id>/<run_id>/<stage>/worldpop_download/metadata/` 和 `raw/`，不自动发布缓存。核对产品、年份、文件、CRS、分辨率、单位和人口总量后，才按授权发布到 `data/01_socioeconomic_natural_change/WorldPop/<version>/`。重采样和分区统计没有独立执行入口。
 
-## 3. CSMAR：浏览器获取和本地处理分开
+## 3. CSMAR
 
-阅读 [CSMAR skill](../../skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md)。`csmar_browser_download` 仅供查询说明。成员在自己的机构会话中登录；自行启动任务浏览器时显式使用 `${AIRMOSAIC_AUTH_DIR}/browser_profiles/csmar/`，变量不自动启动或选定会话。按任务选择表、年份和字段，提交查询后用下载记录中的最终保存动作取得文件。核对实际落盘文件及字段说明，不导出 cookie 或分享认证链接。
-
-首次按[下载与交接向导](../../skills/data_acquisition/01_socioeconomic_natural_change/csmar/references/first-download-guide_ZH.md)确认权限、企业与日期、字段、最终保存和实际列；记录各步完成时间。宿主管理的浏览器会话另有存储，不因设置变量而迁入 AUTH_DIR。少字段获取测试与固定 15 列的本地处理契约分开核验；当前英文关键词筛选的语言与时期仍需人工检查。MCP 已暴露本地处理编号，网页获取仍是不可执行参考。
-
-2026-10-27 已通过外部 Chrome 的单企业、单截止日、八字段下载及 ZIP 内容验收，步骤与时间见[已验证示例](../../skills/data_acquisition/01_socioeconomic_natural_change/csmar/references/first-download-example_ZH.md)。本例一条有效记录，不执行现有十五列行业筛选，也不把网页操作记为 MCP 下载通过。
-
-本地 `csmar_process_company_info` 需要 pandas/openpyxl 和 ZIP，不需要登录。[参数示例](../../config/examples/run-tool/csmar.json)：
-
-```json
-{"zip":"${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/CSMAR_ListedCompanyBasic/v1/company_basic.zip"}
-```
-
-```powershell
-python -m runtime.cli run-tool csmar_process_company_info --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/csmar.json --dry-run
-python -m runtime.cli run-tool csmar_process_company_info --project-id example_project --stage 01_socioeconomic_natural_change --params-file config/examples/run-tool/csmar.json
-```
-
-先将示例名映射到实际授权 ZIP；不存在的输入会被拒绝。执行器自动分配 out_dir，脚本直接读 ZIP 中工作簿，不在输入旁解压。输出行业候选表、最新企业列表 CSV/XLSX。核对固定列及关键词匹配；其他表、CSV/TXT 需要人工适配。企业身份不能直接推断成本承担者或物理生产边界。
+完整操作保存在本地私有扩展中，见[启用说明](local-capabilities_ZH.md)。默认公开安装不能执行该能力。
 
 ## 4. IHME GBD：已有会话与明确维度
 
@@ -108,14 +91,9 @@ python -m runtime.cli run-tool ihme_gbd_fetch_results --project-id example_proje
 
 两项标志必须符合任务授权；会话声明不是登录验证，认证仍显示 unverified。输出 `results/<project_id>/<run_id>/<stage>/ihme_gbd_fetch_results/results.csv` 与 JSON sidecar。同时核对请求维度、错误、行数和缺失；人数、每十万人率及比例分开，错误时不沿用旧表格，不自动补零。页面内部结构变化需适配，raw-to-processed 对应关系保留在本地。
 
-## 5. 工业年鉴：人工适配
+## 5. 工业年鉴
 
-阅读 [工业年鉴 skill](../../skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook/SKILL.md)，用真实模板 ID 查询位置。两项模板不支持 run-tool；没有独立全国行业实现。
-
-1. 复制需要的 R 模板到新任务目录，检查全部赋值和写入位置；source 会执行，不是帮助命令。
-2. 适配表头、版次/数据年份、行业编码、单位、输入、R 依赖和输出。YAML 只是映射示例，不会自动加载。
-3. 对补零、插值、外推和外部补充明确方法依据，不把默认值当成已批准选择。
-4. 用合成表或授权小样本核对覆盖、缺失、数值转换，再处理任务范围，保存排除项和映射。
+专用方法、模板、配置和适配步骤保存在本地私有能力中，见[启用说明](local-capabilities_ZH.md)。启用后仍为需审核适配的模板，尚无自动下载工具。
 
 ## 6. ERA5 / CAMS：人工下载参考
 

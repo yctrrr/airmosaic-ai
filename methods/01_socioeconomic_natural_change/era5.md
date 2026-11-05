@@ -33,6 +33,12 @@ The [official uncertainty guidance](https://confluence.ecmwf.int/pages/viewpage.
 
 A single UTC field cannot establish a daily statistic. Independent observation comparison is needed to assess local scientific suitability.
 
+## Daily delivery as an input choice
+
+For daily prediction, the [official retrieval-time daily statistics](https://cds.climate.copernicus.eu/datasets/derived-era5-single-levels-daily-statistics?tab=overview) can reduce transfer and local processing. Specify the statistic, source sampling and timezone together. An hourly-sampled UTC+8 mean of instantaneous meteorology differs from a UTC-day mean or a mean of eight three-hourly samples. Accumulated quantities require their own temporal interpretation.
+
+Compare representative dates and native nodes against retained hourly inputs before scaling the route. Choose dates and tolerances before checking; preserve the provider request/version and distinguish the sampled equivalence check from independent verification of every national contributing hour. This checks temporal construction, not local observational accuracy. The [operational skill](../../skills/data_acquisition/01_socioeconomic_natural_change/era5/references/daily-statistics.md) supplies requests, bounded jobs and decoding.
+
 ## AOD is a separate product choice
 
 The ERA5 single-level catalogue form checked on 2026-10-30 had no aerosol optical-depth option. Use ERA5 for the declared meteorological variables; an AOD covariate requires its actual separate product identity, for example [CAMS EAC4](cams.md). Access through a related provider does not make the products interchangeable. See the [AOD operation](../../skills/data_acquisition/01_socioeconomic_natural_change/cams/references/eac4-aod.md); only public catalogue metadata was checked, not a new data download.

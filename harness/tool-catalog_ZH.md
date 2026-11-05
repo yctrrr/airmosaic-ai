@@ -29,11 +29,11 @@ SDK 导出 DataCatalogService、DataAccessService、CausalDesignService、ToolRe
 | 工具 ID | skill | runner | 边界 |
 |---|---|---|---|
 | `worldpop_download` | [WorldPop](../skills/data_acquisition/01_socioeconomic_natural_change/worldpop/SKILL_ZH.md) | 是 | requests；发现也联网写元数据，下载由参数显式启用 |
-| `csmar_process_company_info` | [CSMAR](../skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL_ZH.md) | 是 | pandas/openpyxl；只处理已有企业基础信息 ZIP |
+| `csmar_process_company_info` | 本地私有 | 默认不可执行 | 需显式加载本地能力 |
 | `ihme_gbd_fetch_results` | [GBD](../skills/data_acquisition/04_integrated_impacts/ihme-gbd-results/SKILL_ZH.md) | 是 | 本机已登录浏览器，网络许可与会话声明；版本/维度需核对 |
-| `csmar_browser_download` | CSMAR | 否，参考 | 浏览器获取需要本人机构权限及实际可用工具 |
-| `yearbook_regional_sector_template` | [工业年鉴](../skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook/SKILL_ZH.md) | 否，模板 | 人工适配地区行业表头、编码、年份和输出 |
-| `yearbook_product_output_template` | 工业年鉴 | 否，模板 | 人工适配产品、单位与缺失规则；无独立全国行业实现 |
+| `csmar_browser_download` | 本地私有 | 默认不可执行 | 需显式加载本地能力 |
+| `yearbook_regional_sector_template` | 本地私有 | 默认不可执行 | 需显式加载本地能力 |
+| `yearbook_product_output_template` | 本地私有 | 默认不可执行 | 需显式加载本地能力 |
 
 `list-datasets` 当前可读取 9 条声明，数量是此版本快照，不是未来固定验收标准：
 
@@ -76,3 +76,5 @@ SDK 导出 DataCatalogService、DataAccessService、CausalDesignService、ToolRe
 新增工具需同步 manifest、允许清单、参数解析、分类说明和 skill，遵循[注册规范](tool-registration_ZH.md)。状态查询的 ready 不表示任务 can_execute；进程 succeeded 不表示科学验收通过。
 
 科学设计维护在 `methods/shared/`，通用数据与技能组合维护在 `workflows/`，具体问题和案例证据归 `projects/`。当前没有工作流引擎，数据获取、处理、计算和验收仍需显式交接，不会自动串联。
+
+本地私有能力需[显式配置](usage/local-capabilities_ZH.md)后加载；公开列表不包含实现。

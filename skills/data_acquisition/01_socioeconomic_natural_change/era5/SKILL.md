@@ -16,6 +16,10 @@ Use the CDS form or official Python client. This skill has no executable tool ID
 3. For the website route, submit the reviewed form and save its output to a fresh task folder. For API code and non-secret request configuration, use [official-client operations](references/operations.md). Confirm the request against the current product form before submitting.
 4. Start with a bounded request; check its existing server state after interruption before resubmitting. Expand date/variable/level batches after the first content check.
 
+For local-day instantaneous means, use the [daily-statistics route](references/daily-statistics.md): explicit sampling/timezone, durable bounded jobs, five-variable NetCDF reader, and a retained-hourly comparison before expansion. This is a direct script path without a registered adapter.
+
+The direct durable-job implementation is [copernicus_jobs.py](scripts/copernicus_jobs.py); its limits and call sequence are in the daily-statistics reference.
+
 ## Check and deliver
 
 Decode GRIB with ecCodes or NetCDF with a compatible reader. Check parameter identity, level, units, UTC/valid times, grid, finite values and missing time steps against the request. File size and download completion alone are insufficient.

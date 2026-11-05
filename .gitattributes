@@ -1,2 +1,8 @@
 # Public asset hashes must survive checkouts with core.autocrlf enabled.
 /assets/** text eol=lf
+# The adjoint profile verifies these resources by their published byte hashes.
+/skills/model/03_atmospheric_transport/geos-chem/templates/adjoint_v35l/chemistry-component.patch text eol=lf
+/skills/model/03_atmospheric_transport/geos-chem/templates/adjoint_v35l/module-dependencies.mk text eol=lf
+# Preserve blank context markers in patches and upstream native template spacing.
+/skills/model/03_atmospheric_transport/geos-chem/templates/adjoint_v35l/chemistry-component.patch whitespace=-blank-at-eol
+/skills/model/03_atmospheric_transport/geos-chem/templates/**/*.in whitespace=-blank-at-eol

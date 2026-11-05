@@ -39,8 +39,8 @@ methods:
   category: data_acquisition
   title: 统计年鉴与表格来源
   document: 01_socioeconomic_natural_change/statistical_yearbooks.md
-  status: mixed
-  evidence: recent_task_record_and_current_template_guides
+  status: local_private
+  evidence: local_extension_required_for_operational_details
   source_projects:
   - statistical_yearbooks
   - airmosaic
@@ -380,7 +380,7 @@ methods:
   title: GEOS-Chem 输入、编译与浓度交接
   document: 03_atmospheric_transport/geos_chem.md
   status: reference
-  evidence: local_technical_notes_and_official_documentation
+  evidence: official_docs_classic_14_8_0_transport_and_public_v35l_chemistry_component_gradient_checks
   source_projects:
   - atmospheric_model_notes
   tool_ids: []
@@ -699,6 +699,18 @@ methods:
   - 04_integrated_impacts
   skills:
   - skills/model/shared/machine_learning_model/SKILL.md
+- method_id: csmar_acquisition
+  category: data_acquisition
+  title: CSMAR 数据获取方法
+  document: 01_socioeconomic_natural_change/csmar_acquisition.md
+  supporting_documents:
+  - 01_socioeconomic_natural_change/csmar_acquisition_ZH.md
+  status: local_private
+  primary_stage: 01_socioeconomic_natural_change
+  applies_to: [01_socioeconomic_natural_change]
+  skills: [skills/data_acquisition/01_socioeconomic_natural_change/csmar/SKILL.md]
+  tool_ids: [csmar_browser_download, csmar_process_company_info]
+
 stages:
   01_socioeconomic_natural_change: 01_socioeconomic_natural_change
   02_emission_inventory: 02_emission_inventory

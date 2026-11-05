@@ -271,7 +271,8 @@ def test_real_core_cli_and_private_free_text_summary(roots):
 
 @pytest.mark.parametrize("tool_id", ["pm25_hia_calculate_template", "csmar_browser_download", "gcam_configuration_reference", "airmosaic_run_tool"])
 def test_unsupported_entries_never_execute(roots, tool_id):
-    with pytest.raises(ToolExecutionError, match="execution_not_supported"):
+    reason = "private_extension_required" if tool_id == "csmar_browser_download" else "execution_not_supported"
+    with pytest.raises(ToolExecutionError, match=reason):
         ToolRunnerService().run(tool_id, project_id="example_project", stage="01_socioeconomic_natural_change")
 
 
@@ -314,30 +315,6 @@ def test_remote_filename_cannot_escape_task(url):
     with pytest.raises(ValueError):
         script.safe_name(url)
     assert script.safe_name("https://example.invalid/valid.tif?signature=synthetic-private") == "valid.tif"
-
-
-def test_real_csmar_zip_processing_keeps_input_read_only(roots):
-    pd = pytest.importorskip("pandas")
-    pytest.importorskip("openpyxl")
-    import io
-    workspace = roots["AIRMOSAIC_ASSETS_DIR"]
-    source = workspace / "data/csmar/source.zip"
-    source.parent.mkdir(parents=True)
-    columns = ["Symbol", "EndDate", "IndustryName", "IndustryNameC", "IndustryNameD", "IndustryCode",
-               "IndustryCodeC", "IndustryCodeD", "ShortName", "FullName", "MAINBUSSINESS", "SocialCreditCode",
-               "PROVINCE", "CITY", "LISTINGSTATE"]
-    row = {key: "synthetic" for key in columns}
-    row.update(Symbol="000001", EndDate="2020-12-31", IndustryName="cement")
-    buffer = io.BytesIO()
-    pd.DataFrame([row]).to_excel(buffer, index=False)
-    with zipfile.ZipFile(source, "w") as archive:
-        archive.writestr("../../STK_LISTEDCOINFOANL.xlsx", buffer.getvalue())
-    before = source.read_bytes()
-    result = ToolRunnerService().run("csmar_process_company_info", {"zip": str(source)}, project_id="example_project", stage="01_socioeconomic_natural_change")
-    assert result["status"] == "succeeded", result
-    assert source.read_bytes() == before and list(source.parent.iterdir()) == [source]
-    output = workspace / "results" / "example_project" / result["run_id"] / "01_socioeconomic_natural_change" / "csmar_process_company_info"
-    assert len(list(output.glob("*.csv"))) == 2 and len(list(output.glob("*.xlsx"))) == 1
 
 
 def test_real_gcam_aggregate_synthetic_rows(roots):

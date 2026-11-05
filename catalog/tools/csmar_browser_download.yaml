@@ -1,7 +1,8 @@
 schema_version: 1
 tool_id: csmar_browser_download
 title: CSMAR 浏览器获取
-description: 需机构授权与本人浏览器登录；当前是操作流程，没有下载 CLI。
+description: Local private capability; select the authorized local configuration to
+  read its implementation.
 category: data_acquisition
 skill_id: csmar-downloader
 owner_role: data-acquisition-maintainer
@@ -23,25 +24,17 @@ requirements:
   python_packages: []
   executables: []
   r_packages: []
-  configuration:
-  - name: AIRMOSAIC_ASSETS_DIR
-    role: workspace
-    kind: directory
-  - name: AIRMOSAIC_AUTH_DIR
-    role: auth
-    kind: directory
+  configuration: []
   resources: []
   manual_checks:
-  - Use an authorized browser tool, or Node.js Playwright with a compatible Chromium installation.
-  - Confirm table permissions and requested scope in the authorized browser.
+  - Select the local private extension; no implementation is distributed here.
 authentication:
-  method: browser_session
-  profile_id: csmar
+  method: none
 effects:
   reads: []
-  writes:
-  - asset_data
-  network: true
+  writes: []
+  network: false
 documentation: harness/usage/data-acquisition.md
 execution:
   enabled: false
+access: local_private

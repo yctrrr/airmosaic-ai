@@ -624,6 +624,12 @@
           "additionalProperties": false
         }
       ]
+    },
+    "access": {
+      "enum": [
+        "public",
+        "local_private"
+      ]
     }
   },
   "required": [

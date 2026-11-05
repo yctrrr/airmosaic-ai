@@ -178,7 +178,8 @@ def calculate_inventory(payload):
             route_details.append({"activity_id": key[0], "technology_id": key[1], "pollutant": key[2],
                 "route_id": route["route_id"], "route_share": route["route_share"],
                 "operating_fraction": route["operating_fraction"], "capture_fraction": route["capture_fraction"],
-                "removal_efficiency": route["removal_efficiency"], "uncontrolled_kg": route_uncontrolled,
+                "removal_efficiency": route["removal_efficiency"], "source_ref": route["source_ref"],
+                "uncontrolled_kg": route_uncontrolled,
                 "emitted_kg": emitted, "removed_kg": route_uncontrolled - emitted})
         emitted = math.fsum(route_emissions)
         removed = uncontrolled - emitted
@@ -187,6 +188,12 @@ def calculate_inventory(payload):
         detail = {"activity_id": key[0], "region": activity["region"], "year": activity["year"],
             "sector": activity["sector"], "process": activity["process"], "technology_id": key[1],
             "pollutant": key[2], "allocated_activity": amount, "activity_unit": activity["unit"],
+            "activity_basis": activity["activity_basis"], "activity_share": technology["activity_share"],
+            "factor_activity": factor_activity, "factor_activity_unit": factor["activity_unit"],
+            "factor_value": factor["value"], "factor_mass_unit": factor["mass_unit"],
+            "factor_control_basis": factor["control_basis"],
+            "activity_source_ref": activity["source_ref"],
+            "technology_source_ref": technology["source_ref"], "factor_source_ref": factor["source_ref"],
             "uncontrolled_kg": uncontrolled, "emitted_kg": emitted, "removed_kg": removed}
         details.append(detail)
         grouped[(activity["region"], activity["year"], activity["sector"], key[2])].append(detail)
@@ -280,6 +287,7 @@ def run(args):
     record = {"schema_version": 1, "inventory_id": calculated["inventory_id"],
         "dataset_kind": calculated["dataset_kind"], "recorded_at": datetime.now(timezone.utc).isoformat(),
         "input_sha256": hashlib.sha256(raw).hexdigest(), "input_modified": False,
+        "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "method": "activity_technology_exclusive_control_routes_v1", "python": sys.version.split()[0],
         "network_used": False, "credentials_read": False, "scientific_acceptance": "not_assessed"}
     write_json(output / "record.json", record)

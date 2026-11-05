@@ -22,6 +22,7 @@ class _PrivateArgumentParser(argparse.ArgumentParser):
 
 def build_parser() -> argparse.ArgumentParser:
     parser = _PrivateArgumentParser(prog="airmosaic")
+    parser.add_argument("--local-capabilities-config", help="Explicit non-secret local capability mapping; never auto-loaded.")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     capabilities = subparsers.add_parser("list-capabilities", help="Read declared methods, skills and tool mappings")
@@ -84,9 +85,14 @@ def main() -> None:
     parser = build_parser()
 
     args = parser.parse_args()
+    try:
+        selected_registry = (ToolRegistryService(local_config=args.local_capabilities_config)
+                             if args.local_capabilities_config else None)
+    except ToolRegistryError:
+        parser.exit(2, '{"error":"invalid_local_capabilities_configuration"}\n')
     if args.command in {"list-capabilities", "describe-capability", "validate-capabilities"}:
         try:
-            catalog = CapabilityCatalogService()
+            catalog = CapabilityCatalogService(selected_registry)
             if args.command == "validate-capabilities":
                 payload = catalog.validate()
             elif args.command == "describe-capability":
@@ -102,7 +108,7 @@ def main() -> None:
         return
     if args.command == "run-tool":
         try:
-            payload = ToolRunnerService().run(
+            payload = ToolRunnerService(selected_registry).run(
                 args.tool_id, parse_parameters(args.params) if args.params is not None else None,
                 params_file=args.params_file, dry_run=args.dry_run, allow_network=args.allow_network,
                 confirm_browser_session=args.confirm_browser_session, timeout=args.timeout, run_id=args.run_id,
@@ -118,7 +124,7 @@ def main() -> None:
         return
     if args.command in {"list-tools", "describe-tool", "check-tool"}:
         try:
-            registry = ToolRegistryService()
+            registry = selected_registry or ToolRegistryService()
             if args.command == "list-tools":
                 payload = registry.list_tools(args.category, args.skill, args.status, args.query)
             elif args.command == "describe-tool":
@@ -134,7 +140,7 @@ def main() -> None:
             print(json.dumps(payload, ensure_ascii=False, indent=2))
         return
     try:
-        catalog = DataCatalogService()
+        catalog = DataCatalogService(registry=selected_registry)
 
         if args.command == "list-datasets":
             payload = [

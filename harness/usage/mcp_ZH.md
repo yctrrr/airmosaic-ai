@@ -136,3 +136,5 @@ python -m runtime.mcp_server --execute-tool ihme_gbd_fetch_results --network-too
 `catalog/skills.yaml` 将有限的公开操作入口加入只读技能资源索引；权威元数据仍在各 SKILL 入口，不由此注册工具或安装宿主技能，仓库外草案不会被发现。执行仍只依据工具目录与已审查适配器白名单。
 
 机器学习技能分别提供 R 的 `ml_regression_workflow` 和 Python 的 `ml_python_regression_workflow`，任务及依赖契约各自维护。两者沿用共同结果范围规则，各需启动执行授权。Python 新研究另需显式审核材料；工程回放仅接受仓库清单内的合成输入。
+
+本地私有能力可保存在 Git 外的独立目录，通过[显式配置](local-capabilities_ZH.md)加载；数据和认证保持独立。

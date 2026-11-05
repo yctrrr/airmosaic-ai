@@ -1,8 +1,8 @@
-# R path: sf and local mapping helpers
+# R path: vector, mapping and base-R bilinear helpers
 
 **English** | [中文](r-path_ZH.md)
 
-Use sf and ggplot2 for the implemented functions, with terra/exactextractr only for separately adapted raster tasks. Follow the [common configuration and result contract](operations.md). The grid helpers accept projected rectangles with explicit cell dimensions, not arbitrary curvilinear or geographic raster cells.
+Use sf and ggplot2 for vector/map functions, with terra/exactextractr only for separately adapted raster tasks. The separate bilinear module below needs only base R. Follow the [common configuration and result contract](operations.md). The plotting grid helpers accept projected rectangles with explicit cell dimensions, not arbitrary curvilinear or geographic raster cells.
 
 Select a dedicated R environment with sf and ggplot2 installed. If setup is needed, run the following explicitly; Linux source builds may also require the native libraries described in the [sf installation guide](https://r-spatial.github.io/sf/).
 
@@ -59,3 +59,33 @@ ggplot2::ggsave(target_plot, plot, width = 14, height = 10,
 ```
 
 Verify the destination under the external project root before this call; it is a direct library operation, not a runner-protected export. Grid plotting draws declared rectangles only; it does not reconstruct curvilinear cell boundaries, reproject rasters or validate totals.
+
+## Pure base-R bilinear functions
+
+[bilinear_helpers.R](../scripts/r/bilinear_helpers.R) has no package dependency, data reader, exporter or network call. Run this standalone synthetic example from repository root; loading the source reads only that explicit code file, without global configuration or scientific-data access:
+
+```r
+bilinear <- new.env(parent = baseenv())
+sys.source("skills/model/shared/spatial_analysis/scripts/r/bilinear_helpers.R",
+           envir = bilinear)
+x <- c(100, 102, 104)
+y <- c(24, 22, 20)  # original descending latitude order
+points <- rbind(c(101, 21), c(104, 24))
+weights <- bilinear$bilinear_weights(
+  x, y, points, c("site_a", "site_b"), "EPSG:4326", "EPSG:4326"
+)
+field <- outer(y, x, function(a, b) 2 * b + 3 * a + 7)
+sampled <- bilinear$sample_bilinear(field, weights)
+stopifnot(isTRUE(all.equal(sampled$value, c(272, 287))),
+          all(sampled$status == "ok"),
+          all(weights$source_y == y[weights$row_index]))
+missing_field <- field
+missing_field[3, 1] <- NA_real_  # positive support for site_a
+missing_sample <- bilinear$sample_bilinear(missing_field, weights)
+stopifnot(is.na(missing_sample$value[1]),
+          missing_sample$status[1] == "missing_support")
+```
+
+`bilinear_weights` and `sample_bilinear` follow the [shared contract](operations.md#bilinear-and-daily-grid-calls), matching the Python path. Explicitly verified `EPSG:4326`, finite regular regional longitude/latitude axes, stable nonempty unique character IDs and a nonempty numeric n-by-2 point matrix are required for the common path. The complete four-row-per-point data frame includes `point_id,neighbor,row_index,col_index,source_x,source_y,weight`; both indices are **one-based into original y/x order**, including descending axes. The input value matrix is `[y,x]`; the sampler accepts the table directly.
+
+No wrapping or extrapolation is applied; nodes and edges are allowed. Sampling checks neighbors, indices and nonnegative unit-sum weights and returns `point_id,value,status` in first-seen point order. Positive-weight NA/NaN/Inf gives missing `value` with `missing_support`, without renormalizing; zero-weight missing support is ignored. Complete support gives `ok`. Inspect weight totals, source-coordinate/index correspondence, IDs and statuses. See the [method](../../../../../methods/shared/spatial_analysis.md) for support and quantity choices. R supplies no daily-grid aggregation function; that implemented operation is documented in the [Python path](python-path.md).

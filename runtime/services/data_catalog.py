@@ -38,12 +38,14 @@ class DataCatalogService:
         self,
         catalog_dir: str | Path | None = None,
         data_acquisition_dir: str | Path | None = None,
+        registry=None,
     ) -> None:
-        repo_root = Path(__file__).resolve().parents[2]
+        repo_root = registry.repo_root if registry is not None else Path(__file__).resolve().parents[2]
         if catalog_dir is None:
             catalog_dir = repo_root / "catalog" / "datasets"
         if data_acquisition_dir is None:
             data_acquisition_dir = repo_root / "skills" / "data_acquisition"
+        self.registry = registry
         self.catalog_dir = Path(catalog_dir)
         self.data_acquisition_dir = Path(data_acquisition_dir)
 
@@ -55,7 +57,9 @@ class DataCatalogService:
     ) -> list[DatasetRecord]:
         records: list[DatasetRecord] = []
         for path in sorted(self.data_acquisition_dir.glob("**/datasets.yaml")):
-            data = self._read_yaml(path)
+            selected_path = (self.registry.path(path.relative_to(self.registry.repo_root).as_posix())
+                             if self.registry is not None else path)
+            data = self._read_yaml(selected_path)
             skill_id = data["skill_id"]
             layer_id = data["layer"]
             skill_path = data["skill_path"]
@@ -127,8 +131,13 @@ class DataCatalogService:
 
     @staticmethod
     def _read_yaml(path: Path) -> dict[str, Any]:
-        with path.open("r", encoding="utf-8") as handle:
-            data = yaml.safe_load(handle)
+        try:
+            with path.open("r", encoding="utf-8") as handle:
+                data = yaml.safe_load(handle)
+        except (OSError, UnicodeError, yaml.YAMLError):
+            # Selected declarations can be private. Parser excerpts and source
+            # filenames must not escape into SDK, CLI or MCP error messages.
+            raise ValueError("invalid_dataset_metadata") from None
         if not isinstance(data, dict):
-            raise ValueError(f"Invalid dataset metadata: {path}")
+            raise ValueError("invalid_dataset_metadata")
         return data

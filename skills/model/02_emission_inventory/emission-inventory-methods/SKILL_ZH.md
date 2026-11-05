@@ -3,7 +3,7 @@ name: emission-inventory-methods
 description: 用本地数值计算器构建显式活动、技术与末端治理排放核算，检查单位、占比、覆盖及分污染物汇总。
 compatibility: "Python 3.10+ standard library; direct local script; no run-tool or MCP adapter"
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   reviewed: "2026-10-30"
 ---
 
@@ -21,7 +21,7 @@ metadata:
 4. 按[配置与调用](references/operations_ZH.md)先用直接脚本自己的 `--dry-run`，再执行到新的授权外部结果目录。这不是执行器预检，也不构成操作系统沙箱。
 5. 检查技术/路线排放、分污染物汇总、输入/产物哈希及质量平衡，交接前报告科学限制及真实数据适配项。
 
-[完整示例](examples/inventory.synthetic.json)的活动、因子和治理参数全部人为构造，预期剩余排放为 SO₂ 24,664 kg、NOx 30,960 kg，仅作算术验证，不是观测或真实清单。[操作说明](references/operations_ZH.md)提供可运行命令和产物检查。2026-10-30 的 21 项合成实现测试通过，覆盖数值/单位、非法份额/输入、输出不覆盖、Git 边界和链接输入拒绝。没有读取真实数据或凭据，也没有使用 MEIC 来源。
+[完整示例](examples/inventory.synthetic.json)的活动、因子和治理参数全部人为构造，预期剩余排放为 SO₂ 24,664 kg、NOx 30,960 kg，仅作算术验证，不是观测或真实清单。[操作说明](references/operations_ZH.md)提供可运行命令和产物检查。2026-10-30 的 22 项合成实现测试通过，覆盖数值/单位、非法份额/输入、输出不覆盖、Git 边界和链接输入拒绝。没有读取真实数据或凭据，也没有使用 MEIC 来源。
 
 计算器只读取一个明确指定的本地 JSON，不发现数据、不下载、不安装包、不访问凭据。真实整理输入和结果保存在获授权的外部资产，个人路径映射及凭据分离。来源只读、已有输出拒绝覆盖，日志不输出个人绝对路径。详细结果仍可能含敏感来源标签，共享前需复核；数据解释与授权由调用方负责，检查不等于完整执行器隔离。
 

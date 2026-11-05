@@ -2,45 +2,36 @@ skill_id: ind_yearbook
 layer: 01_socioeconomic_natural_change
 skill_path: skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook
 datasets:
-  - dataset_id: industrial_yearbook_national_sector
-    name: Industrial yearbook national sector indicators
-    domain: socioeconomic
-    description: National industry-sector economic indicators extracted from industrial statistical yearbook Excel tables.
-    access_mode: local_excel_processing
-    geography: China national sectors
-    temporal_coverage: yearbook-dependent
-    formats: [xlsx, csv]
-    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/IndustrialYearbook_NationalSector
-
-    acquisition_skill: skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook
-    example_queries:
-      - national industrial revenue by sector
-      - sector assets and profits from industrial yearbooks
-  - dataset_id: industrial_yearbook_regional_sector
-    name: Industrial yearbook regional sector indicators
-    domain: socioeconomic
-    description: Province-by-sector economic indicators extracted from regional industrial yearbook panels.
-    access_mode: local_excel_processing
-    geography: China provinces by sector
-    temporal_coverage: yearbook-dependent
-    formats: [xlsx, csv]
-    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/IndustrialYearbook_RegionalSector
-
-    acquisition_skill: skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook
-    example_queries:
-      - provincial industry revenue by sector and year
-      - regional industrial assets and employment
-  - dataset_id: industrial_yearbook_product_output
-    name: Industrial yearbook regional product output
-    domain: socioeconomic
-    description: Province-by-product industrial output tables, including wide-to-long product/unit parsing.
-    access_mode: local_excel_processing
-    geography: China provinces by product
-    temporal_coverage: yearbook-dependent
-    formats: [xlsx, csv]
-    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/IndustrialYearbook_ProductOutput
-
-    acquisition_skill: skills/data_acquisition/01_socioeconomic_natural_change/ind_yearbook
-    example_queries:
-      - provincial cement output by year
-      - industrial product output for emission inventory activity data
+- dataset_id: industrial_yearbook_national_sector
+  name: Industrial yearbook national sector indicators
+  domain: socioeconomic
+  description: Local private capability; implementation and task configuration require
+    explicit local selection.
+  access_mode: local_private
+  geography: China national sectors
+  temporal_coverage: yearbook-dependent
+  formats:
+  - xlsx
+  - csv
+- dataset_id: industrial_yearbook_regional_sector
+  name: Industrial yearbook regional sector indicators
+  domain: socioeconomic
+  description: Local private capability; implementation and task configuration require
+    explicit local selection.
+  access_mode: local_private
+  geography: China provinces by sector
+  temporal_coverage: yearbook-dependent
+  formats:
+  - xlsx
+  - csv
+- dataset_id: industrial_yearbook_product_output
+  name: Industrial yearbook regional product output
+  domain: socioeconomic
+  description: Local private capability; implementation and task configuration require
+    explicit local selection.
+  access_mode: local_private
+  geography: China provinces by product
+  temporal_coverage: yearbook-dependent
+  formats:
+  - xlsx
+  - csv

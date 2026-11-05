@@ -6,7 +6,7 @@
 
 ## 依赖与配置
 
-直接 R 函数需要 sf 与 ggplot2，包括其 GEOS/GDAL/PROJ 和动态列引用依赖。栅格适配另需 terra；Python 函数需要 GeoPandas、Shapely 和 pyproj，制图另用 Matplotlib，栅格另用 Rasterio。geopy/tidygeocoder 是可选服务客户端，不是基础依赖。记录实际版本，不自动安装。
+R 矢量/制图函数需要 sf 与 ggplot2，包括其 GEOS/GDAL/PROJ 和动态列引用依赖；`bilinear_helpers.R` 仅需 base R。Python `bilinear_helpers.py` 和 `grid_daily.py` 仅需 NumPy 与 pandas；矢量/制图函数需要 GeoPandas、Shapely 和 pyproj，制图另用 Matplotlib。通用栅格适配另需 terra 或 Rasterio。geopy/tidygeocoder 是可选服务客户端，不是基础依赖。记录实际版本，不自动安装。
 
 | 设置 | 显式决定 |
 |---|---|
@@ -35,7 +35,17 @@
 
 两条匹配路径均返回 `sample_id`、`matched_id`、`n_matches`、`match_status` 和 `candidate_ids`。候选必须完整保留，可采用 JSON 数组或独立候选表，不能截成单值或语言专用的列表字符串。矢量交换可用 GeoPackage 或经审查的 GeoParquet 并保留坐标元数据；文件名与布局由任务决定。
 
-质量记录保留语言/库/引擎版本、输入/结果身份、匹配数量、单位、边界版本、转换设置、缺失和任务有关的覆盖/总量。未做距离或守恒检查不代表零误差。模块没有自动路径加载器、文件导出、栅格重采样器、地理编码服务、run-tool 或 MCP 适配器。
+质量记录保留语言/库/引擎版本、输入/结果身份、匹配数量、单位、边界版本、转换设置、缺失和任务有关的覆盖/总量。未做距离或守恒检查不代表零误差。模块没有自动数据/配置加载器、文件导出、通用栅格重投影/守恒重映射、地理编码服务、run-tool 或 MCP 适配器；现有工具 ID 不变。
+
+## 双线性与日网格调用
+
+可运行的加载与调用示例见 [Python 路径](python-path_ZH.md)和 [R 路径](r-path_ZH.md)。科学选择遵循[空间方法](../../../../../methods/shared/spatial_analysis_ZH.md)，操作契约如下：
+
+- `bilinear_weights(x, y, points, point_ids, source_crs, point_crs)` 接收有限、规则的一维轴，每轴至少两个唯一坐标，严格升序或降序。纬度在 `[-90,90]`；经度整轴落在 `[-180,180]` 或 `[0,360]`，跨度不超过 180 度。这是区域非周期网格：后一约定允许 `170..190`，但不会自动包裹经度。提供非空有限 n×2 经度/纬度点数组（R 为矩阵）、对应的非空唯一字符串 ID，且两个 CRS 参数必须精确为 `"EPSG:4326"`。不推断坐标系或转换坐标。点与网格需使用相同经度约定；拒绝外推，允许精确节点与边界。
+- 每点返回四行，字段为 `point_id`、`neighbor`（`sw,se,nw,ne`）、`row_index`、`col_index`、`source_x`、`source_y`、`weight`。**两种语言索引均从 1 开始**，指向原始 y/x 输入顺序，包括降序轴；将表传给采样函数前不要减 1。
+- `sample_bilinear(values, weights)` 接收数值 `[y,x]` 场和完整权重表，检查精确列集合、每点四种唯一邻居及唯一索引对、有限合法整数索引、`[0,1]` 权重及 `1e-12` 容差内的权重和为 1。按点首次出现顺序返回 `point_id,value,status`。正权重邻居出现 NA/NaN/Inf 时，`value` 为缺失、`status="missing_support"`；零权重缺失不影响结果。完整支撑返回 `status="ok"`，绝不重新分配权重。复用前核对权重、原始轴索引、输出 ID 和状态数量；这些检查不代表科学适用性认证。
+- Python `daily_grid_mean(values, times_utc, expected_dates, *, timezone, sample_interval_hours)` 接收非空数值 `[time,y,x]` 数组、唯一递增且带时区的零偏移 UTC 时间、显式递增唯一 `YYYY-MM-DD` 日期列表、`timezone="Asia/Shanghai"` 和 `1` 或 `3` 小时间隔。时间戳必须在整点、遵循以 UTC 00:00 为基准的间隔相位，不推断频率或重采样。每个请求日/格点需要全部 24 个小时样本或 8 个三小时有限样本；支撑不完整则保留 NaN 与计数。三小时结果是八次采样均值。单位不变，累积量需另选经审查操作。
+- 日输出为字典，包含 `dates`、`[day,y,x]` 的 `values`、同形状 `finite_sample_count`、逐日 `source_sample_count`、`expected_samples_per_day`、`sample_interval_hours`、`timezone`、`outside_expected_period_samples` 和 `statistic`。即使全日样本缺失，请求日期仍保留。显式检查计数和期外样本；期外样本仅报告，不计入请求日期。未提供 R 日网格对应函数。
 
 带日期的[合成检查记录](../examples/checks.json)保存实际依赖版本、检查案例及源码哈希，只说明已检查的环境，不是通用版本锁定或科学验收。
 

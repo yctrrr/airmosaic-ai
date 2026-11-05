@@ -7,12 +7,12 @@
 <!-- README-I18N:END -->
 
 
-用途：活动水平、能源、技术、人口及自然环境条件。WorldPop、企业基础 ZIP 处理支持 run-tool；ERA5、CAMS EAC4 和 CAMS 全球预报提供网页/API 流程及已验证小样例，尚未接入 run-tool；年鉴模板、能源和企业披露需适配。
+用途：活动水平、能源、技术、人口及自然环境条件。WorldPop 支持 run-tool；ERA5、CAMS EAC4 和 CAMS 全球预报提供网页/API 流程及已验证小样例，尚未接入 run-tool；CSMAR 和年鉴操作需要显式选择本地私有能力包，能源和企业披露需适配。
 
 ## 本步入口
 
-- [CSMAR](csmar/SKILL_ZH.md)：[首次下载向导](csmar/references/first-download-guide_ZH.md)、[网页已验证示例](csmar/references/first-download-example_ZH.md)；小范围下载已验收，兼容 ZIP 处理已实现
-- [年鉴](ind_yearbook/SKILL_ZH.md)
+- [CSMAR 概述](csmar/SKILL_ZH.md)：专用说明与处理通过[本地私有能力](../../../harness/usage/local-capabilities_ZH.md)显式选择。
+- [年鉴概述](ind_yearbook/SKILL_ZH.md)：专用模板使用相同的本地选择方式。
 - [WorldPop](worldpop/SKILL_ZH.md)
 - [企业披露](enterprise-disclosure/SKILL_ZH.md)
 - [能源整理](energy-balance/SKILL_ZH.md)
@@ -27,4 +27,4 @@
 
 本轮维护只查看说明与接口，不使用原始数据。能否执行以真实工具 工具声明 为准；文档目录和 SKILL.md 都不自动注册工具。
 
-数据与项目结果遵循[资产规范](../../../harness/assets_ZH.md)：共享数据按阶段、实际名称和版本保存；结果按项目及运行归集，跨阶段引用同一数据。复用入库采用计算检查、人工复核、登记新版本三步。
+数据与项目结果遵循[资产规范](../../../harness/assets_ZH.md)：实验结果保留在对应项目中，由人类科学审核决定是否将选定产物入库；资产内部布局暂不规定。

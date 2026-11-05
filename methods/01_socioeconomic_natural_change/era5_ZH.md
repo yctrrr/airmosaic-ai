@@ -31,6 +31,12 @@ ERA5 是 Copernicus Climate Change Service（C3S）提供、ECMWF 生产的全�
 6. **与站点/模型衔接**：指定空间抽取/插值与时间配准；不把地表变量替代所有垂直层，也不直接将 ERA5 文件作为 GEOS-Chem 已适配驱动。
 7. **交付派生说明**：单位公式、时间窗口、有效样本、网格变换、源版本和缺失摘要。偏差订正或特征标准化只在训练数据拟合，验证集独立使用。
 
+## 将日统计交付作为输入选择
+
+逐日预测可选择[官方在获取时计算的日统计](https://cds.climate.copernicus.eu/datasets/derived-era5-single-levels-daily-statistics?tab=overview)，减少传输和本地处理。统计量、来源采样和时区应同时确定。瞬时气象的 UTC+8 逐小时采样日均值，不等同于 UTC 日均值或八个三小时样本的均值；累积量需按自身时间含义处理。
+
+扩展前选择有代表性的日期和原生节点，与保留的逐小时输入对照。检查前固定日期和容差，保留提供方请求及版本，区分抽样一致性检查与对全国全部贡献小时的独立验证。这检查时间构建，不代替当地观测精度评价。请求、有界任务和解码见[操作技能](../../skills/data_acquisition/01_socioeconomic_natural_change/era5/references/daily-statistics_ZH.md)。
+
 ## AOD 需要另行选择产品
 
 2026-10-30 核对的 ERA5 单层目录表单没有气溶胶光学厚度选项。ERA5 用于已声明气象变量；AOD 协变量应保留真实的独立产品身份，例如[CAMS EAC4](cams_ZH.md)。提供方相关不代表产品可互换。具体见[AOD 操作](../../skills/data_acquisition/01_socioeconomic_natural_change/cams/references/eac4-aod_ZH.md)，本轮只检查公开目录元数据，没有新下载数据。

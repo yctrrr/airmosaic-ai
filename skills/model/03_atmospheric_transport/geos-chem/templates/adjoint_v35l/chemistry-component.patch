@@ -1,0 +1,313 @@
+--- a/adjoint/chemistry_adj_mod.f
++++ b/adjoint/chemistry_adj_mod.f
+@@ -207,7 +207,9 @@
+ 
+             ! Adjoint of remove acetone ocean sink (it is self-adjoint)
+             IF ( IDTACET /= 0 ) THEN
++#if !defined(AIRMOSAIC_CHEM_COMPONENT)
+                CALL OCEAN_SINK_ACET( STT_ADJ(:,:,1,IDTACET) )
++#endif
+             ENDIF
+ 
+             ! Do carbonaceous aerosol chemistry
+@@ -272,7 +274,9 @@
+ !            IF ( LSSALT ) CALL CHEMSEASALT
+ 
+             ! Do dust aerosol chemistry
++#if !defined(AIRMOSAIC_CHEM_COMPONENT)
+             IF ( LDUST ) CALL CHEMDUST_ADJ
++#endif
+ 
+             ! ND44 drydep fluxes
+ !            CALL DRYFLX
+--- a/adjoint/define_adj.h
++++ b/adjoint/define_adj.h
+@@ -134,7 +134,7 @@
+ ! => TES O3
+ ! => TES O3 IRKs
+ !#define SOMO35_ATTAINMENT 'SOMO35_ATTAINMENT'
+-#define TES_O3_OBS    'TES_O3_OBS'
++#undef TES_O3_OBS
+ !#define TES_O3_IRK    'TES_O3_IRK'
+ !#define OSIRIS_OBS    'OSIRIS_OBS'
+ !#define IASI_O3_OBS   'IASI_O3_OBS'
+@@ -178,6 +178,9 @@
+ 
+ !xzhang:
+ !#define OMI_CH2O_OBS 'OMI_CH2O_OBS'
+-#define MLS_O3_OBS 'MLS_O3_OBS'
++#undef MLS_O3_OBS
+ !#define MLS_HNO3_OBS 'MLS_HNO3_OBS'
+ !#define OSIRIS_NO2_OBS 'OSIRIS_NO2_OBS'
++
++! Optional branch-specific comparison diagnostics; disabled for the native FD test.
++#undef AIRMOSAIC_EXTRA_OBS_DIAGNOSTICS
+--- a/adjoint/geos_chem_adj_mod.f
++++ b/adjoint/geos_chem_adj_mod.f
+@@ -709,7 +709,9 @@
+             !IF ( ITS_A_FULLCHEM_SIM() ) CALL RDSOIL
+             ! NEW: for v8-02-1
+             IF ( ITS_A_FULLCHEM_SIM() .or. ITS_A_H2HD_SIM() ) THEN
++#if !defined(AIRMOSAIC_CHEM_COMPONENT)
+                CALL RDSOIL
++#endif
+             ENDIF
+ 
+             !### Debug
+--- a/adjoint/input_adj_mod.f
++++ b/adjoint/input_adj_mod.f
+@@ -2673,11 +2673,19 @@
+ !      IF ( ( LADJ_CHEM .AND. ( .NOT. LDRYD     ) ) .OR.
+ !     &     ( LDRYD     .AND. ( .NOT. LADJ_CHEM ) )     )  THEN
+       ! I think we can have DRYD w/o chem
++#if defined(AIRMOSAIC_CHEM_COMPONENT)
++      ! Native chemistry is paired with allocated zero surface-loss rates.
++      IF ( LDRYD ) THEN
++         CALL ERROR_STOP( 'Surface exchange forbidden for component',
++     &                    'AIRMOSAIC_CHEM_COMPONENT:flags' )
++      ENDIF
++#else
+       IF (  ITS_A_FULLCHEM_SIM() .AND.
+      &      LADJ_CHEM .AND. ( .NOT. LDRYD     ) ) THEN
+          CALL ERROR_STOP( ' LADJ_CHEM and LDRYD inconsistent ',
+      &                    ' ARE_FLAGS_VALID, input_adj_mod.f ' )
+       ENDIF
++#endif
+ 
+ ! Not sure about this, leave it out for now (dkh, 06/24/09)
+ !      ! Don't know why, but if WETD, and CHEM are only fwd true
+--- a/define.h
++++ b/define.h
+@@ -108,8 +108,8 @@
+ !#define GCAP        'GCAP'
+ !#define GEOS_3      'GEOS_3'
+ !#define GEOS_4      'GEOS_4'
+-#define GEOS_5      'GEOS_5'
+-!#define GEOS_FP      'GEOS_FP'
++!#define GEOS_5      'GEOS_5'
++#define GEOS_FP      'GEOS_FP'
+ 
+ !----- Grid sizes -----
+ !#define NESTED_CH   'NESTED_CH'
+--- a/modified/chemistry_mod.f
++++ b/modified/chemistry_mod.f
+@@ -229,18 +229,24 @@
+ 
+             ! Do dust aerosol chemistry
+             IF ( LDUST ) THEN
++#if !defined(AIRMOSAIC_CHEM_COMPONENT)
+                CALL CHEMDUST
++#endif
+             END IF
+ 
+             ! ND44 drydep fluxes
++#if !defined(AIRMOSAIC_CHEM_COMPONENT)
+             CALL DRYFLX
++#endif
+ 
+             ! ND43 chemical production
+             CALL DIAGOH
+ 
+             ! Remove acetone ocean sink
+             IF ( IDTACET /= 0 ) THEN
++#if !defined(AIRMOSAIC_CHEM_COMPONENT)
+                CALL OCEAN_SINK_ACET( STT(:,:,1,IDTACET) )
++#endif
+             ENDIF
+ 
+          !---------------------------------
+--- a/modified/geos_chem_mod.f
++++ b/modified/geos_chem_mod.f
+@@ -344,10 +344,18 @@
+       !=================================================================
+ 
+       ! adj_group: set DIRECTION to indicate that it's forward integration
++#if defined(AIRMOSAIC_EXTRA_OBS_DIAGNOSTICS)
+       CALL INIT_HIPPO
++#endif
++#if defined(AIRMOSAIC_EXTRA_OBS_DIAGNOSTICS)
+       CALL READ_HIPPO_DATA
++#endif
++#if defined(AIRMOSAIC_EXTRA_OBS_DIAGNOSTICS)
+       CALL INIT_ATOM
++#endif
++#if defined(AIRMOSAIC_EXTRA_OBS_DIAGNOSTICS)
+       CALL READ_ATOM_DATA
++#endif
+       CALL SET_DIRECTION( 1 )
+ 
+       IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a READ_INPUT_FILE' )
+@@ -985,7 +993,9 @@
+          IF ( ITS_A_NEW_DAY() ) THEN
+ 
+             ! Read leaf-area index (needed for drydep)
++#if !defined(AIRMOSAIC_CHEM_COMPONENT)
+             CALL RDLAI( DAY_OF_YEAR, MONTH )
++#endif
+ 
+             ! For MEGAN biogenics ...
+             IF ( LMEGAN ) THEN
+@@ -999,7 +1009,9 @@
+ 
+             ! Also read soil-type info for fullchem simulation
+             IF ( ITS_A_FULLCHEM_SIM() .or. ITS_A_H2HD_SIM() ) THEN
++#if !defined(AIRMOSAIC_CHEM_COMPONENT)
+                CALL RDSOIL
++#endif
+             ENDIF
+ 
+             !### Debug
+@@ -1413,8 +1425,12 @@
+          !   CALL DIAG52
+          !   IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a ND52' )
+          !ENDIF
++#if defined(AIRMOSAIC_EXTRA_OBS_DIAGNOSTICS)
+          CALL COMPARE_HIPPO_DATA
++#endif
++#if defined(AIRMOSAIC_EXTRA_OBS_DIAGNOSTICS)
+          CALL COMPARE_ATOM_DATA
++#endif
+ 
+          !### After diagnostics
+          IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: after TIMESERIES' )
+@@ -1493,10 +1509,18 @@
+ 
+       ENDIF
+ 
++#if defined(AIRMOSAIC_EXTRA_OBS_DIAGNOSTICS)
+       CALL WRITE_HIPPO_DATA
++#endif
++#if defined(AIRMOSAIC_EXTRA_OBS_DIAGNOSTICS)
+       CALL CLEANUP_HIPPO
++#endif
++#if defined(AIRMOSAIC_EXTRA_OBS_DIAGNOSTICS)
+       CALL WRITE_ATOM_DATA
++#endif
++#if defined(AIRMOSAIC_EXTRA_OBS_DIAGNOSTICS)
+       CALL CLEANUP_ATOM
++#endif
+       ! Print the mass-weighted mean OH concentration (if applicable)
+       CALL PRINT_DIAG_OH
+ 
+--- a/modified/input_mod.f
++++ b/modified/input_mod.f
+@@ -3222,6 +3222,11 @@
+       ! Call setup routines from other F90 modules
+       !=================================================================
+ 
++#if defined(AIRMOSAIC_CHEM_COMPONENT)
++      ! Allocate native species maps and exactly zero DEPSAV rates only.
++      ! INIT_DRYDEP does not read land/velocity tables or calculate fluxes.
++      IF ( .not. LDRYD ) CALL INIT_DRYDEP
++#endif
+       ! Initialize dry deposition arrays
+       IF ( LDRYD ) THEN
+ 
+--- a/modified/sulfate_mod.f
++++ b/modified/sulfate_mod.f
+@@ -550,11 +550,15 @@
+       !=================================================================
+ 
+       ! SO4s [kg] gravitational settling
++#if !defined(AIRMOSAIC_CHEM_COMPONENT)
+       CALL GRAV_SETTLING( STT(:,:,:,IDTSO4s), 1 )
++#endif
+       IF ( LPRT ) CALL DEBUG_MSG( '### CHEMSULFATE: GRAV_SET, SO4S' )
+ 
+       ! NITs [kg] gravitational settling
++#if !defined(AIRMOSAIC_CHEM_COMPONENT)
+       CALL GRAV_SETTLING( STT(:,:,:,IDTNITs), 2 )
++#endif
+       IF ( LPRT ) CALL DEBUG_MSG( '### CHEMSULFATE: GRAV_SET, NITS' )
+ 
+       ! Convert all tracers in STT from [kg] -> [v/v]
+--- a/Objects.mk
++++ b/Objects.mk
+@@ -38,7 +38,7 @@
+ fyhoro.o                      \
+ gasconc.o            	      \
+ get_global_ch4.o              \
+-getifsun.o                    gvchsq.o                     \
++getifsun.o                    \
+ initialize.o                  \
+ jsparse.o                     \
+ ksparse.o                     \
+@@ -252,7 +252,7 @@
+ checkpt_mod.o         	      \
+ population_mod.o              \
+ lightning_nox_mod.o           \
+-rpmares_mod.o                 gosat_co2_mod.o               tes_nh3_mod.o                 tes_o3_mod.o                  iasi_o3_obs_mod.o             tes_o3_irk_mod.o                 \
++rpmares_mod.o                 \
+ rpmares_adj_mod.o             \
+ isoropiaIIcode_adj.o          \
+ isoropiaII_adj_mod.o          \
+@@ -303,16 +303,9 @@
+ weak_constraint_mod.o         \
+ emissions_adj_mod.o           \
+ gamap_mod.o                   \
+-input_mod.o            He4IncludeModule.o            He4ErrorModule.o              He4GridModule.o               He4SwathModule.o              findinv.o                     airsv5_mod.o                  airs_co_obs_mod.o             HdfIncludeModule.o            HdfSdModule.o                 HdfVdModule.o                 mls_o3_obs_mod.o              mls_hno3_obs_mod.o            omi_no2_obs_mod.o             omi_so2_obs_mod.o             omi_ch2o_obs_mod.o            osiris_no2_obs_mod.o          interp.o                      gaussj.o                      iasi_co_obs_mod.o             mopitt_obs_mod.o                   \
++input_mod.o                   \
+ improve_bc_mod.o              \
+ geos_chem_mod.o      	      \
+-ErrorModule.o                 \
+-sciabr_co_obs_mod.o           \
+-tes_ch4_mod.o                 scia_ch4_mod.o                 \
+-mem_ch4_mod.o                 \
+-leo_ch4_mod.o                 \
+-geocape_ch4_mod.o             \
+-osiris_obs_mod.o              \
+ geos_chem_adj_mod.o           \
+ inv_hessian_mod.o             \
+ input_adj_mod.o       	      \
+--- a/rdland.f
++++ b/rdland.f
+@@ -35,6 +35,13 @@
+       USE GRID_MOD,      ONLY : GET_XOFFSET, GET_YOFFSET
+       USE LOGICAL_MOD,   ONLY : LAVHRRLAI
+ 
++#if defined(AIRMOSAIC_CHEM_COMPONENT)
++      USE DAO_MOD,       ONLY : FRLAND, FRLANDIC, FRLAKE, FROCEAN
++      USE DRYDEP_MOD,    ONLY : DEPSAV
++      USE LOGICAL_MOD,   ONLY : LEMIS, LTRAN, LCONV, LTURB
++      USE LOGICAL_MOD,   ONLY : LDRYD, LWETD, LMEGAN, LLIGHTNOX
++#endif
++
+       IMPLICIT NONE
+ 
+ #     include "CMN_SIZE"  ! Size parameters
+@@ -51,6 +58,35 @@
+       !=================================================================
+       ! RDLAND begins here!
+       !=================================================================
++
++#if defined(AIRMOSAIC_CHEM_COMPONENT)
++      ! Approved chemistry component: excluded surface processes fail closed.
++      IF ( LEMIS .or. LTRAN .or. LCONV .or. LTURB .or.
++     &     LDRYD .or. LWETD .or. LMEGAN .or. LLIGHTNOX ) THEN
++         CALL ERROR_STOP( 'Excluded component process enabled',
++     &                    'AIRMOSAIC_CHEM_COMPONENT:RDLAND' )
++      ENDIF
++      IF ( ANY(ABS(FRLAND+FRLANDIC+FRLAKE+FROCEAN-1d0)
++     &          > 1d-2) .or. ANY(FRLAND < 0d0) .or.
++     &     ANY(FRLANDIC < 0d0) .or. ANY(FRLAND > 1d0) .or.
++     &     ANY(FRLANDIC > 1d0) ) THEN
++         CALL ERROR_STOP( 'Invalid native GEOS-FP land fractions',
++     &                    'AIRMOSAIC_CHEM_COMPONENT:RDLAND' )
++      ENDIF
++      IF ( .not. ALLOCATED(DEPSAV) ) THEN
++         CALL ERROR_STOP( 'Missing zero surface-loss rate allocation',
++     &                    'AIRMOSAIC_CHEM_COMPONENT:RDLAND' )
++      ENDIF
++      IF ( ANY(DEPSAV /= 0d0) ) THEN
++         CALL ERROR_STOP( 'Nonzero surface-loss rate forbidden',
++     &                    'AIRMOSAIC_CHEM_COMPONENT:RDLAND' )
++      ENDIF
++      ! Native meteorological fractions replace old Olson land-map input.
++      ! This is an explicit operating-point assumption for chemistry only.
++      FRCLND(:,:) = FRLAND(:,:) + FRLANDIC(:,:)
++      WRITE(6,*) 'AIRMOSAIC_CHEM_COMPONENT: GEOS-FP land fraction'
++      RETURN
++#endif
+ 
+       ! Get nested-grid offsets (bmy, 2/11/03)
+       I0 = GET_XOFFSET()

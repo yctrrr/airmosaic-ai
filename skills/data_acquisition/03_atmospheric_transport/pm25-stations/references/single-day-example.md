@@ -9,15 +9,17 @@
 ## 第一次使用：下载一天
 
 1. 打开来源说明，确认选择全国**站点**文件 `china_sites`，而非城市汇总 `china_cities`。
-2. 在成员自己的 `AIRMOSAIC_ASSETS_DIR` 下新建 `results/<project_id>/<run_id>/03_atmospheric_transport/pm25-stations/raw/`；每次使用新任务目录，保留已有文件。
+2. 在对应外部项目的 `results/` 下选择本次任务目录保存原文件，遵循[项目约定](../../../../../projects/README_ZH.md)；每次使用新任务目录，保留已有文件。
 3. 打开[2024-01-01 单日站点 CSV](https://quotsoft.net/air/data/china_sites_20240101.csv)，另存为 `china_sites_20240101.csv` 到上述 raw 目录。其他日期替换为八位 `YYYYMMDD`，先核对归档范围。
 4. 检查下载成功、文件非空且不是错误 HTML。以 UTF-8 读取；Excel 使用“数据 → 从文本/CSV”，明确选 UTF-8，不直接用错误编码保存回原文件。
 5. 核对前三列 `date,hour,type`、其余站点编码、目标日期及实际小时标签；拒绝重复列、列数异常和重复 `(date,hour,type)` 行。
-6. 保存来源、取得时间、相对文件位置、字节数和 SHA-256。非秘密获取计划放 `AIRMOSAIC_CONFIG_DIR/pm25-stations/`，运行摘要放工作区的 `results/<project_id>/<run_id>/records/<tool_id>/record.json`。
+6. 保存来源、取得时间、相对文件位置、字节数和 SHA-256。非秘密获取计划放 `${AIRMOSAIC_CONFIG_DIR}/projects/<project_id>/`，运行摘要与取得证据保留在对应项目结果中；本直接调用路线没有工具 ID 或自动 runner 回执。
 
 程序调用使用同一个公开 HTTPS URL。本次验证使用 Python `requests`，一个 GET、连接超时 15 秒、读取超时 60 秒、响应上限 20 MiB、不自动跟随重定向或重试；保留 TLS 验证。HTTP 状态异常、HTML 或文件格式不符时终止，不能当成缺测值继续处理。当前没有注册下载工具 ID，不使用 `run-tool pm25-station-acquisition`。
 
 ## 第二步：只整理小时 PM2.5
+
+现有 `scripts/prepare_hourly.py` 可直接提取所选站点，以及在时间声明经核实后计算日均；加载、配置、调用和检查见[小时整理操作](hourly-preparation_ZH.md)。它不下载文件，也不是注册工具。下列实测记录仍是2026-10-26限定试验，不代表助手执行过完整获取或日均流程。
 
 1. 精确筛选 `type == "PM2.5"`；`PM2.5_24h` 是另一平均时段，AQI 是指数，均不混入。
 2. 将每个站点列展开成长表。站号按字符串保存，保留原始 `date`、`hour`、来源、污染物、`1h` 平均时段及 `µg/m³` 单位。

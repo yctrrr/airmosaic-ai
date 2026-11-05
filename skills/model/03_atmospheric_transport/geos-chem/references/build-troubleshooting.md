@@ -1,18 +1,24 @@
-# GEOS-Chem 编译与运行排错
+# Troubleshooting the two maintained configurations
 
-以下是排查顺序与可能原因，不是本机实测修复清单。先记录版本、失败阶段和首个有效错误，原日志留在授权本地；共享摘要不含机器路径、账号、主机或环境转储。只在新的任务 build/run 副本修改，不改现有健康作业。
+**English** | [中文](build-troubleshooting_ZH.md)
 
-| 现象 | 排查位置与可能原因 | 处理及验证 |
-|---|---|---|
-| CMake 找不到编译器或依赖 | 所选环境、工具版本、NetCDF C/Fortran 的可见性 | 确认同一工具链和明确库根，在新 build 重新配置；核对依赖检测摘要 |
-| 缺模块文件、模块版本不兼容或链接符号失败 | Fortran 模块/库是否来自不同编译器，旧 build 是否混入 | 使用匹配编译器和依赖，重建任务副本；同时检查编译和链接阶段，不靠复制任意库文件修复 |
-| GCHP 出现 MPI/ESMF/MAPL 相关失败 | 编译期与运行期的 MPI、依赖及子模块版本 | 对照该 GCHP 版本说明重新检查组合；确认能链接后，再在授权短任务中验证 |
-| 编译进程被杀或无明显编译错误 | 内存、并行度、磁盘与作业资源记录 | 降低并行度或申请合理资源；不把资源不足当源码错误，核对真实退出状态 |
-| 更换版本后仍读取旧设置 | CMake 缓存、CodeDir 目标、已安装二进制 | 使用新 build/run 目录，核对实际源码、配置和二进制对应关系 |
-| 编译成功但运行时找不到共享库 | 执行环境与构建环境不同、库加载路径 | 在任务范围内重现匹配环境，检查具体缺失库；不要导出整个环境或全局改个人启动文件 |
-| 运行时崩溃、超时或内存超限 | 首个错误、资源限制、线程数及线程栈 | Classic 的 OpenMP 和 GCHP 的 MPI 分别核对；短副本使用 debug 构建定位，再恢复正式构建，不长期用 debug 做生产运行 |
-| restart、气象或诊断报错 | 输入时间/物种、边界覆盖、配置间引用 | 转入输入/配置排查；不靠重新编译或静默补数据解除错误 |
+Keep the original failing case and diagnose the first useful error. A correction belongs in a fresh build/run with the source, settings and outcome recorded.
 
-本地笔记中曾记录特定 GCHP 链接选项修复；这里不复制补丁。只有明确缺失符号、工具链与上游依据吻合时，才在任务副本评估链接设置，并保存差异。不要无条件给 CMakeLists 添加系统库或关闭科学模块来让任务“通过”。
+| Symptom | Check and correction |
+|---|---|
+| Missing submodule / native table | Verify the selected model version and recursive Classic submodules; v35l static tables must match that model version. Do not borrow another mechanism's files. |
+| Missing compiler, NetCDF or runtime library | Use matching C/Fortran libraries and the same build/run environment. Check `nf-config`, `nc-config`, executable linking and CMake log. An unrelated conda runtime can interfere. |
+| Legacy make module-order failure | Use the supplied dependency file and serial `-j1`; do not repair by linking stale objects from a different profile. |
+| Old `-openmp` option rejected | The tested Intel environment uses explicit `-qopenmp`; retain the complete documented flags. |
+| Native input parse failure | Preserve fixed label columns and all menu rows; use the templates. `ITER` needs two lines before every invocation. |
+| Met read failure or wrong clock | Check actual I3 endpoints and mean intervals; the component requires the demonstrated complete three-hour interval. Keep CN/ApBp in their native constants directory. |
+| UV/TOMS cannot open | Use the legacy BPCH layout and checked conversion, not only renamed NetCDF. Preserve UV values and TOMS remapping/metadata. |
+| Segmentation fault / stack issue | Main-thread stack needs `ulimit -s unlimited`; workers use `OMP_STACKSIZE=256M`. Check the allocation and original error; a stack increase cannot fix an uninitialized physical array. |
+| Excluded process enabled | The component profile intentionally refuses emissions, transport, mixing and deposition flags. Return to the documented component, or design a separately reviewed full-process run. |
+| Zero exit but no result | Fortran STOP may exit zero. Require native finish, current cost, newly written end restart and independent content checks. |
+| Prepared-input hash mismatch | Do not bypass the receipt. Prepare/review another configuration if native settings change. |
+| Existing output / partial transfer / budget refusal | Preserve files, inspect jobs/processes/receipts and reuse healthy work. Do not reset the ledger, remove unknown locks or rerun fits/integrations blindly. |
+| Gradient disagreement | Confirm tracer IDs, baseline/plus/minus ordering, units and support. Inspect all predeclared steps and local errors. Do not change tolerance or hide the smallest-step failure to obtain a pass. |
+| Aerosol-feedback-adjoint warning | Remains an unresolved coverage boundary; the demonstrated global criterion does not repair the missing derivative. |
 
-官方排错建议包括检查环境、修改、资源限制及短时 debug；关闭过程用于定位时会改变科学含义，定位副本不得作为正式结果。[官方 Debug 指南](https://geos-chem.readthedocs.io/en/stable/geos-chem-shared-docs/supplemental-guides/debug-guide.html)。
+Start from the [Classic](usage.md) or [v35l](adjoint.md) tutorial. Historical failed versions remain recoverable outside the active skill; they are not extra maintained recipes. See the [14.8.0 debug guide](https://geos-chem.readthedocs.io/en/14.8.0/geos-chem-shared-docs/supplemental-guides/debug-guide.html).

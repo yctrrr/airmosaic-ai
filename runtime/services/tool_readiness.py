@@ -68,7 +68,7 @@ def _configuration(spec: dict[str, str], repo_root: Path) -> dict[str, str]:
     return result
 
 
-def check_readiness(tool: dict[str, Any], repo_root: Path) -> dict[str, Any]:
+def check_readiness(tool: dict[str, Any], repo_root: Path, *, entry_path: Path | None = None) -> dict[str, Any]:
     """Check only declared metadata and local prerequisites, without execution.
 
     No state is persisted. A profile directory is never used as login evidence.
@@ -77,7 +77,7 @@ def check_readiness(tool: dict[str, Any], repo_root: Path) -> dict[str, Any]:
     checks: list[dict[str, Any]] = []
     entry = tool["entrypoint"]
     try:
-        entry_exists = (repo_root / entry["path"]).is_file()
+        entry_exists = (entry_path if entry_path is not None else repo_root / entry["path"]).is_file()
     except OSError:
         entry_exists = False
     checks.append({"kind": "entrypoint", "name": entry["path"],

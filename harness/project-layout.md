@@ -83,3 +83,5 @@ The [asset contract](assets.md#synthetic-workflow-checks) is authoritative for t
 ## Maintenance and language paths
 
 Project maintenance lives in `skills/agent_operations/shared/`, governed by [authoring](skill-authoring.md) and [improvement](skill-improvement.md). It adds no research stage or scientific method. Machine-learning operations have one home in `skills/model/shared/machine_learning_model/`, with `scripts/r/`, `scripts/python/` and shared planning helpers. Existing regression and reproduction workflows keep their names. Historical local results stay at the previous ignored location; no automatic result migration is performed.
+
+Local private capabilities can remain outside Git and use [explicit selection](usage/local-capabilities.md); data and authentication stay separate.

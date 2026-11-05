@@ -10,8 +10,6 @@ Use these sources to identify which enterprises report an activity, financial qu
 
 Database tables such as CSMAR/RESSET provide structured fields; annual/ESG reports and provincial disclosures provide original narratives and attachments. Keep each table's definitions, original source, reporting boundary, statistical date, publication date and revision separately. Database curation does not make every field a direct transcription of the same original report.
 
-For CSMAR, field documentation reviewed on 2026-10-27 indicated that `IndustryName`/`IndustryCode` use the listed-company association classification from 2023 and the applicable CSRC classification earlier. `IndustryNameC`/`IndustryCodeC` refer to the 2012 CSRC scheme and become blank after updates cease in 2023; `IndustryNameD`/`IndustryCodeD` use the association scheme. Recheck the selected export's dictionary rather than treating this historical observation as a permanent rule. Main-business and listing-status fields can reflect nearby/latest available information rather than the intended historical year-end.
-
 ## Organization and comparison
 
 Keep securities codes as text, entity identifiers separate from securities, and parent/subsidiary/facility boundaries explicit. Use entity–period–report-type–version keys. Compare a listing with the saved full report and attachments; retain source references and revision evidence. A missing report, inaccessible report and observed zero are different observations.

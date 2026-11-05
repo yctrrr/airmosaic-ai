@@ -1,42 +1,157 @@
-# GEOS-Chem 使用流程与实用注意事项
+# Classic 14.8.0: your first checked forward run
 
-本指南是人工准备清单，没有自动执行器。方法维护只用说明与合成接口；真实模型输入、下载、编译和计算属于另行明确的任务。
+**English** | [中文](usage_ZH.md)
 
-## 版本与运行目录
+This tutorial reproduces the successful **TransportTracers/MERRA-2/global 4×5/47-level** case for **2019-01-01 00:00–01:00 UTC**. It produces 21 concentration fields and 21 restart fields. The chemistry switch here selects the tracer simulation's own processes; this case is not a full pollution-chemistry evaluation.
 
-先固定 Classic 或 GCHP、源码/子模块版本和编译器。Classic 使用单节点 OpenMP；多节点任务应选择并核对 GCHP 的 MPI 环境，不能仅提高 Classic 的节点数。[官方快速开始](https://geos-chem.readthedocs.io/en/stable/getting-started/quick-start.html)给出两种入口的区别。
+## 1. Prepare directories and software
 
-源码、build、运行目录、输入缓存和个人认证分开管理。使用所选版本的运行目录生成器；交互步骤可能涉及个人登记、个人配置文件写入，不能默认让 agent 提交个人信息。运行目录中 CodeDir 等模型内部链接是上游约定，不表示 run-tool 接受这些链接路径。
-
-## 环境、构建与配置
-
-核对 Fortran/C/C++、CMake、NetCDF C/Fortran 及所选并行库，先确认它们来自相容工具链。用新 build 目录配置，构建后安装到任务运行目录，记录实际二进制和源码对应关系。切换编译器或重大版本时不要沿用旧缓存。
-
-下列是 Linux Classic 的人工编译示意，前提是已按该版本生成独立运行目录、确认 CodeDir 和依赖、授权构建；本轮没有执行。变量由使用者本地设置，并行数按实际资源确定，不提供自动安装或提交作业脚本。
+Use Linux/POSIX with Git, Python 3.10+, CMake ≥3.13, a compatible Fortran/C/C++ toolchain, and matching NetCDF-C/NetCDF-Fortran. The successful build used Intel Fortran and NetCDF. Set `FC`, `CC`, `CXX`, `GC_CMAKE`, `GC_NETCDF_PREFIX` to the actual executable names/library prefix in your environment. The same environment must be available when running. An unrelated conda library environment can interfere with Intel/NetCDF linking.
 
 ```bash
-: "${GC_RUN_DIR:?Set the task run directory locally}"
-: "${GC_BUILD_JOBS:?Set the authorized build parallelism}"
-cd "${GC_RUN_DIR}/build"
-cmake ../CodeDir -DRUNDIR=..
-cmake --build . --parallel "${GC_BUILD_JOBS}"
-cmake --install .
+set -euo pipefail
+: "${AIRMOSAIC_REPO:?set the AirMosaic source checkout}"
+: "${GC_ROOT:?set an existing project directory outside Git}"
+GC_SKILL="$AIRMOSAIC_REPO/skills/model/03_atmospheric_transport/geos-chem"
+mkdir -p "$GC_ROOT/source" "$GC_ROOT/inputs/ExtData" "$GC_ROOT/results"
 ```
 
-Classic 的主要配置职责：geoschem_config.yml 管理模拟，HEMCO_Config.rc 管理输入读取/缩放关系，HEMCO_Diagn.rc 与 HISTORY.rc 管理诊断。旧笔记中的 input.geos、旧可执行名或云镜像目录不能直接复制到新版任务。
+Use short paths without spaces. `GC_ROOT` contains data and outputs; `AIRMOSAIC_REPO` contains this skill. A model run belongs in an authorized allocation; the example used at most four threads, a 24 GiB request and shared nodes. These commands do not submit a scheduler job.
 
-GCHP 应先检查该版本的 setCommonRunSettings.sh 与派生配置关系。HEMCO_Config.rc 中的缩放/物种关系不等同于 ExtData 输入读取规则；修改一处后需核对相关配置的一致性。下一代 ExtData 格式也有版本及模拟类型限制，见[官方 GCHP 配置说明](https://gchp.readthedocs.io/en/14.8.0/user-guide/configuration-files.html)。
+## 2. Select source by model version
 
-## 输入检查、dry-run 与下载
+```bash
+GC_VERSION="14.8.0"
+GC_SOURCE="$GC_ROOT/source/GCClassic-$GC_VERSION"
+GC_CASE="$GC_ROOT/results/classic_$GC_VERSION"
+git clone --branch "$GC_VERSION" --recurse-submodules \
+  https://github.com/geoschem/GCClassic.git "$GC_SOURCE"
+git -C "$GC_SOURCE" describe --tags --always
+git -C "$GC_SOURCE" submodule status --recursive
+mkdir "$GC_CASE"
+cp "$GC_SKILL/templates/classic_14.8.0/settings.json" "$GC_CASE/settings.json"
+```
 
-先列所需气象、初始/边界和诊断类别，检查时间、网格、物种及单位契约。嵌套域还需匹配域外边界覆盖。此处不提供排放清单具体数据或代码。
+Choose the release tag for the model number, here **Classic 14.8.0**; no specified Git commit hash is required. The helper checks the model version declared in the source and records the actual source identity automatically. Submodules must not have `-`, `+` or `U` prefixes. In this release `GEOS-Chem`, `HEMCO`, `Cloud-J` and `HETP` are direct children of `src/`. The tested `MECH=fullchem` build option is preserved by the helper; the runtime simulation remains `TransportTracers`.
 
-GEOS-Chem 自身 dry-run **会启动模型并可写日志**，与 AirMosaic 的 run-tool dry-run 不同。只有实际模型任务获授权后才使用。根据日志列出所需文件，再独立决定下载范围；下载会联网并写输入缓存。旧笔记中的下载参数已随版本变化，使用对应版本帮助及[官方 dry-run 下载指南](https://geos-chem.readthedocs.io/en/stable/gcclassic-user-guide/dry-run-download.html)，不直接照搬历史云命令。
+To upgrade, set `GC_VERSION` to the target release and follow its configuration/data documentation. These complete templates and the fixed output checker use the 14.8.0 case as their reference. Recheck configuration interfaces, build options, input compatibility and outputs for the new version; previous experiment results do not transfer automatically.
 
-## Restart、spin-up 与产物
+## 3. Compile once
 
-restart 的时间、网格、物种和精度读取规则要与本次模拟匹配；宽松的缺物种/日期读取模式仅能在明确初始化方案中选择，不能用来掩盖正式输入缺失。spin-up 时长依物种、区域和初始化收敛检查确定，不把笔记中某个固定时长当通用标准。
+```bash
+: "${FC:?}" "${CC:?}" "${CXX:?}" "${GC_CMAKE:?}" "${GC_NETCDF_PREFIX:?}"
+python "$GC_SKILL/scripts/build_classic.py" \
+  --root "$GC_ROOT" --source "$GC_SOURCE" --build "$GC_CASE/build" \
+  --version "$GC_VERSION" \
+  --fc "$FC" --cc "$CC" --cxx "$CXX" --cmake "$GC_CMAKE" \
+  --netcdf-prefix "$GC_NETCDF_PREFIX" --jobs 4 --max-seconds 3600
+# Execute the same plan inside the authorized allocation:
+python "$GC_SKILL/scripts/build_classic.py" \
+  --root "$GC_ROOT" --source "$GC_SOURCE" --build "$GC_CASE/build" \
+  --version "$GC_VERSION" \
+  --fc "$FC" --cc "$CC" --cxx "$CXX" --cmake "$GC_CMAKE" \
+  --netcdf-prefix "$GC_NETCDF_PREFIX" --jobs 4 --max-seconds 3600 --execute
+```
 
-同网格精度延续与跨网格初始化有不同要求：原生精度读取、HEMCO 重网格和裁剪的能力不能无条件同时使用。参考[官方 restart 说明](https://geos-chem.readthedocs.io/en/stable/gcclassic-user-guide/restart-files-gc.html)作选择，另行验证 GCHP 的重网格流程。
+Expected executable: `build/bin/gcclassic`. The helper checks source contents, uses a fresh build directory and saves compile/link logs and a binary hash. `--jobs` is compilation parallelism, not a scientific parameter. The combined prefix must contain `include/`, `lib/libnetcdf.so` and `lib/libnetcdff.so`; split installations need explicit CMake adaptation. See [official compilation](https://geos-chem.readthedocs.io/en/14.8.0/gcclassic-user-guide/compile-cmake.html).
 
-完成状态应同时核对退出码、预期终点、浓度/诊断和 restart。日志有结束标记不保证时空覆盖与研究口径正确。浓度校正只处理已有模拟结果；敏感性、情景差值、伴随与因果效应分别解释，不从某个 forward 可执行文件推断具备伴随能力。
+## 4. Configure the inputs
+
+Edit the copied `settings.json`: replace `@DATA_ROOT@` with the absolute path of `GC_ROOT/inputs/ExtData`. Keep the demonstrated dates for the first run. The helper renders the [complete native templates](../templates/classic_14.8.0/settings.json) and copies the version-matched species database/downloader from the source.
+
+```bash
+python "$GC_SKILL/scripts/configure_run.py" --mode classic \
+  --root "$GC_ROOT" --source "$GC_SOURCE" --run "$GC_CASE/run" \
+  --settings "$GC_CASE/settings.json"
+python "$GC_SKILL/scripts/configure_run.py" --mode classic \
+  --root "$GC_ROOT" --source "$GC_SOURCE" --run "$GC_CASE/run" \
+  --settings "$GC_CASE/settings.json" --execute
+cp "$GC_CASE/build/bin/gcclassic" "$GC_CASE/run/gcclassic"
+cd "$GC_CASE/run"
+./gcclassic --dryrun > log.dryrun 2>&1
+```
+
+| File / parameter | Meaning and effect |
+|---|---|
+| `settings.json:start_utc`, `end_utc` | UTC simulation interval, rendered to `simulation.start_date/end_date`; the helper supports whole-hour intervals |
+| `settings.json:data_root` | Existing external data root, rendered into YAML and HEMCO input paths |
+| `geoschem_config.yml:simulation.name` | Simulation family; keep `TransportTracers` for this tutorial |
+| `simulation.met_field` | `MERRA2`; must match the actual meteorological files and HEMCO met settings |
+| `simulation.read_restart_as_real8` | `false` uses the tested HEMCO reading/remapping route on the reduced 47-level grid |
+| `grid.resolution`, `number_of_levels` | 4° latitude ×5° longitude, 47 layers; changing these requires compatible met/restart and a new check |
+| `grid.longitude/latitude` | Global extent, date-line centering and half-size polar boxes; these define coordinates, not a post-processing crop |
+| `timesteps.transport_timestep_in_s` | 600 seconds between transport updates |
+| `timesteps.chemistry_timestep_in_s` | 1200 seconds between the simulation's chemistry updates |
+| `operations.*.activate` | Enable chemistry, convection, deposition, PBL mixing and transport; changing a switch changes the physical experiment |
+| `operations.transport.transported_species` | The 21 transported species and their required restart/metadata entries |
+| `HEMCO_Config.rc:ROOT`, `METDIR`, `GC_RESTART` | Inventory root, met path selection and restart source; inspect the entire active block, not just filenames |
+| HEMCO source line | Name, file, variable, time coverage, cycling rule, dimensions, units, target species, scale-factor IDs, category and hierarchy |
+| `HEMCO_Diagn.rc` | Emission diagnostics; `HISTORY.rc` does not replace it |
+| `HISTORY.rc:COLLECTIONS` | Enabled output collections; defining a collection alone does not activate it |
+| `SpeciesConc.frequency` | Output/sample interval: `00000000 010000` means one hour |
+| `SpeciesConc.duration` | How often a new file is opened; distinct from frequency |
+| `SpeciesConc.mode` | `time-averaged` for an interval mean; `instantaneous` for a state at a sample time |
+| `SpeciesConc.fields` | Requested variables; `SpeciesConcVV_?ALL?` outputs all species in dry-air mixing-ratio units |
+| `Restart.frequency/duration` | `'End'` writes the end state needed to continue a run |
+| `species_database.yml` | Species identities, molecular weights and properties; retain the source-matched copy |
+
+The native dry-run inventories required paths. It does not generate scientific outputs. Keep all five rendered input files together, plus `species_database.yml`.
+
+## 5. Supply the physical files
+
+The data root needs preprocessed MERRA-2 meteorology, compatible restart, constants and the active source/ancillary files listed by the dry-run. The tested case required 16 files totaling about 498 MB. Reuse compatible files already present. For missing files only, inventory, measure and then fetch within the authorized cumulative budget:
+
+```bash
+python "$GC_SKILL/scripts/bounded_inputs.py" inventory \
+  --root "$GC_ROOT" --data "$GC_ROOT/inputs/ExtData" --run "$GC_CASE/run" \
+  --log "$GC_CASE/run/log.dryrun" --manifest "$GC_CASE/input-inventory.json"
+python "$GC_SKILL/scripts/bounded_inputs.py" measure \
+  --root "$GC_ROOT" --manifest "$GC_CASE/input-inventory.json" \
+  --output "$GC_CASE/input-measured.json"
+python "$GC_SKILL/scripts/bounded_inputs.py" fetch \
+  --root "$GC_ROOT" --manifest "$GC_CASE/input-measured.json" \
+  --ledger "$GC_ROOT/input-transfer-ledger.json" --max-bytes 2147483648 --execute
+```
+
+Inspect the measured size before fetching. Existing final files and unknown/partial transfers are not silently overwritten; failed reservations remain in the same ledger. Larger studies use a separately reviewed budget and the version's official downloader. [Input documentation](https://geos-chem.readthedocs.io/en/14.8.0/gcclassic-user-guide/download-data.html).
+
+## 6. Run and inspect results
+
+```bash
+cd "$GC_CASE/run"
+export OMP_NUM_THREADS=4 OMP_STACKSIZE=128M OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+ulimit -s unlimited
+set +e
+timeout --signal=TERM --kill-after=10 1800 ./gcclassic > log.run 2>&1
+model_exit=$?
+set -e
+printf '%s\n' "$model_exit" > model.exit
+test "$model_exit" -eq 0
+```
+
+The command must exit zero and the log must reach the selected end time. Inspect `OutputDir/GEOSChem.SpeciesConc.20190101_0000z.nc4` and `Restarts/GEOSChem.Restart.20190101_0100z.nc4`. The first is the hour's averaged concentration; the second is the instantaneous end state.
+
+```bash
+: "${GC_NETCDF_C_LIBRARY:?set the full path to the matching libnetcdf.so}"
+python "$GC_SKILL/scripts/check_outputs.py" \
+  --root "$GC_ROOT" --library "$GC_NETCDF_C_LIBRARY" \
+  --concentration "$GC_CASE/run/OutputDir/GEOSChem.SpeciesConc.20190101_0000z.nc4" \
+  --restart "$GC_CASE/run/Restarts/GEOSChem.Restart.20190101_0100z.nc4" \
+  --history "$GC_CASE/run/HISTORY.rc" --unit 'mol mol-1 dry' \
+  --output "$GC_CASE/output-check.json"
+```
+
+This checker is deliberately fixed to the successful 2019 one-hour/47-level/21-species case. It checks species, coordinates/hybrid levels, dimensions, units, averaging, interval and finite values. Changing dates, collections or species requires an adapted output contract; do not run this checker on another case and call that case validated.
+
+## 7. Make one controlled change
+
+| Desired change | Edit | Recheck / expected output |
+|---|---|---|
+| Run a different hour/day | Copy `settings.json`, change both UTC dates, render a new run | New restart and complete met coverage; rerun dry-run; output names carry the new time |
+| Write 30-minute concentrations | In a fresh run change `SpeciesConc.frequency` to `00000000 003000`; choose a duration ≥ frequency | Two samples per hour; keep time averaging explicit; fixed checker needs adaptation |
+| Write fewer variables | Change `SpeciesConc.fields` to existing transported names such as `SpeciesConcVV_CO_50` | Smaller diagnostic files; the simulated species remain unchanged |
+| Change emissions | Adjust the active HEMCO source or scaling entry, preserving units and hierarchy | HEMCO diagnostics must show the intended flux change before interpreting concentrations |
+| Change initial state | Update the active `GC_RESTART` file in HEMCO | Time/grid/species/units and spin-up must be reviewed |
+| Change grid/process family | Regenerate a compatible configuration, build if required and obtain matching data | New experiment; this tutorial's acceptance does not carry over |
+
+Output selection changes what is saved; input/process changes can change the modeled trajectory. Compare scenarios with the same meteorology, numerical settings and valid support when isolating an emission effect. See the [scientific method](../../../../../methods/03_atmospheric_transport/geos_chem.md) and [History guide](https://geos-chem.readthedocs.io/en/14.8.0/geos-chem-shared-docs/supplemental-guides/history-diag-guide.html).

@@ -29,6 +29,8 @@ Unique keys include source/network, station, time and observation type/averaging
 
 ## Handoff
 
+For a preaggregated daily product, inspect its original aggregation and count definition before reuse. A source-row count such as `n()` can include missing values or repeated intervals; it cannot be relabelled as valid unique hours, and a daily mean cannot recover the omitted hourly records. Preserve the product's target definition and missingness. An explicitly reviewed engineering pilot may retain declared assumptions, but that decision does not verify metadata or establish regulatory completeness. Use the skill's [daily-product path](../../skills/data_acquisition/03_atmospheric_transport/pm25-stations/references/daily-product.md) when this limited contract is appropriate.
+
 Acquisition evidence includes original files, publisher/provider, release/license, requested/actual coverage, failures, station-table version and integrity checks. Preparation adds long tables, mappings, duplicate/conflict/missingness reports, aggregation policies and valid coverage. Preserve originals.
 
 Downstream 03/04 use needs time/units, original/processed flags, dated coordinates, intended scope, unresolved questions and validation level. Download completion alone does not establish representativeness or health-model suitability.

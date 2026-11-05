@@ -30,12 +30,17 @@ metadata:
 | R 数据准备、拟合及留出评估 | [R操作](references/operations_ZH.md)：注册工具 `ml_regression_workflow`、适配器 `mlr3_regression`，接收整理好的 CSV 与现有任务 JSON |
 | Python 数值预测 | [Python路径](references/python-path_ZH.md)：依赖、任务契约及 `ml_python_regression_workflow` 独立；须完成该路径记载的验证及注册检查后使用 |
 | Transformer 软件操作案例 | [软件指南](references/transformer-software_ZH.md)：直接运行 CPU 合成表格、序列、网格及融合助手；Python 3.11+、Torch 2.6+，无注册适配器或外部数据选项 |
+| 显式空间剔除折的数值表格拟合 | [直接接口](references/fixed-fold-tabular_ZH.md)：单次拟合传统模型、MLP 及受 FT 启发的数值表格 Transformer；训练内变换、自有检查点与合成检查，调用者提供审核后的划分、拟合账本及进程硬上限，无新注册适配器 |
 | 模型族、参数及固定折复现 | [模型](references/models_ZH.md)：通过配置声明候选，不复制每种模型的完整流水线 |
-| 仅开发数据的自动调参 | [直接 R 路径](references/automatic-tuning_ZH.md)：固定分组折 AutoTuner 助手；基础契约已检查，完整调参待所需依赖环境验证，无执行器适配器 |
+| 仅开发数据的自动调参 | [直接 R/Python 路径](references/automatic-tuning_ZH.md)：固定分组折 R AutoTuner（完整调参待依赖）与 Python 内存 sklearn 助手（合成检查）；显式预算、预处理在折内拟合，无新执行器/MCP 工具 |
 | 预测贡献 | [贡献](references/contribution_ZH.md)：置换/PDP/ICE/Shapley 解释拟合预测 |
 | 因果效应 | [因果](references/causal_ZH.md)：R 连续处理 PLR，声明 DAG、手工调整集及有依据的假设 |
 
 R 和 Python 是独立实现路径。Python 调用程序若调用 R 工具，仍需 R；两者任务契约不能互换。通用计划契约保留科学与实现分支，须通过所选实现的任务校验。
+
+直接 Python 调参模块为 [grouped_tuning.py](scripts/python/models/grouped_tuning.py)，显式调用和结果检查见自动调参说明。
+
+显式单次拟合模块为 [fixed_fold_regression.py](scripts/python/models/fixed_fold_regression.py) 和 [tabular_torch.py](scripts/python/models/tabular_torch.py)，固定划分、配置及重载要求见固定折说明。
 
 ## 执行和验收
 

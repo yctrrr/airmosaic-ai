@@ -59,6 +59,7 @@ class MCPGateway:
         self.catalog = DataCatalogService(
             catalog_dir=self.registry.repo_root / "catalog/datasets",
             data_acquisition_dir=self.registry.repo_root / "skills/data_acquisition",
+            registry=self.registry,
         )
         self.entries = {name: deepcopy(tool) for name, tool in self.registry._tools.items()
                         if tool.get("execution", {}).get("enabled")}

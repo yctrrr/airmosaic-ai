@@ -6,6 +6,8 @@
 
 新研究先采用[计划→审核→生成→执行](planning_ZH.md)，使用[计划调用程序](examples/planned_regression.py)。默认人工审核，代理判断须有用户明确委托。下面的固定合成程序保留作既有技术重放，不能证明完成新的科学方案审核。
 
+小时站点观测与网格特征的组合见[小型空间复现](compact-replay_ZH.md)：衔接整理、双线性提取及分组调参，并从保存的小型输入包验证不下载数据的重新执行。
+
 ## 组合设计
 
 依据技能的[操作契约](../../skills/model/shared/machine_learning_model/references/operations_ZH.md)配置和调用。空气污染任务同时采用[领域方法](../../methods/shared/air_pollution_regression_ZH.md)及[操作特例](../../skills/model/shared/machine_learning_model/references/air-pollution_ZH.md)。可复用数值运算保留在技能，生成的工作流代码提供任务设置与编排。
@@ -57,7 +59,7 @@ flowchart LR
 |---|---|---|
 | 预测数值响应 | `target`、`target_unit`、`target_definition` | 汇总、单位换算与时间对齐需明确准备 |
 | 使用或筛选特征 | `features`、`excluded_features`、`feature_selection` | 筛选只用训练数据，因果调整仍由人工确定 |
-| 选择回归模型 | 技能支持的有界 `models` 配置 | 其他学习器与自动调参需适配 |
+| 选择回归模型 | 技能支持的有界 `models` 配置 | 直接分组调参有单独[接口](../../skills/model/shared/machine_learning_model/references/automatic-tuning_ZH.md)，不是新增执行器任务字段 |
 | 设置开发与评估 | `id_column`、`split`、`row_limits`、`seeds` | 提供合法标签和适合研究的划分，不自动生成空间划分 |
 | 解释拟合预测 | `explanation.methods` 及背景规模限制 | 使用已支持预测解释并说明范围 |
 | 估计已支持因果效应 | `analysis: causal_plr` 与显式 `causal` 配置 | 先明确 DAG、调整集、辅助模型、折分和科学假设 |

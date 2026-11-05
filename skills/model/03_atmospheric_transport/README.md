@@ -7,7 +7,7 @@
 <!-- README-I18N:END -->
 
 
-Model methods from emission interfaces to concentrations. GEOS-Chem compilation, configuration and troubleshooting are manual references; no download, compilation, simulation or scheduler adapter.
+Model methods from emission interfaces to concentrations. GEOS-Chem maintains two successful routes: Classic 14.8.0 transport tracers and the public v35l chemical forward/adjoint component, with beginner guides, complete templates, parameter meanings and output/gradient checks. Direct helpers have no registered simulation or scheduler adapter.
 
 ## Entry points
 

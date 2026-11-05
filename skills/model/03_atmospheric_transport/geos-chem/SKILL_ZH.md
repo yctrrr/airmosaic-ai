@@ -1,33 +1,39 @@
 ---
 name: geos-chem-workflow
-description: 指导特定版本 GEOS-Chem 的配置、编译排错和浓度交接；仅供参考，没有编译、下载、调度或模拟适配器。
+description: 编译、配置并核对已测试的 Classic 14.8.0 输送和公开 v35l 化学分量伴随路线，提供原生模板与参数说明。
+compatibility: "POSIX; Python>=3.10; Git; CMake>=3.13; Intel Fortran; NetCDF-C/Fortran; NumPy and netCDF4 for v35l conversions."
+metadata:
+  version: "0.3.1"
 ---
 
-# GEOS-Chem 使用与排错参考
-
-<!-- README-I18N:START -->
+# GEOS-Chem：选择一条已成功运行的路线
 
 [English](SKILL.md) | **中文**
 
-<!-- README-I18N:END -->
+**阶段：**03，大气输送与化学。科学解释先读[方法说明](../../../../methods/03_atmospheric_transport/geos_chem_ZH.md)。
 
+| 你想做什么 | 从哪里开始 | 已测试配置 |
+|---|---|---|
+| 编译正向模型，得到浓度与重启文件 | [Classic 入门手册](references/usage_ZH.md) | Classic 14.8.0、TransportTracers、MERRA-2、全球 4×5、47 层、一小时 |
+| 运行化学正向、伴随并检查导数 | [Adjoint 入门手册](references/adjoint_ZH.md) | 公开 v35l 分支、GEOS-FP、化学分量、三小时、初始 NOx 缩放 → 表面 Ox 质量 |
 
-**步骤**：03 大气输送与化学。**执行状态**：文档参考，尚未注册工具 ID，不能调用 run-tool 编译或运行。本技能 不安装依赖、不登录、不下载、不读取数据，也不启动或改动现有作业。
+选择一条路线，按“源码 → 编译 → 输入配置 → 执行 → 输出检查”操作。两本手册都提供原生模板、参数含义、修改输入的示例及预期输出。[来源与实测范围](SOURCES_ZH.md)记录版本和公开 skill 参考，[排错表](references/build-troubleshooting_ZH.md)用于定位常见问题。
 
-## 使用顺序
+## 本 skill 提供的文件
 
-1. 明确 Classic/GCHP、固定源码版本、模拟类型、网格与比较情景；确认使用对应版本的官方说明。
-2. 阅读[输入准备](../../../data_acquisition/03_atmospheric_transport/atmospheric-inputs/SKILL_ZH.md)，列出气象、初始/边界条件、物种和时间契约；排放输入仅列接口方法，不附具体数据和实现。
-3. 按[使用流程与注意事项](references/usage.md)检查工具链、源码/构建/运行目录和配置。编译错误使用[编译与运行排错](references/build-troubleshooting.md)，保留失败类别与版本，避免随意改科学代码。
-4. 后续明确授权的模型任务先做短时验证，分别检查进程、时间覆盖、诊断、重启文件 和研究口径；本轮只维护文档，不执行这些步骤。
-5. 浓度交接给 04：说明单位、网格、垂直层/地表定义、时间平均、共同有效范围及观测验证限制。
+- `templates/classic_14.8.0/`：完整的 `geoschem_config.yml`、HEMCO、HISTORY 模板及 `settings.json`。
+- `templates/adjoint_v35l/`：完整的 `input.geos`、`input.gcadj`、`ITER`、配置 JSON、带哈希核对的化学分量补丁和模块依赖表。
+- [configure_run.py](scripts/configure_run.py)：在新的外部目录生成两套配置，默认只预览。
+- [build_classic.py](scripts/build_classic.py)、[prepare_v35l.py](scripts/prepare_v35l.py)：Classic 编译预览/执行，以及 v35l 源码配置副本准备。
+- [bounded_inputs.py](scripts/bounded_inputs.py)、[prepare_v35l_inputs.py](scripts/prepare_v35l_inputs.py)：Classic 限额获取输入，以及本次测试使用的 v35l 输入格式转换。
+- [run_v35l.py](scripts/run_v35l.py)、[check_outputs.py](scripts/check_outputs.py)、[check_v35l_gradients.py](scripts/check_v35l_gradients.py)：有时限的原生伴随试验、固定 Classic 输出检查、独立全域梯度检查。
+- [prepare_classic.py](scripts/prepare_classic.py)：通过所选 Classic 源码自带的运行目录模板准备配置的替代入口。
+- [gc_paths.py](scripts/gc_paths.py)、[v35l_bpch.py](scripts/v35l_bpch.py)：辅助脚本共用的路径/记录及原生 BPCH 工具。
 
-## 路径与证据
+脚本均在 `scripts/`。它们是直接辅助脚本，尚未注册 run-tool/MCP 模型执行器或调度器适配器。生成模板不会下载或验证物理数据。新整理的辅助脚本经过合成检查和已有输出回归核对；原模型试验验证的是特定配置的运行链，不等于每个新辅助脚本均已重新完成模型积分。
 
-源码与发行包在仓库外；任务构建/运行目录由个人非秘密配置明确指定，结果写到外部 assets `results/<project_id>/` 下的新任务目录。GC_SOURCE_DIR、GC_RUN_DIR 等只为文档逻辑变量，不是 AirMosaic 自动加载配置。模型原始日志可能含路径和文件名，不作为公开附件；未适配流程不具有 run-tool 的环境隔离与脱敏回执。
+## 操作边界
 
-本指南按本地技术笔记提炼并与官方文档交叉核对，来源与版本差异见 [SOURCES.md](SOURCES.md)。历史机器补丁不视为通用修复；不将 正向模型、GCHP 或任意版本的 伴随模型 能力互相代替。
+源码、输入、新运行与检查放在 Git 外部。使用明确的编译器/库环境和已授权计算资源；凭据、站点路径与原始日志保留在私人目录。保留成功输入与结果，停用历史可合并为带核验及恢复索引的归档。
 
-数据与结果按[资产目录与复核入库规范](../../../../harness/assets_ZH.md)管理：数据按阶段、实际名称和版本共享；结果按项目及运行归集。跨阶段引用同一数据，复用入库需人工批准。
-
-科学设计与浓度解释见[方法](../../../../methods/03_atmospheric_transport/geos_chem_ZH.md).
+按模型编号选择源码并配套配置和输入。升级时复核接口与输出，明确化学/过程选择及目标与控制量定义。修改参数会形成新试验，需要重新检查输入、输出和导数。v35l 补丁定义的是化学分量，不支持据此直接开启完整大气输送、排放或反演。两档较大扰动达到预设全域容差，最小步长和许多局地格点未达到；技术运行与科学验收分别判断。

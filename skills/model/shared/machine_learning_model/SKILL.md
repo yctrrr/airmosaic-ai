@@ -30,12 +30,17 @@ Read [mlr3 framework guidance](frameworks/r/mlr3/SKILL.md) for direct R API exam
 | R data preparation, fitting and held-out evaluation | [R operations](references/operations.md): registered `ml_regression_workflow`, adapter `mlr3_regression`, prepared CSV plus existing task JSON |
 | Python numeric prediction | [Python path](references/python-path.md): separate dependencies, task contract and `ml_python_regression_workflow`; implemented with its separate documented checks and supported limits |
 | Transformer software operation cases | [Software guide](references/transformer-software.md): direct CPU synthetic table, sequence, grid and fusion helper; Python 3.11+ and Torch 2.6+, no registered adapter or external-data option |
+| Explicit purged-fold numeric-table fits | [Direct APIs](references/fixed-fold-tabular.md): single-fit classical estimators, MLP and FT-inspired numeric-table Transformer; train-only transforms, own checkpoints and synthetic checks; caller supplies reviewed folds, fit ledger and hard process limits, no new registered adapter |
 | Model families, settings and fixed-fold reproduction | [Models](references/models.md); select declared candidates through configuration rather than copied per-model pipelines |
-| Development-only automatic tuning | [Direct R path](references/automatic-tuning.md): grouped fixed-fold AutoTuner helper; base contracts checked, full tuning pending the required dependency environment; no runner adapter |
+| Development-only automatic tuning | [Direct R/Python paths](references/automatic-tuning.md): grouped fixed-fold R AutoTuner (full tuning pending dependencies) and Python in-memory sklearn helper (synthetic checks); explicit budgets and fold-local preprocessing, no new runner/MCP tool |
 | Predictive contribution | [Contribution](references/contribution.md): permutation/PDP/ICE/Shapley explain fitted predictions |
 | Causal effect | [Causal](references/causal.md): R continuous-treatment PLR, declared DAG/manual adjustment and justified assumptions |
 
 R and Python are distinct runtime paths; a Python caller invoking the R tool still requires R. Their task contracts are not interchangeable. The common plan contract retains the supported scientific/runtime distinctions and must pass the selected runtime's task validation.
+
+The direct Python tuning module is [grouped_tuning.py](scripts/python/models/grouped_tuning.py); its explicit call and result checks are in the automatic-tuning reference.
+
+The explicit single-fit modules are [fixed_fold_regression.py](scripts/python/models/fixed_fold_regression.py) and [tabular_torch.py](scripts/python/models/tabular_torch.py); their reviewed-fold, configuration and reload requirements are in the fixed-fold reference.
 
 ## Run and verify
 

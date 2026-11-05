@@ -104,7 +104,13 @@ def test_only_allowlisted_public_assets_are_visible_to_git():
 def test_public_toy_hashes_survive_windows_style_git_checkout(tmp_path):
     import subprocess
     prefix = str(tmp_path / "checkout") + "/"
-    paths = [DATA, REFERENCE, "assets/toy-manifest.json"]
+    # checkout-index exports the index, so derive the complete fixture list from
+    # the same index manifest rather than two historical example constants.
+    indexed = subprocess.run(["git", "show", ":assets/toy-manifest.json"], cwd=ROOT,
+                             capture_output=True, text=True)
+    assert indexed.returncode == 0
+    indexed_manifest = json.loads(indexed.stdout)
+    paths = ["assets/toy-manifest.json", *("assets/" + name for name in indexed_manifest["files"])]
     result = subprocess.run(["git", "-c", "core.autocrlf=true", "checkout-index", "--prefix=" + prefix,
                              "--", *paths], cwd=ROOT, capture_output=True, text=True)
     assert result.returncode == 0

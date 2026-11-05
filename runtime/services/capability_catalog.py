@@ -37,6 +37,8 @@ class CapabilityCatalogService:
     def __init__(self, registry: ToolRegistryService | None = None):
         self.registry = registry or ToolRegistryService()
         self.root = self.registry.repo_root
+        self._path = getattr(self.registry, "path", lambda relative: repository_path(self.root, relative))
+        self._scope = getattr(self.registry, "scope", lambda relative: "public")
         self.documents: dict[str, str] = {}
         self.methods: list[dict] = []
         self.skills: list[dict] = []
@@ -51,9 +53,10 @@ class CapabilityCatalogService:
                for part in PurePosixPath(relative).parts):
             raise CapabilityCatalogError("invalid_public_reference")
         try:
-            path = repository_path(self.root, relative)
+            path = self._path(relative)
             for ancestor in (path, *path.parents):
-                if ancestor == self.root:
+                if ancestor == (getattr(getattr(self.registry, "local_capabilities", None), "root", self.root)
+                                if self._scope(relative) == "local_private" else self.root):
                     break
                 if (ancestor / ".git").exists() or (ancestor / ".git").is_symlink():
                     raise CapabilityCatalogError("nested_repository_reference")
@@ -122,9 +125,10 @@ class CapabilityCatalogService:
         for reference in references:
             relative = directory + reference
             try:
-                path = repository_path(self.root, relative)
+                path = self._path(relative)
                 for ancestor in (path, *path.parents):
-                    if ancestor == self.root:
+                    if ancestor == (getattr(getattr(self.registry, "local_capabilities", None), "root", self.root)
+                                if self._scope(relative) == "local_private" else self.root):
                         break
                     if (ancestor / ".git").exists() or (ancestor / ".git").is_symlink():
                         raise ValueError
@@ -206,7 +210,7 @@ class CapabilityCatalogService:
             tools = self._references(source.get("tool_ids", []))
             candidates.update(skills)
             self.methods.append({"method_id": name, "title": source.get("title"),
-                "path": relative, "version": source.get("version", "not_declared"),
+                "path": relative, "source_scope": self._scope(relative), "version": source.get("version", "not_declared"),
                 "content_sha256": digest, "declared_status": source.get("status", "not_declared"),
                 "evidence_claim": {"status": "declared", "value": deepcopy(source["evidence"])}
                     if source.get("evidence") else {"status": "not_declared"},
@@ -228,7 +232,7 @@ class CapabilityCatalogService:
                     break
                 candidate = (parent / "SKILL.md").as_posix()
                 try:
-                    if repository_path(self.root, candidate).is_file():
+                    if self._path(candidate).is_file():
                         candidates.add(candidate)
                         break
                 except ToolRegistryError:
@@ -257,7 +261,7 @@ class CapabilityCatalogService:
             bodies = [body]
             _, digest = self._document(relative, resources["en"])
             sibling = relative.removesuffix("SKILL.md") + "SKILL_ZH.md"
-            if repository_path(self.root, sibling).is_file():
+            if self._path(sibling).is_file():
                 resources["zh"] = f"airmosaic://skills/{name}/zh"
                 translated, _ = self._document(sibling, resources["zh"])
                 bodies.append(translated)
@@ -266,7 +270,7 @@ class CapabilityCatalogService:
             owned = [t["tool_id"] for t in self.registry._tools.values()
                      if t["entrypoint"]["path"].startswith(directory)]
             self.skills.append({"name": name, "description": front["description"],
-                "path": relative, "version": metadata.get("version", "not_declared"),
+                "path": relative, "source_scope": self._scope(relative), "version": metadata.get("version", "not_declared"),
                 "content_sha256": digest, "resources": resources,
                 "compatibility": front.get("compatibility", "not_declared"),
                 "declarations": self._declarations(metadata),

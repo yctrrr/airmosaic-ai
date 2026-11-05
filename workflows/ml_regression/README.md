@@ -6,6 +6,8 @@ This directory provides an agent-guided data/skill recipe with code generation i
 
 New studies begin with [plan → review → generation → execution](planning.md), using the [plan-aware caller](examples/planned_regression.py). Human review is the default; agent judgment requires explicit user delegation. The fixed synthetic program below remains a legacy technical replay, not evidence of a newly reviewed scientific plan.
 
+For hourly station observations and gridded predictors, use the [compact spatial replay](compact-replay.md): it connects preparation, bilinear sampling and grouped tuning, and verifies re-execution from a small saved input package without downloads.
+
 ## Design the combination
 
 Configure and invoke the skill using its [operation contract](../../skills/model/shared/machine_learning_model/references/operations.md). For air-pollution tasks, follow the [domain method](../../methods/shared/air_pollution_regression.md) and [operational cases](../../skills/model/shared/machine_learning_model/references/air-pollution.md). Reusable numerical operations stay in skills; generated workflow code supplies task settings and orchestration.
@@ -57,7 +59,7 @@ The [shared design method](../../methods/shared/requirements_driven_model_buildi
 |---|---|---|
 | Predict a numeric response | `target`, `target_unit`, `target_definition` | Aggregation, unit conversion and temporal alignment require explicit preparation |
 | Use or screen predictors | `features`, `excluded_features`, `feature_selection` | Screening uses training data; causal adjustment remains manual |
-| Choose a regression model | Bounded `models` entries supported by the skill | Other learners and automatic tuning require adaptation |
+| Choose a regression model | Bounded `models` entries supported by the skill | Direct grouped tuning has a separate [interface](../../skills/model/shared/machine_learning_model/references/automatic-tuning.md); it is not a new runner task field |
 | Set development and evaluation | `id_column`, `split`, `row_limits`, `seeds` | Supply valid labels and an appropriate study split; no automatic spatial split builder |
 | Explain fitted predictions | `explanation.methods` and background limits | Use supported predictive explanations and state their scope |
 | Estimate the supported causal effect | `analysis: causal_plr` and explicit `causal` settings | Specify DAG, adjustment, nuisance model, folds and scientific assumptions first |

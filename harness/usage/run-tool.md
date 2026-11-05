@@ -32,7 +32,7 @@ python -m runtime.cli run-tool worldpop_download --project-id example_project --
 | 工具 ID | 参数文件 | 使用前核对 |
 |---|---|---|
 | `worldpop_download` | [worldpop.json](../../config/examples/run-tool/worldpop.json) | 国家、年份、产品和 download 标志 |
-| `csmar_process_company_info` | [csmar.json](../../config/examples/run-tool/csmar.json) | 映射到已有授权 ZIP，核对表结构 |
+| `csmar_process_company_info` | [本地私有能力](local-capabilities_ZH.md) | 默认不可执行，需显式加载 |
 | `ihme_gbd_fetch_results` | [gbd.json](../../config/examples/run-tool/gbd.json) | 历史语法例子；当前页面版本、维度及已授权会话须另行核对 |
 | `gcam_extract_market_sector` | [gcam-market.json](../../config/examples/run-tool/gcam-market.json) | 替换示例情景，明确地区、年份；两省样例不是全国 |
 | `gcam_extract_technology_components` | [gcam-technology.json](../../config/examples/run-tool/gcam-technology.json) | 同上；没有 method 参数 |

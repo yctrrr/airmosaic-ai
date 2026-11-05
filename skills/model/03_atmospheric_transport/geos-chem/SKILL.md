@@ -1,33 +1,39 @@
 ---
 name: geos-chem-workflow
-description: Guide version-specific GEOS-Chem Classic and GCHP setup, compilation triage, runtime configuration and concentration handoff. Reference only; no compilation, download, scheduler or simulation adapter.
+description: Build, configure and check the tested Classic 14.8.0 transport and public v35l chemistry-component adjoint routes, with native templates and parameter guides.
+compatibility: "POSIX; Python>=3.10; Git; CMake>=3.13; Intel Fortran; NetCDF-C/Fortran; NumPy and netCDF4 for v35l conversions."
+metadata:
+  version: "0.3.1"
 ---
 
-# GEOS-Chem usage and troubleshooting reference
-
-<!-- README-I18N:START -->
+# GEOS-Chem: choose one successful route
 
 **English** | [中文](SKILL_ZH.md)
 
-<!-- README-I18N:END -->
+**Stage:** 03, atmospheric transport and chemistry. Read the [method](../../../../methods/03_atmospheric_transport/geos_chem.md) for scientific interpretation.
 
+| Your task | Start here | Tested configuration |
+|---|---|---|
+| Build a forward model and produce concentration/restart files | [Classic beginner guide](references/usage.md) | Classic 14.8.0, TransportTracers, MERRA-2, global 4×5, 47 levels, one hour |
+| Run chemical forward/adjoint calculations and check derivatives | [Adjoint beginner guide](references/adjoint.md) | Public v35l fork, GEOS-FP, chemistry component, three hours, NOx initial scale → surface Ox mass |
 
-**Stage:** 03, atmospheric transport and chemistry. **Status:** reference only, without a registered tool ID. run-tool cannot compile or simulate the model. This skill does not install dependencies, log in, download/read data or launch/modify jobs.
+Follow one guide from source → build → input configuration → execution → output checks. Both guides include native templates, parameter meanings, examples of changing inputs and expected outputs. [Sources and tested coverage](SOURCES.md) records the exact versions and the public skill review. [Troubleshooting](references/build-troubleshooting.md) covers common failures.
 
-## Workflow
+## Files supplied with this skill
 
-1. Specify Classic/GCHP, pinned source version, simulation type, grid and comparison scenarios; use matching official documentation.
-2. Read [input preparation](../../../data_acquisition/03_atmospheric_transport/atmospheric-inputs/SKILL.md) and define meteorology, initial/boundary conditions, species and time contracts. Emissions remain interface methods without concrete data or implementation.
-3. Use the [usage guide](references/usage.md) to review toolchains, source/build/run directories and configuration. Consult [build/run troubleshooting](references/build-troubleshooting.md), retaining error categories and versions instead of arbitrarily changing scientific code.
-4. A separately authorized model task should begin with a short validation, checking process state, time coverage, diagnostics, restart and scientific scope independently. Documentation maintenance does not execute these steps.
-5. Hand concentrations to stage 04 with units, grid, vertical/surface definition, averaging period, common valid support and observation-validation limits.
+- `templates/classic_14.8.0/`: complete `geoschem_config.yml`, HEMCO and HISTORY templates plus `settings.json`.
+- `templates/adjoint_v35l/`: complete `input.geos`, `input.gcadj`, `ITER`, settings, a hash-checked chemistry-component patch and module dependencies.
+- [configure_run.py](scripts/configure_run.py): render either set into a fresh external directory; plan by default.
+- [build_classic.py](scripts/build_classic.py), [prepare_v35l.py](scripts/prepare_v35l.py): Classic build planning/execution and v35l source-profile preparation.
+- [bounded_inputs.py](scripts/bounded_inputs.py), [prepare_v35l_inputs.py](scripts/prepare_v35l_inputs.py): bounded Classic acquisition and the tested v35l input-format conversions.
+- [run_v35l.py](scripts/run_v35l.py), [check_outputs.py](scripts/check_outputs.py), [check_v35l_gradients.py](scripts/check_v35l_gradients.py): bounded native adjoint execution, fixed Classic output checks and independent global gradient checks.
+- [prepare_classic.py](scripts/prepare_classic.py): alternative preparation from the selected Classic source's native run-directory templates.
+- [gc_paths.py](scripts/gc_paths.py), [v35l_bpch.py](scripts/v35l_bpch.py): shared path/receipt and native BPCH utilities used by the helpers.
 
-## Paths and evidence
+Scripts are in `scripts/`. They are direct helpers, with no registered run-tool/MCP simulation or scheduler adapter. Template rendering does not download or validate physical data. Newly generalized helpers have synthetic checks and saved-output regression checks; the original model tests establish the configuration's bounded runtime evidence, not a new execution of every helper.
 
-Keep source and releases outside Git. Explicitly configure task build/run directories in personal non-secret settings; write results to a fresh external assets `results/<project_id>/` task directory. `GC_SOURCE_DIR` and `GC_RUN_DIR` are documentation variables, not automatically loaded AirMosaic settings. Raw logs may expose paths and filenames; do not publish them. Unadapted workflows do not inherit run-tool isolation or sanitized receipts.
+## Operating boundaries
 
-This guide distills local technical notes cross-checked against official documents. See [sources and version differences](SOURCES.md). Historical machine-specific patches are not universal fixes; forward, GCHP and version-specific adjoint capabilities are not interchangeable.
+Keep source, inputs, fresh runs and checks outside Git. Use the caller's explicit compiler/library environment and authorized compute allocation. Keep credentials, site paths and raw logs out of shared files. Preserve successful inputs/results; inactive history may be consolidated into a verified archive with a short recovery index.
 
-Follow the [asset layout and review contract](../../../../harness/assets.md): share data by stage, actual dataset name and version; group results by project and run. Reference the same data across stages; registration for reuse requires human approval.
-
-Scientific design and concentration interpretation: [method](../../../../methods/03_atmospheric_transport/geos_chem.md).
+Select source by model version and match its configuration and inputs. Recheck interfaces and outputs when upgrading; keep chemistry/process choices and objective/control definitions explicit. Changes prepare a new experiment and need renewed input/output and derivative checks. The v35l patch defines a chemistry component; it does not enable complete atmospheric transport, emissions or inversion. Its two larger perturbations met the predeclared global tolerance, while the smallest step and many local cells did not. Scientific acceptance remains separate from technical execution.

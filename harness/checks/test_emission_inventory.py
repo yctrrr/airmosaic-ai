@@ -123,6 +123,7 @@ def test_cli_dry_run_fresh_outputs_checksums_and_no_overwrite(tmp_path):
     record = json.loads((batch / "record.json").read_text())
     assert record["network_used"] is False
     assert record["credentials_read"] is False
+    assert record["script_sha256"] == hashlib.sha256(SCRIPT.read_bytes()).hexdigest()
     assert str(tmp_path) not in (batch / "record.json").read_text()
 
 
@@ -151,3 +152,23 @@ def test_cli_refuses_linked_input(tmp_path):
     response = call(inputs, outputs)
     assert response.returncode == 2
     assert json.loads(response.stdout)["reason"] == "linked_path_refused"
+
+
+def test_audit_columns_reconstruct_uncontrolled_and_trace_all_four_tables():
+    data = example()
+    data["activities"][0]["amount"] *= 1000
+    data["activities"][0]["unit"] = "kg"
+    result = helper.calculate_inventory(data)
+    for row in result["details"]:
+        factor = next(f for f in data["factors"] if all(f[k] == row[k] for k in ("activity_id", "technology_id", "pollutant")))
+        tech = next(t for t in data["technologies"] if all(t[k] == row[k] for k in ("activity_id", "technology_id")))
+        assert row["factor_activity"] == pytest.approx(row["allocated_activity"] / 1000)
+        assert row["uncontrolled_kg"] == pytest.approx(row["factor_activity"] * row["factor_value"] * helper.MASS_TO_KG[row["factor_mass_unit"]])
+        assert row["activity_basis"] == factor["activity_basis"]
+        assert row["factor_control_basis"] == "uncontrolled"
+        assert row["factor_source_ref"] == factor["source_ref"]
+        assert row["technology_source_ref"] == tech["source_ref"]
+        assert row["activity_source_ref"] == data["activities"][0]["source_ref"]
+    for row in result["routes"]:
+        source = next(r for r in data["control_routes"] if all(r[k] == row[k] for k in ("activity_id", "technology_id", "pollutant", "route_id")))
+        assert row["source_ref"] == source["source_ref"]
