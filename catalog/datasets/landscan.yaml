@@ -1,0 +1,20 @@
+dataset_id: landscan_global
+name: LandScan Global ambient population
+domain: population
+description: ORNL-produced annual ambient population counts. This GDP workflow uses the Global 30 arcsecond product.
+spatial_coverage: global
+spatial_resolution: 30 arcseconds
+temporal_coverage: annual releases available in the official portal; verify the requested year
+temporal_resolution: annual ambient population, representing average daily activity space
+formats: [tif, zip]
+variables:
+  - name: population
+    description: Ambient population count per cell, not population density or a residential census count.
+    unit: persons per cell
+access_method: "https://landscan.ornl.gov/ ; select Global and year in the official download portal, then stage verified files locally"
+license_or_terms: Follow the selected release's terms and attribution.
+local_cache_policy: Preserve product/year, original metadata, hash and crop/alignment evidence outside Git.
+default_cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/LandScan
+acquisition_skill: skills/data_acquisition/shared/public-data
+quality_notes: Mosaic, HD and Global have different methods/resolutions; interannual differences also reflect changing input data and modelling.
+example_queries: [same-year total population for GDP calibration]

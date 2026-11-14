@@ -4,6 +4,8 @@
 
 Workflows explain reusable combinations of data and skills: purpose, input contracts, ordered handoffs, alternative branches, checks and review. Code and concrete software operations belong in skills; scientific reasoning belongs in methods; specific scientific questions and experiments belong in projects.
 
+The [annual gridded GDP workflow](gridded_gdp/README.md) provides a dedicated direct-script controller for public-data intake, paired model validation, annual append, two-level calibration and external candidate acceptance. It includes an executable synthetic case and optional local backup/rollback; authorized data remain external.
+
 See the [regression combination](ml_regression/README.md), including target definition, variable roles and DAG design. Its referenced registered capability is executable, while the recipe YAML is documentation. There is no general YAML executor, project loader, automatic experiment orchestration or scientific approval service.
 
 The [model reproduction combination](model_reproduction/README.md) adds source audit, frozen candidate/reference snapshots, comparable views and fresh project comparison batches. `compare_existing` uses a reviewed direct helper with default preflight; `reproduce_and_compare` is agent-guided and requires explicitly selected skills. Its [prompt](model_reproduction/prompt.md) describes handoffs and review branches. Source collection is reviewed separately through an authorized route; no general remote execution or registered comparison adapter is provided.

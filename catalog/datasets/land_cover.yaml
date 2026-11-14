@@ -1,0 +1,20 @@
+dataset_id: c3s_land_cover
+name: C3S annual land-cover classification
+domain: natural
+description: Annual ESA CCI and Copernicus C3S land cover distributed through the Climate Data Store; the GDP workflow selects C3S v2.1.1.
+spatial_coverage: global with a declared requested area
+spatial_resolution: approximately 300 m, 1/360 degree grid
+temporal_coverage: selected year available in the official product form
+temporal_resolution: annual
+formats: [nc, zip, tif]
+variables:
+  - name: lccs_class
+    description: Land Cover Classification System category codes; retain valid/NoData distinctions.
+    unit: categorical code
+access_method: "https://cds.climate.copernicus.eu/datasets/satellite-land-cover ; official CDS client after accepting terms"
+license_or_terms: Product-specific ESA CCI/C3S/VITO terms; verify the selected version.
+local_cache_policy: Retain request ID, original response, year/version, hashes and any conversion evidence outside Git.
+default_cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/LandCover
+acquisition_skill: skills/model/01_socioeconomic_natural_change/gridded-gdp
+quality_notes: Verify embedded year and lccs_class; category fractions use valid classified pixels, including categories outside the five model groups.
+example_queries: [same-year LCCS fractions for gridded GDP]

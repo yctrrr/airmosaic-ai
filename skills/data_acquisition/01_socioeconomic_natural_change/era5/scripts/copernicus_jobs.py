@@ -146,7 +146,8 @@ class CopernicusJobs:
             raise ValueError('invalid_job_name_or_suffix')
         if mode not in {'submit', 'status', 'download'}:
             raise ValueError('invalid_job_mode')
-        if dataset not in {'derived-era5-single-levels-daily-statistics', 'reanalysis-era5-single-levels', 'cams-global-reanalysis-eac4'}:
+        if dataset not in {'derived-era5-single-levels-daily-statistics', 'reanalysis-era5-single-levels',
+                           'cams-global-reanalysis-eac4', 'satellite-land-cover'}:
             raise ValueError('unsupported_official_dataset')
         directory = self.jobs / name
         directory.mkdir(exist_ok=True)

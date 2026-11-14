@@ -17,6 +17,7 @@
 | 经济模型及关联的实物核算 | [阅读方法](economic_model/README_ZH.md) |
 | 气象再分析 | [阅读方法](era5_ZH.md) |
 | 大气成分产品 | [阅读方法](cams_ZH.md) |
+| 网格人均 GDP | [阅读方法](gridded_gdp_ZH.md) |
 | 人口栅格 | [阅读方法](worldpop_ZH.md) |
 
 具体配置、调用与实际执行状态见[数据获取技能](../../skills/data_acquisition/01_socioeconomic_natural_change/README_ZH.md)与[模型技能](../../skills/model/01_socioeconomic_natural_change/README_ZH.md)。

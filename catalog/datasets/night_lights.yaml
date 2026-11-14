@@ -1,0 +1,20 @@
+dataset_id: harmonized_night_lights
+name: Harmonized NPP-VIIRS-like annual night lights
+domain: socioeconomic
+description: Cross-sensor harmonized annual light proxy; publication repository is Harvard Dataverse, with the producer's dataset DOI retained.
+spatial_coverage: global, cropped to a declared study extent
+spatial_resolution: native raster grid; inspect actual TIFF geometry
+temporal_coverage: requested annual files in the selected published DOI version
+temporal_resolution: annual
+formats: [zip, tif]
+variables:
+  - name: NPP_VIIRS_like_light
+    description: Harmonized light proxy; verify scale and units in the selected release documentation.
+    unit: release-specific
+access_method: "https://doi.org/10.7910/DVN/YGIVCD ; official Dataverse metadata and data-access APIs"
+license_or_terms: Check the selected release license and producer attribution before redistribution.
+local_cache_policy: Keep original archive, provider checksum, SHA-256, version/file ID and native-grid crop receipt outside Git.
+default_cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/NightLights
+acquisition_skill: skills/data_acquisition/shared/public-data
+quality_notes: Harmonization does not remove all interannual/sensor uncertainty. Publication year is distinct from observation year.
+example_queries: [annual night-light file for GDP predictors]

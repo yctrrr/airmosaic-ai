@@ -1,0 +1,18 @@
+{
+  "features": ["Agriculture_grid", "Forest_grid", "Grassland_grid", "NTL_Pop", "Urban_grid", "Wetland_grid", "Year", "cenlat", "cenlon"],
+  "seed": 170321,
+  "rounds": 4403,
+  "params": {
+    "nthread": 1,
+    "objective": "reg:squarederror",
+    "eval_metric": "rmse",
+    "booster": "gbtree",
+    "eta": 0.02123267171395931,
+    "max_depth": 13,
+    "colsample_bytree": 0.7141497244592756,
+    "colsample_bylevel": 0.10391354684252292,
+    "lambda": 0.023101940089621732,
+    "alpha": 6.416926903139884,
+    "subsample": 0.6512029706500471
+  }
+}

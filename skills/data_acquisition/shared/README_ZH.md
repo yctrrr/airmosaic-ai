@@ -7,6 +7,7 @@
 <!-- README-I18N:END -->
 
 
+- [公开科研数据](public-data/SKILL_ZH.md)：DOI 与 Zotero 来源追踪、仓储 API、年度栅格校验和裁剪，以及常用数据目录。
 - [文献发现与导入计划](literature-workflow/SKILL_ZH.md)：全阶段证据支持，未注册执行器。
 - [人口健康方法卡](../../../methods/shared/population_health_ZH.md)：引用 01 的 WorldPop 与 04 的 GBD，保留各自真实工具 ID 与登录边界。
 

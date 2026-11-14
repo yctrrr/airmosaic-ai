@@ -11,6 +11,7 @@ Activity, energy, technology, population and natural conditions. WorldPop and co
 
 ## Entry points
 
+- [Gridded GDP per capita](gridded-gdp/SKILL.md): direct scripts for annual features, paired validation, prediction and two-level calibration.
 - [Computable general equilibrium (CGE)](cge/SKILL.md)
 - [Input-output analysis](input-output-analysis/SKILL.md)
 - [Material flow analysis](material-flow-analysis/SKILL.md)

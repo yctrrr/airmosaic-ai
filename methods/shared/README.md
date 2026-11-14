@@ -7,6 +7,7 @@ Shared means applicable across stages; it does not establish automatic execution
 | Method | Applicable scope | Entry |
 |---|---|---|
 | Provenance, errors and normalization | Acquisition/preparation and downstream use; stage 02 remains conceptual | [Common guidance](data_quality.md); stage methods own specialist quality rules |
+| Public research data | Source tracing from articles/Zotero, repository identity and verified raster intake | [Public-data method](public_data_acquisition.md) |
 | Literature | All stages | [Literature methods](literature.md) |
 | Population and health data | 01 and 04 | [Population/health](population_health.md); acquisition skills retain their homes |
 | Spatial analysis | Matching, coordinate conversion and mapping across 01, 03 and 04 | [Spatial relationships, precision and support](spatial_analysis.md); choose the R or Python path in the skill |

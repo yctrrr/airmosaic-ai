@@ -7,6 +7,7 @@
 | 方法 | 适用阶段 | 入口 |
 |---|---|---|
 | 数据来源、误差与规范化原则 | 获取/整理及下游使用阶段；02 仍仅列方法 | [共同规范](data_quality_ZH.md)，领域细则由各阶段方法主文维护 |
+| 公开科研数据 | 从论文/Zotero 追溯来源、仓储身份及栅格接入核验 | [公开数据方法](public_data_acquisition_ZH.md) |
 | 文献 | 全阶段 | [文献方法](literature_ZH.md) |
 | 人口与健康数据 | 01、04 | [人口健康方法](population_health_ZH.md)；WorldPop/GBD skill 保持原位 |
 | 空间分析 | 01、03、04 的匹配、坐标转换与制图 | [空间关系、精度与支撑](spatial_analysis_ZH.md)，具体选择技能中的 R 或 Python 路径 |

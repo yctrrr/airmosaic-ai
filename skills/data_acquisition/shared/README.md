@@ -7,6 +7,7 @@
 <!-- README-I18N:END -->
 
 
+- [Public research data](public-data/SKILL.md): DOI and Zotero source tracing, repository APIs, verified annual raster retrieval and crop, and a common source directory.
 - [Literature discovery/import planning](literature-workflow/SKILL.md): evidence support across stages, without an execution adapter.
 - [Population/health method](../../../methods/shared/population_health.md): references WorldPop in 01 and GBD in 04, preserving actual tool IDs and login boundaries.
 

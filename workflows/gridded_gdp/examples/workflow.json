@@ -1,0 +1,103 @@
+{
+  "mode": "authorized",
+  "data_root": "__DATA_ROOT__",
+  "work_root": "__WORK_ROOT__",
+  "release_root": "__RELEASE_ROOT__",
+  "inputs": {
+    "boundary": "county_boundary.rds",
+    "history": "county_panel_2000_2020.csv",
+    "legacy_booster": "Xgboost_GDP_model_2000-2020.json",
+    "county_gdp": "CRE_Cmect.csv",
+    "province_gdp": "CRE_Gdp01.csv"
+  },
+  "history_first": 2000,
+  "history_last": 2020,
+  "training_years": [
+    2021
+  ],
+  "validation_years": [
+    2021
+  ],
+  "output_years": [
+    2021
+  ],
+  "threads": 1,
+  "gdp_unit": "CNY/person current prices",
+  "province_codes": [
+    "110000",
+    "120000",
+    "130000",
+    "140000",
+    "150000",
+    "210000",
+    "220000",
+    "230000",
+    "310000",
+    "320000",
+    "330000",
+    "340000",
+    "350000",
+    "360000",
+    "370000",
+    "410000",
+    "420000",
+    "430000",
+    "440000",
+    "450000",
+    "460000",
+    "500000",
+    "510000",
+    "520000",
+    "530000",
+    "540000",
+    "610000",
+    "620000",
+    "630000",
+    "640000",
+    "650000"
+  ],
+  "geo": {
+    "extent": [
+      73.5,
+      134.8,
+      18.16,
+      53.57
+    ],
+    "resolution": 0.01,
+    "county_resolution": 0.1,
+    "centroid_tolerance": 0.00001
+  },
+  "validation": {
+    "holdout_fraction": 0.2,
+    "legacy_min_years": 10,
+    "require_nonworse": true
+  },
+  "acceptance": {
+    "province_max_rel": 1e-8,
+    "county_p95_rel": 0.05,
+    "county_max_rel": 0.15,
+    "min_positive_counties": 2851
+  },
+  "annual": {
+    "2021": {
+      "light": {
+        "provider": "dataverse",
+        "year": 2021,
+        "version": "10.1"
+      },
+      "population": {
+        "path": "landscan_global_2021.tif",
+        "year": 2021,
+        "version": "2021",
+        "product": "LandScan Global 30 arcsec",
+        "sha256": "__POPULATION_SHA256__"
+      },
+      "cover": {
+        "provider": "cds",
+        "request": "cds-land-cover-2021.json",
+        "year": 2021,
+        "version": "2.1.1"
+      }
+    }
+  }
+}

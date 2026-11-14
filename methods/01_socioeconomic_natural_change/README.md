@@ -17,6 +17,7 @@ Explain the upstream activity, population and natural conditions of a study. Sel
 | Economic models and linked physical accounting | [Read methods](economic_model/README.md) |
 | Meteorological reanalysis | [Read method](era5.md) |
 | Atmospheric composition products | [Read method](cams.md) |
+| Gridded GDP per capita | [Read method](gridded_gdp.md) |
 | Gridded population | [Read method](worldpop.md) |
 
 Configuration, invocation and actual execution status are in the [acquisition skills](../../skills/data_acquisition/01_socioeconomic_natural_change/README.md) and [model skills](../../skills/model/01_socioeconomic_natural_change/README.md).

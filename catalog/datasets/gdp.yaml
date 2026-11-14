@@ -22,7 +22,7 @@ license_or_terms: Source-specific terms apply.
 local_cache_policy: Store cleaned indicators and provenance, not raw restricted documents.
 default_cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/SocioeconomicIndicators
 
-acquisition_skill: skills/data_acquisition/gdp
+acquisition_skill: skills/data_acquisition/01_socioeconomic_natural_change/csmar
 quality_notes: Administrative code harmonization is required across years.
 example_queries:
   - county GDP matched with PM2.5 exposure

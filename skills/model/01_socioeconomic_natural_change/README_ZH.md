@@ -11,6 +11,7 @@
 
 ## 本步入口
 
+- [网格人均 GDP](gridded-gdp/SKILL_ZH.md)：年度特征、配对验证、预测和两级校准的直接脚本。
 - [可计算一般均衡（CGE）](cge/SKILL_ZH.md)
 - [投入产出分析](input-output-analysis/SKILL_ZH.md)
 - [物质流分析](material-flow-analysis/SKILL_ZH.md)

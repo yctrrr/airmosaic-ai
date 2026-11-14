@@ -16,6 +16,28 @@ status_definitions:
   methods_only: Conceptual methods only; no concrete data, implementation code, source-script references or executable
     adapter.
 methods:
+- method_id: public_data_acquisition
+  category: data_acquisition
+  title: Public research data discovery and verified acquisition
+  document: shared/public_data_acquisition.md
+  status: reviewed_direct_script
+  evidence: official_repository_interfaces_and_bounded_raster_checks
+  tool_ids: []
+  primary_stage: shared
+  applies_to: [01_socioeconomic_natural_change, 03_atmospheric_transport, 04_integrated_impacts]
+  skills: [skills/data_acquisition/shared/public-data/SKILL.md]
+  supporting_documents: [shared/public_data_acquisition_ZH.md]
+- method_id: gridded_gdp
+  category: model
+  title: Annual gridded GDP per capita and two-level calibration
+  document: 01_socioeconomic_natural_change/gridded_gdp.md
+  status: reviewed_direct_script
+  evidence: source_method_handoff_and_synthetic_workflow_acceptance
+  tool_ids: []
+  primary_stage: 01_socioeconomic_natural_change
+  applies_to: [01_socioeconomic_natural_change, 04_integrated_impacts]
+  skills: [skills/model/01_socioeconomic_natural_change/gridded-gdp/SKILL.md]
+  supporting_documents: [01_socioeconomic_natural_change/gridded_gdp_ZH.md]
 - method_id: literature_collection
   category: data_acquisition
   title: 文献发现、下载与归档

@@ -1,0 +1,40 @@
+skill_id: public-data-acquisition
+layer: shared
+skill_path: skills/data_acquisition/shared/public-data
+datasets:
+  - dataset_id: harmonized_night_lights
+    name: Harmonized NPP-VIIRS-like annual night lights
+    domain: socioeconomic
+    description: Versioned DOI files acquired through the Harvard Dataverse API, with provider checksums and verified native-grid crops.
+    access_mode: api_download_direct_script
+    geography: global, cropped to a declared extent
+    temporal_coverage: requested years in the selected published dataset version
+    formats: [zip, tif, json]
+    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/NightLights
+    acquisition_skill: skills/data_acquisition/shared/public-data
+    source_url: https://doi.org/10.7910/DVN/YGIVCD
+    example_queries: [annual night lights, GDP predictors]
+  - dataset_id: landscan_global
+    name: LandScan Global ambient population
+    domain: population
+    description: ORNL annual 30 arcsecond population counts; use the official portal and stage the approved product locally.
+    access_mode: official_portal_manual
+    geography: global
+    temporal_coverage: selected annual release
+    formats: [zip, tif]
+    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/LandScan
+    acquisition_skill: skills/data_acquisition/shared/public-data
+    source_url: https://landscan.ornl.gov/
+    example_queries: [LandScan total population, GDP population weights]
+  - dataset_id: c3s_land_cover
+    name: C3S annual LCCS land-cover classification
+    domain: natural
+    description: Official satellite-land-cover records; the GDP skill provides a bounded annual v2.1.1 official-client helper.
+    access_mode: official_client_direct_script
+    geography: global, requested area
+    temporal_coverage: selected year available in the official CDS form
+    formats: [nc, zip, tif]
+    cache_root: ${AIRMOSAIC_ASSETS_DIR}/data/01_socioeconomic_natural_change/LandCover
+    acquisition_skill: skills/model/01_socioeconomic_natural_change/gridded-gdp
+    source_url: https://cds.climate.copernicus.eu/datasets/satellite-land-cover
+    example_queries: [C3S annual land cover, LCCS GDP predictors]
